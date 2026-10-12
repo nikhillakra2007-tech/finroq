@@ -42,4 +42,15 @@ declare module 'lucide-react' {
   export const Filter: LucideIcon;
   export const Download: LucideIcon;
   export const Upload: LucideIcon;
+  export const AlertCircle: LucideIcon;
+  export const User: LucideIcon;
+  export const LogOut: LucideIcon;
+  export const Settings: LucideIcon;
+  export const Shield: LucideIcon;
+  export const Lock: LucideIcon;
+  export const DollarSign: LucideIcon;
+  export const Target: LucideIcon;
+  export const ChevronDown: LucideIcon;
+  export const ChevronUp: LucideIcon;
+  export const Activity: LucideIcon;
 }
