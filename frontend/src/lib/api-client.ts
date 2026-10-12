@@ -95,19 +95,20 @@ class ApiClient {
 
   // Auth
   async register(data: { email: string; password: string; full_name?: string }) {
-    const res = await this.client.post<AuthResponse>('/auth/register', data);
-    if (res.data?.access_token) {
-      this.setToken(res.data.access_token);
+    const res = await this.client.post<User>('/auth/register', data);
+    // After registration, auto-authenticate to retrieve token
+    try {
+      const loginRes = await this.login({ email: data.email, password: data.password });
+      return { ...res, data: { ...res.data, access_token: loginRes.data.access_token } };
+    } catch {
+      return res;
     }
-    return res;
   }
 
   async login(data: { email: string; password: string }) {
-    const formData = new URLSearchParams();
-    formData.append('username', data.email);
-    formData.append('password', data.password);
-    const res = await this.client.post<AuthResponse>('/auth/login', formData, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    const res = await this.client.post<AuthResponse>('/auth/login', {
+      email: data.email,
+      password: data.password,
     });
     if (res.data?.access_token) {
       this.setToken(res.data.access_token);
@@ -236,6 +237,27 @@ class ApiClient {
   async deleteRecurring(id: number) {
     return this.client.delete(`/recurring/${id}`);
   }
+}
+
+export function extractErrorMessage(err: unknown, fallback = 'An unexpected error occurred'): string {
+  if (axios.isAxiosError(err)) {
+    if (err.response?.data?.detail) {
+      if (typeof err.response.data.detail === 'string') {
+        return err.response.data.detail;
+      }
+      if (Array.isArray(err.response.data.detail)) {
+        return err.response.data.detail.map((d: any) => d.msg || d.message || JSON.stringify(d)).join(', ');
+      }
+    }
+    if (err.message === 'Network Error') {
+      return 'Unable to connect to server. Please verify your internet or backend connection.';
+    }
+    return err.message || fallback;
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return fallback;
 }
 
 export const apiClient = new ApiClient();
