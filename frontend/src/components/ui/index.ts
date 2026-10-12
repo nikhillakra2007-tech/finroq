@@ -6,3 +6,4 @@ export { Badge } from './Badge';
 export { Loading, LoadingOverlay, LoadingCard } from './Loading';
 export { EmptyState } from './EmptyState';
 export { Modal } from './Modal';
+export { ConfirmationDialog } from './ConfirmationDialog';

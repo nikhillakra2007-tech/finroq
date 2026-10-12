@@ -53,4 +53,6 @@ declare module 'lucide-react' {
   export const ChevronDown: LucideIcon;
   export const ChevronUp: LucideIcon;
   export const Activity: LucideIcon;
+  export const ShieldCheck: LucideIcon;
+  export const Database: LucideIcon;
 }
