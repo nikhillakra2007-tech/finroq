@@ -14,6 +14,7 @@ import {
   PieChart,
   Repeat,
   TrendingUp,
+  Sparkles,
   Settings,
   LogOut,
   User as UserIcon,
@@ -26,6 +27,7 @@ const navigation = [
   { name: 'Budgets', href: '/budgets', icon: PieChart },
   { name: 'Recurring', href: '/recurring', icon: Repeat },
   { name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
+  { name: 'AI Insights', href: '/insights', icon: Sparkles },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 

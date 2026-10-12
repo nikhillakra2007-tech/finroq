@@ -240,3 +240,70 @@ export interface AuthResponse {
 export interface ApiError {
   detail: string;
 }
+
+export interface FinancialExplanationRequest {
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface FinancialExplanationResponse {
+  explanation: string;
+  is_ai_generated: boolean;
+  model_used: string;
+  provider_status: string;
+  verified_income: string;
+  verified_expenses: string;
+  verified_net_cash_flow: string;
+  overspent_categories: string[];
+}
+
+export interface SpendingAssistantRequest {
+  question: string;
+}
+
+export interface SpendingAssistantResponse {
+  answer: string;
+  is_ai_generated: boolean;
+  model_used: string;
+  relevant_data: Record<string, any>;
+}
+
+export interface TransactionClassificationRequest {
+  description: string;
+  amount?: string;
+}
+
+export interface TransactionClassificationResponse {
+  suggested_category_id: number | null;
+  suggested_category_name: string;
+  confidence: number;
+  is_ai_generated: boolean;
+}
+
+export interface GoalSimulationRequest {
+  goal_name: string;
+  target_amount: string;
+  current_savings: string;
+  monthly_contribution: string;
+  target_date?: string;
+}
+
+export interface GoalSimulationResponse {
+  goal_name: string;
+  target_amount: string;
+  current_savings: string;
+  funding_gap: string;
+  monthly_contribution: string;
+  projected_months_needed: number | null;
+  projected_completion_date: string | null;
+  feasibility_status: string;
+  explanation: string;
+  is_ai_generated: boolean;
+}
+
+export interface AIEntitlementsResponse {
+  tier: string;
+  queries_used: number;
+  queries_allowed: number;
+  queries_remaining: number;
+}

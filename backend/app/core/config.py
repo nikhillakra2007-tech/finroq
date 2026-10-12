@@ -33,6 +33,15 @@ class Settings(BaseSettings):
     # CORS
     cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
 
+    # AI & Gemini Configuration
+    gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
+    gemini_model: str = Field(default="gemini-1.5-flash", alias="GEMINI_MODEL")
+    ai_request_timeout_seconds: float = Field(default=15.0, alias="AI_REQUEST_TIMEOUT_SECONDS")
+
+    # Premium Entitlements
+    free_ai_monthly_limit: int = Field(default=20, alias="FREE_AI_MONTHLY_LIMIT")
+    premium_ai_monthly_limit: int = Field(default=200, alias="PREMIUM_AI_MONTHLY_LIMIT")
+
     @computed_field
     @property
     def database_url_sync(self) -> str:

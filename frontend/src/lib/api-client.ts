@@ -237,6 +237,27 @@ class ApiClient {
   async deleteRecurring(id: number) {
     return this.client.delete(`/recurring/${id}`);
   }
+
+  // AI & Financial Intelligence
+  async explainFinances(data?: { start_date?: string; end_date?: string }) {
+    return this.client.post<import('./api-types').FinancialExplanationResponse>('/ai/explain', data || {});
+  }
+
+  async askSpendingAssistant(data: { question: string }) {
+    return this.client.post<import('./api-types').SpendingAssistantResponse>('/ai/assistant', data);
+  }
+
+  async classifyTransaction(data: { description: string; amount?: string }) {
+    return this.client.post<import('./api-types').TransactionClassificationResponse>('/ai/classify', data);
+  }
+
+  async simulateGoal(data: import('./api-types').GoalSimulationRequest) {
+    return this.client.post<import('./api-types').GoalSimulationResponse>('/ai/goals/simulate', data);
+  }
+
+  async getAIEntitlements() {
+    return this.client.get<import('./api-types').AIEntitlementsResponse>('/ai/entitlements');
+  }
 }
 
 export function extractErrorMessage(err: unknown, fallback = 'An unexpected error occurred'): string {

@@ -55,4 +55,9 @@ declare module 'lucide-react' {
   export const Activity: LucideIcon;
   export const ShieldCheck: LucideIcon;
   export const Database: LucideIcon;
+  export const Sparkles: LucideIcon;
+  export const Send: LucideIcon;
+  export const Lightbulb: LucideIcon;
+  export const Compass: LucideIcon;
+  export const HelpCircle: LucideIcon;
 }
