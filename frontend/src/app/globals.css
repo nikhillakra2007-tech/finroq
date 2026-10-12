@@ -3,19 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --finroq-ivory: #F7F7F0;
-  --finroq-forest: #173F2B;
-  --finroq-forest-deep: #102F21;
+  /* Eye-Soothing Calming Palette */
+  --finroq-ivory: #F8FAF6;
+  --finroq-forest: #143526;
+  --finroq-forest-deep: #0E241A;
   --finroq-white: #FFFFFF;
-  --finroq-sage: #DCE7D9;
-  --finroq-mint: #EAF3E7;
-  --finroq-lime: #C7F36B;
-  --finroq-text: #202B24;
-  --finroq-muted: #657168;
-  --finroq-border: #E1E6DD;
-  --finroq-positive: #247A50;
-  --finroq-warning: #B77925;
-  --finroq-negative: #B74747;
+  --finroq-sage: #D5E0D3;
+  --finroq-mint: #E9F2E7;
+  --finroq-lime: #C1E86E;
+  --finroq-text: #1C241E;
+  --finroq-muted: #5E6961;
+  --finroq-border: #E2E8E0;
+  --finroq-positive: #26734B;
+  --finroq-warning: #B37828;
+  --finroq-negative: #B84747;
+}
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -23,11 +41,21 @@ body {
   background-color: var(--finroq-ivory);
   min-height: 100vh;
   font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-manrope), system-ui, sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+}
+
+/* Smooth Transitions & Reverse Transitions */
+a, button, input, select, textarea, .card, .btn, .badge {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: 250ms;
 }
 
 @layer utilities {
@@ -56,28 +84,28 @@ h1, h2, h3, h4, .font-heading {
 
   /* Interactive Elements with Micro-transitions */
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-150 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
   }
   .btn-primary {
     @apply btn bg-finroq-forest text-white hover:bg-finroq-forest-deep hover:-translate-y-0.5 focus:ring-finroq-forest shadow-sm;
   }
   .btn-secondary {
-    @apply btn bg-slate-100 text-slate-900 hover:bg-slate-200 focus:ring-slate-500 border border-finroq-border dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600;
+    @apply btn bg-white text-finroq-text hover:bg-finroq-mint focus:ring-finroq-sage border border-finroq-border shadow-sm;
   }
   .btn-danger {
-    @apply btn bg-danger-500 text-white hover:bg-red-700 focus:ring-danger-500;
+    @apply btn bg-finroq-negative text-white hover:brightness-90 focus:ring-finroq-negative;
   }
   .btn-lime {
-    @apply btn bg-finroq-lime text-finroq-forest-deep font-semibold hover:brightness-95 hover:-translate-y-0.5 focus:ring-finroq-forest;
+    @apply btn bg-finroq-lime text-finroq-forest-deep font-semibold hover:brightness-95 hover:-translate-y-0.5 focus:ring-finroq-forest shadow-sm;
   }
   
   .input {
-    @apply w-full px-3.5 py-2.5 bg-white border border-finroq-border rounded-lg shadow-sm placeholder-slate-400 text-finroq-text text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-finroq-forest/20 focus:border-finroq-forest dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100;
+    @apply w-full px-3.5 py-2.5 bg-white border border-finroq-border rounded-xl shadow-sm placeholder-slate-400 text-finroq-text text-sm transition-all focus:outline-none focus:ring-2 focus:ring-finroq-forest/20 focus:border-finroq-forest;
   }
   .label {
     @apply block text-sm font-medium text-finroq-text mb-1.5;
   }
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-finroq-border p-6 transition-shadow duration-200 hover:shadow-md dark:bg-slate-800 dark:border-slate-700;
+    @apply bg-white rounded-2xl shadow-sm border border-finroq-border p-6 transition-all duration-200 hover:shadow-md hover:border-finroq-sage/80;
   }
 }

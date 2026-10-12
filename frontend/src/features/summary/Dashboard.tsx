@@ -78,11 +78,38 @@ export function Dashboard() {
 
   if (error) {
     return (
-      <Card className="text-center py-12 bg-white border-finroq-border">
-        <p className="text-finroq-negative font-medium mb-4">{error}</p>
-        <Button onClick={fetchDashboardData} variant="secondary">
-          Retry Loading
-        </Button>
+      <Card className="text-center py-12 bg-white border-finroq-border max-w-lg mx-auto my-8 rounded-3xl p-8 shadow-xs">
+        <div className="w-12 h-12 bg-finroq-mint rounded-2xl flex items-center justify-center mx-auto mb-4 text-finroq-forest">
+          <Wallet className="h-6 w-6 text-finroq-forest" />
+        </div>
+        <h3 className="font-heading text-lg font-bold text-finroq-text mb-2">Financial Engine Connection</h3>
+        <p className="text-finroq-muted text-sm mb-6">
+          {error.includes('Not authenticated') || error.includes('connection')
+            ? 'Authenticate your session or connect with the verified demo account to inspect live balances, cash flow, and budgets.'
+            : error}
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button
+            onClick={async () => {
+              try {
+                const res = await apiClient.login({ email: 'demo@finroq.com', password: 'password123' });
+                apiClient.setToken(res.data.access_token);
+                fetchDashboardData();
+              } catch {
+                fetchDashboardData();
+              }
+            }}
+            className="btn btn-primary text-xs px-5 py-2.5 w-full sm:w-auto"
+          >
+            Connect Demo Account
+          </button>
+          <button
+            onClick={fetchDashboardData}
+            className="btn btn-secondary text-xs px-4 py-2.5 w-full sm:w-auto"
+          >
+            Retry Loading
+          </button>
+        </div>
       </Card>
     );
   }

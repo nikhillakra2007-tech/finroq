@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Manrope } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/layout/AppProviders';
+import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
@@ -17,9 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
+    <html lang="en" className={`${inter.variable} ${manrope.variable} font-sans antialiased scroll-smooth`}>
       <body className="min-h-screen bg-finroq-ivory text-finroq-text antialiased selection:bg-finroq-lime selection:text-finroq-forest">
-        <AppProviders>{children}</AppProviders>
+        <SmoothScrollProvider>
+          <AppProviders>{children}</AppProviders>
+        </SmoothScrollProvider>
       </body>
     </html>
   );
