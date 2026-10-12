@@ -3,20 +3,20 @@
 @tailwind utilities;
 
 :root {
-  /* Eye-Soothing Calming Palette */
-  --finroq-ivory: #F8FAF6;
-  --finroq-forest: #143526;
-  --finroq-forest-deep: #0E241A;
+  /* Master FINROQ Warm Ivory & Forest Green Palette */
+  --finroq-ivory: #F7F7F0;
+  --finroq-forest: #173F2B;
+  --finroq-forest-deep: #102F21;
   --finroq-white: #FFFFFF;
-  --finroq-sage: #D5E0D3;
-  --finroq-mint: #E9F2E7;
-  --finroq-lime: #C1E86E;
-  --finroq-text: #1C241E;
-  --finroq-muted: #5E6961;
-  --finroq-border: #E2E8E0;
-  --finroq-positive: #26734B;
-  --finroq-warning: #B37828;
-  --finroq-negative: #B84747;
+  --finroq-sage: #DCE7D9;
+  --finroq-mint: #EAF3E7;
+  --finroq-lime: #C7F36B;
+  --finroq-text: #202B24;
+  --finroq-muted: #657168;
+  --finroq-border: #E1E6DD;
+  --finroq-positive: #247A50;
+  --finroq-warning: #B77925;
+  --finroq-negative: #B74747;
 }
 
 /* Lenis Smooth Scroll Configuration */

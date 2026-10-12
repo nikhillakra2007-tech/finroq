@@ -59,9 +59,11 @@ export default function RegisterPage() {
           </div>
           <span className="text-2xl font-extrabold font-heading text-finroq-forest tracking-tight">FINROQ</span>
         </Link>
-        <h1 className="heading-section text-finroq-text">Create your FINROQ account</h1>
+        <h1 className="text-3xl font-extrabold font-heading text-finroq-text tracking-tight">
+          Start building your financial picture.
+        </h1>
         <p className="mt-2 text-sm text-finroq-muted">
-          Start mastering your cash flow, net worth, and monthly budgets.
+          Create your account to organize your spending, budgets, goals, and financial commitments in one place.
         </p>
       </div>
 

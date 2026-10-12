@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -17,15 +17,40 @@ import {
   LogOut,
   User as UserIcon,
   Wallet,
+  ChevronDown,
+  Layers,
+  Users,
+  ShoppingBag,
+  Zap,
+  BookOpen,
+  Umbrella,
+  ShieldAlert,
+  ShieldCheck,
+  Activity,
+  Target,
 } from 'lucide-react';
 
-// Streamlined, uncluttered 5-item core navigation
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
+const PRIMARY_NAV = [
+  { name: 'Overview', href: '/', icon: Home },
   { name: 'Ledger', href: '/transactions', icon: CreditCard },
   { name: 'Budgets', href: '/budgets', icon: PieChart },
   { name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
   { name: 'AI Insights', href: '/insights', icon: Sparkles },
+];
+
+const ALL_12_MODULES = [
+  { name: 'Expense Tracking', href: '/transactions', icon: CreditCard, cat: 'Track' },
+  { name: 'Daily Budgeting', href: '/budgets', icon: PieChart, cat: 'Track' },
+  { name: 'Expense Splitter', href: '/splitter', icon: Users, cat: 'Track' },
+  { name: 'Pre-Spend Check', href: '/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
+  { name: 'Spend Leak Detector', href: '/spend-leaks', icon: Zap, cat: 'Decide' },
+  { name: 'Money Guides', href: '/guides', icon: BookOpen, cat: 'Decide' },
+  { name: 'Net Worth Architecture', href: '/net-worth', icon: TrendingUp, cat: 'Wealth' },
+  { name: 'Goal Timeline Simulator', href: '/insights', icon: Target, cat: 'Wealth' },
+  { name: 'Emergency Cushion', href: '/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
+  { name: 'EMI / Debt Watchdog', href: '/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
+  { name: 'Credit Health', href: '/credit-health', icon: ShieldCheck, cat: 'Health' },
+  { name: 'Integrated Financial Health', href: '/financial-health', icon: Activity, cat: 'Health' },
 ];
 
 export function Navbar() {
@@ -33,7 +58,20 @@ export function Navbar() {
   const router = useRouter();
   const { user, isAuthenticated, login, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setModulesDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -46,37 +84,37 @@ export function Navbar() {
       await login('demo@finroq.com', 'password123');
       router.push('/');
     } catch (err) {
-      console.error('Demo login error', err);
+      console.error(err);
     } finally {
       setIsDemoLoading(false);
     }
   };
 
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-b border-finroq-border sticky top-0 z-40 shadow-xs transition-all duration-200">
+    <nav className="bg-white/95 backdrop-blur-md border-b border-finroq-border sticky top-0 z-40 shadow-xs transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6 lg:gap-8">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="p-2 bg-finroq-forest rounded-xl shadow-xs group-hover:scale-105 transition-transform duration-200">
                 <Wallet className="h-5 w-5 text-finroq-lime" />
               </div>
-              <span className="text-xl font-extrabold font-heading text-finroq-forest tracking-tight">
+              <span className="text-xl font-black font-heading text-finroq-forest tracking-tight">
                 FINROQ
               </span>
             </Link>
 
-            {/* Streamlined Desktop Navigation Links */}
+            {/* Desktop Navigation Links */}
             <div className="hidden md:flex md:items-center md:gap-1">
-              {navigation.map((item) => {
+              {PRIMARY_NAV.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200',
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200',
                       isActive
                         ? 'bg-finroq-mint text-finroq-forest shadow-xs'
                         : 'text-finroq-muted hover:bg-slate-50 hover:text-finroq-text'
@@ -87,6 +125,49 @@ export function Navbar() {
                   </Link>
                 );
               })}
+
+              {/* All 12 Modules Dropdown Menu */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200',
+                    modulesDropdownOpen
+                      ? 'bg-finroq-mint text-finroq-forest'
+                      : 'text-finroq-muted hover:bg-slate-50 hover:text-finroq-text'
+                  )}
+                  aria-expanded={modulesDropdownOpen}
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>Modules</span>
+                  <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', modulesDropdownOpen ? 'rotate-180' : '')} />
+                </button>
+
+                {modulesDropdownOpen && (
+                  <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-lg border border-finroq-border p-2 grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-finroq-muted uppercase tracking-wider">
+                      <span>All 12 Financial Modules</span>
+                    </div>
+
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 space-y-0.5">
+                      {ALL_12_MODULES.map((m) => (
+                        <Link
+                          key={m.name}
+                          href={m.href}
+                          onClick={() => setModulesDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-finroq-text hover:bg-finroq-mint/50 transition-colors"
+                        >
+                          <m.icon className="h-4 w-4 text-finroq-forest shrink-0" />
+                          <div className="flex-1">
+                            <p className="font-semibold">{m.name}</p>
+                            <span className="text-[10px] text-finroq-muted">{m.cat}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -151,25 +232,34 @@ export function Navbar() {
           )}
         >
           <div className="space-y-1">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium',
-                    isActive
-                      ? 'bg-finroq-mint text-finroq-forest font-semibold'
-                      : 'text-finroq-muted hover:bg-slate-50 hover:text-finroq-text'
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                </Link>
-              );
-            })}
+            <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">Primary Hubs</span>
+            {PRIMARY_NAV.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-finroq-text hover:bg-slate-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <item.icon className="h-4 w-4 text-finroq-forest" />
+                {item.name}
+              </Link>
+            ))}
+
+            <div className="pt-2 border-t border-slate-100 mt-2">
+              <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">All 12 Modules</span>
+              <div className="grid grid-cols-2 gap-1 px-2 pt-1">
+                {ALL_12_MODULES.map((m) => (
+                  <Link
+                    key={m.name}
+                    href={m.href}
+                    className="p-2 rounded-lg text-xs font-medium text-finroq-text hover:bg-finroq-mint/40 truncate"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {m.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             <div className="pt-3 mt-2 border-t border-finroq-border">
               {isAuthenticated ? (

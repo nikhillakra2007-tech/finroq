@@ -60,4 +60,12 @@ declare module 'lucide-react' {
   export const Lightbulb: LucideIcon;
   export const Compass: LucideIcon;
   export const HelpCircle: LucideIcon;
+  export const ShieldAlert: LucideIcon;
+  export const Umbrella: LucideIcon;
+  export const BookOpen: LucideIcon;
+  export const Calculator: LucideIcon;
+  export const Layers: LucideIcon;
+  export const ShoppingBag: LucideIcon;
+  export const Zap: LucideIcon;
+  export const Users: LucideIcon;
 }

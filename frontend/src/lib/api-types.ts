@@ -5,6 +5,7 @@ export interface Account {
   account_type: AccountType;
   currency: string;
   initial_balance: string;
+  current_balance?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -61,6 +62,7 @@ export interface Transaction {
   account_id: number;
   to_account_id?: number | null;
   category_id: number | null;
+  category?: Category | null;
   related_transaction_id?: number | null;
   amount: string;
   currency: string;
