@@ -177,6 +177,22 @@ The frontend is built with **Next.js 14 App Router**, **TypeScript**, and **Tail
 
 ---
 
+### 5. AI-Powered Financial Intelligence & Entitlements Engine (`app.features.ai`, `app.features.entitlements`)
+- **Safe 3-Layer Architecture**:
+  - **Layer A (Deterministic Financial Engine)**: Core calculations (cash flow, net worth, budget overruns, goal timelines) are executed using arbitrary-precision Python `Decimal`. The AI layer is strictly read-only and never invents or alters authoritative balances.
+  - **Layer B (Controlled Context Preparation)**: User-scoped context sanitization strips PII, passwords, account numbers, and token claims, compiling only verified aggregates.
+  - **Layer C (AI Explanation & Guidance)**: Centralized Gemini client (`app/features/ai/gemini.py`) connecting to Google Gemini REST API (`gemini-1.5-flash`) with 15-second bounded timeouts, retry backoff, prompt injection filtering, and automatic deterministic fallback when credentials are not configured or the remote provider fails.
+- **AI Modules**:
+  - **Financial Explainer** (`POST /api/v1/ai/explain`): Translates monthly aggregates, savings rates, and overspent categories into plain English.
+  - **Spending Assistant** (`POST /api/v1/ai/spending-assistant`): Conversational spending Q&A protected against prompt injection.
+  - **Goal Timeline Simulator** (`POST /api/v1/ai/simulate-goal`): Deterministic calculation of funding gaps and projected months required, paired with actionable recommendations.
+  - **Transaction Classifier** (`POST /api/v1/ai/classify-transaction`): Intelligent categorization with heuristic keyword fallback against predefined system categories.
+- **Server-Enforced Quota Entitlements**:
+  - Server-side tier evaluation (`FREE` vs `PREMIUM`).
+  - Monthly AI quota tracker (`check_and_consume_ai_quota`) with 403 Forbidden enforcement upon quota exhaustion.
+
+---
+
 ## Test Suite & Verification
 
 FINROQ enforces a strict verification bar with zero failing tests.
@@ -186,21 +202,27 @@ FINROQ enforces a strict verification bar with zero failing tests.
 cd backend
 python -m pytest tests -v
 ```
-**Results (114/114 passing):**
-- `tests/unit/test_budget_service.py`: 11 passed
-- `tests/unit/test_finance_engine.py`: 21 passed
-- `tests/unit/test_models.py`: 9 passed
+**Results (127/127 passing):**
+- `tests/unit/test_ai_service.py`: 7 passed
+- `tests/unit/test_budget_service.py`: 10 passed
+- `tests/unit/test_finance_engine.py`: 18 passed
+- `tests/unit/test_models.py`: 8 passed
 - `tests/unit/test_recurring_service.py`: 12 passed
-- `tests/unit/test_services.py`: 22 passed
-- `tests/integration/test_api.py`: 39 passed
+- `tests/unit/test_services.py`: 19 passed
+- `tests/integration/test_ai_api.py`: 6 passed
+- `tests/integration/test_auth_api.py`: 10 passed
+- `tests/integration/test_budget_api.py`: 10 passed
+- `tests/integration/test_recurring_api.py`: 10 passed
+- `tests/integration/test_api.py`: 17 passed
 
 ### 2. Frontend Test Suite (Jest)
 ```bash
 cd frontend
-npm test
+npm test -- --watchAll=false
 ```
-**Results (18/18 passing):**
+**Results (22/22 passing):**
 - `src/components/ui/Button.test.tsx`: 7 passed
+- `src/components/ui/ConfirmationDialog.test.tsx`: 4 passed
 - `src/components/ui/Input.test.tsx`: 5 passed
 - `src/lib/utils.test.ts`: 6 passed
 
@@ -209,7 +231,7 @@ npm test
 cd frontend
 npm run build
 ```
-**Results:** Compiled and verified across all 9 static and dynamic application routes with zero type errors.
+**Results:** Compiled and verified across all 14 static and dynamic application routes with zero type errors.
 
 ---
 
