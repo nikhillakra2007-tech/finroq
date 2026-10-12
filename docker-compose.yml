@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finroq-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-finroq}
+      POSTGRES_USER: ${POSTGRES_USER:-finroq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-finroq} -d ${POSTGRES_DB:-finroq}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - finroq-network
+
+volumes:
+  postgres_data:
+    name: finroq-postgres-data
+
+networks:
+  finroq-network:
+    driver: bridge
+    name: finroq-network
