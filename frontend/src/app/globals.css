@@ -1,22 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Master FINROQ Warm Ivory & Forest Green Palette */
-  --finroq-ivory: #F7F7F0;
-  --finroq-forest: #173F2B;
+  /* Canonical Finroq Reference Palette */
+  --bg: #F5F7F5;
+  --surface: #FFFFFF;
+  --ink: #121B17;
+  --muted: #5E6B65;
+  --line: #DCE3DF;
+  --soft: #EAF0EC;
+  --accent: #1E6A4E;
+  --accent-ink: #FFFFFF;
+  --bad: #B3382C;
+  --bad-soft: #F6E3E0;
+  --wait: #8A6A12;
+
+  /* Typography tokens */
+  --display: 'Bricolage Grotesque', 'Hanken Grotesk', system-ui, sans-serif;
+  --body: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  /* Finroq aliases */
+  --finroq-ivory: var(--bg);
+  --finroq-forest: var(--accent);
   --finroq-forest-deep: #102F21;
-  --finroq-white: #FFFFFF;
+  --finroq-white: var(--surface);
   --finroq-sage: #DCE7D9;
-  --finroq-mint: #EAF3E7;
+  --finroq-mint: var(--soft);
   --finroq-lime: #C7F36B;
-  --finroq-text: #202B24;
-  --finroq-muted: #657168;
-  --finroq-border: #E1E6DD;
-  --finroq-positive: #247A50;
-  --finroq-warning: #B77925;
-  --finroq-negative: #B74747;
+  --finroq-text: var(--ink);
+  --finroq-muted: var(--muted);
+  --finroq-border: var(--line);
+  --finroq-positive: var(--accent);
+  --finroq-warning: var(--wait);
+  --finroq-negative: var(--bad);
+}
+
+[data-theme="dark"],
+:root.dark {
+  --bg: #0D1411;
+  --surface: #141D19;
+  --ink: #E6EEE9;
+  --muted: #8E9C95;
+  --line: #24312B;
+  --soft: #18231E;
+  --accent: #5ECB9C;
+  --accent-ink: #0B1A13;
+  --bad: #F28B7F;
+  --bad-soft: #2D1B19;
+  --wait: #D9B85A;
+  color-scheme: dark;
 }
 
 /* Lenis Smooth Scroll Configuration */
@@ -32,80 +68,129 @@ html.lenis, html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
 
 body {
-  color: var(--finroq-text);
-  background-color: var(--finroq-ivory);
+  color: var(--ink);
+  background-color: var(--bg);
   min-height: 100vh;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--body);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, .font-heading {
-  font-family: var(--font-manrope), system-ui, sans-serif;
+h1, h2, h3, h4, .font-display {
+  font-family: var(--display);
+  font-weight: 600;
   letter-spacing: -0.025em;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
-/* Smooth Transitions & Reverse Transitions */
-a, button, input, select, textarea, .card, .btn, .badge {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 250ms;
+.font-mono, .num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Scroll reveal helper */
+.rv {
+  opacity: 0.15;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rv.in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
 
-@layer components {
-  /* Typography scale */
-  .heading-page {
-    @apply font-heading text-3xl sm:text-4xl font-extrabold text-finroq-text tracking-tight;
-  }
-  .heading-section {
-    @apply font-heading text-xl sm:text-2xl font-bold text-finroq-text tracking-tight;
-  }
-  .heading-card {
-    @apply font-heading text-lg font-semibold text-finroq-text;
-  }
-  .figure-primary {
-    @apply font-mono text-2xl sm:text-3xl font-bold tracking-tight;
-  }
-  .label-supporting {
-    @apply text-xs sm:text-sm font-medium text-finroq-muted;
-  }
+/* Pill buttons and interactive utilities */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s;
+}
+.btn-pill:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-pill:active {
+  transform: scale(0.98);
+}
+.btn-pill.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-pill.ghost:hover {
+  border-color: var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+.btn-pill.sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
 
-  /* Interactive Elements with Micro-transitions */
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
-  }
-  .btn-primary {
-    @apply btn bg-finroq-forest text-white hover:bg-finroq-forest-deep hover:-translate-y-0.5 focus:ring-finroq-forest shadow-sm;
-  }
-  .btn-secondary {
-    @apply btn bg-white text-finroq-text hover:bg-finroq-mint focus:ring-finroq-sage border border-finroq-border shadow-sm;
-  }
-  .btn-danger {
-    @apply btn bg-finroq-negative text-white hover:brightness-90 focus:ring-finroq-negative;
-  }
-  .btn-lime {
-    @apply btn bg-finroq-lime text-finroq-forest-deep font-semibold hover:brightness-95 hover:-translate-y-0.5 focus:ring-finroq-forest shadow-sm;
-  }
-  
-  .input {
-    @apply w-full px-3.5 py-2.5 bg-white border border-finroq-border rounded-xl shadow-sm placeholder-slate-400 text-finroq-text text-sm transition-all focus:outline-none focus:ring-2 focus:ring-finroq-forest/20 focus:border-finroq-forest;
-  }
-  .label {
-    @apply block text-sm font-medium text-finroq-text mb-1.5;
-  }
-  .card {
-    @apply bg-white rounded-2xl shadow-sm border border-finroq-border p-6 transition-all duration-200 hover:shadow-md hover:border-finroq-sage/80;
-  }
+/* Status chips */
+.chip {
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: 500 12px var(--mono);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.chip.Completed {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chip.Pending {
+  border-color: var(--wait);
+  color: var(--wait);
+}
+.chip.Cancelled {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.chip:hover {
+  background: var(--soft);
+}
+
+/* Track and meter */
+.track {
+  height: 6px;
+  background: var(--soft);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.meter.over .track i {
+  background: var(--bad);
 }

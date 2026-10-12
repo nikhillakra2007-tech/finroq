@@ -54,9 +54,11 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-manrope)', 'Manrope', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['var(--display)', 'system-ui', 'sans-serif'],
+        body: ['var(--body)', 'system-ui', 'sans-serif'],
+        sans: ['var(--body)', 'system-ui', 'sans-serif'],
+        heading: ['var(--display)', 'system-ui', 'sans-serif'],
+        mono: ['var(--mono)', 'monospace'],
       },
       boxShadow: {
         xs: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',

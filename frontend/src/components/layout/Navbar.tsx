@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 const PRIMARY_NAV = [
-  { name: 'Overview', href: '/', icon: Home },
+  { name: '12-Module Home', href: '/app/home', icon: Home },
   { name: 'Ledger', href: '/transactions', icon: CreditCard },
   { name: 'Budgets', href: '/budgets', icon: PieChart },
   { name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
@@ -39,18 +39,18 @@ const PRIMARY_NAV = [
 ];
 
 const ALL_12_MODULES = [
-  { name: 'Expense Tracking', href: '/transactions', icon: CreditCard, cat: 'Track' },
-  { name: 'Daily Budgeting', href: '/budgets', icon: PieChart, cat: 'Track' },
-  { name: 'Expense Splitter', href: '/splitter', icon: Users, cat: 'Track' },
-  { name: 'Pre-Spend Check', href: '/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
-  { name: 'Spend Leak Detector', href: '/spend-leaks', icon: Zap, cat: 'Decide' },
-  { name: 'Money Guides', href: '/guides', icon: BookOpen, cat: 'Decide' },
-  { name: 'Net Worth Architecture', href: '/net-worth', icon: TrendingUp, cat: 'Wealth' },
-  { name: 'Goal Timeline Simulator', href: '/insights', icon: Target, cat: 'Wealth' },
-  { name: 'Emergency Cushion', href: '/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
-  { name: 'EMI / Debt Watchdog', href: '/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
-  { name: 'Credit Health', href: '/credit-health', icon: ShieldCheck, cat: 'Health' },
-  { name: 'Integrated Financial Health', href: '/financial-health', icon: Activity, cat: 'Health' },
+  { name: 'Expense Tracking', href: '/app/expense-tracking', icon: CreditCard, cat: 'Track' },
+  { name: 'Daily Budgeting', href: '/app/budgeting', icon: PieChart, cat: 'Track' },
+  { name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Track' },
+  { name: 'Pre-Spend Check', href: '/app/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
+  { name: 'Spend Leak Detector', href: '/app/spend-leak-detector', icon: Zap, cat: 'Decide' },
+  { name: 'Money Guides', href: '/app/money-guides', icon: BookOpen, cat: 'Decide' },
+  { name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth' },
+  { name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth' },
+  { name: 'Emergency Cushion', href: '/app/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
+  { name: 'EMI / Debt Watchdog', href: '/app/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
+  { name: 'Credit Health', href: '/app/credit-health', icon: ShieldCheck, cat: 'Health' },
+  { name: 'Integrated Financial Health', href: '/app/financial-health', icon: Activity, cat: 'Health' },
 ];
 
 export function Navbar() {
