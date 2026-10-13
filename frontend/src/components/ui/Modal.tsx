@@ -29,9 +29,13 @@ export function Modal({
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.position = 'fixed';
+      document.documentElement.style.width = '100%';
       return () => {
         document.body.style.overflow = originalOverflow;
         document.documentElement.style.overflow = '';
+        document.documentElement.style.position = '';
+        document.documentElement.style.width = '';
       };
     }
   }, [isOpen]);
@@ -48,15 +52,12 @@ export function Modal({
   return (
     <Fragment>
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
-        className={cn(
-          'fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto',
-          'bg-transparent'
-        )}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-transparent"
         onClick={onClose}
         role="dialog"
         aria-modal="true"
@@ -65,7 +66,7 @@ export function Modal({
       >
         <div
           className={cn(
-            'w-full bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-2xl shadow-xl',
+            'w-full bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-2xl shadow-2xl',
             'transform transition-all',
             sizes[size]
           )}
@@ -73,11 +74,11 @@ export function Modal({
         >
           <div className="flex items-start justify-between p-6 border-b border-[#DCE4DC] dark:border-[#2A3D33]">
             <div>
-              <h2 id="modal-title" className="text-lg font-display font-semibold text-[#173F2B] dark:text-emerald-300">
+              <h2 id="modal-title" className="text-xl font-display font-bold text-[#173F2B] dark:text-emerald-300">
                 {title}
               </h2>
               {description && (
-                <p id="modal-description" className="text-sm text-[#4D5D51] dark:text-slate-300 mt-1">
+                <p id="modal-description" className="text-sm text-[#4D5D51] dark:text-slate-300 mt-1.5">
                   {description}
                 </p>
               )}
@@ -92,7 +93,7 @@ export function Modal({
               </button>
             )}
           </div>
-          <div className="p-6">{children}</div>
+          <div className="p-6 text-[#173F2B] dark:text-slate-200">{children}</div>
         </div>
       </div>
     </Fragment>

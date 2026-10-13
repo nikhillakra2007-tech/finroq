@@ -149,8 +149,8 @@ export function TransactionList() {
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-display font-bold text-finroq-forest dark:text-slate-100">Transactions</h2>
-          <p className="text-finroq-muted dark:text-slate-400 mt-1 text-sm font-medium">
+          <h2 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">Transactions</h2>
+          <p className="text-[#4D5D51] dark:text-slate-400 mt-1 text-sm font-medium">
             {pagination.total} recorded ledger transaction{pagination.total !== 1 ? 's' : ''}
           </p>
         </div>
@@ -160,49 +160,47 @@ export function TransactionList() {
             onChange={(e) => setFilters((prev) => ({ ...prev, account_id: e.target.value ? Number(e.target.value) : undefined }))}
             options={accountFilterOptions}
             placeholder="Filter by account"
-            className="w-auto min-w-[170px] font-medium text-emerald-700 dark:text-emerald-400 bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
+            className="w-auto min-w-[150px] font-medium text-[#173F2B] dark:text-emerald-400 bg-white dark:bg-[#16251E] border-[#DCE4DC] dark:border-[#2A3D33]"
           />
           <Select
             value={filters.transaction_type || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, transaction_type: e.target.value as TransactionType || undefined }))}
             options={typeFilterOptions}
             placeholder="Filter by type"
-            className="w-auto min-w-[140px] font-medium text-emerald-700 dark:text-emerald-400 bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
+            className="w-auto min-w-[130px] font-medium text-[#173F2B] dark:text-emerald-400 bg-white dark:bg-[#16251E] border-[#DCE4DC] dark:border-[#2A3D33]"
           />
-          <div className="flex items-center gap-2.5">
-            <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] dark:text-slate-200 border-finroq-border hover:bg-finroq-mint/40">
-              <Upload className="h-4 w-4 mr-2 text-[#173F2B] dark:text-emerald-400" />
-              Import Statement
-            </Button>
-            <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Transaction
-            </Button>
-          </div>
+          <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] dark:text-slate-200 border-[#DCE4DC] dark:border-[#2A3D33] hover:bg-[#EAF3E7] dark:hover:bg-[#1A2C22]">
+            <Upload className="h-4 w-4 mr-1 text-[#173F2B] dark:text-emerald-400" />
+            Import Statement
+          </Button>
+          <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-[#102F21] shadow-xs">
+            <Plus className="h-4 w-4 mr-1" />
+            Add Transaction
+          </Button>
         </div>
       </div>
 
       {/* Financial Institution Integration Status Panel */}
-      <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-finroq-border dark:border-[var(--line)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
+      <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-white dark:bg-[#1A2C22] text-[#173F2B] dark:text-[#67E8F9] border border-finroq-border dark:border-[var(--line)] shadow-xs">
+          <div className="p-2 rounded-xl bg-white dark:bg-[#1A2C22] text-[#173F2B] dark:text-[#67E8F9] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
             <CreditCard className="w-4 h-4" />
           </div>
           <div>
             <p className="font-bold text-[#173F2B] dark:text-slate-100">
               Financial Institution Linking (Open Banking / Account Aggregator)
             </p>
-            <p className="text-[#4E5E52] dark:text-slate-400 font-medium">
+            <p className="text-[#4D5D51] dark:text-slate-400 font-medium">
               Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.
             </p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-finroq-border dark:border-[var(--line)] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-[#DCE4DC] dark:border-[#2A3D33] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
           <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" /> Architecture Ready
         </span>
       </div>
 
-      <Card className="overflow-hidden bg-[#FCFDFC] dark:bg-[var(--surface)] border border-finroq-border dark:border-[var(--line)] shadow-xs">
+      <Card className="overflow-hidden bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
         {transactions.length === 0 ? (
           <EmptyState
             title="No transactions found"
@@ -224,7 +222,7 @@ export function TransactionList() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-finroq-border dark:border-[var(--line)] bg-[#F3F7F3] dark:bg-[#16251E]">
+                <tr className="border-b border-[#DCE4DC] dark:border-[#2A3D33] bg-[#F3F7F3] dark:bg-[#16251E]">
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Date</th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Account</th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Category</th>
@@ -234,14 +232,14 @@ export function TransactionList() {
                   <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-finroq-border dark:divide-[var(--line)]">
+              <tbody className="divide-y divide-[#DCE4DC] dark:divide-[#2A3D33]">
                 {transactions.map((transaction) => {
                   const account = accounts.find((a) => a.id === transaction.account_id);
                   const category = categories.find((c) => c.id === transaction.category_id);
                   const isIncome = transaction.transaction_type === 'income';
                   const isTransfer = transaction.transaction_type === 'transfer';
                   return (
-                    <tr key={transaction.id} className="hover:bg-[#F4F8F4] dark:hover:bg-white/5 transition-colors bg-white dark:bg-[#141D19]">
+                    <tr key={transaction.id} className="hover:bg-[#F4F8F4] dark:hover:bg-white/5 transition-colors bg-white dark:bg-[#16251E]">
                       <td className="p-4 text-sm font-mono font-semibold text-[#173F2B] dark:text-slate-100">
                         {formatDate(transaction.transaction_date)}
                       </td>
@@ -306,7 +304,7 @@ export function TransactionList() {
         )}
 
         {pagination.total > pagination.page_size && (
-          <div className="flex items-center justify-between p-4 border-t border-finroq-border dark:border-[var(--line)]">
+          <div className="flex items-center justify-between p-4 border-t border-[#DCE4DC] dark:border-[#2A3D33]">
             <p className="text-sm text-finroq-muted dark:text-slate-400">
               Page {pagination.page} of {Math.ceil(pagination.total / pagination.page_size)}
             </p>

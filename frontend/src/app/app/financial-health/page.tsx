@@ -148,8 +148,8 @@ export default function AppFinancialHealthPage() {
       {isDetailOpen && (
         <Modal
           isOpen={isDetailOpen}
-          onClose={() => setIsDetailOpen(false)}
-          title="Comprehensive Health Diagnostic Report"
+          onClose={() => { setIsDetailOpen(false); document.body.style.overflow = ''; }}
+          title="Financial Health Report"
         >
           <div className="space-y-6 text-sm">
             <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[var(--line)] space-y-1">
@@ -193,10 +193,10 @@ export default function AppFinancialHealthPage() {
 
             <div className="pt-2 flex justify-end">
               <button
-                onClick={() => setIsDetailOpen(false)}
+                onClick={() => { setIsDetailOpen(false); document.body.style.overflow = ''; }}
                 className="px-5 py-2.5 rounded-xl bg-[#173F2B] text-white text-xs font-bold hover:bg-[#102F21] transition-colors"
               >
-                Close Diagnostic
+                Close
               </button>
             </div>
           </div>

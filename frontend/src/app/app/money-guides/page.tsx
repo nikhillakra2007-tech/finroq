@@ -164,6 +164,96 @@ const GUIDES: Guide[] = [
       proTip: 'If someone promises risk-free high returns, assume it is a scam. There is no such thing.',
     },
   },
+  {
+    id: 'index-funds',
+    title: 'Index Funds: Best for Beginners',
+    tag: 'Investing',
+    readTime: '2 min read',
+    summary: 'Index funds track the whole market. Low fees, no need to pick stocks. Perfect for first-time investors.',
+    fullBody: {
+      coreConcept: 'An index fund buys all stocks in an index like Nifty 50. You own a tiny piece of India\'s top 50 companies.',
+      whyItMatters: 'Most stock pickers fail to beat the index over 10+ years. Index funds give you market returns with minimal fees.',
+      actionSteps: [
+        'Start with a Nifty 50 or Sensex index fund.',
+        'Choose direct plans (lower fees) over regular plans.',
+        'Invest via SIP — same amount every month, regardless of market level.',
+        'Stay invested for 10+ years. Time in the market beats timing the market.',
+      ],
+      proTip: 'A ₹10,000 monthly SIP in a Nifty 50 index fund for 30 years can grow to over ₹10 crore at 12% average returns.',
+    },
+  },
+  {
+    id: 'epf-vs-ppf',
+    title: 'EPF vs PPF: Which is Better?',
+    tag: 'Investing',
+    readTime: '2 min read',
+    summary: 'Both are government-backed savings. EPF is for salaried, PPF is open to everyone. Know the difference.',
+    fullBody: {
+      coreConcept: 'EPF is automatic for salaried employees. PPF is voluntary but open to anyone with a bank account.',
+      whyItMatters: 'EPF gives ~8.25% with employer contribution. PPF gives ~7.1% with 15-year lock-in. Both are safe.',
+      actionSteps: [
+        'If salaried, keep EPF and contribute more through VPF if possible.',
+        'If self-employed or want extra savings, open a PPF account.',
+        'Both qualify for tax deduction under Section 80C (up to ₹1.5 lakh/year).',
+        'Do not withdraw EPF before 5 years unless absolutely necessary.',
+      ],
+      proTip: 'Max out both EPF and PPF for ₹3 lakh/year in safe, tax-free returns before investing in anything risky.',
+    },
+  },
+  {
+    id: 'gold-investment',
+    title: 'Gold: Should You Invest?',
+    tag: 'Investing',
+    readTime: '2 min read',
+    summary: 'Gold is a hedge against inflation, not a wealth creator. Keep 5-10% of your portfolio in gold.',
+    fullBody: {
+      coreConcept: 'Gold protects your money when currencies fail and markets crash. But it does not grow wealth like equities.',
+      whyItMatters: 'Gold has given ~8-10% long-term returns, roughly matching inflation. It is insurance, not growth.',
+      actionSteps: [
+        'Prefer Sovereign Gold Bonds (SGB) over physical gold — you earn 2.5% interest plus gold price gains.',
+        'Gold ETFs are the cheapest way to invest in gold.',
+        'Keep 5-10% of total portfolio in gold as insurance.',
+        'Do not buy gold jewellery as investment — making charges eat 20-30% of value.',
+      ],
+      proTip: 'Buy gold during emotional market panic. It is your financial fire extinguisher, not your engine.',
+    },
+  },
+  {
+    id: 'stock-basics',
+    title: 'Stock Market Basics for Beginners',
+    tag: 'Investing',
+    readTime: '3 min read',
+    summary: 'Stocks represent ownership in companies. Learn how to start safely with small amounts.',
+    fullBody: {
+      coreConcept: 'When you buy a stock, you own a small piece of that company. If the company grows, your stock grows.',
+      whyItMatters: 'Equities have given 12-15% annual returns over long periods in India — higher than FD, gold, or real estate.',
+      actionSteps: [
+        'Open a demat account with Zerodha, Groww, or any SEBI-registered broker.',
+        'Start with blue-chip stocks (TCS, HDFC, Infosys) or just stick to index funds.',
+        'Never invest emergency fund money in stocks.',
+        'Ignore short-term noise. Think in years and decades.',
+      ],
+      proTip: 'If you do not understand a company, do not buy its stock. Index funds are always the safe default.',
+    },
+  },
+  {
+    id: 'retirement-planning',
+    title: 'Retirement Planning: Start Early',
+    tag: 'Long-Term',
+    readTime: '2 min read',
+    summary: 'The earlier you start, the less you need to save each month. Compound interest is the 8th wonder.',
+    fullBody: {
+      coreConcept: 'Starting at 25 vs 35 can mean saving ₹5,000/month vs ₹15,000/month for the same retirement corpus.',
+      whyItMatters: 'Compounding needs time. 30 years at 12% turns ₹1 lakh into ₹30 lakh. 20 years turns it into only ₹10 lakh.',
+      actionSteps: [
+        'Target a retirement corpus of 25x your annual expenses (the 4% rule).',
+        'Invest in equity for growth, then shift to debt as retirement approaches.',
+        'Increase SIP amount by 10% every year as your salary grows.',
+        'Do not withdraw retirement money early — let it compound.',
+      ],
+      proTip: 'A ₹5,000 monthly SIP at 12% for 30 years becomes ₹1.76 crore. Start today, not tomorrow.',
+    },
+  },
 ];
 
 export default function AppMoneyGuidesPage() {
@@ -180,7 +270,7 @@ export default function AppMoneyGuidesPage() {
           {GUIDES.map((g) => (
             <div
               key={g.id}
-              className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-md transition-shadow"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -191,18 +281,18 @@ export default function AppMoneyGuidesPage() {
                     {g.readTime}
                   </span>
                 </div>
-                <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
+                <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-emerald-300">
                   {g.title}
                 </h3>
-                <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-300 leading-relaxed">
+                <p className="text-xs font-medium text-[#2A4736] dark:text-slate-300 leading-relaxed">
                   {g.summary}
                 </p>
               </div>
 
               <div className="pt-3 border-t border-[#DCE4DC] dark:border-[var(--line)]">
                 <button
-                  onClick={() => setSelectedGuide(g)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#F4F7F3] dark:bg-[#1A2C22] text-[#173F2B] dark:text-slate-100 text-xs font-bold hover:bg-[#EAF1EA] transition-colors"
+                  onClick={() => { setSelectedGuide(g); document.body.style.overflow = 'hidden'; }}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 text-xs font-bold hover:bg-[#DCE7D9] transition-colors"
                 >
                   <span>Open Full Action Guide</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -225,7 +315,7 @@ export default function AppMoneyGuidesPage() {
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#173F2B] dark:text-emerald-300 block mb-1">
                 Core Principle
               </span>
-              <p className="text-xs font-medium text-[#173F2B] dark:text-slate-200">
+              <p className="text-xs font-medium text-[#2A4736] dark:text-slate-200">
                 {selectedGuide.fullBody.coreConcept}
               </p>
             </div>
@@ -234,7 +324,7 @@ export default function AppMoneyGuidesPage() {
               <h4 className="font-bold text-sm text-[#173F2B] dark:text-slate-100 mb-1">
                 Why this protects your wealth:
               </h4>
-              <p className="text-xs text-[#4D5D51] dark:text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#2A4736] dark:text-slate-300 leading-relaxed">
                 {selectedGuide.fullBody.whyItMatters}
               </p>
             </div>
@@ -245,7 +335,7 @@ export default function AppMoneyGuidesPage() {
               </h4>
               <ul className="space-y-2">
                 {selectedGuide.fullBody.actionSteps.map((step, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-xs text-[#374151] dark:text-slate-200">
+                  <li key={idx} className="flex items-start gap-2.5 text-xs text-[#2A4736] dark:text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>{step}</span>
                   </li>
@@ -253,18 +343,18 @@ export default function AppMoneyGuidesPage() {
               </ul>
             </div>
 
-            <div className="p-3 rounded-2xl bg-[#F7FAF7] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[var(--line)] text-xs">
+            <div className="p-3 rounded-2xl bg-[#F7FAF7] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] text-xs">
               <span className="font-bold text-[#173F2B] dark:text-emerald-300 block mb-0.5">
-                💡 FINROQ Practical Pro-Tip:
+                Pro-Tip:
               </span>
-              <p className="text-[#4D5D51] dark:text-slate-300">
+              <p className="text-[#2A4736] dark:text-slate-300">
                 {selectedGuide.fullBody.proTip}
               </p>
             </div>
 
             <div className="pt-2 flex justify-end">
               <button
-                onClick={() => setSelectedGuide(null)}
+                onClick={() => { setSelectedGuide(null); document.body.style.overflow = ''; }}
                 className="px-5 py-2 rounded-xl bg-[#173F2B] text-white text-xs font-bold hover:bg-[#102F21] transition-colors"
               >
                 Close Guide

@@ -55,6 +55,20 @@
   color-scheme: dark;
 }
 
+:root {
+  --bg: #F7F7F0;
+  --surface: #FFFFFF;
+  --ink: #173F2B;
+  --muted: #4D5D51;
+  --line: #DCE4D8;
+  --soft: #EAF3E7;
+  --accent: #173F2B;
+  --accent-ink: #FFFFFF;
+  --bad: #B74747;
+  --bad-soft: #FDE8E8;
+  --wait: #B77925;
+}
+
 /* Lenis Smooth Scroll Configuration */
 html.lenis, html.lenis body {
   height: auto;

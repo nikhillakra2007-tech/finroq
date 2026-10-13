@@ -94,7 +94,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="bg-white/95 backdrop-blur-md border-b border-finroq-border sticky top-0 z-40 shadow-xs transition-all duration-200">
+    <nav className="bg-white/95 backdrop-blur-md border-b border-[#DCE4DC] dark:border-[#2A3D33] sticky top-0 z-40 shadow-xs transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
@@ -103,7 +103,7 @@ export function Navbar() {
               <div className="p-2 bg-finroq-forest rounded-xl shadow-xs group-hover:scale-105 transition-transform duration-200">
                 <Wallet className="h-5 w-5 text-finroq-lime" />
               </div>
-              <span className="text-xl font-black font-heading text-finroq-forest tracking-tight">
+              <span className="text-xl font-black font-heading text-[#173F2B] dark:text-emerald-300 tracking-tight">
                 FINROQ
               </span>
             </Link>
@@ -186,16 +186,16 @@ export function Navbar() {
             </button>
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
-                <Link
+            <Link
                   href="/settings"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium text-finroq-text bg-finroq-ivory border border-finroq-border hover:bg-finroq-mint/50 transition-all duration-200"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium text-[#4D5D51] hover:text-[#173F2B] dark:text-slate-400 dark:hover:text-emerald-300 transition-colors"
                 >
                   <UserIcon className="h-3.5 w-3.5 text-finroq-forest" />
                   <span className="max-w-[130px] truncate">{user?.full_name || user?.email}</span>
                 </Link>
-                <button
+            <button
                   onClick={handleLogout}
-                  className="p-1.5 rounded-xl text-finroq-muted hover:text-finroq-negative hover:bg-red-50 border border-transparent hover:border-red-100 transition-all duration-200"
+                  className="p-1.5 rounded-xl text-[#4D5D51] hover:text-[#B74747] hover:bg-red-50 border border-transparent hover:border-red-100 dark:text-slate-400 dark:hover:text-rose-400 transition-all duration-200"
                   title="Sign out"
                   aria-label="Logout"
                 >

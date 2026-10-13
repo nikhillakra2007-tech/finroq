@@ -70,28 +70,23 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // FAQ accordion state (first item open by default)
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // Reverse scroll navbar visibility
-  const [navVisible, setNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [navVisible, setNavVisible] = useState(false);
+  const [lastMouseY, setLastMouseY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > 70) {
-        if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 8) {
-          setNavVisible(false); // scrolling down -> hide
-        } else if (lastScrollY - currentScrollY > 8) {
-          setNavVisible(true); // scrolling up -> reveal
-        }
-      } else {
+    const handleMouseMove = (e: MouseEvent) => {
+      const currentY = e.clientY;
+      if (currentY < lastMouseY - 5 && currentY < 120) {
         setNavVisible(true);
+      } else if (currentY > lastMouseY + 5) {
+        setNavVisible(false);
       }
-      setLastScrollY(currentScrollY);
+      setLastMouseY(currentY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [lastMouseY]);
 
   // Theme management
   useEffect(() => {

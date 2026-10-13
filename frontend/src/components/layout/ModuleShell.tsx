@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n-context';
 import { useCurtain } from '@/components/layout/CurtainTransition';
-import { ArrowLeft, Sun, Moon, LogOut } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, LogOut, Globe } from 'lucide-react';
 
 interface ModuleShellProps {
   title: string;
@@ -16,6 +17,7 @@ interface ModuleShellProps {
 export function ModuleShell({ title, category, description, children }: ModuleShellProps) {
   const { user, logout } = useAuth();
   const { navigateWithCurtain } = useCurtain();
+  const { language, setLanguage } = useI18n();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -57,6 +59,14 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+              className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all flex items-center gap-1"
+              title="Switch Language / भाषा बदलें"
+            >
+              <Globe className="w-4 h-4" />
+              <span className="text-xs font-bold">{language === 'en' ? 'हिन्दी' : 'EN'}</span>
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all"
