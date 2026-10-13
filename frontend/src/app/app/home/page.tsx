@@ -215,8 +215,8 @@ export default function AuthenticatedHomeHub() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white flex flex-col justify-between">
-      {/* App Bar */}
-      <header className="sticky top-0 z-30 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--line)]">
+      {/* App Bar - Static, scrolls naturally with the page like landing page */}
+      <header className="relative w-full z-30 bg-[var(--bg)] border-b border-[var(--line)]">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
