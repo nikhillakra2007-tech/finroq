@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
 import { useCurtain } from '@/components/layout/CurtainTransition';
+import { getStoredTheme, applyTheme } from '@/lib/theme';
 import { ArrowLeft, Sun, Moon, LogOut, Globe } from 'lucide-react';
 
 interface ModuleShellProps {
@@ -21,14 +22,15 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    setTheme(isDark ? 'dark' : 'light');
+    const stored = getStoredTheme();
+    setTheme(stored);
+    applyTheme(stored);
   }, []);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
     setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
+    applyTheme(next);
   };
 
   const handleSignOut = () => {

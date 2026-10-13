@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useCurtain } from '@/components/layout/CurtainTransition';
+import { getStoredTheme, applyTheme } from '@/lib/theme';
 import {
   CreditCard,
   PieChart,
@@ -152,14 +153,15 @@ export default function AuthenticatedHomeHub() {
   }, [isLoading, isAuthenticated, router]);
 
   useEffect(() => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    setTheme(isDark ? 'dark' : 'light');
+    const stored = getStoredTheme();
+    setTheme(stored);
+    applyTheme(stored);
   }, []);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
     setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
+    applyTheme(next);
   };
 
   const handleSignOut = () => {

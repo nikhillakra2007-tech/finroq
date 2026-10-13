@@ -3,7 +3,7 @@
 <div align="center">
 
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.0.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://pocketcircle.vercel.app)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-129%2F129%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
 ![Jest Tests](https://img.shields.io/badge/Jest-22%2F22%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
@@ -11,10 +11,10 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules in bespoke light styling, bank statement ingestion, and deterministic AI intelligence.</b>
+  <b>Double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, dark/light theming, Hindi/English i18n, bank statement ingestion, and deterministic AI intelligence.</b>
 </p>
 
-🔗 **Live Production App**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app) (Mirror: [https://finroq-os.vercel.app](https://finroq-os.vercel.app))
+🔗 **Live Production App**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app)
 
 [System Architecture](#-system-architecture) •
 [12 Core Financial Modules](#-12-unified-financial-modules) •
@@ -32,7 +32,8 @@
 **FINROQ** is an enterprise-grade personal finance platform built with FastAPI, Next.js 14, and PostgreSQL 16. It replaces the error-prone assumptions of standard budget apps with strict financial mathematics and tenant-scoped security:
 
 - ⚖️ **Arbitrary-Precision Decimal Arithmetic**: Powered by Python `Decimal` and PostgreSQL `NUMERIC(14, 2)`. Zero IEEE 754 floating-point drift.
-- 🎨 **Bespoke Light Design System**: Warm Ivory (`#F7F7F0`), Forest Green (`#173F2B`), Pale Mint (`#EAF3E7`), and Lime accents (`#C7F36B`) delivering high information density and calm readability across all 12 modules.
+- 🎨 **Bespoke Dark/Light Design System**: Warm Ivory (`#F7F7F0`) light mode and deep forest (`#0D1411`) dark mode with localStorage persistence, system-preference detection, and zero-FOUC pre-hydration.
+- 🌐 **Hindi/English Internationalization**: Full i18n via React context with zero-latency client-side dictionaries — no external API dependencies.
 - 🔄 **Unified Financial Data Model**: Single source of truth. All modules read live accounts, completed transactions, category allocations, and net-worth metrics directly from the authoritative backend engine.
 - 📥 **Comprehensive Transaction Ingestion**: Support for manual entries (including zero-sum inter-account transfers), CSV/TSV bank-statement file imports with preview and duplicate detection, and architecture-ready institutional aggregation.
 - 🛡️ **Zero-Hallucination AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Layer A before context reaches Google Gemini in Layer C.
@@ -103,7 +104,7 @@ flowchart TB
 
 ## 🧩 12 Unified Financial Modules
 
-All modules are unified under the FINROQ light theme and synchronized with the shared financial engine:
+All modules are unified under the FINROQ design system (dark + light themes) and synchronized with the shared financial engine:
 
 | # | Financial Module | Route | Live Data Integration |
 |---|---|---|---|
@@ -201,7 +202,7 @@ Every test and verification check passes with 100% compliance:
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Production Build** | `npm run build` | **37/37 static routes prerendered** | ✅ PASS |
 | **Demo Seeding** | `python seed_demo.py` | **Idempotent, 0 duplicates created** | ✅ PASS |
-| **Live Vercel Production** | `curl https://finroq-app.vercel.app` | **HTTP 200 OK** | ✅ PASS |
+| **Live Vercel Production** | `curl https://pocketcircle.vercel.app` | **HTTP 200 OK** | ✅ PASS |
 
 ---
 
@@ -259,7 +260,7 @@ npm run dev
 
 ## 🌐 Production Deployment
 
-- **Frontend**: Deployed on Vercel ([https://finroq-app.vercel.app](https://finroq-app.vercel.app) / [https://finroq-os.vercel.app](https://finroq-os.vercel.app)) using Next.js 14 App Router.
+- **Frontend**: Deployed on Vercel at [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) using Next.js 14 App Router with dark/light theming and Hindi/English internationalization.
 - **Backend**: Containerized with Uvicorn and FastAPI, easily deployable to Render, Railway, AWS ECS, or Fly.io.
 
 ---

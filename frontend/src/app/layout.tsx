@@ -19,8 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${jetbrains.variable} font-sans antialiased scroll-smooth`}>
-      <body className="min-h-screen bg-finroq-ivory text-finroq-text antialiased selection:bg-finroq-lime selection:text-finroq-forest">
+    <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${jetbrains.variable} font-sans antialiased scroll-smooth`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('finroq_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.setAttribute('data-theme','light')}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen antialiased" style={{ background: 'var(--bg)', color: 'var(--ink)' }}>
         <SmoothScrollProvider>
           <AppProviders>{children}</AppProviders>
         </SmoothScrollProvider>

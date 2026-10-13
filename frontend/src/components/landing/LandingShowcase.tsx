@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { useI18n } from '@/lib/i18n-context';
+import { getStoredTheme, applyTheme } from '@/lib/theme';
 import {
   ArrowRight,
   Sun,
@@ -70,16 +71,17 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // FAQ accordion state (first item open by default)
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // Theme management
+  // Theme management — read from localStorage and apply on mount
   useEffect(() => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    setTheme(isDark ? 'dark' : 'light');
+    const stored = getStoredTheme();
+    setTheme(stored);
+    applyTheme(stored);
   }, []);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
     setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
+    applyTheme(next);
   };
 
   // 1. Spend Tracker Interactive Demo State
