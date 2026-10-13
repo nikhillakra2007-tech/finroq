@@ -118,6 +118,11 @@ async def seed_demo():
                     amount=Decimal("45.00"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
                     description="Criterion Channel & Spotify Subscriptions", transaction_date=datetime.utcnow() - timedelta(days=1)
                 ),
+                Transaction(
+                    owner_id=owner_id, account_id=chk_id, to_account_id=acc_map.get("High-Yield Savings"),
+                    amount=Decimal("1000.00"), transaction_type=TransactionType.TRANSFER, status=TransactionStatus.COMPLETED,
+                    description="Monthly Savings Allocation Transfer", transaction_date=datetime.utcnow() - timedelta(days=6)
+                ),
             ]
             session.add_all(txs)
             await session.commit()

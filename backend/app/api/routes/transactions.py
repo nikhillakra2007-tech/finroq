@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import DatabaseSession, CurrentUserId
 from app.features.transactions.service import TransactionService
@@ -9,6 +9,9 @@ from app.shared.schemas import (
     TransactionUpdate,
     TransactionResponse,
     TransactionListResponse,
+    StatementImportPreviewResponse,
+    StatementImportConfirmRequest,
+    StatementImportConfirmResponse,
 )
 from app.db.models import TransactionType
 
@@ -57,6 +60,39 @@ async def list_transactions(
         page=page,
         page_size=page_size,
     )
+
+
+@router.post("/import/preview", response_model=StatementImportPreviewResponse)
+async def preview_statement_import(
+    db: DatabaseSession,
+    user_id: CurrentUserId,
+    account_id: int = Form(...),
+    file: UploadFile = File(...),
+):
+    service = TransactionService(db, str(user_id))
+    try:
+        content_bytes = await file.read()
+        content = content_bytes.decode("utf-8", errors="replace")
+        return await service.preview_import(account_id, content, file.filename or "statement.csv")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Failed to parse statement: {str(e)}")
+
+
+@router.post("/import/confirm", response_model=StatementImportConfirmResponse)
+async def confirm_statement_import(
+    data: StatementImportConfirmRequest,
+    db: DatabaseSession,
+    user_id: CurrentUserId,
+):
+    service = TransactionService(db, str(user_id))
+    try:
+        return await service.confirm_import(data)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Import failed: {str(e)}")
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)

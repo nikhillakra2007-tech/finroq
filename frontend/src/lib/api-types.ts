@@ -309,3 +309,43 @@ export interface AIEntitlementsResponse {
   queries_allowed: number;
   queries_remaining: number;
 }
+
+export interface StatementImportPreviewItem {
+  row_index: number;
+  transaction_date: string;
+  description: string | null;
+  amount: string;
+  transaction_type: TransactionType;
+  suggested_category_id: number | null;
+  suggested_category_name: string | null;
+  is_duplicate: boolean;
+  is_valid: boolean;
+  error: string | null;
+}
+
+export interface StatementImportPreviewResponse {
+  account_id: number;
+  account_name: string;
+  total_rows: number;
+  valid_count: number;
+  duplicate_count: number;
+  items: StatementImportPreviewItem[];
+}
+
+export interface StatementImportConfirmItem {
+  transaction_date: string;
+  description: string | null;
+  amount: string;
+  transaction_type: TransactionType;
+  category_id?: number | null;
+}
+
+export interface StatementImportConfirmRequest {
+  account_id: number;
+  transactions: StatementImportConfirmItem[];
+}
+
+export interface StatementImportConfirmResponse {
+  imported_count: number;
+  message: string;
+}

@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
+import { apiClient } from '@/lib/api-client';
+import { Account } from '@/lib/api-types';
 import { formatCurrency } from '@/lib/utils';
-import { Users, Plus, Trash2, ArrowRight, CheckCircle2, Calculator } from 'lucide-react';
+import { Users, Plus, Trash2, ArrowRight, CheckCircle2, Calculator, Wallet } from 'lucide-react';
 
 interface Participant {
   id: string;
@@ -19,9 +21,49 @@ export default function AppSplitterPage() {
     { id: '3', name: 'Jordan', paid: 3000 },
   ]);
   const [newName, setNewName] = useState('');
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<number>(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordSuccess, setRecordSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const res = await apiClient.listAccounts();
+        setAccounts(res.data.accounts || []);
+        if (res.data.accounts && res.data.accounts.length > 0) {
+          setSelectedAccountId(res.data.accounts[0].id);
+        }
+      } catch (err) {
+        // Fallback gracefully
+      }
+    }
+    fetchAccounts();
+  }, []);
 
   const totalExpense = participants.reduce((sum, p) => sum + (Number(p.paid) || 0), 0);
   const sharePerPerson = participants.length > 0 ? totalExpense / participants.length : 0;
+
+  const handleRecordShare = async () => {
+    if (!selectedAccountId || sharePerPerson <= 0) return;
+    setIsRecording(true);
+    setRecordSuccess(null);
+    try {
+      await apiClient.createTransaction({
+        account_id: selectedAccountId,
+        amount: sharePerPerson.toFixed(2),
+        currency: accounts.find((a) => a.id === selectedAccountId)?.currency || 'USD',
+        transaction_type: 'expense',
+        description: `Group Split Share: ${description}`,
+        transaction_date: new Date().toISOString().split('T')[0],
+      });
+      setRecordSuccess(`Successfully committed ${formatCurrency(sharePerPerson)} to ledger.`);
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to record transaction to ledger.');
+    } finally {
+      setIsRecording(false);
+    }
+  };
 
   const balances = participants.map((p) => ({
     ...p,
@@ -213,6 +255,49 @@ export default function AppSplitterPage() {
                       </span>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Cross-Module Integration: Commit Share to Authoritative Ledger */}
+            <div className="pt-5 border-t border-[var(--line)] space-y-3">
+              <span className="text-xs font-mono uppercase tracking-wider font-bold text-[var(--muted)] block">
+                Record Share into Finroq Ledger
+              </span>
+
+              {recordSuccess ? (
+                <div className="p-3 rounded-xl bg-[var(--soft)] text-xs text-[var(--accent)] flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{recordSuccess}</span>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {accounts.length > 0 && (
+                    <div>
+                      <label className="text-[11px] text-[var(--muted)] block mb-1">Deduct From Account</label>
+                      <select
+                        value={selectedAccountId}
+                        onChange={(e) => setSelectedAccountId(Number(e.target.value))}
+                        className="w-full px-3 py-1.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                      >
+                        {accounts.map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.name} ({a.currency})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleRecordShare}
+                    disabled={isRecording || sharePerPerson <= 0 || accounts.length === 0}
+                    className="w-full py-2.5 px-4 rounded-xl bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] disabled:opacity-50 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Wallet className="w-3.5 h-3.5" />
+                    {isRecording ? 'Recording...' : `Record Your Share (${formatCurrency(sharePerPerson)})`}
+                  </button>
                 </div>
               )}
             </div>

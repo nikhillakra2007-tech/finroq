@@ -61,19 +61,19 @@ export function Modal({
       >
         <div
           className={cn(
-            'w-full bg-white dark:bg-slate-800 rounded-xl shadow-xl',
+            'w-full bg-white dark:bg-[var(--surface)] border border-finroq-border dark:border-[var(--line)] rounded-2xl shadow-xl',
             'transform transition-all',
             sizes[size]
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-start justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-start justify-between p-6 border-b border-finroq-border dark:border-[var(--line)]">
             <div>
-              <h2 id="modal-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <h2 id="modal-title" className="text-lg font-display font-semibold text-finroq-forest dark:text-slate-100">
                 {title}
               </h2>
               {description && (
-                <p id="modal-description" className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p id="modal-description" className="text-sm text-finroq-muted dark:text-slate-400 mt-1">
                   {description}
                 </p>
               )}
@@ -81,7 +81,7 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                className="text-finroq-muted hover:text-finroq-forest dark:hover:text-slate-300 p-1.5 rounded-lg hover:bg-finroq-mint/60 dark:hover:bg-slate-700 transition-colors"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />

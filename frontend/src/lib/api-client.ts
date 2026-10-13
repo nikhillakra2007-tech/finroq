@@ -20,6 +20,9 @@ import type {
   RecurringRecordOccurrenceResponse,
   AuthResponse,
   User,
+  StatementImportPreviewResponse,
+  StatementImportConfirmRequest,
+  StatementImportConfirmResponse,
 } from './api-types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -164,6 +167,19 @@ class ApiClient {
 
   async deleteTransaction(id: number) {
     return this.client.delete(`/transactions/${id}`);
+  }
+
+  async previewStatementImport(accountId: number, file: File) {
+    const formData = new FormData();
+    formData.append('account_id', String(accountId));
+    formData.append('file', file);
+    return this.client.post<StatementImportPreviewResponse>('/transactions/import/preview', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+
+  async confirmStatementImport(data: StatementImportConfirmRequest) {
+    return this.client.post<StatementImportConfirmResponse>('/transactions/import/confirm', data);
   }
 
   // Categories

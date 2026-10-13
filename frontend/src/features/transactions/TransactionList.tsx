@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Transaction, TransactionListResponse, Account, Category, TransactionType } from '@/lib/api-types';
 import { apiClient } from '@/lib/api-client';
 import { TransactionForm } from './TransactionForm';
+import { StatementImportModal } from './StatementImportModal';
 import { Button, Card, EmptyState, Loading, LoadingCard, Badge, Select } from '@/components/ui';
-import { Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Edit, Trash2, ChevronLeft, ChevronRight, Upload, CreditCard, ShieldCheck } from 'lucide-react';
 import { formatCurrency, formatDate, getTransactionTypeColor, getTransactionTypeBg } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
@@ -25,6 +26,7 @@ export function TransactionList() {
   });
   const [isCreating, setIsCreating] = useState(false);
   const [createFormOpen, setCreateFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,9 +149,9 @@ export function TransactionList() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Transactions</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            {pagination.total} transaction{pagination.total !== 1 ? 's' : ''}
+          <h2 className="text-2xl font-display font-bold text-finroq-forest dark:text-slate-100">Transactions</h2>
+          <p className="text-finroq-muted dark:text-slate-400 mt-1 text-sm">
+            {pagination.total} recorded ledger transaction{pagination.total !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -167,70 +169,108 @@ export function TransactionList() {
             placeholder="Filter by type"
             className="w-auto min-w-[140px]"
           />
-          <Button variant="secondary" onClick={() => setCreateFormOpen(true)}>
+          <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
+            <Upload className="h-4 w-4 mr-2" />
+            Import Statement
+          </Button>
+          <Button variant="primary" onClick={() => setCreateFormOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Transaction
           </Button>
         </div>
       </div>
 
+      {/* Financial Institution Integration Status Panel */}
+      <div className="p-4 rounded-2xl bg-finroq-mint/50 border border-finroq-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-white text-finroq-forest border border-finroq-border">
+            <CreditCard className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="font-semibold text-finroq-forest">
+              Financial Institution Linking (Open Banking / Account Aggregator)
+            </p>
+            <p className="text-finroq-muted">
+              Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.
+            </p>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-finroq-border text-finroq-forest font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
+          <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" /> Architecture Ready
+        </span>
+      </div>
+
       <Card className="overflow-hidden">
         {transactions.length === 0 ? (
           <EmptyState
             title="No transactions found"
-            description="Add your first transaction or adjust your filters."
+            description="Add your first transaction, import a statement, or adjust your filters."
             action={
-              <Button onClick={() => setCreateFormOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Transaction
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import Statement
+                </Button>
+                <Button onClick={() => setCreateFormOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Transaction
+                </Button>
+              </div>
             }
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Date</th>
-                  <th className="text-left p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Account</th>
-                  <th className="text-left p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Category</th>
-                  <th className="text-left p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Type</th>
-                  <th className="text-right p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Amount</th>
-                  <th className="text-left p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Description</th>
-                  <th className="text-right p-4 text-sm font-medium text-slate-500 dark:text-slate-400">Actions</th>
+                <tr className="border-b border-finroq-border dark:border-[var(--line)] bg-finroq-mint/20">
+                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Date</th>
+                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Account</th>
+                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Category</th>
+                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Type</th>
+                  <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Amount</th>
+                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Description</th>
+                  <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+              <tbody className="divide-y divide-finroq-border dark:divide-[var(--line)]">
                 {transactions.map((transaction) => {
                   const account = accounts.find((a) => a.id === transaction.account_id);
                   const category = categories.find((c) => c.id === transaction.category_id);
                   const isIncome = transaction.transaction_type === 'income';
+                  const isTransfer = transaction.transaction_type === 'transfer';
                   return (
-                    <tr key={transaction.id} className="hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors">
-                      <td className="p-4 text-sm text-slate-900 dark:text-slate-100">
+                    <tr key={transaction.id} className="hover:bg-finroq-mint/30 dark:hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-sm font-mono text-finroq-forest dark:text-slate-100">
                         {formatDate(transaction.transaction_date)}
                       </td>
-                      <td className="p-4 text-sm text-slate-600 dark:text-slate-300">
+                      <td className="p-4 text-sm font-medium text-finroq-text dark:text-slate-300">
                         {account?.name || 'Unknown'}
                       </td>
-                      <td className="p-4 text-sm text-slate-600 dark:text-slate-300">
-                        {category?.name || '—'}
+                      <td className="p-4 text-sm text-finroq-muted dark:text-slate-300">
+                        {category?.name || (isTransfer ? 'Account Transfer' : '—')}
                       </td>
                       <td className="p-4">
                         <Badge
-                          variant={isIncome ? 'success' : 'danger'}
+                          variant={isIncome ? 'success' : isTransfer ? 'info' : 'danger'}
                           size="sm"
-                          className={cn(getTransactionTypeBg(transaction.transaction_type))}
                         >
-                          {isIncome ? 'Income' : 'Expense'}
+                          {isIncome ? 'Income' : isTransfer ? 'Transfer' : 'Expense'}
                         </Badge>
                       </td>
-                      <td className="p-4 text-right font-mono text-sm font-medium">
-                        <span className={cn(getTransactionTypeColor(transaction.transaction_type))}>
-                          {isIncome ? '+' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
+                      <td className="p-4 text-right font-mono text-sm font-bold">
+                        <span
+                          className={
+                            isIncome
+                              ? 'text-finroq-positive'
+                              : isTransfer
+                              ? 'text-finroq-forest'
+                              : 'text-finroq-negative'
+                          }
+                        >
+                          {isIncome ? '+' : isTransfer ? '↔ ' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
                         </span>
                       </td>
-                      <td className="p-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
+                      <td className="p-4 text-sm text-finroq-muted dark:text-slate-400 max-w-xs truncate">
                         {transaction.description || '—'}
                       </td>
                       <td className="p-4 text-right">
@@ -262,8 +302,8 @@ export function TransactionList() {
         )}
 
         {pagination.total > pagination.page_size && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-200 dark:border-slate-700">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex items-center justify-between p-4 border-t border-finroq-border dark:border-[var(--line)]">
+            <p className="text-sm text-finroq-muted dark:text-slate-400">
               Page {pagination.page} of {Math.ceil(pagination.total / pagination.page_size)}
             </p>
             <div className="flex gap-2">
@@ -309,6 +349,13 @@ export function TransactionList() {
         initialData={editingTransaction || undefined}
         isEditing={true}
         isLoading={isSubmitting}
+      />
+
+      <StatementImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onSuccess={fetchData}
+        accounts={accounts}
       />
     </div>
   );

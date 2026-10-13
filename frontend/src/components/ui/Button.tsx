@@ -14,10 +14,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
     
     const variants = {
-      primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-      secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200 focus:ring-slate-500 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600',
+      primary: 'bg-finroq-forest text-white hover:bg-finroq-forest-deep focus:ring-finroq-forest',
+      secondary: 'bg-slate-100 text-finroq-forest hover:bg-slate-200 border border-finroq-border focus:ring-finroq-forest dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
       danger: 'bg-danger-500 text-white hover:bg-danger-600 focus:ring-danger-500',
-      ghost: 'text-slate-600 hover:bg-slate-100 focus:ring-slate-500 dark:text-slate-400 dark:hover:bg-slate-800',
+      ghost: 'text-finroq-forest/80 hover:bg-finroq-mint/60 focus:ring-finroq-forest dark:text-slate-400 dark:hover:bg-slate-800',
     };
 
     const sizes = {

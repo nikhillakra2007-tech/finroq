@@ -3,34 +3,69 @@
 import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
-import { Budget } from '@/lib/api-types';
+import { Budget, Account } from '@/lib/api-types';
 import { formatCurrency } from '@/lib/utils';
-import { ShoppingBag, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { ShoppingBag, CheckCircle2, AlertTriangle, Wallet } from 'lucide-react';
 
 export default function AppPreSpendCheckPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<number>(0);
   const [selectedBudgetId, setSelectedBudgetId] = useState<string>('');
   const [purchaseAmount, setPurchaseAmount] = useState<number>(1500);
   const [itemDescription, setItemDescription] = useState('New Noise Cancelling Headphones');
   const [isLoading, setIsLoading] = useState(true);
+  const [isCommitting, setIsCommitting] = useState(false);
+  const [commitSuccess, setCommitSuccess] = useState<string | null>(null);
+
+  const loadBudgetsAndAccounts = async () => {
+    try {
+      const now = new Date();
+      const [bRes, aRes] = await Promise.all([
+        apiClient.listBudgets(now.getFullYear(), now.getMonth() + 1),
+        apiClient.listAccounts(),
+      ]);
+      setBudgets(bRes.data);
+      if (bRes.data.length > 0 && !selectedBudgetId) {
+        setSelectedBudgetId(String(bRes.data[0].id));
+      }
+      setAccounts(aRes.data.accounts || []);
+      if (aRes.data.accounts && aRes.data.accounts.length > 0 && !selectedAccountId) {
+        setSelectedAccountId(aRes.data.accounts[0].id);
+      }
+    } catch {
+      // Fallback for simulation
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function loadBudgets() {
-      try {
-        const now = new Date();
-        const res = await apiClient.listBudgets(now.getFullYear(), now.getMonth() + 1);
-        setBudgets(res.data);
-        if (res.data.length > 0) {
-          setSelectedBudgetId(String(res.data[0].id));
-        }
-      } catch {
-        // Fallback for simulation
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadBudgets();
+    loadBudgetsAndAccounts();
   }, []);
+
+  const handleCommitPurchase = async () => {
+    if (!selectedAccountId || !selectedBudget || purchaseAmount <= 0) return;
+    setIsCommitting(true);
+    setCommitSuccess(null);
+    try {
+      await apiClient.createTransaction({
+        account_id: selectedAccountId,
+        category_id: selectedBudget.category_id,
+        amount: purchaseAmount.toFixed(2),
+        currency: accounts.find((a) => a.id === selectedAccountId)?.currency || 'USD',
+        transaction_type: 'expense',
+        description: itemDescription,
+        transaction_date: new Date().toISOString().split('T')[0],
+      });
+      setCommitSuccess(`Committed ${formatCurrency(purchaseAmount)} to ${selectedBudget.category_name} budget.`);
+      await loadBudgetsAndAccounts();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to record purchase.');
+    } finally {
+      setIsCommitting(false);
+    }
+  };
 
   const selectedBudget = budgets.find((b) => String(b.id) === selectedBudgetId);
   const allocated = selectedBudget ? parseFloat(selectedBudget.allocated_amount) : 10000;
@@ -175,6 +210,45 @@ export default function AppPreSpendCheckPage() {
                 ✅ <strong>Approved Cushion:</strong> This planned expense fits cleanly within your category allowance, leaving{' '}
                 <strong>{formatCurrency(remainingAfter)}</strong> remaining for the rest of the cycle.
               </p>
+            )}
+          </div>
+
+          {/* Action to commit to ledger */}
+          <div className="pt-3 border-t border-[var(--line)] space-y-3">
+            {commitSuccess ? (
+              <div className="p-3 rounded-xl bg-[var(--soft)] text-xs text-[var(--accent)] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{commitSuccess}</span>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {accounts.length > 0 && (
+                  <div>
+                    <label className="text-[11px] text-[var(--muted)] block mb-1">Charge Account</label>
+                    <select
+                      value={selectedAccountId}
+                      onChange={(e) => setSelectedAccountId(Number(e.target.value))}
+                      className="w-full px-3 py-1.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    >
+                      {accounts.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.name} ({a.currency})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleCommitPurchase}
+                  disabled={isCommitting || purchaseAmount <= 0 || !selectedBudget}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] disabled:opacity-50 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Wallet className="w-3.5 h-3.5" />
+                  {isCommitting ? 'Committing...' : `Commit Purchase to Ledger (${formatCurrency(purchaseAmount)})`}
+                </button>
+              </div>
             )}
           </div>
         </div>

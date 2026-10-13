@@ -6,17 +6,17 @@
 
 :root {
   /* Canonical Finroq Reference Palette */
-  --bg: #F5F7F5;
+  --bg: #F7F7F0;
   --surface: #FFFFFF;
-  --ink: #121B17;
-  --muted: #5E6B65;
-  --line: #DCE3DF;
-  --soft: #EAF0EC;
-  --accent: #1E6A4E;
+  --ink: #173F2B;
+  --muted: #657168;
+  --line: #E1E6DD;
+  --soft: #EAF3E7;
+  --accent: #173F2B;
   --accent-ink: #FFFFFF;
-  --bad: #B3382C;
-  --bad-soft: #F6E3E0;
-  --wait: #8A6A12;
+  --bad: #B74747;
+  --bad-soft: #FDE8E8;
+  --wait: #B77925;
 
   /* Typography tokens */
   --display: 'Bricolage Grotesque', 'Hanken Grotesk', system-ui, sans-serif;
@@ -24,19 +24,19 @@
   --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
   /* Finroq aliases */
-  --finroq-ivory: var(--bg);
-  --finroq-forest: var(--accent);
+  --finroq-ivory: #F7F7F0;
+  --finroq-forest: #173F2B;
   --finroq-forest-deep: #102F21;
-  --finroq-white: var(--surface);
+  --finroq-white: #FFFFFF;
   --finroq-sage: #DCE7D9;
-  --finroq-mint: var(--soft);
+  --finroq-mint: #EAF3E7;
   --finroq-lime: #C7F36B;
-  --finroq-text: var(--ink);
-  --finroq-muted: var(--muted);
-  --finroq-border: var(--line);
-  --finroq-positive: var(--accent);
-  --finroq-warning: var(--wait);
-  --finroq-negative: var(--bad);
+  --finroq-text: #202B24;
+  --finroq-muted: #657168;
+  --finroq-border: #E1E6DD;
+  --finroq-positive: #247A50;
+  --finroq-warning: #B77925;
+  --finroq-negative: #B74747;
 }
 
 [data-theme="dark"],

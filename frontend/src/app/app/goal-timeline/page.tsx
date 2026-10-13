@@ -1,15 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
+import { apiClient } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
-import { Target, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Target, Calendar, CheckCircle2, ArrowRight, Wallet } from 'lucide-react';
 
 export default function AppGoalTimelinePage() {
   const [goalName, setGoalName] = useState('Down Payment Fund');
   const [targetAmount, setTargetAmount] = useState(500000);
   const [currentSavings, setCurrentSavings] = useState(125000);
   const [monthlyContribution, setMonthlyContribution] = useState(25000);
+
+  useEffect(() => {
+    async function loadSavings() {
+      try {
+        const res = await apiClient.listAccounts();
+        const savingsAccounts = (res.data.accounts || []).filter((a) => a.account_type === 'savings');
+        if (savingsAccounts.length > 0) {
+          const totalSaved = savingsAccounts.reduce(
+            (sum, a) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
+            0
+          );
+          if (totalSaved > 0) {
+            setCurrentSavings(totalSaved);
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    loadSavings();
+  }, []);
 
   const remaining = Math.max(0, targetAmount - currentSavings);
   const monthsNeeded = monthlyContribution > 0 ? Math.ceil(remaining / monthlyContribution) : 0;

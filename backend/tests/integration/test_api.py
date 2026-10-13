@@ -271,6 +271,95 @@ class TestTransactionsAPI:
         response = await async_client.get(f'/api/v1/transactions/{txn["id"]}', headers=auth_headers)
         assert response.status_code == 404
 
+    async def test_create_transfer_transaction(self, async_client, auth_headers):
+        acc1 = (await async_client.post('/api/v1/accounts', json={'name': 'Checking 1', 'account_type': 'checking', 'currency': 'USD', 'initial_balance': '1000.00'}, headers=auth_headers)).json()
+        acc2 = (await async_client.post('/api/v1/accounts', json={'name': 'Savings 1', 'account_type': 'savings', 'currency': 'USD', 'initial_balance': '500.00'}, headers=auth_headers)).json()
+
+        # Valid transfer
+        res = await async_client.post(
+            '/api/v1/transactions',
+            json={
+                'account_id': acc1['id'],
+                'to_account_id': acc2['id'],
+                'amount': '250.00',
+                'currency': 'USD',
+                'transaction_type': 'transfer',
+                'transaction_date': datetime.now().isoformat(),
+                'description': 'Transfer to savings',
+            },
+            headers=auth_headers,
+        )
+        assert res.status_code == 201
+        data = res.json()
+        assert data['transaction_type'] == 'transfer'
+        assert data['to_account_id'] == acc2['id']
+
+        # Transfer missing to_account_id
+        res_err = await async_client.post(
+            '/api/v1/transactions',
+            json={
+                'account_id': acc1['id'],
+                'amount': '50.00',
+                'currency': 'USD',
+                'transaction_type': 'transfer',
+                'transaction_date': datetime.now().isoformat(),
+            },
+            headers=auth_headers,
+        )
+        assert res_err.status_code == 400
+
+    async def test_statement_import_preview_and_confirm(self, async_client, auth_headers):
+        account = (await async_client.post('/api/v1/accounts', json={'name': 'Import Account', 'account_type': 'checking', 'currency': 'USD', 'initial_balance': '1000.00'}, headers=auth_headers)).json()
+        await async_client.post('/api/v1/categories/seed-defaults', headers=auth_headers)
+
+        csv_content = (
+            "Date,Description,Amount,Type\n"
+            "2026-10-01,Acme Payroll Deposit,3500.00,income\n"
+            "2026-10-02,Trader Joe Food Market,85.20,expense\n"
+            "2026-10-03,Uber Ride Transit,24.50,expense\n"
+        )
+
+        files = {"file": ("statement.csv", csv_content.encode("utf-8"), "text/csv")}
+        data = {"account_id": account["id"]}
+
+        preview_res = await async_client.post(
+            "/api/v1/transactions/import/preview",
+            data=data,
+            files=files,
+            headers=auth_headers,
+        )
+        assert preview_res.status_code == 200
+        preview_data = preview_res.json()
+        assert preview_data["total_rows"] == 3
+        assert preview_data["valid_count"] == 3
+        assert preview_data["duplicate_count"] == 0
+
+        # Confirm import
+        confirm_res = await async_client.post(
+            "/api/v1/transactions/import/confirm",
+            json={
+                "account_id": account["id"],
+                "transactions": [
+                    {
+                        "transaction_date": item["transaction_date"],
+                        "description": item["description"],
+                        "amount": item["amount"],
+                        "transaction_type": item["transaction_type"],
+                        "category_id": item["suggested_category_id"],
+                    }
+                    for item in preview_data["items"]
+                ],
+            },
+            headers=auth_headers,
+        )
+        assert confirm_res.status_code == 200
+        confirm_data = confirm_res.json()
+        assert confirm_data["imported_count"] == 3
+
+        # Verify listed transactions
+        list_res = await async_client.get(f"/api/v1/transactions?account_id={account['id']}", headers=auth_headers)
+        assert list_res.json()["total"] == 3
+
 
 class TestCategoriesAPI:
     async def test_list_categories(self, async_client, auth_headers):

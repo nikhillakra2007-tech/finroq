@@ -1,14 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
+import { apiClient } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
-import { Umbrella, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Umbrella, CheckCircle2, AlertTriangle, ShieldCheck, Wallet } from 'lucide-react';
 
 export default function AppEmergencyCushionPage() {
   const [monthlyEssential, setMonthlyEssential] = useState<number>(45000);
   const [targetMonths, setTargetMonths] = useState<number>(6);
   const [currentEmergencyLiquid, setCurrentEmergencyLiquid] = useState<number>(180000);
+  const [hasLiveAccounts, setHasLiveAccounts] = useState(false);
+
+  useEffect(() => {
+    async function loadAccounts() {
+      try {
+        const res = await apiClient.listAccounts();
+        const liquidAccounts = (res.data.accounts || []).filter(
+          (a) => a.account_type === 'checking' || a.account_type === 'savings'
+        );
+        if (liquidAccounts.length > 0) {
+          const totalLiquid = liquidAccounts.reduce(
+            (sum, a) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
+            0
+          );
+          if (totalLiquid > 0) {
+            setCurrentEmergencyLiquid(totalLiquid);
+            setHasLiveAccounts(true);
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    loadAccounts();
+  }, []);
 
   const targetFund = monthlyEssential * targetMonths;
   const fundedMonths = monthlyEssential > 0 ? (currentEmergencyLiquid / monthlyEssential).toFixed(1) : '0';

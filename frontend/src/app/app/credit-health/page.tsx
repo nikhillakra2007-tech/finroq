@@ -1,13 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
+import { apiClient } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
-import { ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, AlertTriangle, CreditCard } from 'lucide-react';
 
 export default function AppCreditHealthPage() {
   const [totalCreditLimit, setTotalCreditLimit] = useState(150000);
   const [currentCreditBalance, setCurrentCreditBalance] = useState(22340);
+  const [hasLiveCreditAccount, setHasLiveCreditAccount] = useState(false);
+
+  useEffect(() => {
+    async function loadAccounts() {
+      try {
+        const res = await apiClient.listAccounts();
+        const creditAccounts = (res.data.accounts || []).filter((a) => a.account_type === 'credit');
+        if (creditAccounts.length > 0) {
+          const totalBal = creditAccounts.reduce(
+            (sum, a) => sum + Math.abs(parseFloat(a.current_balance || a.initial_balance || '0')),
+            0
+          );
+          setCurrentCreditBalance(totalBal);
+          setTotalCreditLimit(Math.max(100000, Math.round(totalBal * 3.5)));
+          setHasLiveCreditAccount(true);
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    loadAccounts();
+  }, []);
 
   const utilizationRate = totalCreditLimit > 0 ? (currentCreditBalance / totalCreditLimit) * 100 : 0;
   const isHealthy = utilizationRate <= 30;

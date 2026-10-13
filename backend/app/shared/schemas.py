@@ -80,6 +80,7 @@ class CategoryResponse(CategoryBase):
 
 class TransactionBase(BaseModel):
     account_id: int = Field(..., gt=0)
+    to_account_id: Optional[int] = Field(None, gt=0)
     category_id: Optional[int] = Field(None, gt=0)
     amount: Decimal = Field(..., gt=0)
     currency: str = Field(..., min_length=3, max_length=3, pattern="^[A-Z]{3}$")
@@ -99,6 +100,7 @@ class TransactionCreate(TransactionBase):
 
 class TransactionUpdate(BaseModel):
     account_id: Optional[int] = Field(None, gt=0)
+    to_account_id: Optional[int] = Field(None, gt=0)
     category_id: Optional[int] = Field(None, gt=0)
     amount: Optional[Decimal] = Field(None, gt=0)
     currency: Optional[str] = Field(None, min_length=3, max_length=3, pattern="^[A-Z]{3}$")
@@ -124,12 +126,51 @@ class TransactionResponse(TransactionBase):
     updated_at: datetime
 
 
-
 class TransactionListResponse(BaseModel):
     transactions: List[TransactionResponse]
     total: int
     page: int
     page_size: int
+
+
+class StatementImportPreviewItem(BaseModel):
+    row_index: int
+    transaction_date: datetime
+    description: Optional[str] = None
+    amount: Decimal
+    transaction_type: TransactionType
+    suggested_category_id: Optional[int] = None
+    suggested_category_name: Optional[str] = None
+    is_duplicate: bool = False
+    is_valid: bool = True
+    error: Optional[str] = None
+
+
+class StatementImportPreviewResponse(BaseModel):
+    account_id: int
+    account_name: str
+    total_rows: int
+    valid_count: int
+    duplicate_count: int
+    items: List[StatementImportPreviewItem]
+
+
+class StatementImportConfirmItem(BaseModel):
+    transaction_date: datetime
+    description: Optional[str] = None
+    amount: Decimal
+    transaction_type: TransactionType
+    category_id: Optional[int] = None
+
+
+class StatementImportConfirmRequest(BaseModel):
+    account_id: int
+    transactions: List[StatementImportConfirmItem]
+
+
+class StatementImportConfirmResponse(BaseModel):
+    imported_count: int
+    message: str
 
 
 class SummaryPeriod(BaseModel):

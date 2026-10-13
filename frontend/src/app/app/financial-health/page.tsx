@@ -25,8 +25,8 @@ export default function AppFinancialHealthPage() {
     loadData();
   }, []);
 
-  const totalIncome = summary ? parseFloat(summary.total_income) : 85000;
-  const totalExpenses = summary ? parseFloat(summary.total_expenses) : 38000;
+  const totalIncome = summary ? parseFloat(summary.total_income || '0') : 0;
+  const totalExpenses = summary ? parseFloat(summary.total_expenses || '0') : 0;
   const netSavings = Math.max(0, totalIncome - totalExpenses);
   const savingsRate = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
 
