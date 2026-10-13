@@ -342,13 +342,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[var(--line)]">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Clean, balanced typography with refined scale */}
-          <div className="md:col-span-6 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-100">
+          <div className="md:col-span-6 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-100">
               <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
               <span>{t('hero.badge', 'Next-Gen Personal Finance Engine')}</span>
             </div>
 
-            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-bold tracking-tight leading-[1.18] text-[#173F2B] dark:text-slate-50">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[2.9rem] xl:text-[3.15rem] font-bold tracking-tight leading-[1.14] text-[#173F2B] dark:text-slate-50">
               {language === 'hi' ? (
                 <>
                   अपनी संपत्ति पर पाएं पूर्ण नियंत्रण,<br />
@@ -362,7 +362,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               )}
             </h1>
 
-            <p className="text-sm sm:text-base text-[#2E4035] dark:text-slate-300 max-w-lg leading-relaxed font-medium">
+            <p className="text-base sm:text-lg md:text-[1.125rem] text-[#2E4035] dark:text-slate-300 max-w-xl leading-relaxed font-normal">
               {language === 'hi'
                 ? 'फिनरॉक (Finroq) एक उद्यम-स्तरीय वित्तीय लेजर है जो निश्चित दशमलव अंकगणित के साथ तैयार किया गया है। अपने कैश फ्लो, बजट और कुल संपत्ति पर पूरा नियंत्रण पाएं बिना किसी अनुमान के।'
                 : 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.'}
@@ -371,19 +371,19 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <div className="pt-2 flex flex-wrap gap-3">
               <button
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-                className="btn-pill bg-[#173F2B] text-white hover:bg-[#102F21] shadow-sm font-bold text-sm"
+                className="btn-pill bg-[#173F2B] text-white hover:bg-[#102F21] shadow-sm font-bold text-sm sm:text-base"
               >
                 {t('hero.open_ledger', 'Open your ledger')} <ArrowRight className="w-4 h-4 ml-1" />
               </button>
               <a
                 href="#ledger"
-                className="btn-pill ghost hover:border-[var(--ink)] font-bold text-sm text-[#173F2B] dark:text-slate-100"
+                className="btn-pill ghost hover:border-[var(--ink)] font-bold text-sm sm:text-base text-[#173F2B] dark:text-slate-100"
               >
                 {t('hero.explore_demo', 'Explore interactive demo')}
               </a>
               <a
                 href="#amount-sandbox"
-                className="btn-pill ghost hover:border-[var(--accent)] font-bold text-sm text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5"
+                className="btn-pill ghost hover:border-[var(--accent)] font-bold text-sm sm:text-base text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5"
               >
                 <span>{language === 'hi' ? '⚡ विशिष्ट राशि जोड़ें' : '⚡ Test Specific Amount'}</span>
               </a>
