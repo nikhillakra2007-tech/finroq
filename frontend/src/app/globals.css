@@ -194,3 +194,34 @@ h1, h2, h3, h4, .font-display {
 .meter.over .track i {
   background: var(--bad);
 }
+
+/* Clean interactive hover elevation */
+.card-hover-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .card-hover-lift:hover {
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Rich typography and accent utilities */
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, #2DB87E 50%, #178358 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-hero {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--accent) 55%, var(--ink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .text-gradient-hero {
+  background: linear-gradient(135deg, #FFFFFF 0%, #5ECB9C 60%, #E6EEE9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
