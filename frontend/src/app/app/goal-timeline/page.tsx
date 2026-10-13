@@ -16,10 +16,10 @@ export default function AppGoalTimelinePage() {
     async function loadSavings() {
       try {
         const res = await apiClient.listAccounts();
-        const savingsAccounts = (res.data.accounts || []).filter((a) => a.account_type === 'savings');
+        const savingsAccounts = (res.data.accounts || []).filter((a: any) => a.account_type === 'savings');
         if (savingsAccounts.length > 0) {
           const totalSaved = savingsAccounts.reduce(
-            (sum, a) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
+            (sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
             0
           );
           if (totalSaved > 0) {

@@ -77,7 +77,7 @@ export function Dashboard() {
       setSummary(sumRes.data);
       setRecentTransactions(txRes.data.transactions || []);
       setBudgets(bRes.data || []);
-      setRecurring(rRes.data.filter((r) => r.status === 'active') || []);
+      setRecurring(rRes.data.filter((r: any) => r.status === 'active') || []);
     } catch (err) {
       setError(extractErrorMessage(err, 'Failed to load financial dashboard. Please check your connection.'));
     } finally {

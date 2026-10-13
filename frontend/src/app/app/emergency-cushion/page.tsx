@@ -17,11 +17,11 @@ export default function AppEmergencyCushionPage() {
       try {
         const res = await apiClient.listAccounts();
         const liquidAccounts = (res.data.accounts || []).filter(
-          (a) => a.account_type === 'checking' || a.account_type === 'savings'
+          (a: any) => a.account_type === 'checking' || a.account_type === 'savings'
         );
         if (liquidAccounts.length > 0) {
           const totalLiquid = liquidAccounts.reduce(
-            (sum, a) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
+            (sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
             0
           );
           if (totalLiquid > 0) {

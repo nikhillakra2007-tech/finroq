@@ -16,8 +16,8 @@ export default function CreditHealthPage() {
       try {
         const res = await apiClient.listAccounts();
         const accountsList = res.data.accounts || [];
-        const creditCards = accountsList.filter((a) => a.account_type === 'credit');
-        const bal = creditCards.reduce((sum, a) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
+        const creditCards = accountsList.filter((a: any) => a.account_type === 'credit');
+        const bal = creditCards.reduce((sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
         if (bal > 0) {
           setCreditBalance(bal);
         }

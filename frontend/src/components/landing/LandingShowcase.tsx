@@ -86,19 +86,34 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     }, 0);
   }, [ledgerRows]);
 
-  // 2. Safe Recurrence Demo
-  const [recEntriesCount, setRecEntriesCount] = useState<number>(0);
-  const [recMessage, setRecMessage] = useState<string>(
-    'Ledger occurrences for 15 Oct: 0. Press the button to verify duplicate prevention in action.'
-  );
+  // 2. Interactive Feature 2: Self-Monitoring Budget Simulation
+  // Category under spotlight: Dining & Outings (Base cap: ₹5,000, initial spend: ₹3,850 = 77%)
+  const [simDiningSpend, setSimDiningSpend] = useState<number>(385000); // in paisa: ₹3,850.00
+  const [simDiningCap, setSimDiningCap] = useState<number>(500000); // in paisa: ₹5,000.00
+  const [simCommuteCap, setSimCommuteCap] = useState<number>(200000); // in paisa: ₹2,000.00
+  const [simRebalanceDone, setSimRebalanceDone] = useState<boolean>(false);
 
-  const handleRecordRec = () => {
-    if (recEntriesCount === 0) {
-      setRecEntriesCount(1);
-      setRecMessage('✓ Recorded for 15 Oct. Ledger entries for this period: 1. Verified atomic entry.');
-    } else {
-      setRecMessage('✓ Already recorded for 15 Oct. Safe idempotency enforced: zero duplicate entries created.');
-    }
+  const diningOver = simDiningSpend > simDiningCap;
+  const diningPct = Math.min(100, (simDiningSpend / simDiningCap) * 100);
+  const diningDeficit = Math.max(0, simDiningSpend - simDiningCap);
+
+  const handleSimAddSpend = (amountPaisa: number) => {
+    setSimDiningSpend((prev) => prev + amountPaisa);
+    setSimRebalanceDone(false);
+  };
+
+  const handleSimRebalance = () => {
+    // Rebalance ₹500 (50,000 paisa) from commute surplus into dining
+    setSimDiningCap(550000); // ₹5,500
+    setSimCommuteCap(150000); // ₹1,500
+    setSimRebalanceDone(true);
+  };
+
+  const handleSimReset = () => {
+    setSimDiningSpend(385000);
+    setSimDiningCap(500000);
+    setSimCommuteCap(200000);
+    setSimRebalanceDone(false);
   };
 
   // 3. Interactive Budget Comparison Graph State
@@ -389,83 +404,210 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         </div>
       </section>
 
-      {/* 5. Feature 2: Budgets & Safe Recurrence */}
+      {/* 5. Feature 2: Budgets That Monitor Themselves */}
       <section id="budgets" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--soft)]/20">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-7 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-7 shadow-xs order-2 md:order-1 hover:border-[var(--line)] transition-colors">
+            {/* Card Header with Live Status Indicator */}
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
-                <h3 className="font-display text-lg font-bold text-[var(--ink)]">Monthly Category Allocations</h3>
-                <p className="text-xs text-[var(--muted)]">Dynamically synchronized with completed ledger entries</p>
+                <h3 className="font-display text-lg font-bold text-[var(--ink)]">Live Category Allocations</h3>
+                <p className="text-xs text-[var(--muted)]">Continuous burn-rate monitoring on verified transactions</p>
               </div>
-              <span className="text-xs font-mono text-[var(--muted)] bg-[var(--soft)] px-2.5 py-1 rounded-full">
-                Active Limits
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-mono text-emerald-800 font-semibold bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full">
+                  Autonomous Guardian
+                </span>
+              </div>
             </div>
 
+            {/* Category Monitoring Bars */}
             <div className="space-y-5">
-              {[
-                { cat: 'Groceries & Food', alloc: 600000, spent: 527000 },
-                { cat: 'Commute & Fuel', alloc: 150000, spent: 138000 },
-                { cat: 'Discretionary Lifestyle', alloc: 500000, spent: 799900 },
-              ].map((m) => {
-                const over = m.spent > m.alloc;
-                const pct = Math.min(100, (m.spent / m.alloc) * 100);
-                return (
-                  <div key={m.cat} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-bold text-[var(--ink)] flex items-center gap-2">
-                        {m.cat}
-                        {over && (
-                          <span className="px-2 py-0.5 rounded-full bg-[var(--bad-soft)] text-[var(--bad)] text-[11px] font-mono uppercase font-bold">
-                            Over Limit
-                          </span>
-                        )}
-                      </span>
-                      <span className="font-mono text-xs font-semibold text-[var(--muted)]">
-                        {fmt(m.spent)} of {fmt(m.alloc)}
-                      </span>
-                    </div>
-                    <div className="track">
-                      <i
-                        style={{
-                          width: `${pct}%`,
-                          backgroundColor: over ? 'var(--bad)' : 'var(--accent)',
-                        }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
-                      <span>{over ? `Deficit: ${fmt(m.spent - m.alloc)}` : `${pct.toFixed(1)}% consumed`}</span>
-                      <span>{over ? 'Reallocation suggested' : `Remaining: ${fmt(m.alloc - m.spent)}`}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Duplicate-Safe Recurrence Demo */}
-            <div className="pt-6 border-t border-[var(--line)] space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="font-bold text-sm text-[var(--ink)]">Fiber Internet Subscription</p>
-                  <span className="text-xs text-[var(--muted)]">Monthly recurrence · Scheduled for 15 Oct</span>
+              {/* Category 1: Groceries & Essentials */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-[var(--ink)] flex items-center gap-2">
+                    Groceries & Essentials
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-mono uppercase font-semibold">
+                      On Track
+                    </span>
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-[var(--muted)]">
+                    {fmt(527000)} of {fmt(650000)}
+                  </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono font-bold text-sm text-[var(--ink)]">₹999.00</span>
-                  <button
-                    onClick={handleRecordRec}
-                    className="btn-pill sm bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)]"
-                  >
-                    Record occurrence
-                  </button>
+                <div className="track">
+                  <i style={{ width: '81.1%', backgroundColor: 'var(--accent)' }} />
+                </div>
+                <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
+                  <span>81.1% consumed</span>
+                  <span>Remaining: {fmt(123000)}</span>
                 </div>
               </div>
-              <p className="text-xs text-[var(--muted)] bg-[var(--soft)] p-3 rounded-xl border border-[var(--line)] leading-relaxed font-mono">
-                {recMessage}
-              </p>
+
+              {/* Category 2: Commute & Fuel (Surplus Donor) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-[var(--ink)] flex items-center gap-2">
+                    Commute & Fuel
+                    <span className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-[11px] font-mono uppercase font-semibold">
+                      Surplus Cushion
+                    </span>
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-[var(--muted)]">
+                    {fmt(138000)} of {fmt(simCommuteCap)}
+                  </span>
+                </div>
+                <div className="track">
+                  <i
+                    style={{
+                      width: `${Math.min(100, (138000 / simCommuteCap) * 100)}%`,
+                      backgroundColor: '#0284C7',
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
+                  <span>{((138000 / simCommuteCap) * 100).toFixed(1)}% consumed</span>
+                  <span className="text-sky-700 font-semibold">Available Surplus: {fmt(simCommuteCap - 138000)}</span>
+                </div>
+              </div>
+
+              {/* Category 3: Dining & Outings (Interactive Hero) */}
+              <div className="space-y-2 p-4 rounded-2xl bg-[var(--soft)]/60 border border-[var(--line)]">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-bold text-[var(--ink)] flex items-center gap-2">
+                    Dining & Outings
+                    {simRebalanceDone ? (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-mono uppercase font-bold">
+                        ✓ Rebalanced
+                      </span>
+                    ) : diningOver ? (
+                      <span className="px-2 py-0.5 rounded-full bg-[var(--bad-soft)] text-[var(--bad)] text-[11px] font-mono uppercase font-bold animate-pulse">
+                        Over Limit
+                      </span>
+                    ) : diningPct >= 85 ? (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-mono uppercase font-bold">
+                        Velocity Warning
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-mono uppercase font-semibold">
+                        Safe Pace
+                      </span>
+                    )}
+                  </span>
+                  <span className="font-mono text-xs font-bold text-[var(--ink)]">
+                    {fmt(simDiningSpend)} of {fmt(simDiningCap)}
+                  </span>
+                </div>
+                <div className="track">
+                  <i
+                    style={{
+                      width: `${diningPct}%`,
+                      backgroundColor: diningOver
+                        ? 'var(--bad)'
+                        : diningPct >= 85
+                        ? '#D97706'
+                        : 'var(--accent)',
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
+                  <span className={diningOver ? 'text-[var(--bad)] font-bold' : ''}>
+                    {diningOver ? `Deficit: ${fmt(diningDeficit)}` : `${diningPct.toFixed(1)}% consumed`}
+                  </span>
+                  <span>
+                    {diningOver
+                      ? 'Rebalance needed'
+                      : `Safe remaining: ${fmt(simDiningCap - simDiningSpend)}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Simulation Controls */}
+            <div className="pt-5 border-t border-[var(--line)] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <p className="font-bold text-xs uppercase tracking-wider text-[var(--ink)]">
+                    Interactive Monitor Test
+                  </p>
+                  <p className="text-[11px] text-[var(--muted)]">
+                    Simulate card spending to watch the guardian catch and rebalance deficits:
+                  </p>
+                </div>
+                <button
+                  onClick={handleSimReset}
+                  className="self-start sm:self-auto text-xs font-mono font-medium text-[var(--muted)] hover:text-[var(--ink)] underline underline-offset-2"
+                >
+                  ↺ Reset
+                </button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => handleSimAddSpend(60000)}
+                  disabled={diningOver || simRebalanceDone}
+                  className="btn-pill sm bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--soft)] text-xs font-semibold disabled:opacity-50"
+                >
+                  + ₹600 Cafe Bill (89% Warning)
+                </button>
+                <button
+                  onClick={() => handleSimAddSpend(150000)}
+                  disabled={diningOver || simRebalanceDone}
+                  className="btn-pill sm bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--soft)] text-xs font-semibold disabled:opacity-50"
+                >
+                  + ₹1,500 Bistro Dinner (Over Cap)
+                </button>
+                {(diningOver || diningPct >= 85) && !simRebalanceDone && (
+                  <button
+                    onClick={handleSimRebalance}
+                    className="btn-pill sm bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold shadow-xs flex items-center gap-1.5 animate-bounce"
+                  >
+                    <span>⚡ 1-Click Auto-Rebalance</span>
+                    <span className="opacity-90 font-mono text-[11px]">(+₹500 from Commute)</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Dynamic Intelligence Explanation Card */}
+              <div
+                className={`p-3.5 rounded-2xl border text-xs font-mono leading-relaxed transition-all ${
+                  simRebalanceDone
+                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
+                    : diningOver
+                    ? 'bg-rose-50/90 border-rose-200 text-rose-900'
+                    : diningPct >= 85
+                    ? 'bg-amber-50/80 border-amber-200 text-amber-900'
+                    : 'bg-[var(--soft)] border-[var(--line)] text-[var(--ink)]'
+                }`}
+              >
+                {simRebalanceDone ? (
+                  <div>
+                    <span className="font-bold block mb-1">✓ Automated Rebalance Applied:</span>
+                    FINROQ safely shifted ₹500 surplus from your Commute cushion into Dining. Your Dining cap is now ₹5,500, deficit is neutralized, and your net monthly savings of ₹1,07,200 remains 100% untouched.
+                  </div>
+                ) : diningOver ? (
+                  <div>
+                    <span className="font-bold block mb-1">🚨 Autonomous Deficit Intercept:</span>
+                    Dining is {fmt(diningDeficit)} over target with 17 days left in October! FINROQ spotted a {fmt(simCommuteCap - 138000)} spare cushion in &apos;Commute & Fuel&apos;. Click &quot;1-Click Auto-Rebalance&quot; above to neutralize it automatically.
+                  </div>
+                ) : diningPct >= 85 ? (
+                  <div>
+                    <span className="font-bold block mb-1">⚠️ Burn-Rate Velocity Warning:</span>
+                    You have consumed {diningPct.toFixed(1)}% of your dining allocation with 17 days remaining. FINROQ recommends capping discretionary dining to {fmt(Math.round((simDiningCap - simDiningSpend) / 17))}/day to finish October in the green.
+                  </div>
+                ) : (
+                  <div>
+                    <span className="font-bold block mb-1">🛡️ Autonomous Monitor: Active</span>
+                    Transactions flow into category buckets with zero manual entry. When burn rates exceed calendar days or breach limits, FINROQ triggers predictive alerts and reallocation options in real time.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
+          {/* Right Column Copy */}
           <div className="md:col-span-5 space-y-6 order-1 md:order-2">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Feature Two
@@ -474,20 +616,32 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               Budgets that monitor themselves.
             </h2>
             <p className="text-[var(--muted)] leading-relaxed">
-              Set planned limits per category. Actual spending is derived live from verified transactions, alerting you the instant discretionary thresholds are tested.
+              No manual receipt spreadsheets or end-of-month regret. FINROQ watches your spending velocity in real-time, warning you before limits are broken and rebalancing surpluses automatically.
             </p>
             <ul className="space-y-4 pt-4 border-t border-[var(--line)] text-sm">
               <li className="flex gap-4">
-                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[80px]">Autonomous</span>
-                <span className="text-[var(--muted)]">Derived live from ledger data so you never have to reconcile receipts manually.</span>
+                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[95px]">
+                  Real-Time Sync
+                </span>
+                <span className="text-[var(--muted)]">
+                  Every card swipe, UPI transfer, and bank debit categorizes instantly. Zero manual logging.
+                </span>
               </li>
               <li className="flex gap-4">
-                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[80px]">Recurrence</span>
-                <span className="text-[var(--muted)]">Weekly, monthly, or yearly calendar rules handle shorter months with precision.</span>
+                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[95px]">
+                  Burn Alerts
+                </span>
+                <span className="text-[var(--muted)]">
+                  Proactive velocity warnings flag categories running hot weeks before the month ends.
+                </span>
               </li>
               <li className="flex gap-4">
-                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[80px]">Idempotent</span>
-                <span className="text-[var(--muted)]">Recording scheduled charges repeatedly never triggers duplicate expenses.</span>
+                <span className="font-mono text-xs font-bold uppercase text-[var(--accent)] min-w-[95px]">
+                  Auto-Rebalance
+                </span>
+                <span className="text-[var(--muted)]">
+                  When you spend more on dining, FINROQ absorbs it from under-budget surplus without denting your savings.
+                </span>
               </li>
             </ul>
           </div>

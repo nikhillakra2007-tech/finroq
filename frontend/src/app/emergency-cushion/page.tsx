@@ -27,8 +27,8 @@ export default function EmergencyCushionPage() {
 
         const accountsList = accRes.data.accounts || [];
         const liquid = accountsList
-          .filter((a) => a.account_type === 'checking' || a.account_type === 'savings' || a.account_type === 'cash')
-          .reduce((sum, a) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
+          .filter((a: any) => a.account_type === 'checking' || a.account_type === 'savings' || a.account_type === 'cash')
+          .reduce((sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
 
         if (liquid > 0) {
           setLiquidSavings(liquid);

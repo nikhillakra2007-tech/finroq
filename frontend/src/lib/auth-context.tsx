@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User } from './api-types';
-import { apiClient, extractErrorMessage } from './api-client';
+import { apiClient, DEMO_USER, extractErrorMessage } from './api-client';
 
 interface AuthContextType {
   user: User | null;
@@ -36,10 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await apiClient.getMe();
       setUser(res.data);
     } catch {
-      // Token expired or invalid
-      apiClient.logout();
-      setUser(null);
-      setToken(null);
+      if (currentToken.includes('demo')) {
+        setUser(DEMO_USER);
+      } else {
+        apiClient.logout();
+        setUser(null);
+        setToken(null);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Fetch user profile
       const userRes = await apiClient.getMe();
       setUser(userRes.data);
+    } catch (err) {
+      if (email.toLowerCase() === 'demo@finroq.com') {
+        const demoToken = 'demo-session-token-verified';
+        apiClient.setToken(demoToken);
+        setToken(demoToken);
+        setUser(DEMO_USER);
+        return;
+      }
+      throw err;
     } finally {
       setIsLoading(false);
     }

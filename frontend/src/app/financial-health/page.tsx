@@ -29,7 +29,7 @@ export default function FinancialHealthPage() {
         let ast = 0;
         let liab = 0;
         const accountsList = accRes.data.accounts || [];
-        accountsList.forEach((a) => {
+        accountsList.forEach((a: any) => {
           const bal = parseFloat(a.current_balance || a.initial_balance);
           if (a.account_type === 'credit') liab += bal;
           else ast += bal;

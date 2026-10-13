@@ -16,7 +16,7 @@ export default function SpendLeaksPage() {
     async function loadData() {
       try {
         const res = await apiClient.listRecurring();
-        setRecurring(res.data.filter((r) => r.transaction_type === 'expense' && r.status === 'active'));
+        setRecurring(res.data.filter((r: any) => r.transaction_type === 'expense' && r.status === 'active'));
       } catch {
         // Handled
       } finally {
@@ -26,7 +26,7 @@ export default function SpendLeaksPage() {
     loadData();
   }, []);
 
-  const totalMonthlyLeaks = recurring.reduce((sum, r) => {
+  const totalMonthlyLeaks = recurring.reduce((sum: number, r: any) => {
     const amt = parseFloat(r.amount);
     if (r.frequency === 'daily') return sum + amt * 30;
     if (r.frequency === 'weekly') return sum + amt * 4.33;

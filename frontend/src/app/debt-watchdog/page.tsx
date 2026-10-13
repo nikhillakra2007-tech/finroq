@@ -18,9 +18,9 @@ export default function DebtWatchdogPage() {
       try {
         const res = await apiClient.listAccounts();
         const accountsList = res.data.accounts || [];
-        const debtAccounts = accountsList.filter((a) => a.account_type === 'credit');
+        const debtAccounts = accountsList.filter((a: any) => a.account_type === 'credit');
         setAccounts(debtAccounts);
-        const total = debtAccounts.reduce((sum, a) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
+        const total = debtAccounts.reduce((sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance), 0);
         if (total > 0) {
           setBalance(total);
         }

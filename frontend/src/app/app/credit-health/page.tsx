@@ -15,10 +15,10 @@ export default function AppCreditHealthPage() {
     async function loadAccounts() {
       try {
         const res = await apiClient.listAccounts();
-        const creditAccounts = (res.data.accounts || []).filter((a) => a.account_type === 'credit');
+        const creditAccounts = (res.data.accounts || []).filter((a: any) => a.account_type === 'credit');
         if (creditAccounts.length > 0) {
           const totalBal = creditAccounts.reduce(
-            (sum, a) => sum + Math.abs(parseFloat(a.current_balance || a.initial_balance || '0')),
+            (sum: number, a: any) => sum + Math.abs(parseFloat(a.current_balance || a.initial_balance || '0')),
             0
           );
           setCurrentCreditBalance(totalBal);

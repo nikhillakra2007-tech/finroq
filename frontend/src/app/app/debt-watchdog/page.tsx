@@ -30,14 +30,14 @@ export default function AppDebtWatchdogPage() {
           apiClient.listRecurring(),
         ]);
 
-        const creditAccounts = (accRes.data.accounts || []).filter((a) => a.account_type === 'credit');
+        const creditAccounts = (accRes.data.accounts || []).filter((a: any) => a.account_type === 'credit');
         const recurringDebts = (recRes.data || []).filter(
-          (r) => r.transaction_type === 'expense' && r.status === 'active'
+          (r: any) => r.transaction_type === 'expense' && r.status === 'active'
         );
 
         const liveItems: DebtItem[] = [];
 
-        creditAccounts.forEach((c) => {
+        creditAccounts.forEach((c: any) => {
           const bal = Math.abs(parseFloat(c.current_balance || c.initial_balance || '0'));
           liveItems.push({
             id: `acc-${c.id}`,
@@ -51,7 +51,7 @@ export default function AppDebtWatchdogPage() {
           });
         });
 
-        recurringDebts.forEach((r) => {
+        recurringDebts.forEach((r: any) => {
           const amt = parseFloat(r.amount);
           liveItems.push({
             id: `rec-${r.id}`,
