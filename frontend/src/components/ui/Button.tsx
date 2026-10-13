@@ -14,10 +14,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
     
     const variants = {
-      primary: 'bg-finroq-forest text-white hover:bg-finroq-forest-deep focus:ring-finroq-forest',
-      secondary: 'bg-slate-100 text-finroq-forest hover:bg-slate-200 border border-finroq-border focus:ring-finroq-forest dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700',
-      danger: 'bg-danger-500 text-white hover:bg-danger-600 focus:ring-danger-500',
-      ghost: 'text-finroq-forest/80 hover:bg-finroq-mint/60 focus:ring-finroq-forest dark:text-slate-400 dark:hover:bg-slate-800',
+      primary: 'bg-[#173F2B] text-white hover:bg-[#102F21] focus:ring-[#173F2B]',
+      secondary: 'bg-[#F0F5EE] text-[#173F2B] hover:bg-[#E0EBE0] border border-[#DCE4DC] focus:ring-[#173F2B] dark:bg-[#1A2C22] dark:text-emerald-300 dark:border-[#2A3D33]',
+      danger: 'bg-[#B74747] text-white hover:bg-[#9A3838] focus:ring-[#B74747]',
+      ghost: 'text-[#173F2B]/80 hover:bg-[#EAF3E7]/60 focus:ring-[#173F2B] dark:text-emerald-400 dark:hover:bg-[#1A2C22]',
     };
 
     const sizes = {

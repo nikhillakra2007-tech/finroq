@@ -65,19 +65,19 @@ export function Modal({
       >
         <div
           className={cn(
-            'w-full bg-white dark:bg-[var(--surface)] border border-finroq-border dark:border-[var(--line)] rounded-2xl shadow-xl',
+            'w-full bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-2xl shadow-xl',
             'transform transition-all',
             sizes[size]
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-start justify-between p-6 border-b border-finroq-border dark:border-[var(--line)]">
+          <div className="flex items-start justify-between p-6 border-b border-[#DCE4DC] dark:border-[#2A3D33]">
             <div>
-              <h2 id="modal-title" className="text-lg font-display font-semibold text-finroq-forest dark:text-slate-100">
+              <h2 id="modal-title" className="text-lg font-display font-semibold text-[#173F2B] dark:text-emerald-300">
                 {title}
               </h2>
               {description && (
-                <p id="modal-description" className="text-sm text-finroq-muted dark:text-slate-400 mt-1">
+                <p id="modal-description" className="text-sm text-[#4D5D51] dark:text-slate-300 mt-1">
                   {description}
                 </p>
               )}
@@ -85,7 +85,7 @@ export function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-finroq-muted hover:text-finroq-forest dark:hover:text-slate-300 p-1.5 rounded-lg hover:bg-finroq-mint/60 dark:hover:bg-slate-700 transition-colors"
+                className="text-[#4D5D51] hover:text-[#173F2B] dark:text-slate-400 dark:hover:text-emerald-300 p-1.5 rounded-lg hover:bg-[#EAF3E7] dark:hover:bg-[#1A2C22] transition-colors"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />

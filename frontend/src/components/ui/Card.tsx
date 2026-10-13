@@ -10,9 +10,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'default', children, ...props }, ref) => {
     const variants = {
-      default: 'bg-[#FCFDFC] dark:bg-[var(--surface)] rounded-2xl shadow-xs border border-[#DCE4DC] dark:border-[var(--line)]',
-      outlined: 'bg-[#F9FAF8] dark:bg-[var(--surface)] rounded-2xl border border-[#D5DFD5] dark:border-[var(--line)]',
-      elevated: 'bg-white dark:bg-[var(--surface)] rounded-2xl shadow-sm border border-[#D4DDD3] dark:border-[var(--line)]',
+      default: 'bg-[#FCFDFC] dark:bg-[#16251E] rounded-2xl shadow-xs border border-[#DCE4DC] dark:border-[#2A3D33]',
+      outlined: 'bg-[#F9FAF8] dark:bg-[#16251E] rounded-2xl border border-[#D5DFD5] dark:border-[#2A3D33]',
+      elevated: 'bg-white dark:bg-[#16251E] rounded-2xl shadow-sm border border-[#D4DDD3] dark:border-[#2A3D33]',
     };
 
     return (
@@ -41,7 +41,7 @@ CardHeader.displayName = 'CardHeader';
 
 export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
   ({ className, children, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-lg font-display font-semibold text-finroq-forest dark:text-slate-100', className)} {...props}>
+    <h3 ref={ref} className={cn('text-lg font-display font-semibold text-[#173F2B] dark:text-emerald-300', className)} {...props}>
       {children}
     </h3>
   )

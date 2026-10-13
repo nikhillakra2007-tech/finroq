@@ -134,7 +134,7 @@ export function StatementImportModal({
               <select
                 value={selectedAccountId}
                 onChange={(e) => setSelectedAccountId(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-finroq-border bg-white text-finroq-forest text-sm font-medium focus:outline-none focus:ring-2 focus:ring-finroq-forest"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE4DC] bg-white text-[#173F2B] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#173F2B] dark:bg-[#16251E] dark:border-[#2A3D33] dark:text-emerald-300"
               >
                 {accounts.map((a) => (
                   <option key={a.id} value={a.id}>
@@ -186,22 +186,22 @@ export function StatementImportModal({
         ) : (
           <div className="space-y-5">
             {/* Summary Banner */}
-            <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-finroq-mint/40 border border-finroq-border text-xs">
+            <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-[#EAF3E7]/40 border border-[#DCE4DC] text-xs dark:bg-[#16251E] dark:border-[#2A3D33]">
               <div>
-                <span className="text-finroq-muted block">Total Parsed</span>
-                <span className="font-mono text-base font-bold text-finroq-forest">
+                <span className="text-[#4D5D51] dark:text-slate-400 block">Total Parsed</span>
+                <span className="font-mono text-base font-bold text-[#173F2B] dark:text-emerald-300">
                   {preview.total_rows}
                 </span>
               </div>
               <div>
-                <span className="text-finroq-muted block">Ready to Import</span>
-                <span className="font-mono text-base font-bold text-finroq-positive">
+                <span className="text-[#4D5D51] dark:text-slate-400 block">Ready to Import</span>
+                <span className="font-mono text-base font-bold text-[#247A50] dark:text-emerald-400">
                   {preview.valid_count}
                 </span>
               </div>
               <div>
-                <span className="text-finroq-muted block">Duplicates Flagged</span>
-                <span className="font-mono text-base font-bold text-finroq-warning">
+                <span className="text-[#4D5D51] dark:text-slate-400 block">Duplicates Flagged</span>
+                <span className="font-mono text-base font-bold text-[#B77925] dark:text-amber-400">
                   {preview.duplicate_count}
                 </span>
               </div>
@@ -210,13 +210,13 @@ export function StatementImportModal({
             {/* Preview Table */}
             <div className="border border-finroq-border rounded-xl overflow-hidden max-h-80 overflow-y-auto">
               <table className="w-full text-xs">
-                <thead className="bg-finroq-mint/50 sticky top-0 border-b border-finroq-border">
+                <thead className="bg-[#EAF3E7]/50 sticky top-0 border-b border-[#DCE4DC] dark:bg-[#1A2C22] dark:border-[#2A3D33]">
                   <tr>
-                    <th className="p-3 text-left font-semibold text-finroq-forest">Date</th>
-                    <th className="p-3 text-left font-semibold text-finroq-forest">Description</th>
-                    <th className="p-3 text-left font-semibold text-finroq-forest">Suggested Category</th>
-                    <th className="p-3 text-right font-semibold text-finroq-forest">Amount</th>
-                    <th className="p-3 text-center font-semibold text-finroq-forest">Status</th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Date</th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Description</th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Suggested Category</th>
+                    <th className="p-3 text-right font-semibold text-[#173F2B] dark:text-emerald-300">Amount</th>
+                    <th className="p-3 text-center font-semibold text-[#173F2B] dark:text-emerald-300">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-finroq-border">
@@ -225,10 +225,10 @@ export function StatementImportModal({
                       key={idx}
                       className={it.is_duplicate ? 'bg-amber-50/50' : 'hover:bg-finroq-mint/20'}
                     >
-                      <td className="p-3 font-mono text-finroq-forest">
+                      <td className="p-3 font-mono text-[#173F2B] dark:text-slate-100">
                         {formatDate(it.transaction_date)}
                       </td>
-                      <td className="p-3 font-medium text-finroq-text max-w-xs truncate">
+                      <td className="p-3 font-medium text-[#202B24] dark:text-slate-200 max-w-xs truncate">
                         {it.description || '—'}
                       </td>
                       <td className="p-3">
@@ -237,15 +237,15 @@ export function StatementImportModal({
                             {it.suggested_category_name}
                           </Badge>
                         ) : (
-                          <span className="text-finroq-muted">Uncategorized</span>
+                          <span className="text-[#4D5D51] dark:text-slate-400">Uncategorized</span>
                         )}
                       </td>
                       <td className="p-3 text-right font-mono font-bold">
                         <span
                           className={
                             it.transaction_type === 'income'
-                              ? 'text-finroq-positive'
-                              : 'text-finroq-negative'
+                              ? 'text-[#247A50] dark:text-emerald-400'
+                              : 'text-[#B74747] dark:text-rose-400'
                           }
                         >
                           {it.transaction_type === 'income' ? '+' : '-'}
