@@ -68,8 +68,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const rootRef = useScrollReveal();
 
-  // FAQ accordion state (first item open by default)
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  // FAQ accordion state (collapsed by default)
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Theme management — read from localStorage and apply on mount
   useEffect(() => {
