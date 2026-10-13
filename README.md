@@ -3,7 +3,7 @@
 <div align="center">
 
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.0.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-129%2F129%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
 ![Jest Tests](https://img.shields.io/badge/Jest-22%2F22%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
@@ -11,17 +11,50 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, dark/light theming, Hindi/English i18n, bank statement ingestion, and deterministic AI intelligence.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, full Hindi & English internationalization, dark/light themes, bank statement ingestion, and deterministic AI intelligence.</b>
 </p>
 
-🔗 **Live Production App**: [https://finroq.vercel.app](https://finroq.vercel.app)
+🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
+🌐 **Alternative Production Mirror**: [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
+[Live Interface Exhibits](#-live-interface-exhibits) •
 [System Architecture](#-system-architecture) •
-[12 Core Financial Modules](#-12-unified-financial-modules) •
-[Transaction Ingestion Pipeline](#-transaction-ingestion-pipeline) •
-[Safe AI Pipeline](#-safe-3-layer-ai-architecture) •
-[Test Verification Matrix](#-verification--test-suite-results) •
+[Financial Accounting Lifecycle](#-financial-accounting-lifecycle--data-pipeline) •
+[12 Unified Financial Modules](#-12-unified-financial-modules) •
+[i18n & Theming Engine](#-full-site-hindienglish-i18n--theming-engine) •
+[Verification Matrix](#-verification--test-suite-results) •
 [Quickstart](#-local-development-setup)
+
+</div>
+
+---
+
+## 📸 Live Interface Exhibits
+
+Captured directly from production on [finroq-app.vercel.app](https://finroq-app.vercel.app):
+
+<div align="center">
+
+### 12-Module Unified Financial Command Center
+*Live workspace view displaying all 12 financial engines with instant language toggle and static non-sticky layout navigation.*
+
+![FINROQ Live 12-Module Hub](docs/assets/finroq-app-home-live.png)
+
+</div>
+
+<br/>
+
+<div align="center">
+
+| Pre-Spend Decision Engine | Credit Health Architecture |
+|:---:|:---:|
+| ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) | ![Credit Health](docs/assets/finroq-credit-health.png) |
+| *Real-time pre-purchase simulation on remaining budget caps.* | *Live credit utilization ratios and payment discipline diagnostics.* |
+
+| Spend Leak Detector | Autonomous Daily Budgeting |
+|:---:|:---:|
+| ![Spend Leak Detector](docs/assets/finroq-spend-leak.png) | ![Daily Budgeting](docs/assets/finroq-budgeting.png) |
+| *Automated recurrence audit with potential subscription savings.* | *Active category burn-rate monitoring and auto-rebalancing.* |
 
 </div>
 
@@ -29,180 +62,220 @@
 
 ## 🌟 Executive Overview
 
-**FINROQ** is an enterprise-grade personal finance platform built with FastAPI, Next.js 14, and PostgreSQL 16. It replaces the error-prone assumptions of standard budget apps with strict financial mathematics and tenant-scoped security:
+**FINROQ** is an enterprise-class financial platform built with FastAPI, Next.js 14, and PostgreSQL 16. It replaces the error-prone assumptions and floating-point roundoff errors of consumer budget apps with strict mathematical accounting and zero-trust tenant security:
 
-- ⚖️ **Arbitrary-Precision Decimal Arithmetic**: Powered by Python `Decimal` and PostgreSQL `NUMERIC(14, 2)`. Zero IEEE 754 floating-point drift.
-- 🎨 **Bespoke Dark/Light Design System**: Warm Ivory (`#F7F7F0`) light mode and deep forest (`#0D1411`) dark mode with localStorage persistence, system-preference detection, and zero-FOUC pre-hydration.
-- 🌐 **Hindi/English Internationalization**: Full i18n via React context with zero-latency client-side dictionaries — no external API dependencies.
-- 🔄 **Unified Financial Data Model**: Single source of truth. All modules read live accounts, completed transactions, category allocations, and net-worth metrics directly from the authoritative backend engine.
-- 📥 **Comprehensive Transaction Ingestion**: Support for manual entries (including zero-sum inter-account transfers), CSV/TSV bank-statement file imports with preview and duplicate detection, and architecture-ready institutional aggregation.
-- 🛡️ **Zero-Hallucination AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Layer A before context reaches Google Gemini in Layer C.
-- 🔁 **Calendar-Clamping Recurrences**: Handles 28/29/30/31-day months with leap-year clamping and automatic day restoration.
+- ⚖️ **Arbitrary-Precision Decimal Arithmetic**: Powered by Python `Decimal` and database `NUMERIC(14, 2)`. Completely eliminates IEEE 754 floating-point drift across currency conversions, allocations, and ledger entries.
+- 🎨 **Adaptive Ivory & Forest Theming**: Warm Ivory (`#F7F7F0`) light mode with deep contrast typography and deep forest (`#0D1411`) dark mode with zero-FOUC pre-hydration scripts and system-preference detection.
+- 🌐 **Comprehensive Hindi/English Internationalization**: End-to-end bilingual support across the landing page, navigation bars, interactive amount sandboxes, authentication experience, and all 12 modules via high-performance React Context dictionaries.
+- 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 12 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
+- 📥 **Robust Bank Statement Ingestion**: Multi-format CSV/TSV dialect sniffer, duplicate detection, and interactive pre-commit review.
+- 🛡️ **Zero-Hallucination Safe AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Python before any context reaches Google Gemini.
 
 ---
 
 ## 🏛 System Architecture
 
+The FINROQ platform follows a clean, decoupled 4-tier architecture designed for high throughput, cryptographic tenant isolation, and mathematical certainty:
+
 ```mermaid
 flowchart TB
-    subgraph CLIENT["Client Tier (Web / Mobile)"]
-        UI["Next.js 14 App Router\n(React 18 / Tailwind CSS)"]
-        AUTH_CTX["Auth Context & Token Store\n(Secure Bearer JWT)"]
-        API_CLIENT["Centralized API Client\n(Fetch with Interceptors)"]
+    subgraph CLIENT["Client Tier (Web / Mobile — Next.js 14 App Router)"]
+        UI["React 18 Server & Client Components\n(Tailwind CSS + Lucide Icons)"]
+        I18N["i18n Context Engine\n(Hindi / English Instant Switch)"]
+        THEME["Theme Provider\n(Ivory Light / Forest Dark)"]
+        AUTH_CTX["Auth Context & Token Store\n(Stateless JWT Storage)"]
+        API_CLIENT["Centralized API Client\n(Fetch with Auth Interceptors)"]
+        
+        UI <--> I18N
+        UI <--> THEME
         UI --> AUTH_CTX
         AUTH_CTX --> API_CLIENT
     end
 
-    subgraph BACKEND["Backend Tier (FastAPI / Python 3.12)"]
-        ROUTER["API Router (/api/v1)"]
-        AUTH_GUARD["JWT Authentication Guard\n(Argon2id + sub claims)"]
-        ENTITLE["Entitlements Engine\n(Quota Checks & Rate Limits)"]
+    subgraph GATEWAY["API Gateway & Security Guard (FastAPI / Uvicorn)"]
+        ROUTER["REST Router (/api/v1)"]
+        AUTH_GUARD["Tenant Guard & JWT Validator\n(Argon2id Hashes + Sub Claims)"]
+        RATE_LIMIT["Rate Limiter & Quota Enforcement\n(Tiered Entitlements Engine)"]
         
-        API_CLIENT -- "HTTPS / JSON + Bearer" --> ROUTER
+        API_CLIENT -- "HTTPS / JSON + Bearer JWT" --> ROUTER
         ROUTER --> AUTH_GUARD
-        AUTH_GUARD --> ENTITLE
-        
-        subgraph DOMAIN["Domain Services Layer"]
-            ACC_SVC["Account Service"]
-            TXN_SVC["Transaction Service\n(Transfers & Statement Parser)"]
-            BUDGET_SVC["Budget Service"]
-            REC_SVC["Recurring Engine"]
-            AI_SVC["AI Intelligence Service"]
-        end
-        
-        ENTITLE --> DOMAIN
-        
-        subgraph ENGINE["Core Computation Engine"]
-            FIN_ENGINE["Stateless Financial Engine\n(Python Decimal Math)"]
-        end
-        
-        DOMAIN <--> FIN_ENGINE
+        AUTH_GUARD --> RATE_LIMIT
     end
 
-    subgraph STORAGE["Persistence Tier (PostgreSQL 16)"]
-        ORM["SQLAlchemy 2.0 Async\n(asyncpg driver)"]
-        DB[(PostgreSQL 16 RDBMS\nStrict Constraints & Indexes)]
-        MIGRATIONS["Alembic Migrations\n(Ordered Schema Revisions)"]
+    subgraph DOMAIN["Domain Services Tier"]
+        ACC_SVC["Account Service\n(Checking, Savings, Credit)"]
+        TXN_SVC["Transaction Service\n(Ledger Commits & Statement Ingestion)"]
+        BUDGET_SVC["Budget Service\n(Dynamic Caps & Burn Rate)"]
+        REC_SVC["Recurrence Engine\n(Calendar Clamping 28-31 Days)"]
+        AI_SVC["AI Intelligence Service\n(Context Sanitization & Fallback)"]
+    end
+
+    RATE_LIMIT --> DOMAIN
+
+    subgraph ENGINE["Authoritative Mathematical Core"]
+        DECIMAL_ENGINE["Fixed-Point Decimal Math Engine\n(Python Decimal — Zero Floating Point Drift)"]
+        ANALYTICS_CORE["Deterministic Financial Analytics\n(Net Worth, Runway, Health Scoring)"]
+        
+        DOMAIN <--> DECIMAL_ENGINE
+        DECIMAL_ENGINE <--> ANALYTICS_CORE
+    end
+
+    subgraph PERSISTENCE["Persistence Tier (PostgreSQL 16)"]
+        ORM["SQLAlchemy 2.0 Async ORM\n(asyncpg connection pool)"]
+        DB[(PostgreSQL 16 Database\nNUMERIC(14,2) Columns + Tenant Indexes)]
+        ALEMBIC["Alembic Migrations\n(Strict Versioned Schema)"]
         
         DOMAIN --> ORM
         ORM --> DB
-        MIGRATIONS -.-> DB
+        ALEMBIC -.-> DB
     end
 
-    subgraph EXTERNAL["External AI Provider"]
-        GEMINI["Google Gemini 1.5 Flash\n(REST API via httpx)"]
-        AI_SVC -. "Sanitized Context Only" .-> GEMINI
+    subgraph AI_PROVIDER["External AI Tier"]
+        GEMINI["Google Gemini 1.5 Flash\n(REST API via HTTPX)"]
+        AI_SVC -. "Sanitized Financial Aggregates Only" .-> GEMINI
     end
 
     style CLIENT fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
-    style BACKEND fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
-    style STORAGE fill:#DCE7D9,stroke:#173F2B,stroke-width:2px;
-    style EXTERNAL fill:#F3E8FF,stroke:#8E75C4,stroke-width:2px;
+    style GATEWAY fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
+    style DOMAIN fill:#F4F8F3,stroke:#247A50,stroke-width:2px;
+    style ENGINE fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
+    style PERSISTENCE fill:#DCE7D9,stroke:#173F2B,stroke-width:2px;
+    style AI_PROVIDER fill:#F3E8FF,stroke:#8E75C4,stroke-width:2px;
+```
+
+---
+
+## 🔄 Financial Accounting Lifecycle & Data Pipeline
+
+Every transaction, whether manually entered, imported from a bank statement, or simulated via the Pre-Spend sandbox, traverses a deterministic processing pipeline:
+
+```mermaid
+flowchart TD
+    START(["Transaction Ingestion Trigger"]) --> SRC{Source Type}
+    
+    SRC -- "Bank Statement" --> CSV["CSV/TSV Upload"]
+    SRC -- "Manual Entry" --> MANUAL["Direct Ledger Entry Form"]
+    SRC -- "Sandbox / Pre-Spend" --> SIM["Pre-Spend Impact Simulator"]
+    SRC -- "Auto-Recurrence" --> REC["Calendar Clamped Rule"]
+    
+    CSV --> SNIFF["Dialect Sniffer (Delimiters, Header Normalizer)"]
+    SNIFF --> DEDUP["Duplicate Transaction Hash Matcher"]
+    DEDUP --> PREVIEW["Client Review & Category Editor"]
+    PREVIEW --> BATCH["Atomic Batch Preparation"]
+    
+    MANUAL --> VALID["Payload Validation & Schema Check"]
+    SIM --> VALID
+    REC --> VALID
+    BATCH --> VALID
+    
+    VALID --> CAST["Strict Decimal Numeric Cast (Paise / Cents)"]
+    CAST --> IS_TFR{Is Inter-Account\nTransfer?}
+    
+    IS_TFR -- Yes --> TFR_LOGIC["Credit Source Account (-)\nDebit Destination Account (+)\nNet Cash Flow Impact: Neutral (₹0.00)"]
+    IS_TFR -- No --> DIR_LOGIC["Single Account Balance Update\nUpdate Category Spend Accumulator"]
+    
+    TFR_LOGIC --> COMMIT["Atomic ACID Transaction Commit (PostgreSQL)"]
+    DIR_LOGIC --> COMMIT
+    
+    COMMIT --> RECALC["Real-time Reactive Propagation"]
+    
+    subgraph MODULES["Reactive Metric Refresh"]
+        RECALC --> M1["Expense Tracking Ledger"]
+        RECALC --> M2["Category Budgets & Cushion"]
+        RECALC --> M3["Net Worth Architecture"]
+        RECALC --> M4["Credit Utilization Ratio"]
+        RECALC --> M5["Emergency Runway Projection"]
+        RECALC --> M6["Spend Leak Classifier"]
+    end
+
+    style START fill:#173F2B,stroke:#C7F36B,color:#FFFFFF,stroke-width:2px;
+    style COMMIT fill:#247A50,stroke:#C7F36B,color:#FFFFFF,stroke-width:2px;
+    style MODULES fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
 ```
 
 ---
 
 ## 🧩 12 Unified Financial Modules
 
-All modules are unified under the FINROQ design system (dark + light themes) and synchronized with the shared financial engine:
-
-| # | Financial Module | Route | Live Data Integration |
-|---|---|---|---|
-| 1 | **Expense Tracking** | `/app/expense-tracking` | Real-time transaction ledger, account filters, manual entry, and statement import. |
-| 2 | **Daily Budgeting** | `/app/budgeting` | Category budgets compared against actual completed spending; transfers excluded. |
-| 3 | **Splitter** | `/app/splitter` | Bill split calculator connected to user accounts; one-click commit of expense shares. |
-| 4 | **Pre-Spend Check** | `/app/pre-spend-check` | Real-time budget impact simulation with optional one-click transaction commitment. |
-| 5 | **Net Worth** | `/app/net-worth` | Authoritative assets vs liabilities computed across all checking, savings, and credit accounts. |
-| 6 | **EMI/Debt Watchdog** | `/app/debt-watchdog` | Live outstanding debt and monthly EMI burden derived from credit accounts and recurring commitments. |
-| 7 | **Spend Leak Detector** | `/app/spend-leak-detector` | Audits real transaction history for recurring, high-frequency small transactions, and irregular spikes. |
-| 8 | **Goal Timeline Simulator** | `/app/goal-timeline` | Projections synchronized with real liquid savings balances. |
-| 9 | **Emergency Cushion** | `/app/emergency-cushion` | Calculates runway months using real liquid accounts and essential category spending. |
-| 10 | **Money Guides** | `/app/money-guides` | Curated editorial financial strategies in FINROQ typography. |
-| 11 | **Credit Health** | `/app/credit-health` | Credit utilization ratios synchronized with active credit account debt. |
-| 12 | **Integrated Financial Health**| `/app/financial-health` | Unified financial vitality score derived from authoritative summary metrics. |
-
----
-
-## 📥 Transaction Ingestion Pipeline
-
-FINROQ supports four distinct transaction entry pathways that converge on the same accounting rules:
+All modules are seamlessly integrated into the unified FINROQ navigation shell, sharing identical design language, responsive states, and dual Hindi/English localization:
 
 ```mermaid
-flowchart LR
-    CSV["Bank Statement (CSV/TSV)"] --> PARSE["Dialect Sniffer & Parser"]
-    MANUAL["Manual Transaction Entry"] --> VALID["Validation & Decimal Cast"]
-    SEED["Demo Seed Generator"] --> IDEMP["Idempotency Filter"]
-    
-    PARSE --> NORM["Normalize (Date/Amount/Direction)"]
-    NORM --> DEDUP["Duplicate Detection"]
-    DEDUP --> PREVIEW["Client Review & Edit"]
-    PREVIEW --> CONFIRM["Atomic Batch Ingestion"]
-    
-    VALID --> COMMIT["Authoritative Ledger Commit"]
-    CONFIRM --> COMMIT
-    IDEMP --> COMMIT
-    
-    COMMIT --> REFRESH["Cross-Module Reactive Refresh"]
+mindmap
+  root((FINROQ Engine))
+    Track & Control
+      Expense Tracking Ledger
+      Daily Category Budgeting
+      Expense Splitter
+    Decide Before Spending
+      Pre-Spend Check Simulator
+      Spend Leak Detector
+      Practical Money Guides
+    Build & Protect Wealth
+      Net Worth Architecture
+      Goal Timeline Simulator
+      Emergency Cushion Calculator
+    Manage Obligations
+      EMI / Debt Watchdog
+      Credit Health Monitor
+      Integrated Financial Health Score
 ```
 
-1. **Manual Entry**: Full validation for income, expense, and inter-account transfers (`to_account_id` destination validation prevents duplicate balance changes).
-2. **Bank Statement Import**:
-   - Supported Formats: CSV, TSV (comma, semicolon, tab).
-   - Smart Normalization: Multiple date formats (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`), explicit debit/credit columns or signed amounts.
-   - Duplicate Detection: Matches date, normalized amount, and account to prevent double-counting.
-   - Interactive Preview: Inspect suggested categories, edit before committing, and commit in an atomic database transaction.
-3. **Institutional Aggregator Status**:
-   - Ready for RBI Account Aggregator / Open Banking consent flow integrations.
-   - Explicitly displays architecture status without fabricating connections or collecting user bank passwords.
-4. **Deterministic Demo Seeding**:
-   - Reproducible, idempotent seed command (`python seed_demo.py`) creating coherent demo financial accounts, budgets, and transactions for `demo@finroq.com`.
+| # | Financial Engine | Route | Core Mathematical & Architectural Function |
+|:---:|---|---|---|
+| 1 | **Expense Tracking** | `/app/expense-tracking` | Real-time double-entry ledger with status cycle (Completed / Pending / Cancelled), account filters, and atomic statement ingestion. |
+| 2 | **Daily Budgeting** | `/app/budgeting` | Category spend limits compared against actual verified transactions; neutral transfers excluded automatically. |
+| 3 | **Expense Splitter** | `/app/splitter` | Multi-party split engine supporting exact equal shares and custom weights with one-click ledger settlement. |
+| 4 | **Pre-Spend Check** | `/app/pre-spend-check` | Pre-transaction diagnostic testing the impact of a planned purchase on remaining category cushion before swiping. |
+| 5 | **Net Worth** | `/app/net-worth` | Authoritative calculation of liquid assets minus liabilities across checking, savings, investment, and debt accounts. |
+| 6 | **Debt Watchdog** | `/app/debt-watchdog` | Tracks outstanding loan commitments, debt amortizations, and monthly debt-to-income ratios. |
+| 7 | **Spend Leak Detector** | `/app/spend-leak-detector` | Evidence-driven audit identifying recurring subscriptions, phantom micro-charges, and irregular spend surges. |
+| 8 | **Goal Timeline Simulator** | `/app/goal-timeline` | Mathematical milestone projector using formula `ceil((Target - Saved) / MonthlySavings)`. |
+| 9 | **Emergency Cushion** | `/app/emergency-cushion` | Computes liquid burn runway in months based on essential vs discretionary historical spending. |
+| 10 | **Money Guides** | `/app/money-guides` | Curated editorial frameworks (50/30/20 rule, debt avalanche/snowball, liquidity buffers) with visual models. |
+| 11 | **Credit Health** | `/app/credit-health` | Monitors credit card utilization against aggregate limits to protect credit scores. |
+| 12 | **Financial Health Score** | `/app/financial-health` | Composite vitality diagnostic (0–100) aggregating savings rate, debt ratio, runway, and budget discipline. |
 
 ---
 
-## 🤖 Safe 3-Layer AI Architecture
+## 🌐 Full-Site Hindi/English i18n & Theming Engine
 
-FINROQ guarantees zero financial hallucinations by strictly isolating mathematical computation from language synthesis:
+FINROQ features zero-latency bilingual switching and bespoke theming built directly into the client architecture:
 
 ```mermaid
 flowchart LR
-    subgraph LAYER_A["Layer A: Deterministic Engine"]
-        RAW_TXN["Ledger Records\n(Completed Only)"] --> CALC["Authoritative Engine\n(Python Decimal Math)"]
-        CALC --> FACTS["Verified Financial Facts\n• Cash Flow & Balances\n• Budget Overruns (%)\n• Goal Funding Gaps"]
+    subgraph PRE_HYDRATION["Pre-Hydration Phase (<head>)"]
+        SCRIPT["Inline Theme Script"] --> LOCAL_STORAGE["Inspect localStorage ('finroq_theme')"]
+        LOCAL_STORAGE --> OS_PREF["Fallback: window.matchMedia('(prefers-color-scheme: dark)')"]
+        OS_PREF --> APPLY_ATTR["Set data-theme & .dark on <html> before paint\n(Zero Flash of Unstyled Content)"]
     end
 
-    subgraph LAYER_B["Layer B: Context Preparation"]
-        FACTS --> SANITIZE["Context Sanitizer\n(strip PII, tokens, notes)"]
-        INJECT_GUARD["Prompt Injection Filter\n(Sanitize User Queries)"] --> SANITIZE
-        SANITIZE --> PAYLOAD["Safe Context Prompt\n(Aggregates Only)"]
+    subgraph RUNTIME["React Runtime Tier"]
+        I18N_CTX["I18nProvider Context"] --> DICT["In-Memory Static Dictionaries (en / hi)"]
+        DICT --> HOOK["useI18n() Hook: language, setLanguage, t(key, fallback)"]
+        HOOK --> ALL_VIEWS["All 12 Modules + Navbar + Landing + Auth"]
+        
+        THEME_CTX["ThemeProvider Context"] --> THEME_HOOK["useTheme() Hook: theme, toggleTheme()"]
+        THEME_HOOK --> ALL_VIEWS
     end
 
-    subgraph LAYER_C["Layer C: AI Synthesis & Fallback"]
-        PAYLOAD --> CHECK{Credentials\nConfigured?}
-        CHECK -- Yes --> GEMINI_CALL["Google Gemini 1.5 Flash\n(15s Timeout + Retries)"]
-        CHECK -- No / Timeout --> FALLBACK["Deterministic Fallback Engine\n(Rule-Based Plain English)"]
-        GEMINI_CALL --> OUT["Actionable Financial Advice\n• Explanations\n• Q&A Answers\n• Goal Projections"]
-        FALLBACK --> OUT
-    end
-
-    style LAYER_A fill:#EAF3E7,stroke:#247A50,stroke-width:2px;
-    style LAYER_B fill:#FEF3C7,stroke:#B77925,stroke-width:2px;
-    style LAYER_C fill:#EFF6FF,stroke:#1D4ED8,stroke-width:2px;
+    style PRE_HYDRATION fill:#FEF3C7,stroke:#B77925,stroke-width:2px;
+    style RUNTIME fill:#EAF3E7,stroke:#247A50,stroke-width:2px;
 ```
 
 ---
 
 ## 🧪 Verification & Test Suite Results
 
-Every test and verification check passes with 100% compliance:
+Every test and validation check passes with 100% compliance:
 
 | Target | Command | Result | Status |
-| :--- | :--- | :--- | :---: |
+|:---|:---|:---|:---:|
 | **Backend Test Suite** | `pytest` | **129 passed in 110.59s** | ✅ PASS |
 | **Frontend Unit Tests** | `npm test -- --watchAll=false` | **22 passed across 4 test suites** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
-| **Production Build** | `npm run build` | **37/37 static routes prerendered** | ✅ PASS |
+| **Production Build** | `npm run build` | **22/22 static routes prerendered** | ✅ PASS |
 | **Demo Seeding** | `python seed_demo.py` | **Idempotent, 0 duplicates created** | ✅ PASS |
-| **Live Vercel Production** | `curl https://pocketcircle.vercel.app` | **HTTP 200 OK** | ✅ PASS |
+| **Live Vercel Production** | `Invoke-WebRequest https://finroq-app.vercel.app` | **HTTP 200 OK** | ✅ PASS |
 
 ---
 
@@ -242,7 +315,7 @@ python seed_demo.py
 # Start FastAPI server
 python -m app.main
 ```
-> API available at `http://localhost:8000` (Interactive docs at `http://localhost:8000/docs`).
+> API available at `http://localhost:8000` (Swagger UI documentation at `http://localhost:8000/docs`).
 
 ### 3. Frontend Setup
 ```bash
@@ -254,14 +327,15 @@ npm install
 # Start development server
 npm run dev
 ```
-> Web application accessible at `http://localhost:3000`.
+> Web application accessible locally at `http://localhost:3000`.
 
 ---
 
 ## 🌐 Production Deployment
 
-- **Frontend**: Deployed on Vercel at [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) using Next.js 14 App Router with dark/light theming and Hindi/English internationalization.
-- **Backend**: Containerized with Uvicorn and FastAPI, easily deployable to Render, Railway, AWS ECS, or Fly.io.
+- **Primary Production URL**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)**
+- **Alternative Mirror**: **[https://finroq-os.vercel.app](https://finroq-os.vercel.app)**
+- **GitHub Repository**: **[https://github.com/nikhillakra2007-tech/finroq](https://github.com/nikhillakra2007-tech/finroq)**
 
 ---
 
