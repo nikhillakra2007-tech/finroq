@@ -52,7 +52,7 @@ export default function AppSplitterPage() {
       await apiClient.createTransaction({
         account_id: selectedAccountId,
         amount: sharePerPerson.toFixed(2),
-        currency: accounts.find((a) => a.id === selectedAccountId)?.currency || 'USD',
+        currency: accounts.find((a) => a.id === selectedAccountId)?.currency || 'INR',
         transaction_type: 'expense',
         description: `Group Split Share: ${description}`,
         transaction_date: new Date().toISOString().split('T')[0],

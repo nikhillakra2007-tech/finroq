@@ -12,6 +12,7 @@ export default function AppEmergencyCushionPage() {
   const [currentEmergencyLiquid, setCurrentEmergencyLiquid] = useState<number>(180000);
   const [realTxnCount, setRealTxnCount] = useState<number>(0);
   const [isCalculatedFromLedger, setIsCalculatedFromLedger] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadRealData() {
@@ -51,7 +52,7 @@ export default function AppEmergencyCushionPage() {
         console.warn('Fallback to standard model for emergency cushion:', err);
       }
     }
-    loadRealData();
+    loadRealData().finally(() => setIsLoading(false));
   }, []);
 
   const targetFund = monthlyEssential * targetMonths;
@@ -66,6 +67,15 @@ export default function AppEmergencyCushionPage() {
       category="Build & Protect"
       description="Connected to your actual monthly spending from the expense tracker. Your emergency fund adjusts as your spending changes."
     >
+      {isLoading ? (
+        <div className="grid md:grid-cols-12 gap-8 items-start">
+          <div className="md:col-span-5 h-96 bg-[var(--soft)] rounded-3xl animate-pulse" />
+          <div className="md:col-span-7 space-y-6">
+            <div className="h-40 bg-[var(--soft)] rounded-3xl animate-pulse" />
+            <div className="h-64 bg-[var(--soft)] rounded-3xl animate-pulse" />
+          </div>
+        </div>
+      ) : (
       <div className="grid md:grid-cols-12 gap-8 items-start">
         {/* Controls */}
         <div className="md:col-span-5 bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
@@ -220,6 +230,7 @@ export default function AppEmergencyCushionPage() {
           </div>
         </div>
       </div>
+      )}
     </ModuleShell>
   );
 }

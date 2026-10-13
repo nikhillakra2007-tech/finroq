@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Budget } from '@/lib/api-types';
-import { apiClient } from '@/lib/api-client';
+import { apiClient, DEMO_BUDGETS } from '@/lib/api-client';
 import { BudgetForm } from './BudgetForm';
 import { Button, Card, Badge, EmptyState, LoadingCard } from '@/components/ui';
 import { formatCurrency, cn } from '@/lib/utils';
@@ -83,13 +83,11 @@ export function BudgetList() {
       if (res.data && res.data.length > 0) {
         setBudgets(res.data);
       } else {
-        const seedKey = `${year}-${month}`;
-        setBudgets(SEED_MONTHLY_BUDGETS[seedKey] || []);
+        setBudgets(DEMO_BUDGETS);
       }
     } catch (err: any) {
-      console.warn('API fetch failed, falling back to seed budgets:', err);
-      const seedKey = `${year}-${month}`;
-      setBudgets(SEED_MONTHLY_BUDGETS[seedKey] || SEED_MONTHLY_BUDGETS['2026-10']);
+      console.warn('API fetch failed, falling back to demo budgets:', err);
+      setBudgets(DEMO_BUDGETS);
     } finally {
       setIsLoading(false);
     }

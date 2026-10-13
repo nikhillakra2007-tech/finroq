@@ -11,6 +11,7 @@ import { Activity, ShieldCheck, CheckCircle2, TrendingUp, Sparkles, ArrowRight, 
 export default function AppFinancialHealthPage() {
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function AppFinancialHealthPage() {
         const res = await apiClient.getSummary();
         setSummary(res.data);
       } catch {
-        // Fallback
+        setError('Failed to load financial health data.');
       } finally {
         setIsLoading(false);
       }
@@ -27,10 +28,10 @@ export default function AppFinancialHealthPage() {
     loadData();
   }, []);
 
-  const totalIncome = summary ? parseFloat(summary.total_income || '0') : 85000;
-  const totalExpenses = summary ? parseFloat(summary.total_expenses || '0') : 58500;
+  const totalIncome = summary ? parseFloat(summary.total_income || '0') : 150000;
+  const totalExpenses = summary ? parseFloat(summary.total_expenses || '0') : 42800;
   const netSavings = Math.max(0, totalIncome - totalExpenses);
-  const savingsRate = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 31;
+  const savingsRate = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 71;
 
   const pillars = [
     {
@@ -69,6 +70,19 @@ export default function AppFinancialHealthPage() {
       category="Manage Obligations"
       description="Consolidated overview bringing together verified metrics across cash flow, debt burden, savings discipline, and liquidity."
     >
+      {isLoading ? (
+        <div className="space-y-8">
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[1,2,3].map(i => <div key={i} className="h-32 bg-[var(--soft)] rounded-3xl animate-pulse" />)}
+          </div>
+          <div className="h-64 bg-[var(--soft)] rounded-3xl animate-pulse" />
+        </div>
+      ) : error ? (
+        <div className="p-8 rounded-3xl bg-[var(--bad-soft)] border border-[var(--bad-soft)] text-center">
+          <p className="text-[var(--bad)] font-medium">{error}</p>
+          <button onClick={() => window.location.reload()} className="mt-4 btn-pill sm bg-[var(--ink)] text-[var(--bg)]">Retry</button>
+        </div>
+      ) : (
       <div className="space-y-8">
         {/* Clean Summary Metric Cards */}
         <div className="grid sm:grid-cols-3 gap-5">
@@ -128,6 +142,7 @@ export default function AppFinancialHealthPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Expandable Detailed Breakdown Dialog with Backdrop Blur & Scroll Lock */}
       {isDetailOpen && (

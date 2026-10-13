@@ -11,23 +11,28 @@ export default function AppNetWorthPage() {
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
       try {
         const [sumRes, acctRes] = await Promise.all([
           apiClient.getSummary(),
           apiClient.listAccounts(),
         ]);
-        setSummary(sumRes.data);
-        setAccounts(acctRes.data.accounts || []);
-      } catch {
-        // Handled gracefully
+        if (!cancelled) {
+          setSummary(sumRes.data);
+          setAccounts(acctRes.data.accounts || []);
+        }
+      } catch (err) {
+        if (!cancelled) setError('Failed to load net worth data.');
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
     loadData();
+    return () => { cancelled = true; };
   }, []);
 
   const totalAssets = accounts
@@ -46,6 +51,19 @@ export default function AppNetWorthPage() {
       category="Build & Protect"
       description="Track total assets minus liabilities across checking, savings, investment, and credit accounts with exact decimal math."
     >
+      {isLoading ? (
+        <div className="space-y-8">
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[1,2,3].map(i => <div key={i} className="h-32 bg-[var(--soft)] rounded-3xl animate-pulse" />)}
+          </div>
+          <div className="h-64 bg-[var(--soft)] rounded-3xl animate-pulse" />
+        </div>
+      ) : error ? (
+        <div className="p-8 rounded-3xl bg-[var(--bad-soft)] border border-[var(--bad-soft)] text-center">
+          <p className="text-[var(--bad)] font-medium">{error}</p>
+          <button onClick={() => window.location.reload()} className="mt-4 btn-pill sm bg-[var(--ink)] text-[var(--bg)]">Retry</button>
+        </div>
+      ) : (
       <div className="space-y-8">
         {/* Top Net Worth Stat Cards */}
         <div className="grid sm:grid-cols-3 gap-5">
@@ -117,6 +135,7 @@ export default function AppNetWorthPage() {
           )}
         </div>
       </div>
+      )}
     </ModuleShell>
   );
 }

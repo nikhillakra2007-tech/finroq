@@ -70,10 +70,10 @@ async def seed_database(owner_id: str, db_url: str) -> None:
 
         # Create accounts
         accounts_data = [
-            ("Main Checking", AccountType.CHECKING, Decimal("5000.00")),
-            ("Savings Account", AccountType.SAVINGS, Decimal("15000.00")),
-            ("Credit Card", AccountType.CREDIT, Decimal("0.00")),
-            ("Investment Portfolio", AccountType.INVESTMENT, Decimal("25000.00")),
+            ("HDFC Bank (Salary)", AccountType.CHECKING, Decimal("100400.00")),
+            ("ICICI Savings", AccountType.SAVINGS, Decimal("375000.00")),
+            ("SBI Prime Credit", AccountType.CREDIT, Decimal("24500.00")),
+            ("Investment Portfolio", AccountType.INVESTMENT, Decimal("50000.00")),
         ]
 
         account_map = {}
@@ -134,7 +134,7 @@ async def seed_database(owner_id: str, db_url: str) -> None:
                     account_id=account_id,
                     category_id=category_id,
                     amount=amount,
-                    currency="USD",
+                currency="INR",
                     transaction_type=txn_type,
                     description=description,
                     transaction_date=txn_date,

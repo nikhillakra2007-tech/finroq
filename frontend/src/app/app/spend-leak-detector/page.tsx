@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
-import { apiClient } from '@/lib/api-client';
+import { apiClient, DEMO_TRANSACTIONS } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
 import { Zap, AlertTriangle, ShieldCheck, CheckCircle2, TrendingUp, Sparkles, ArrowUpRight } from 'lucide-react';
 
@@ -35,6 +35,22 @@ const DEFAULT_LEAKS: LeakItem[] = [
 export default function AppSpendLeakDetectorPage() {
   const [leaks, setLeaks] = useState<LeakItem[]>(DEFAULT_LEAKS);
   const [cancelledCount, setCancelledCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadData() {
+      try {
+        await apiClient.listTransactions({ transaction_type: 'expense' });
+      } catch (err) {
+        console.warn('Spend leak detector using local data:', err);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+    loadData();
+    return () => { cancelled = true; };
+  }, []);
 
   const activeLeaks = leaks.filter((l) => l.status === 'active');
   const cancelledLeaks = leaks.filter((l) => l.status === 'cancelled');
@@ -72,6 +88,13 @@ export default function AppSpendLeakDetectorPage() {
       category="Decide Before Spending"
       description="Scan dormant OTT subscriptions, recurring app fees, and unused SaaS memberships to halt silent wealth erosion."
     >
+      {isLoading ? (
+        <div className="space-y-8">
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[1,2,3].map(i => <div key={i} className="h-32 bg-[var(--soft)] rounded-3xl animate-pulse" />)}
+          </div>
+        </div>
+      ) : (
       <div className="space-y-8">
         {/* Top Summary Metrics Cards */}
         <div className="grid sm:grid-cols-3 gap-5">
@@ -200,6 +223,7 @@ export default function AppSpendLeakDetectorPage() {
           </div>
         </div>
       </div>
+      )}
     </ModuleShell>
   );
 }
