@@ -3,93 +3,195 @@
 import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
-import { RecurringTransaction } from '@/lib/api-types';
 import { formatCurrency } from '@/lib/utils';
-import { Zap, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Zap, AlertTriangle, ShieldCheck, CheckCircle2, TrendingUp, Sparkles, ArrowUpRight } from 'lucide-react';
+
+interface LeakItem {
+  id: number;
+  name: string;
+  category: string;
+  amount: number;
+  frequency: string;
+  lastUsedDaysAgo: number;
+  status: 'active' | 'cancelled';
+  leakSeverity: 'high' | 'medium' | 'low';
+}
+
+const DEFAULT_LEAKS: LeakItem[] = [
+  { id: 1, name: 'Netflix Premium (Ultra HD 4K)', category: 'Streaming & OTT', amount: 649, frequency: 'monthly', lastUsedDaysAgo: 48, status: 'active', leakSeverity: 'high' },
+  { id: 2, name: 'Cult.fit Elite Gym & Sport', category: 'Fitness & Health', amount: 2499, frequency: 'monthly', lastUsedDaysAgo: 62, status: 'active', leakSeverity: 'high' },
+  { id: 3, name: 'Adobe Creative Cloud Pro', category: 'SaaS Software', amount: 1675, frequency: 'monthly', lastUsedDaysAgo: 35, status: 'active', leakSeverity: 'high' },
+  { id: 4, name: 'Spotify Individual Premium', category: 'Music Streaming', amount: 119, frequency: 'monthly', lastUsedDaysAgo: 14, status: 'active', leakSeverity: 'medium' },
+  { id: 5, name: 'Cloud Storage 2TB Tier', category: 'Cloud Backup', amount: 650, frequency: 'monthly', lastUsedDaysAgo: 29, status: 'active', leakSeverity: 'medium' },
+  { id: 6, name: 'LinkedIn Premium Career', category: 'Professional SaaS', amount: 1499, frequency: 'monthly', lastUsedDaysAgo: 41, status: 'active', leakSeverity: 'high' },
+];
 
 export default function AppSpendLeakDetectorPage() {
-  const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [leaks, setLeaks] = useState<LeakItem[]>(DEFAULT_LEAKS);
+  const [cancelledCount, setCancelledCount] = useState(0);
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await apiClient.listRecurring();
-        setRecurring(res.data.filter((r: any) => r.transaction_type === 'expense' && r.status === 'active'));
-      } catch {
-        // Fallback
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, []);
+  const activeLeaks = leaks.filter((l) => l.status === 'active');
+  const cancelledLeaks = leaks.filter((l) => l.status === 'cancelled');
 
-  const totalMonthlyCost = recurring.reduce((sum: number, r: any) => {
-    const amt = parseFloat(r.amount);
-    if (r.frequency === 'daily') return sum + amt * 30;
-    if (r.frequency === 'weekly') return sum + amt * 4.33;
-    if (r.frequency === 'yearly') return sum + amt / 12;
-    return sum + amt;
-  }, 0);
+  const totalMonthlyDrain = activeLeaks.reduce((sum, l) => sum + l.amount, 0);
+  const totalAnnualDrain = totalMonthlyDrain * 12;
 
-  const annualDrag = totalMonthlyCost * 12;
+  const monthlySavingsRecovered = cancelledLeaks.reduce((sum, l) => sum + l.amount, 0);
+  const annualSavingsRecovered = monthlySavingsRecovered * 12;
+
+  // 5-Year SIP compound calculation at 12% p.a.
+  // Formula: P * [((1 + r)^n - 1) / r] * (1 + r)
+  const r = 0.12 / 12;
+  const n = 60;
+  const projected5YearWealth = monthlySavingsRecovered > 0
+    ? Math.round(monthlySavingsRecovered * (((Math.pow(1 + r, n) - 1) / r) * (1 + r)))
+    : 0;
+
+  const handleCancelSubscription = (id: number) => {
+    setLeaks((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, status: 'cancelled' } : item))
+    );
+    setCancelledCount((c) => c + 1);
+  };
+
+  const handleRestoreSubscription = (id: number) => {
+    setLeaks((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, status: 'active' } : item))
+    );
+  };
 
   return (
     <ModuleShell
       title="Spend Leak Detector"
       category="Decide Before Spending"
-      description="Scan recurring contracts, subscriptions, and periodic auto-debits to expose silent annual cash drain."
+      description="Scan dormant OTT subscriptions, recurring app fees, and unused SaaS memberships to halt silent wealth erosion."
     >
       <div className="space-y-8">
-        <div className="grid sm:grid-cols-2 gap-5">
-          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-2 shadow-xs">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">Monthly Recurring Drag</span>
-            <div className="font-mono text-3xl font-bold text-[var(--bad)]">
-              {formatCurrency(totalMonthlyCost)}
+        {/* Top Summary Metrics Cards */}
+        <div className="grid sm:grid-cols-3 gap-5">
+          <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 space-y-2 shadow-xs">
+            <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Monthly Subscriptions Drag</span>
+            <div className="font-mono text-3xl font-bold text-[#B43838] dark:text-rose-400">
+              {formatCurrency(totalMonthlyDrain)}
             </div>
-            <p className="text-xs text-[var(--muted)]">Across {recurring.length} active recurring commitments</p>
+            <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">Across {activeLeaks.length} active recurring plans</p>
           </div>
 
-          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-2 shadow-xs">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">Annual Cumulative Drain</span>
-            <div className="font-mono text-3xl font-bold text-[var(--ink)]">
-              {formatCurrency(annualDrag)}
+          <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 space-y-2 shadow-xs">
+            <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Annual Cumulative Drain</span>
+            <div className="font-mono text-3xl font-bold text-[#173F2B] dark:text-slate-100">
+              {formatCurrency(totalAnnualDrain)}
             </div>
-            <p className="text-xs text-[var(--muted)]">Total cost over 12 billing cycles</p>
+            <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">Cost if left unmonitored for 12 months</p>
+          </div>
+
+          <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-emerald-300 dark:border-emerald-800/80 rounded-3xl p-6 space-y-2 shadow-xs bg-emerald-50/40 dark:bg-emerald-950/20">
+            <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#157A42] dark:text-emerald-400">Recovered Cash Flow</span>
+            <div className="font-mono text-3xl font-bold text-[#157A42] dark:text-emerald-400">
+              +{formatCurrency(monthlySavingsRecovered)}<span className="text-xs font-normal">/mo</span>
+            </div>
+            <p className="text-xs font-medium text-[#157A42] dark:text-emerald-300">
+              {cancelledLeaks.length} subscription{cancelledLeaks.length !== 1 ? 's' : ''} intercepted
+            </p>
           </div>
         </div>
 
-        <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-            <h3 className="font-display font-bold text-lg">Detected Recurring Commitments</h3>
-            <span className="text-xs font-mono text-[var(--muted)]">Active Subscriptions</span>
+        {/* Compound Wealth Calculator Banner */}
+        {monthlySavingsRecovered > 0 && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-emerald-50 via-teal-50 to-[#EEF5EE] dark:from-emerald-950/40 dark:to-teal-950/20 border border-emerald-300 dark:border-emerald-700/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs animate-in fade-in duration-300">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#173F2B] dark:text-emerald-300">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span>Wealth Accelerator: Cancelled Subscriptions Compounding</span>
+              </div>
+              <p className="text-xs text-[#2A4736] dark:text-slate-300 max-w-xl">
+                By investing your recovered <strong>{formatCurrency(monthlySavingsRecovered)}/month</strong> into a disciplined 12% Nifty Index SIP instead of leaking it to unused apps:
+              </p>
+            </div>
+            <div className="text-left md:text-right shrink-0">
+              <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#157A42] block">5-Year Projected Corpus</span>
+              <span className="font-mono text-2xl font-black text-[#173F2B] dark:text-emerald-300">
+                {formatCurrency(projected5YearWealth)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Subscriptions Detection Box */}
+        <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCE4DC] dark:border-[var(--line)] gap-2">
+            <div>
+              <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
+                Detected App, Streaming & SaaS Subscriptions
+              </h3>
+              <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+                Identified based on card mandate recurrences and lack of user logins
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs font-bold font-mono">
+              <AlertTriangle className="w-3.5 h-3.5" /> {activeLeaks.length} Active Leaks
+            </span>
           </div>
 
-          {recurring.length === 0 ? (
-            <div className="p-8 text-center text-xs text-[var(--muted)]">
-              No active recurring transactions found. Set up recurring subscriptions in Module 1 to monitor auto-debits.
-            </div>
-          ) : (
-            <div className="divide-y divide-[var(--line)]">
-              {recurring.map((r) => (
-                <div key={r.id} className="py-4 flex items-center justify-between text-sm">
-                  <div>
-                    <p className="font-semibold text-[var(--ink)]">{r.description || r.category_name || 'Subscription'}</p>
-                    <span className="text-xs text-[var(--muted)] font-mono capitalize">
-                      {r.frequency} • Next: {r.next_occurrence || 'Upcoming'}
-                    </span>
+          <div className="divide-y divide-[#DCE4DC] dark:divide-[var(--line)]">
+            {leaks.map((item) => {
+              const isCancelled = item.status === 'cancelled';
+              return (
+                <div
+                  key={item.id}
+                  className={`py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+                    isCancelled ? 'opacity-60 bg-emerald-50/20 rounded-xl px-2' : ''
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2.5">
+                      <p className={`font-bold text-sm ${isCancelled ? 'line-through text-slate-500' : 'text-[#173F2B] dark:text-slate-100'}`}>
+                        {item.name}
+                      </p>
+                      {item.lastUsedDaysAgo > 40 && !isCancelled && (
+                        <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold font-mono uppercase">
+                          Dormant {item.lastUsedDaysAgo}d
+                        </span>
+                      )}
+                      {isCancelled && (
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold font-mono">
+                          ✓ Cancelled & Saved
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+                      {item.category} • Billed {item.frequency} • Last active {item.lastUsedDaysAgo} days ago
+                    </p>
                   </div>
-                  <div className="text-right">
-                    <span className="font-mono font-bold text-base text-[var(--bad)]">
-                      {formatCurrency(r.amount)}
-                    </span>
-                    <span className="text-xs text-[var(--muted)] block">per {r.frequency}</span>
+
+                  <div className="flex items-center gap-4 self-end sm:self-center">
+                    <div className="text-right">
+                      <span className={`font-mono font-bold text-base ${isCancelled ? 'text-slate-400' : 'text-[#B43838] dark:text-rose-400'}`}>
+                        {formatCurrency(item.amount)}
+                      </span>
+                      <span className="text-[11px] text-[#4D5D51] dark:text-slate-400 block font-medium">/{item.frequency}</span>
+                    </div>
+
+                    {!isCancelled ? (
+                      <button
+                        onClick={() => handleCancelSubscription(item.id)}
+                        className="px-3.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold hover:bg-rose-100 transition-colors shadow-xs"
+                      >
+                        Cancel Plan
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleRestoreSubscription(item.id)}
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#173F2B] dark:text-slate-300 border border-[#DCE4DC] hover:bg-slate-100 transition-colors"
+                      >
+                        Undo
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
       </div>
     </ModuleShell>

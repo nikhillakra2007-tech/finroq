@@ -2,147 +2,244 @@
 
 import React, { useState, useEffect } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
-import { apiClient } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
-import { Target, Calendar, CheckCircle2, ArrowRight, Wallet } from 'lucide-react';
+import { Target, Calendar, CheckCircle2, ArrowRight, Wallet, Shuffle, Layers, Plus, Sparkles } from 'lucide-react';
+
+interface Goal {
+  id: number;
+  name: string;
+  category: string;
+  targetAmount: number;
+  currentAmount: number;
+  priority: number;
+}
+
+const INITIAL_GOALS: Goal[] = [
+  { id: 1, name: '6-Month Emergency Cushion', category: 'Safety Net', targetAmount: 300000, currentAmount: 180000, priority: 1 },
+  { id: 2, name: 'Flat Down Payment & Registry', category: 'Real Estate', targetAmount: 1500000, currentAmount: 420000, priority: 2 },
+  { id: 3, name: 'Annual Family Vacation Fund', category: 'Lifestyle', targetAmount: 200000, currentAmount: 60000, priority: 3 },
+];
 
 export default function AppGoalTimelinePage() {
-  const [goalName, setGoalName] = useState('Down Payment Fund');
-  const [targetAmount, setTargetAmount] = useState(500000);
-  const [currentSavings, setCurrentSavings] = useState(125000);
-  const [monthlyContribution, setMonthlyContribution] = useState(25000);
+  const [goals, setGoals] = useState<Goal[]>(INITIAL_GOALS);
+  const [monthlySurplus, setMonthlySurplus] = useState<number>(45000); // ₹45,000 / mo
+  const [strategy, setStrategy] = useState<'simultaneous' | 'sequential'>('sequential');
 
-  useEffect(() => {
-    async function loadSavings() {
-      try {
-        const res = await apiClient.listAccounts();
-        const savingsAccounts = (res.data.accounts || []).filter((a: any) => a.account_type === 'savings');
-        if (savingsAccounts.length > 0) {
-          const totalSaved = savingsAccounts.reduce(
-            (sum: number, a: any) => sum + parseFloat(a.current_balance || a.initial_balance || '0'),
-            0
-          );
-          if (totalSaved > 0) {
-            setCurrentSavings(totalSaved);
-          }
-        }
-      } catch {
-        // Fallback
-      }
-    }
-    loadSavings();
-  }, []);
+  // Calculate timelines under both strategies
+  // 1. Simultaneous: distribute surplus proportional to remaining balances
+  const totalRemaining = goals.reduce((sum, g) => sum + Math.max(0, g.targetAmount - g.currentAmount), 0);
 
-  const remaining = Math.max(0, targetAmount - currentSavings);
-  const monthsNeeded = monthlyContribution > 0 ? Math.ceil(remaining / monthlyContribution) : 0;
-  const progressPct = Math.min(100, Math.round((currentSavings / (targetAmount || 1)) * 100));
+  const simultaneousResults = goals.map((g) => {
+    const remaining = Math.max(0, g.targetAmount - g.currentAmount);
+    const weight = totalRemaining > 0 ? remaining / totalRemaining : 0;
+    const allocatedMonthly = Math.round(monthlySurplus * weight);
+    const months = allocatedMonthly > 0 ? Math.ceil(remaining / allocatedMonthly) : 0;
+    const finishDate = new Date();
+    finishDate.setMonth(finishDate.getMonth() + months);
+    return {
+      ...g,
+      remaining,
+      allocatedMonthly,
+      months,
+      finishDate,
+    };
+  });
 
-  const targetDate = new Date();
-  targetDate.setMonth(targetDate.getMonth() + monthsNeeded);
+  // 2. Sequential: channel 100% of surplus to Goal 1, then Goal 2, then Goal 3
+  let cumulativeMonths = 0;
+  const sequentialResults = goals.map((g) => {
+    const remaining = Math.max(0, g.targetAmount - g.currentAmount);
+    const monthsForThisGoal = monthlySurplus > 0 ? Math.ceil(remaining / monthlySurplus) : 0;
+    cumulativeMonths += monthsForThisGoal;
+    const finishDate = new Date();
+    finishDate.setMonth(finishDate.getMonth() + cumulativeMonths);
+    return {
+      ...g,
+      remaining,
+      allocatedMonthly: monthlySurplus,
+      months: cumulativeMonths,
+      finishDate,
+    };
+  });
+
+  const activeResults = strategy === 'simultaneous' ? simultaneousResults : sequentialResults;
 
   return (
     <ModuleShell
       title="Goal Timeline Simulator"
       category="Build & Protect"
-      description="Model savings milestones, calculate deterministic completion timelines, and evaluate contribution scenarios."
+      description="Simulate multiple simultaneous savings targets with deterministic timeline comparisons between Parallel Split and Sequential Waterfall."
     >
-      <div className="grid md:grid-cols-12 gap-8 items-start">
-        {/* Controls */}
-        <div className="md:col-span-5 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
-          <h3 className="font-display font-bold text-lg pb-3 border-b border-[var(--line)]">
-            Goal Configuration
-          </h3>
+      <div className="space-y-8">
+        {/* Strategy Control & Surplus Slider */}
+        <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DCE4DC] dark:border-[var(--line)]">
+            <div>
+              <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
+                Allocation Strategy Engine
+              </h3>
+              <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+                Compare simultaneous multi-tasking versus sequential avalanche focus
+              </p>
+            </div>
 
-          <div>
-            <label className="text-xs font-medium text-[var(--muted)] block mb-1.5">Goal Name</label>
-            <input
-              type="text"
-              value={goalName}
-              onChange={(e) => setGoalName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg)] border border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm font-medium"
-            />
+            {/* Toggle Switch */}
+            <div className="p-1 rounded-2xl bg-[#EEF3EE] dark:bg-[#1A2C22] border border-[#DCE4DC] dark:border-[var(--line)] grid grid-cols-2 text-xs font-bold shadow-xs">
+              <button
+                type="button"
+                onClick={() => setStrategy('sequential')}
+                className={`px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                  strategy === 'sequential'
+                    ? 'bg-[#173F2B] text-white shadow-xs'
+                    : 'text-[#4D5D51] dark:text-slate-300 hover:text-[#173F2B]'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Sequential Waterfall</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStrategy('simultaneous')}
+                className={`px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                  strategy === 'simultaneous'
+                    ? 'bg-[#173F2B] text-white shadow-xs'
+                    : 'text-[#4D5D51] dark:text-slate-300 hover:text-[#173F2B]'
+                }`}
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+                <span>Simultaneous Split</span>
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-[var(--muted)] block mb-1.5">Target Amount (₹)</label>
+          {/* Monthly Surplus Allocation Slider */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-center text-sm">
+              <label className="font-bold text-[#173F2B] dark:text-slate-200">
+                Monthly Available Savings Pool (Surplus):
+              </label>
+              <span className="font-mono text-xl font-bold text-[#173F2B] dark:text-slate-100">
+                {formatCurrency(monthlySurplus)}/month
+              </span>
+            </div>
             <input
-              type="number"
-              min="1000"
-              step="5000"
-              value={targetAmount}
-              onChange={(e) => setTargetAmount(parseFloat(e.target.value) || 0)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg)] border border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm font-mono font-bold"
+              type="range"
+              min={10000}
+              max={150000}
+              step={5000}
+              value={monthlySurplus}
+              onChange={(e) => setMonthlySurplus(Number(e.target.value))}
+              className="w-full accent-[#173F2B] h-2 bg-[#E5EDE5] rounded-lg cursor-pointer"
             />
+            <div className="flex justify-between text-[11px] font-mono text-[#4D5D51] dark:text-slate-400">
+              <span>₹10,000/mo</span>
+              <span>₹75,000/mo</span>
+              <span>₹1,50,000/mo</span>
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-[var(--muted)] block mb-1.5">Saved So Far (₹)</label>
-            <input
-              type="number"
-              min="0"
-              step="5000"
-              value={currentSavings}
-              onChange={(e) => setCurrentSavings(parseFloat(e.target.value) || 0)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg)] border border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm font-mono font-bold"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-medium text-[var(--muted)] block mb-1.5">Monthly Contribution (₹)</label>
-            <input
-              type="number"
-              min="500"
-              step="1000"
-              value={monthlyContribution}
-              onChange={(e) => setMonthlyContribution(parseFloat(e.target.value) || 0)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg)] border border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm font-mono font-bold"
-            />
+          {/* Strategy Insight Banner */}
+          <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+            <div className="space-y-0.5 text-slate-700 dark:text-slate-300">
+              {strategy === 'sequential' ? (
+                <>
+                  <strong className="text-[#173F2B] dark:text-emerald-300 block">
+                    Sequential Focus Advantage:
+                  </strong>
+                  By funding Goal 1 (Emergency Cushion) first, it finishes in just{' '}
+                  <strong className="text-[#173F2B] dark:text-emerald-200">
+                    {sequentialResults[0].months} months
+                  </strong>{' '}
+                  (vs {simultaneousResults[0].months} months under Simultaneous), securing your household rapidly against panic!
+                </>
+              ) : (
+                <>
+                  <strong className="text-[#173F2B] dark:text-emerald-300 block">
+                    Simultaneous Split Dynamics:
+                  </strong>
+                  All 3 goals make progress each month. However, your critical Emergency Cushion takes{' '}
+                  <strong className="text-[#173F2B] dark:text-emerald-200">
+                    {simultaneousResults[0].months} months
+                  </strong>{' '}
+                  to fully fund instead of {sequentialResults[0].months} months.
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Projection */}
-        <div className="md:col-span-7 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-            <div>
-              <h3 className="font-display font-bold text-lg">{goalName}</h3>
-              <p className="text-xs text-[var(--muted)]">Target: {formatCurrency(targetAmount)}</p>
-            </div>
-            <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[var(--soft)] text-[var(--accent)]">
-              {progressPct}% Reached
-            </span>
-          </div>
+        {/* Goals Cards Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {activeResults.map((g, idx) => {
+            const pct = Math.min(100, Math.round((g.currentAmount / (g.targetAmount || 1)) * 100));
+            return (
+              <div
+                key={g.id}
+                className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 flex flex-col justify-between space-y-5 shadow-xs"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300 bg-[#EEF5EE] dark:bg-[#1A2C22] px-2.5 py-0.5 rounded-full border border-[#DCE4DC] dark:border-[var(--line)]">
+                      Priority #{idx + 1}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                      {pct}% funded
+                    </span>
+                  </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-mono text-[var(--muted)]">
-              <span>Saved: {formatCurrency(currentSavings)}</span>
-              <span>Gap: {formatCurrency(remaining)}</span>
-            </div>
-            <div className="track">
-              <i style={{ width: `${progressPct}%` }} />
-            </div>
-          </div>
+                  <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
+                    {g.name}
+                  </h4>
+                  <p className="text-xs text-[#4D5D51] dark:text-slate-400 font-medium">
+                    {g.category}
+                  </p>
 
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--line)]">
-            <div className="p-4 rounded-2xl bg-[var(--soft)]">
-              <span className="text-xs text-[var(--muted)] block">Estimated Runway</span>
-              <span className="font-mono text-2xl font-bold text-[var(--accent)] block mt-1">
-                {monthsNeeded} Months
-              </span>
-            </div>
-            <div className="p-4 rounded-2xl bg-[var(--soft)]">
-              <span className="text-xs text-[var(--muted)] block">Projected Completion</span>
-              <span className="font-mono text-lg font-bold text-[var(--ink)] block mt-1">
-                {targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-              </span>
-            </div>
-          </div>
+                  <div className="space-y-1.5 pt-2">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-[#4D5D51] dark:text-slate-400">Saved:</span>
+                      <span className="font-bold text-[#173F2B] dark:text-slate-100">
+                        {formatCurrency(g.currentAmount)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-[#4D5D51] dark:text-slate-400">Target:</span>
+                      <span className="font-bold text-[#173F2B] dark:text-slate-100">
+                        {formatCurrency(g.targetAmount)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs font-mono border-t border-[#DCE4DC] dark:border-[var(--line)] pt-1">
+                      <span className="text-[#4D5D51] dark:text-slate-400">Remaining:</span>
+                      <span className="font-bold text-[#B43838] dark:text-rose-400">
+                        {formatCurrency(g.remaining)}
+                      </span>
+                    </div>
 
-          <div className="p-4 rounded-2xl bg-[var(--soft)] text-xs text-[var(--ink)] leading-relaxed border border-[var(--line)]">
-            🎯 <strong>Deterministic Assumption:</strong> Assuming zero investment variance and an exact steady contribution of{' '}
-            <strong className="font-mono">{formatCurrency(monthlyContribution)}/mo</strong>, your goal of{' '}
-            <strong className="font-mono">{formatCurrency(targetAmount)}</strong> will be completely achieved in{' '}
-            <strong className="font-mono">{monthsNeeded} billing cycles</strong>.
-          </div>
+                    {/* Progress Bar */}
+                    <div className="w-full bg-[#E5EDE5] dark:bg-slate-700 h-2 rounded-full overflow-hidden mt-3">
+                      <div
+                        className="bg-[#173F2B] dark:bg-emerald-500 h-full rounded-full transition-all duration-300"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-[#DCE4DC] dark:border-[var(--line)] space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#4D5D51] dark:text-slate-400 font-medium">Estimated Completion:</span>
+                    <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
+                      {g.finishDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs font-mono text-[#4D5D51] dark:text-slate-400">
+                    <span>Timeline:</span>
+                    <span>{g.months} month{g.months !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </ModuleShell>

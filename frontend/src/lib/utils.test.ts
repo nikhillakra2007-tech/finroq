@@ -1,19 +1,20 @@
 import { formatCurrency, formatDate, getAccountTypeLabel, getTransactionTypeColor, getTransactionTypeBg } from './utils';
 
 describe('formatCurrency', () => {
-  it('formats positive numbers', () => {
-    expect(formatCurrency('1000')).toBe('$1,000.00');
-    expect(formatCurrency('1000.50')).toBe('$1,000.50');
-    expect(formatCurrency(1000)).toBe('$1,000.00');
+  it('formats positive numbers with default INR currency', () => {
+    expect(formatCurrency('1000')).toBe('₹1,000.00');
+    expect(formatCurrency('1000.50')).toBe('₹1,000.50');
+    expect(formatCurrency(1000)).toBe('₹1,000.00');
   });
 
   it('formats with different currencies', () => {
+    expect(formatCurrency('1000', 'USD')).toBe('$1,000.00');
     expect(formatCurrency('1000', 'EUR')).toBe('€1,000.00');
     expect(formatCurrency('1000', 'GBP')).toBe('£1,000.00');
   });
 
   it('handles zero', () => {
-    expect(formatCurrency('0')).toBe('$0.00');
+    expect(formatCurrency('0')).toBe('₹0.00');
   });
 });
 

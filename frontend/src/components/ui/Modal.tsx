@@ -26,11 +26,14 @@ export function Modal({
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.documentElement.style.overflow = '';
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -45,15 +48,16 @@ export function Modal({
   return (
     <Fragment>
       <div
-        className="fixed inset-0 bg-black/50 z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
         className={cn(
-          'fixed inset-0 z-50 flex items-center justify-center p-4',
+          'fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto',
           'bg-transparent'
         )}
+        onClick={onClose}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"

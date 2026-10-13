@@ -147,33 +147,33 @@ export function TransactionList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-display font-bold text-finroq-forest dark:text-slate-100">Transactions</h2>
-          <p className="text-finroq-muted dark:text-slate-400 mt-1 text-sm">
+          <p className="text-finroq-muted dark:text-slate-400 mt-1 text-sm font-medium">
             {pagination.total} recorded ledger transaction{pagination.total !== 1 ? 's' : ''}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Select
             value={filters.account_id ? String(filters.account_id) : ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, account_id: e.target.value ? Number(e.target.value) : undefined }))}
             options={accountFilterOptions}
             placeholder="Filter by account"
-            className="w-auto min-w-[180px]"
+            className="w-auto min-w-[170px] font-medium text-[#173F2B] bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
           />
           <Select
             value={filters.transaction_type || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, transaction_type: e.target.value as TransactionType || undefined }))}
             options={typeFilterOptions}
             placeholder="Filter by type"
-            className="w-auto min-w-[140px]"
+            className="w-auto min-w-[140px] font-medium text-[#173F2B] bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
           />
-          <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
-            <Upload className="h-4 w-4 mr-2" />
+          <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] border-finroq-border hover:bg-finroq-mint/40">
+            <Upload className="h-4 w-4 mr-2 text-[#173F2B]" />
             Import Statement
           </Button>
-          <Button variant="primary" onClick={() => setCreateFormOpen(true)}>
+          <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs">
             <Plus className="h-4 w-4 mr-2" />
             Add Transaction
           </Button>
@@ -181,26 +181,26 @@ export function TransactionList() {
       </div>
 
       {/* Financial Institution Integration Status Panel */}
-      <div className="p-4 rounded-2xl bg-finroq-mint/50 border border-finroq-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+      <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-finroq-border dark:border-[var(--line)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-white text-finroq-forest border border-finroq-border">
+          <div className="p-2 rounded-xl bg-white dark:bg-[#1A2C22] text-[#173F2B] dark:text-[#67E8F9] border border-finroq-border dark:border-[var(--line)] shadow-xs">
             <CreditCard className="w-4 h-4" />
           </div>
           <div>
-            <p className="font-semibold text-finroq-forest">
+            <p className="font-bold text-[#173F2B] dark:text-slate-100">
               Financial Institution Linking (Open Banking / Account Aggregator)
             </p>
-            <p className="text-finroq-muted">
+            <p className="text-[#4E5E52] dark:text-slate-400 font-medium">
               Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.
             </p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-finroq-border text-finroq-forest font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-finroq-border dark:border-[var(--line)] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
           <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" /> Architecture Ready
         </span>
       </div>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden bg-[#FCFDFC] dark:bg-[var(--surface)] border border-finroq-border dark:border-[var(--line)] shadow-xs">
         {transactions.length === 0 ? (
           <EmptyState
             title="No transactions found"
@@ -220,16 +220,16 @@ export function TransactionList() {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-finroq-border dark:border-[var(--line)] bg-finroq-mint/20">
-                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Date</th>
-                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Account</th>
-                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Category</th>
-                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Type</th>
-                  <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Amount</th>
-                  <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Description</th>
-                  <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-finroq-forest dark:text-slate-400">Actions</th>
+                <tr className="border-b border-finroq-border dark:border-[var(--line)] bg-[#F3F7F3] dark:bg-[#16251E]">
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Date</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Account</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Category</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Type</th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Amount</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Description</th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-finroq-border dark:divide-[var(--line)]">
@@ -239,14 +239,14 @@ export function TransactionList() {
                   const isIncome = transaction.transaction_type === 'income';
                   const isTransfer = transaction.transaction_type === 'transfer';
                   return (
-                    <tr key={transaction.id} className="hover:bg-finroq-mint/30 dark:hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-sm font-mono text-finroq-forest dark:text-slate-100">
+                    <tr key={transaction.id} className="hover:bg-[#F4F8F4] dark:hover:bg-white/5 transition-colors bg-white dark:bg-transparent">
+                      <td className="p-4 text-sm font-mono font-semibold text-[#173F2B] dark:text-slate-100">
                         {formatDate(transaction.transaction_date)}
                       </td>
-                      <td className="p-4 text-sm font-medium text-finroq-text dark:text-slate-300">
+                      <td className="p-4 text-sm font-bold text-[#111827] dark:text-slate-100">
                         {account?.name || 'Unknown'}
                       </td>
-                      <td className="p-4 text-sm text-finroq-muted dark:text-slate-300">
+                      <td className="p-4 text-sm font-medium text-[#2A4736] dark:text-slate-300">
                         {category?.name || (isTransfer ? 'Account Transfer' : '—')}
                       </td>
                       <td className="p-4">
@@ -261,16 +261,16 @@ export function TransactionList() {
                         <span
                           className={
                             isIncome
-                              ? 'text-finroq-positive'
+                              ? 'text-[#157A42] dark:text-[#4ADE80]'
                               : isTransfer
-                              ? 'text-finroq-forest'
-                              : 'text-finroq-negative'
+                              ? 'text-[#173F2B] dark:text-slate-200'
+                              : 'text-[#B43838] dark:text-[#F87171]'
                           }
                         >
                           {isIncome ? '+' : isTransfer ? '↔ ' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
                         </span>
                       </td>
-                      <td className="p-4 text-sm text-finroq-muted dark:text-slate-400 max-w-xs truncate">
+                      <td className="p-4 text-sm font-medium text-[#374151] dark:text-slate-300 max-w-xs truncate">
                         {transaction.description || '—'}
                       </td>
                       <td className="p-4 text-right">
@@ -280,6 +280,7 @@ export function TransactionList() {
                             size="sm"
                             onClick={() => handleEditClick(transaction)}
                             aria-label="Edit transaction"
+                            className="text-[#173F2B] dark:text-slate-300 hover:text-[#102F21]"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -288,8 +289,9 @@ export function TransactionList() {
                             size="sm"
                             onClick={() => handleDeleteTransaction(transaction)}
                             aria-label="Delete transaction"
+                            className="text-danger-500 hover:text-danger-700"
                           >
-                            <Trash2 className="h-4 w-4 text-danger-500" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </td>

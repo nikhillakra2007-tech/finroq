@@ -72,4 +72,13 @@ declare module 'lucide-react' {
   export const Moon: LucideIcon;
   export const RotateCcw: LucideIcon;
   export const ArrowLeft: LucideIcon;
+  export const Languages: LucideIcon;
+  export const Globe: LucideIcon;
+  export const Phone: LucideIcon;
+  export const Smartphone: LucideIcon;
+  export const Mail: LucideIcon;
+  export const Shuffle: LucideIcon;
+  export const Split: LucideIcon;
+  export const HeartHandshake: LucideIcon;
+  export const XCircle: LucideIcon;
 }

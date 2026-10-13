@@ -48,10 +48,10 @@ interface TransactionFormProps {
 }
 
 const currencyOptions = [
-  { value: 'USD', label: 'USD - US Dollar' },
-  { value: 'INR', label: 'INR - Indian Rupee' },
-  { value: 'EUR', label: 'EUR - Euro' },
-  { value: 'GBP', label: 'GBP - British Pound' },
+  { value: 'INR', label: 'INR - Indian Rupee (₹)' },
+  { value: 'USD', label: 'USD - US Dollar ($)' },
+  { value: 'EUR', label: 'EUR - Euro (€)' },
+  { value: 'GBP', label: 'GBP - British Pound (£)' },
 ];
 
 const typeOptions = [
@@ -86,7 +86,7 @@ export function TransactionForm({
       account_id: defaultAccountId || accounts[0]?.id || 0,
       to_account_id: (initialData as any)?.to_account_id || null,
       amount: '',
-      currency: 'USD',
+      currency: 'INR',
       transaction_type: defaultType || 'expense',
       transaction_date: new Date().toISOString().split('T')[0],
       ...initialData,
@@ -110,7 +110,7 @@ export function TransactionForm({
       account_id: defaultAccountId || accounts[0]?.id || 0,
       to_account_id: null,
       amount: '',
-      currency: 'USD',
+      currency: 'INR',
       transaction_type: defaultType || 'expense',
       transaction_date: new Date().toISOString().split('T')[0],
     });

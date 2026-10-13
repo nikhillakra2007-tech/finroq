@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useCurtain } from '@/components/layout/CurtainTransition';
+import { useI18n } from '@/lib/i18n-context';
 import {
   ArrowRight,
   Sun,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   Lock,
   Zap,
+  Globe,
 } from 'lucide-react';
 
 /* Money formatting in integer paise */
@@ -38,10 +40,34 @@ function fmtSigned(paise: number): string {
 
 export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   const { navigateWithCurtain } = useCurtain();
+  const { language, setLanguage, t } = useI18n();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // FAQ accordion state (first item open by default)
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  // FAQ accordion state (closed by default)
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Reverse scroll navbar visibility
+  const [navVisible, setNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > 70) {
+        if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 8) {
+          setNavVisible(false); // scrolling down -> hide
+        } else if (lastScrollY - currentScrollY > 8) {
+          setNavVisible(true); // scrolling up -> reveal
+        }
+      } else {
+        setNavVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Theme management
   useEffect(() => {
@@ -186,18 +212,18 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white">
-      {/* 1. Sticky Navigation */}
-      <header className="sticky top-0 z-40 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--line)]">
+      {/* 1. Smart Reverse-Scroll Navigation */}
+      <header className={`sticky top-0 z-40 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] transition-all duration-300 ease-in-out ${navVisible ? 'translate-y-0 shadow-xs' : '-translate-y-full shadow-none'}`}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
           <Link
             href="/"
             className="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight text-[var(--ink)] hover:opacity-90 transition-opacity"
           >
             <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
-            <span className="tracking-tight font-extrabold">finroq</span>
+            <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[var(--muted)]">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-[#4D5D51] dark:text-slate-300">
             <a href="#ledger" className="hover:text-[var(--ink)] transition-colors">
               Ledger
             </a>
@@ -215,7 +241,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+              className="px-2.5 py-1 rounded-full border border-[var(--line)] text-xs font-bold text-[var(--ink)] hover:bg-[var(--soft)] flex items-center gap-1.5 transition-colors"
+              title="Switch Language / भाषा बदलें"
+            >
+              <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all"
@@ -225,13 +259,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-sm font-semibold text-[var(--muted)] hover:text-[var(--ink)] px-2 transition-colors"
+              className="text-sm font-semibold text-[var(--ink)] hover:text-[var(--accent)] px-2 transition-colors"
             >
               Sign in
             </button>
             <button
               onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill sm bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] shadow-sm"
+              className="btn-pill sm bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] shadow-sm font-semibold"
             >
               Get started
             </button>
@@ -527,10 +561,22 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
             {/* Interactive Simulation Controls */}
             <div className="pt-5 border-t border-[var(--line)] space-y-4">
+              <div className="p-3 bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs space-y-1">
+                <p className="font-bold text-[#173F2B] dark:text-emerald-300 flex items-center gap-1.5">
+                  <span>💡 Try This Quick 2-Step Interactive Demo:</span>
+                </p>
+                <p className="text-slate-700 dark:text-slate-300">
+                  <strong className="text-[#173F2B] dark:text-emerald-200">1. Click &quot;+ ₹1,500 Bistro Dinner&quot; below</strong> to simulate a weekend restaurant overspend.
+                </p>
+                <p className="text-slate-700 dark:text-slate-300">
+                  <strong className="text-[#173F2B] dark:text-emerald-200">2. Watch Dining turn RED</strong>, then click the green <strong className="text-emerald-800 dark:text-emerald-300">&quot;⚡ 1-Click Auto-Rebalance&quot;</strong> button to see FINROQ rescue your budget using unused money from Commute!
+                </p>
+              </div>
+
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <p className="font-bold text-xs uppercase tracking-wider text-[var(--ink)]">
-                    Interactive Monitor Test
+                    Simulate Live Transactions
                   </p>
                   <p className="text-[11px] text-[var(--muted)]">
                     Simulate card spending to watch the guardian catch and rebalance deficits:
@@ -540,7 +586,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   onClick={handleSimReset}
                   className="self-start sm:self-auto text-xs font-mono font-medium text-[var(--muted)] hover:text-[var(--ink)] underline underline-offset-2"
                 >
-                  ↺ Reset
+                  ↺ Reset demo
                 </button>
               </div>
 
@@ -550,19 +596,19 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   disabled={diningOver || simRebalanceDone}
                   className="btn-pill sm bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--soft)] text-xs font-semibold disabled:opacity-50"
                 >
-                  + ₹600 Cafe Bill (89% Warning)
+                  + ₹600 Cafe Bill (Warning)
                 </button>
                 <button
                   onClick={() => handleSimAddSpend(150000)}
                   disabled={diningOver || simRebalanceDone}
-                  className="btn-pill sm bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--soft)] text-xs font-semibold disabled:opacity-50"
+                  className="btn-pill sm bg-[#173F2B] text-white border border-[#173F2B] hover:bg-[#102F21] text-xs font-bold disabled:opacity-50 shadow-xs"
                 >
                   + ₹1,500 Bistro Dinner (Over Cap)
                 </button>
                 {(diningOver || diningPct >= 85) && !simRebalanceDone && (
                   <button
                     onClick={handleSimRebalance}
-                    className="btn-pill sm bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold shadow-xs flex items-center gap-1.5 animate-bounce"
+                    className="btn-pill sm bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold shadow-sm flex items-center gap-1.5 animate-bounce"
                   >
                     <span>⚡ 1-Click Auto-Rebalance</span>
                     <span className="opacity-90 font-mono text-[11px]">(+₹500 from Commute)</span>

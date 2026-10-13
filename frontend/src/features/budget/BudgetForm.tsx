@@ -167,8 +167,8 @@ export function BudgetForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-            Allocated Amount (₹ / $)
+          <label className="block text-sm font-semibold text-finroq-forest dark:text-slate-200 mb-1">
+            Allocated Amount (₹)
           </label>
           <Input
             type="text"

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n-context';
 import {
   Menu,
   X,
@@ -28,6 +29,7 @@ import {
   ShieldCheck,
   Activity,
   Target,
+  Globe,
 } from 'lucide-react';
 
 const PRIMARY_NAV = [
@@ -57,6 +59,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, login, logout } = useAuth();
+  const { language, setLanguage, t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
@@ -173,6 +176,14 @@ export function Navbar() {
 
           {/* User Account Controls */}
           <div className="hidden sm:flex sm:items-center sm:gap-2.5">
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+              className="px-2.5 py-1.5 rounded-xl border border-finroq-border text-xs font-bold text-finroq-forest hover:bg-finroq-mint/40 flex items-center gap-1.5 transition-colors"
+              title="Switch Language / भाषा बदलें"
+            >
+              <Globe className="w-3.5 h-3.5 text-finroq-forest" />
+              <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+            </button>
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 <Link
