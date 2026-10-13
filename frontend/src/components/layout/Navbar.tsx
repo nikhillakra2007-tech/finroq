@@ -33,26 +33,26 @@ import {
 } from 'lucide-react';
 
 const PRIMARY_NAV = [
-  { name: '12-Module Home', href: '/app/home', icon: Home },
-  { name: 'Ledger', href: '/transactions', icon: CreditCard },
-  { name: 'Budgets', href: '/budgets', icon: PieChart },
-  { name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
-  { name: 'AI Insights', href: '/insights', icon: Sparkles },
+  { key: 'nav.home', name: '12-Module Home', href: '/app/home', icon: Home },
+  { key: 'nav.ledger', name: 'Ledger', href: '/transactions', icon: CreditCard },
+  { key: 'nav.budgets', name: 'Budgets', href: '/budgets', icon: PieChart },
+  { key: 'mod.net_worth', name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
+  { key: 'nav.ai_insights', name: 'AI Insights', href: '/insights', icon: Sparkles },
 ];
 
 const ALL_12_MODULES = [
-  { name: 'Expense Tracking', href: '/app/expense-tracking', icon: CreditCard, cat: 'Track' },
-  { name: 'Daily Budgeting', href: '/app/budgeting', icon: PieChart, cat: 'Track' },
-  { name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Track' },
-  { name: 'Pre-Spend Check', href: '/app/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
-  { name: 'Spend Leak Detector', href: '/app/spend-leak-detector', icon: Zap, cat: 'Decide' },
-  { name: 'Money Guides', href: '/app/money-guides', icon: BookOpen, cat: 'Decide' },
-  { name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth' },
-  { name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth' },
-  { name: 'Emergency Cushion', href: '/app/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
-  { name: 'EMI / Debt Watchdog', href: '/app/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
-  { name: 'Credit Health', href: '/app/credit-health', icon: ShieldCheck, cat: 'Health' },
-  { name: 'Integrated Financial Health', href: '/app/financial-health', icon: Activity, cat: 'Health' },
+  { key: 'mod.expense_tracking', name: 'Expense Tracking', href: '/app/expense-tracking', icon: CreditCard, cat: 'Track' },
+  { key: 'mod.daily_budgeting', name: 'Daily Budgeting', href: '/app/budgeting', icon: PieChart, cat: 'Track' },
+  { key: 'mod.splitter', name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Track' },
+  { key: 'mod.pre_spend_check', name: 'Pre-Spend Check', href: '/app/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
+  { key: 'mod.spend_leak_detector', name: 'Spend Leak Detector', href: '/app/spend-leak-detector', icon: Zap, cat: 'Decide' },
+  { key: 'mod.money_guides', name: 'Money Guides', href: '/app/money-guides', icon: BookOpen, cat: 'Decide' },
+  { key: 'mod.net_worth', name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth' },
+  { key: 'mod.goal_timeline', name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth' },
+  { key: 'mod.emergency_cushion', name: 'Emergency Cushion', href: '/app/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
+  { key: 'mod.debt_watchdog', name: 'EMI / Debt Watchdog', href: '/app/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
+  { key: 'mod.credit_health', name: 'Credit Health', href: '/app/credit-health', icon: ShieldCheck, cat: 'Health' },
+  { key: 'mod.financial_health', name: 'Integrated Financial Health', href: '/app/financial-health', icon: Activity, cat: 'Health' },
 ];
 
 export function Navbar() {
@@ -114,17 +114,17 @@ export function Navbar() {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 return (
                   <Link
-                    key={item.name}
+                    key={item.key}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200',
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200',
                       isActive
                         ? 'bg-finroq-mint text-finroq-forest shadow-xs'
-                        : 'text-finroq-muted hover:bg-slate-50 hover:text-finroq-text'
+                        : 'text-[#173F2B] dark:text-slate-200 hover:bg-[#EAF3E7] hover:text-[#102F21]'
                     )}
                   >
                     <item.icon className="h-3.5 w-3.5" />
-                    {item.name}
+                    {t(item.key, item.name)}
                   </Link>
                 );
               })}
@@ -134,36 +134,36 @@ export function Navbar() {
                 <button
                   onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
                   className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200',
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200',
                     modulesDropdownOpen
                       ? 'bg-finroq-mint text-finroq-forest'
-                      : 'text-finroq-muted hover:bg-slate-50 hover:text-finroq-text'
+                      : 'text-[#173F2B] dark:text-slate-200 hover:bg-[#EAF3E7] hover:text-[#102F21]'
                   )}
                   aria-expanded={modulesDropdownOpen}
                 >
                   <Layers className="h-3.5 w-3.5" />
-                  <span>Modules</span>
+                  <span>{t('nav.modules', 'Modules')}</span>
                   <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', modulesDropdownOpen ? 'rotate-180' : '')} />
                 </button>
 
                 {modulesDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-lg border border-finroq-border p-2 grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-3 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-finroq-muted uppercase tracking-wider">
-                      <span>All 12 Financial Modules</span>
+                  <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#16251E] rounded-2xl shadow-lg border border-[#BAC7BE] dark:border-[#2A3D33] p-2 grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-1.5 border-b border-slate-100 dark:border-[#2A3D33] flex items-center justify-between text-[11px] font-bold text-[#173F2B] dark:text-slate-300 uppercase tracking-wider">
+                      <span>{language === 'hi' ? 'सभी 12 वित्तीय मॉड्यूल' : 'All 12 Financial Modules'}</span>
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 space-y-0.5">
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 dark:divide-[#2A3D33] space-y-0.5">
                       {ALL_12_MODULES.map((m) => (
                         <Link
-                          key={m.name}
+                          key={m.key}
                           href={m.href}
                           onClick={() => setModulesDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-finroq-text hover:bg-finroq-mint/50 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-[#173F2B] dark:text-slate-100 hover:bg-finroq-mint/50 dark:hover:bg-[#1A2C22] transition-colors"
                         >
-                          <m.icon className="h-4 w-4 text-finroq-forest shrink-0" />
+                          <m.icon className="h-4 w-4 text-finroq-forest dark:text-emerald-400 shrink-0" />
                           <div className="flex-1">
-                            <p className="font-semibold">{m.name}</p>
-                            <span className="text-[10px] text-finroq-muted">{m.cat}</span>
+                            <p className="font-semibold">{t(m.key, m.name)}</p>
+                            <span className="text-[10px] text-[#374A3E] dark:text-slate-400 font-medium">{m.cat}</span>
                           </div>
                         </Link>
                       ))}

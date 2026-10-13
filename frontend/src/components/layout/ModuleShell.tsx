@@ -17,7 +17,7 @@ interface ModuleShellProps {
 export function ModuleShell({ title, category, description, children }: ModuleShellProps) {
   const { user, logout } = useAuth();
   const { navigateWithCurtain } = useCurtain();
-  const { language, setLanguage } = useI18n();
+  const { language, setLanguage, t } = useI18n();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -37,17 +37,17 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col justify-between">
       {/* Top App Bar */}
       <header className="sticky top-0 z-30 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--line)]">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigateWithCurtain('/app/home', 'home', 'back')}
-              className="btn-pill sm ghost text-xs flex items-center gap-1.5 hover:border-[var(--ink)]"
+              className="btn-pill sm ghost text-xs flex items-center gap-1.5 hover:border-[var(--ink)] font-bold text-[#173F2B] dark:text-slate-100"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Back to home
+              {t('common.back_home', 'Back to home')}
             </button>
             <Link
               href="/app/home"
@@ -76,10 +76,10 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
             </button>
             <button
               onClick={handleSignOut}
-              className="btn-pill sm ghost text-xs flex items-center gap-1.5"
+              className="btn-pill sm ghost text-xs flex items-center gap-1.5 font-bold text-[#173F2B] dark:text-slate-100"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign out</span>
+              <span className="hidden sm:inline">{t('common.sign_out', 'Sign out')}</span>
             </button>
           </div>
         </div>

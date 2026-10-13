@@ -25,6 +25,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.modules': 'Modules',
     'nav.signout': 'Sign out',
     'nav.demo': '1-Click Demo',
+    'nav.ai_insights': 'AI Insights',
 
     // Modules
     'mod.expense_tracking': 'Expense Tracking',
@@ -115,6 +116,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.modules': 'मॉड्यूल',
     'nav.signout': 'साइन आउट',
     'nav.demo': '1-क्लिक डेमो',
+    'nav.ai_insights': 'एआई इनसाइट्स',
 
     // Modules
     'mod.expense_tracking': 'व्यय ट्रैकिंग (Expense Tracking)',

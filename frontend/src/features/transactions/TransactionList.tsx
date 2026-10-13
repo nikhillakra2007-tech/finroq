@@ -9,8 +9,10 @@ import { Button, Card, EmptyState, Loading, LoadingCard, Badge, Select } from '@
 import { Plus, Edit, Trash2, ChevronLeft, ChevronRight, Upload, CreditCard, ShieldCheck } from 'lucide-react';
 import { formatCurrency, formatDate, getTransactionTypeColor, getTransactionTypeBg } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 
 export function TransactionList() {
+  const { t, language } = useI18n();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -135,72 +137,86 @@ export function TransactionList() {
   }
 
   const typeFilterOptions = [
-    { value: '', label: 'All Types' },
-    { value: 'income', label: 'Income' },
-    { value: 'expense', label: 'Expense' },
+    { value: '', label: t('action.all_types', 'All Types') },
+    { value: 'income', label: t('action.income', 'Income') },
+    { value: 'expense', label: t('action.expense', 'Expense') },
   ];
 
   const accountFilterOptions = [
-    { value: '', label: 'All Accounts' },
+    { value: '', label: t('action.all_accounts', 'All Accounts') },
     ...accounts.map((a) => ({ value: String(a.id), label: a.name })),
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">Transactions</h2>
-          <p className="text-[#4D5D51] dark:text-slate-400 mt-1 text-sm font-medium">
-            {pagination.total} recorded ledger transaction{pagination.total !== 1 ? 's' : ''}
+          <h2 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">
+            {t('mod.expense_tracking', 'Transactions')}
+          </h2>
+          <p className="text-[#374A3E] dark:text-slate-400 mt-1 text-sm font-medium">
+            {pagination.total} {language === 'hi' ? 'दर्ज लेजर लेन-देन' : `recorded ledger transaction${pagination.total !== 1 ? 's' : ''}`}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2.5">
+
+        {/* All four controls strictly in ONE single horizontal line properly spaced */}
+        <div className="flex flex-row items-center gap-3 overflow-x-auto no-scrollbar py-1">
           <Select
             value={filters.account_id ? String(filters.account_id) : ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, account_id: e.target.value ? Number(e.target.value) : undefined }))}
             options={accountFilterOptions}
-            placeholder="Filter by account"
-            className="w-auto min-w-[150px] font-medium text-[#173F2B] dark:text-emerald-400 bg-white dark:bg-[#16251E] border-[#DCE4DC] dark:border-[#2A3D33]"
+            placeholder={t('action.filter_account', 'Filter by account')}
+            containerClassName="w-auto shrink-0"
+            className="w-44 text-xs font-semibold text-[#173F2B] dark:text-slate-100 bg-white dark:bg-[#16251E] border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs"
           />
           <Select
             value={filters.transaction_type || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, transaction_type: e.target.value as TransactionType || undefined }))}
             options={typeFilterOptions}
-            placeholder="Filter by type"
-            className="w-auto min-w-[130px] font-medium text-[#173F2B] dark:text-emerald-400 bg-white dark:bg-[#16251E] border-[#DCE4DC] dark:border-[#2A3D33]"
+            placeholder={t('action.filter_type', 'Filter by type')}
+            containerClassName="w-auto shrink-0"
+            className="w-40 text-xs font-semibold text-[#173F2B] dark:text-slate-100 bg-white dark:bg-[#16251E] border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs"
           />
-          <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] dark:text-slate-200 border-[#DCE4DC] dark:border-[#2A3D33] hover:bg-[#EAF3E7] dark:hover:bg-[#1A2C22]">
-            <Upload className="h-4 w-4 mr-1 text-[#173F2B] dark:text-emerald-400" />
-            Import Statement
+          <Button
+            variant="secondary"
+            onClick={() => setIsImportOpen(true)}
+            className="shrink-0 whitespace-nowrap text-xs font-semibold text-[#173F2B] dark:text-slate-100 border-[#BAC7BE] dark:border-[#2A3D33] bg-white dark:bg-[#16251E] hover:bg-[#EAF3E7] dark:hover:bg-[#1A2C22] shadow-xs"
+          >
+            <Upload className="h-4 w-4 mr-1.5 text-[#173F2B] dark:text-emerald-400" />
+            {t('action.import_statement', 'Import Statement')}
           </Button>
-          <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-[#102F21] shadow-xs">
-            <Plus className="h-4 w-4 mr-1" />
-            Add Transaction
+          <Button
+            variant="primary"
+            onClick={() => setCreateFormOpen(true)}
+            className="shrink-0 whitespace-nowrap text-xs font-semibold bg-[#173F2B] text-white hover:bg-[#102F21] dark:bg-emerald-600 dark:hover:bg-emerald-500 shadow-xs"
+          >
+            <Plus className="h-4 w-4 mr-1.5" />
+            {t('action.add_transaction', 'Add Transaction')}
           </Button>
         </div>
       </div>
 
       {/* Financial Institution Integration Status Panel */}
-      <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
+      <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#BAC7BE] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-white dark:bg-[#1A2C22] text-[#173F2B] dark:text-[#67E8F9] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+          <div className="p-2 rounded-xl bg-white dark:bg-[#1A2C22] text-[#173F2B] dark:text-[#67E8F9] border border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs">
             <CreditCard className="w-4 h-4" />
           </div>
           <div>
             <p className="font-bold text-[#173F2B] dark:text-slate-100">
               Financial Institution Linking (Open Banking / Account Aggregator)
             </p>
-            <p className="text-[#4D5D51] dark:text-slate-400 font-medium">
+            <p className="text-[#374A3E] dark:text-slate-400 font-medium">
               Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.
             </p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-[#DCE4DC] dark:border-[#2A3D33] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-[#BAC7BE] dark:border-[#2A3D33] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
           <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" /> Architecture Ready
         </span>
       </div>
 
-      <Card className="overflow-hidden bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+      <Card className="overflow-hidden bg-white dark:bg-[#16251E] border border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs">
         {transactions.length === 0 ? (
           <EmptyState
             title="No transactions found"

@@ -59,14 +59,35 @@
   --bg: #F7F7F0;
   --surface: #FFFFFF;
   --ink: #173F2B;
-  --muted: #4D5D51;
-  --line: #DCE4D8;
+  --muted: #2E4035;
+  --line: #CAD5CA;
   --soft: #EAF3E7;
   --accent: #173F2B;
   --accent-ink: #FFFFFF;
   --bad: #B74747;
   --bad-soft: #FDE8E8;
   --wait: #B77925;
+}
+
+/* Global Selection Styling - Deep high-contrast forest with white text */
+::selection {
+  background-color: #173F2B !important;
+  color: #FFFFFF !important;
+}
+::-moz-selection {
+  background-color: #173F2B !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] ::selection,
+.dark ::selection {
+  background-color: #245A40 !important;
+  color: #FFFFFF !important;
+}
+[data-theme="dark"] ::-moz-selection,
+.dark ::-moz-selection {
+  background-color: #245A40 !important;
+  color: #FFFFFF !important;
 }
 
 /* Lenis Smooth Scroll Configuration */

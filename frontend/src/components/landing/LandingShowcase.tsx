@@ -70,24 +70,6 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // FAQ accordion state (first item open by default)
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const [navVisible, setNavVisible] = useState(false);
-  const [lastMouseY, setLastMouseY] = useState(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const currentY = e.clientY;
-      if (currentY < lastMouseY - 5 && currentY < 120) {
-        setNavVisible(true);
-      } else if (currentY > lastMouseY + 5) {
-        setNavVisible(false);
-      }
-      setLastMouseY(currentY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [lastMouseY]);
-
   // Theme management
   useEffect(() => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -230,9 +212,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   ];
 
   return (
-    <div ref={rootRef} className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white">
-      {/* 1. Smart Reverse-Scroll Navigation */}
-      <header className={`sticky top-0 z-40 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] transition-all duration-300 ease-in-out ${navVisible ? 'translate-y-0 shadow-xs' : '-translate-y-full shadow-none'}`}>
+    <div ref={rootRef} className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
+      {/* 1. Stationary Top Navigation - Does not pop up or stick during scrolling */}
+      <header className="relative w-full z-40 bg-[var(--bg)] border-b border-[var(--line)]">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
           <Link
             href="/"
@@ -242,28 +224,28 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-[#4D5D51] dark:text-slate-300">
-            <a href="#ledger" className="hover:text-[var(--ink)] transition-colors">
-              Ledger
+          <nav className="hidden md:flex items-center gap-7 text-sm font-bold text-[#173F2B] dark:text-slate-100">
+            <a href="#ledger" className="hover:text-[var(--accent)] transition-colors">
+              {t('nav.ledger', 'Ledger')}
             </a>
-            <a href="#budgets" className="hover:text-[var(--ink)] transition-colors">
-              Budgets
+            <a href="#budgets" className="hover:text-[var(--accent)] transition-colors">
+              {t('nav.budgets', 'Budgets')}
             </a>
-            <a href="#comparison" className="hover:text-[var(--ink)] transition-colors">
-              Comparison
+            <a href="#comparison" className="hover:text-[var(--accent)] transition-colors">
+              {t('nav.comparison', 'Comparison')}
             </a>
-            <a href="#simulator" className="hover:text-[var(--ink)] transition-colors">
-              Goal Simulator
+            <a href="#simulator" className="hover:text-[var(--accent)] transition-colors">
+              {t('nav.simulator', 'Goal Simulator')}
             </a>
-            <a href="#faq" className="hover:text-[var(--ink)] transition-colors">
-              FAQ
+            <a href="#faq" className="hover:text-[var(--accent)] transition-colors">
+              {t('nav.faq', 'FAQ')}
             </a>
           </nav>
 
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-              className="px-2.5 py-1 rounded-full border border-[var(--line)] text-xs font-bold text-[var(--ink)] hover:bg-[var(--soft)] flex items-center gap-1.5 transition-colors"
+              className="px-2.5 py-1 rounded-full border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-200 hover:bg-[var(--soft)] flex items-center gap-1.5 transition-colors"
               title="Switch Language / भाषा बदलें"
             >
               <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
@@ -278,15 +260,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-sm font-semibold text-[var(--ink)] hover:text-[var(--accent)] px-2 transition-colors"
+              className="text-sm font-bold text-[#173F2B] dark:text-slate-100 hover:text-[var(--accent)] px-2 transition-colors"
             >
-              Sign in
+              {t('nav.signin', 'Sign in')}
             </button>
             <button
               onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill sm bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] shadow-sm font-semibold"
+              className="btn-pill sm bg-[#173F2B] text-white hover:bg-[var(--accent)] shadow-sm font-bold"
             >
-              Get started
+              {t('nav.getstarted', 'Get started')}
             </button>
           </div>
         </div>
@@ -297,32 +279,43 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-center">
           {/* Left Column: Clean, unbordered, razor-sharp typography */}
           <div className="md:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-[var(--ink)]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-100">
               <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
-              <span>Next-Gen Personal Finance Engine</span>
+              <span>{t('hero.badge', 'Next-Gen Personal Finance Engine')}</span>
             </div>
 
-            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1.05] text-[var(--ink)]">
-              Master your wealth,<br />
-              with <span className="text-[var(--accent)]">absolute precision.</span>
+            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1.05] text-[#173F2B] dark:text-slate-50">
+              {language === 'hi' ? (
+                <>
+                  अपनी संपत्ति पर पाएं पूर्ण नियंत्रण,<br />
+                  पूर्ण <span className="text-[var(--accent)]">सटीकता और विश्वास</span> के साथ।
+                </>
+              ) : (
+                <>
+                  Master your wealth,<br />
+                  with <span className="text-[var(--accent)]">absolute precision.</span>
+                </>
+              )}
             </h1>
 
-            <p className="text-xl md:text-2xl text-[var(--muted)] max-w-xl leading-relaxed">
-              Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.
+            <p className="text-xl md:text-2xl text-[#2E4035] dark:text-slate-300 max-w-xl leading-relaxed font-medium">
+              {language === 'hi'
+                ? 'फिनरॉक (Finroq) एक उद्यम-स्तरीय वित्तीय लेजर है जो निश्चित दशमलव अंकगणित के साथ तैयार किया गया है। अपने कैश फ्लो, बजट और कुल संपत्ति पर पूरा नियंत्रण पाएं बिना किसी अनुमान के।'
+                : 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.'}
             </p>
 
             <div className="pt-2 flex flex-wrap gap-3">
               <button
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-                className="btn-pill bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] shadow-sm"
+                className="btn-pill bg-[#173F2B] text-white hover:bg-[#102F21] shadow-sm font-bold"
               >
-                Open your ledger <ArrowRight className="w-4 h-4 ml-1" />
+                {language === 'hi' ? 'अपना खाता बही खोलें' : 'Open your ledger'} <ArrowRight className="w-4 h-4 ml-1" />
               </button>
               <a
                 href="#ledger"
-                className="btn-pill ghost hover:border-[var(--ink)]"
+                className="btn-pill ghost hover:border-[var(--ink)] font-bold text-[#173F2B] dark:text-slate-100"
               >
-                Explore interactive demo
+                {language === 'hi' ? 'इंटरैक्टिव डेमो देखें' : 'Explore interactive demo'}
               </a>
             </div>
           </div>
@@ -331,32 +324,38 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           <div className="md:col-span-5">
             <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-7 space-y-6 shadow-xs hover:border-[var(--line)] transition-colors">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold tracking-wider uppercase text-[var(--muted)]">
-                  Consolidated Net Worth
+                <span className="text-xs font-mono font-bold tracking-wider uppercase text-[#2E4035] dark:text-slate-300">
+                  {language === 'hi' ? 'कुल संचित संपत्ति' : 'Consolidated Net Worth'}
                 </span>
-                <span className="text-[11px] font-mono font-medium px-2.5 py-0.5 rounded-full bg-[var(--soft)] text-[var(--accent)]">
-                  Live Ledger State
+                <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[var(--soft)] text-[var(--accent)]">
+                  {language === 'hi' ? 'सत्यापित लेजर स्थिति' : 'Live Ledger State'}
                 </span>
               </div>
-              <div className="font-mono text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--ink)]">
+              <div className="font-mono text-3xl sm:text-4xl font-extrabold tracking-tight text-[#173F2B] dark:text-slate-50">
                 ₹5,41,310.00
               </div>
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--line)]">
                 <div>
-                  <span className="text-xs font-medium text-[var(--muted)]">Liquid Assets</span>
+                  <span className="text-xs font-bold text-[#2E4035] dark:text-slate-300">
+                    {language === 'hi' ? 'तरल संपत्ति' : 'Liquid Assets'}
+                  </span>
                   <p className="font-mono text-base font-bold text-[var(--accent)] mt-1">
                     ₹5,63,650.00
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium text-[var(--muted)]">Active Liabilities</span>
+                  <span className="text-xs font-bold text-[#2E4035] dark:text-slate-300">
+                    {language === 'hi' ? 'सक्रिय देनदारियां' : 'Active Liabilities'}
+                  </span>
                   <p className="font-mono text-base font-bold text-[var(--bad)] mt-1">
                     ₹22,340.00
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-[var(--muted)] pt-3 border-t border-[var(--line)] leading-relaxed">
-                Every calculation is backed by exact fixed-point decimal arithmetic, eliminating IEEE 754 floating-point drift.
+              <p className="text-xs text-[#2E4035] dark:text-slate-400 pt-3 border-t border-[var(--line)] leading-relaxed font-medium">
+                {language === 'hi'
+                  ? 'प्रत्येक गणना निश्चित दशमलव अंकगणित पर आधारित है, जिससे फ्लोटिंग-पॉइंट की त्रुटि पूरी तरह समाप्त हो जाती है।'
+                  : 'Every calculation is backed by exact fixed-point decimal arithmetic, eliminating IEEE 754 floating-point drift.'}
               </p>
             </div>
           </div>
