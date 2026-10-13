@@ -340,15 +340,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
       {/* 2. Hero Section */}
       <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[var(--line)]">
-        <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Clean, unbordered, razor-sharp typography */}
-          <div className="md:col-span-7 space-y-6">
+        <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Left Column: Clean, balanced typography with refined scale */}
+          <div className="md:col-span-6 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-100">
               <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
               <span>{t('hero.badge', 'Next-Gen Personal Finance Engine')}</span>
             </div>
 
-            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1.05] text-[#173F2B] dark:text-slate-50">
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-bold tracking-tight leading-[1.18] text-[#173F2B] dark:text-slate-50">
               {language === 'hi' ? (
                 <>
                   अपनी संपत्ति पर पाएं पूर्ण नियंत्रण,<br />
@@ -362,7 +362,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               )}
             </h1>
 
-            <p className="text-xl md:text-2xl text-[#2E4035] dark:text-slate-300 max-w-xl leading-relaxed font-medium">
+            <p className="text-sm sm:text-base text-[#2E4035] dark:text-slate-300 max-w-lg leading-relaxed font-medium">
               {language === 'hi'
                 ? 'फिनरॉक (Finroq) एक उद्यम-स्तरीय वित्तीय लेजर है जो निश्चित दशमलव अंकगणित के साथ तैयार किया गया है। अपने कैश फ्लो, बजट और कुल संपत्ति पर पूरा नियंत्रण पाएं बिना किसी अनुमान के।'
                 : 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.'}
@@ -371,45 +371,47 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <div className="pt-2 flex flex-wrap gap-3">
               <button
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-                className="btn-pill bg-[#173F2B] text-white hover:bg-[#102F21] shadow-sm font-bold"
+                className="btn-pill bg-[#173F2B] text-white hover:bg-[#102F21] shadow-sm font-bold text-sm"
               >
                 {t('hero.open_ledger', 'Open your ledger')} <ArrowRight className="w-4 h-4 ml-1" />
               </button>
               <a
                 href="#ledger"
-                className="btn-pill ghost hover:border-[var(--ink)] font-bold text-[#173F2B] dark:text-slate-100"
+                className="btn-pill ghost hover:border-[var(--ink)] font-bold text-sm text-[#173F2B] dark:text-slate-100"
               >
                 {t('hero.explore_demo', 'Explore interactive demo')}
               </a>
               <a
                 href="#amount-sandbox"
-                className="btn-pill ghost hover:border-[var(--accent)] font-bold text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5"
+                className="btn-pill ghost hover:border-[var(--accent)] font-bold text-sm text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5"
               >
                 <span>{language === 'hi' ? '⚡ विशिष्ट राशि जोड़ें' : '⚡ Test Specific Amount'}</span>
               </a>
             </div>
           </div>
 
-          {/* Right Column: Hero Financial Preview Card (sharp, no blur) */}
-          <div className="md:col-span-5">
-            <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-7 space-y-6 shadow-xs hover:border-[var(--line)] transition-colors">
+          {/* Right Column: Expanded Hero Financial Preview Card that fills space harmoniously */}
+          <div className="md:col-span-6">
+            <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-8 sm:p-9 space-y-6 shadow-md hover:border-[var(--line)] transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold tracking-wider uppercase text-[#2E4035] dark:text-slate-300">
                   {t('hero.net_worth', 'Consolidated Net Worth')}
                 </span>
-                <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[var(--soft)] text-[var(--accent)]">
+                <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-[var(--soft)] text-[var(--accent)] border border-[var(--line)]">
                   {t('hero.live_state', 'Live Ledger State')}
                 </span>
               </div>
-              <div className="font-mono text-3xl sm:text-4xl font-extrabold tracking-tight text-[#173F2B] dark:text-slate-50">
+
+              <div className="font-mono text-4xl sm:text-5xl font-extrabold tracking-tight text-[#173F2B] dark:text-slate-50">
                 ₹5,41,310.00
               </div>
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--line)]">
+
+              <div className="grid grid-cols-2 gap-5 pt-4 border-t border-[var(--line)]">
                 <div>
                   <span className="text-xs font-bold text-[#2E4035] dark:text-slate-300">
                     {t('hero.liquid_assets', 'Liquid Assets')}
                   </span>
-                  <p className="font-mono text-base font-bold text-[var(--accent)] mt-1">
+                  <p className="font-mono text-xl font-bold text-[var(--accent)] mt-1">
                     ₹5,63,650.00
                   </p>
                 </div>
@@ -417,12 +419,29 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <span className="text-xs font-bold text-[#2E4035] dark:text-slate-300">
                     {t('hero.active_liabilities', 'Active Liabilities')}
                   </span>
-                  <p className="font-mono text-base font-bold text-[var(--bad)] mt-1">
+                  <p className="font-mono text-xl font-bold text-[var(--bad)] mt-1">
                     ₹22,340.00
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-[#2E4035] dark:text-slate-400 pt-3 border-t border-[var(--line)] leading-relaxed font-medium">
+
+              {/* Asset Solvency Ratio Progress Bar */}
+              <div className="space-y-2 pt-1">
+                <div className="flex justify-between text-xs font-mono font-semibold text-[#2E4035] dark:text-slate-300">
+                  <span>{language === 'hi' ? 'परिसंपत्ति सुरक्षा अनुपात' : 'Asset Solvency Ratio'}</span>
+                  <span className="text-[var(--accent)] font-bold">96.2% {language === 'hi' ? 'सुरक्षित' : 'Solvent'}</span>
+                </div>
+                <div className="w-full bg-[var(--soft)] h-2.5 rounded-full overflow-hidden">
+                  <div className="bg-[var(--accent)] h-full rounded-full transition-all duration-500" style={{ width: '96.2%' }} />
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs font-mono font-semibold text-[#2E4035] dark:text-slate-300">
+                <span>{language === 'hi' ? 'मासिक शुद्ध अधिशेष:' : 'Monthly Net Surplus:'}</span>
+                <span className="text-[var(--accent)] font-bold text-sm">+₹1,07,200.00</span>
+              </div>
+
+              <p className="text-xs text-[#2E4035] dark:text-slate-400 pt-2 border-t border-[var(--line)] leading-relaxed font-medium">
                 {t('hero.decimal_note', 'Every calculation is backed by exact fixed-point decimal arithmetic, eliminating IEEE 754 floating-point drift.')}
               </p>
             </div>
