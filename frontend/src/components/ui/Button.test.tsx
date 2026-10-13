@@ -10,7 +10,7 @@ describe('Button', () => {
   it('applies variant classes', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-slate-100');
+    expect(button).toHaveClass('bg-[#F0F5EE]');
   });
 
   it('applies size classes', () => {

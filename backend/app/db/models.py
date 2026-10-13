@@ -138,6 +138,7 @@ class Transaction(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     recurring_transaction_id = Column(Integer, ForeignKey("recurring_transactions.id", ondelete="SET NULL"), nullable=True, index=True)
+    source = Column(String(32), nullable=False, default="manual")
 
     account = relationship("Account", back_populates="transactions", foreign_keys=[account_id])
     to_account = relationship("Account", foreign_keys=[to_account_id])

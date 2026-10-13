@@ -138,6 +138,7 @@ async def seed_database(owner_id: str, db_url: str) -> None:
                     transaction_type=txn_type,
                     description=description,
                     transaction_date=txn_date,
+                    source="seed_demo",
                 )
                 db.add(txn)
 

@@ -349,3 +349,94 @@ export interface StatementImportConfirmResponse {
   imported_count: number;
   message: string;
 }
+
+export type ReadinessTier = 'limited_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';
+export type InsightType = 'recurring_subscription' | 'dormant_recurring' | 'excessive_category_spend' | 'recurring_cost_inflation' | 'duplicate_charge_leakage' | 'annual_subscription_evaluation';
+export type InsightStatus = 'insufficient_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';
+
+export interface AccountCoverageItem {
+  account_id: number;
+  account_name: string;
+  account_type: string;
+  currency: string;
+  is_active: boolean;
+  transaction_count: number;
+  earliest_transaction_date?: string | null;
+  latest_transaction_date?: string | null;
+}
+
+export interface MissingPeriodGap {
+  start_date: string;
+  end_date: string;
+  gap_days: number;
+  description: string;
+}
+
+export interface SupportingTransaction {
+  id: number;
+  transaction_date: string;
+  amount: string;
+  description?: string | null;
+  source: string;
+}
+
+export interface DataReadinessReport {
+  account_age_days: number;
+  available_history_days: number;
+  observed_active_days: number;
+  calendar_days_in_window: number;
+  earliest_transaction_date?: string | null;
+  latest_transaction_date?: string | null;
+  data_freshness_days?: number | null;
+  manual_transactions_count: number;
+  imported_transactions_count: number;
+  seed_transactions_count: number;
+  provider_sync_transactions_count: number;
+  total_eligible_transactions: number;
+  verified_coverage_status: string;
+  verified_coverage_notes: string;
+  statement_coverage_start?: string | null;
+  statement_coverage_end?: string | null;
+  provider_sync_start?: string | null;
+  provider_last_sync?: string | null;
+  is_synthetic_demo_data: boolean;
+  accounts_included: AccountCoverageItem[];
+  accounts_excluded: AccountCoverageItem[];
+  missing_periods: MissingPeriodGap[];
+  readiness_tier: ReadinessTier;
+  readiness_headline: string;
+  readiness_explanation: string;
+  recommended_action: string;
+}
+
+export interface SpendLeakInsight {
+  id: string;
+  insight_type: InsightType;
+  status: InsightStatus;
+  title: string;
+  description: string;
+  severity: 'high' | 'medium' | 'low';
+  analysis_start_date?: string | null;
+  analysis_end_date?: string | null;
+  relevant_transaction_count: number;
+  supporting_transactions: SupportingTransaction[];
+  evidence_summary: string;
+  calculation_method: string;
+  assumptions: string;
+  limitations: string;
+  recommended_action: string;
+  potential_monthly_savings: string;
+  projected_annual_savings: string;
+  is_savings_projected: boolean;
+  disclaimer: string;
+}
+
+export interface SpendLeakAnalysisResponse {
+  readiness: DataReadinessReport;
+  insights: SpendLeakInsight[];
+  total_monthly_leak: string;
+  total_annual_leak: string;
+  recoverable_monthly_estimate: string;
+  recoverable_annual_estimate: string;
+  disclaimer: string;
+}

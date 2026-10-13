@@ -87,6 +87,7 @@ class TransactionBase(BaseModel):
     transaction_type: TransactionType
     description: Optional[str] = Field(None, max_length=512)
     transaction_date: datetime
+    source: Optional[str] = Field("manual", max_length=32)
     
     @field_validator("amount")
     @classmethod
@@ -107,6 +108,7 @@ class TransactionUpdate(BaseModel):
     transaction_type: Optional[TransactionType] = None
     description: Optional[str] = Field(None, max_length=512)
     transaction_date: Optional[datetime] = None
+    source: Optional[str] = Field(None, max_length=32)
     
     @field_validator("amount")
     @classmethod
@@ -122,6 +124,7 @@ class TransactionResponse(TransactionBase):
     status: Optional[TransactionStatus] = TransactionStatus.COMPLETED
     to_account_id: Optional[int] = None
     related_transaction_id: Optional[int] = None
+    source: Optional[str] = "manual"
     created_at: datetime
     updated_at: datetime
 

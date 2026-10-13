@@ -60,6 +60,7 @@ class TransactionService:
             transaction_type=data.transaction_type,
             description=data.description,
             transaction_date=data.transaction_date,
+            source=getattr(data, "source", None) or "manual",
         )
         self.db.add(transaction)
         await self.db.commit()
@@ -425,6 +426,7 @@ class TransactionService:
                 description=it.description,
                 transaction_date=it.transaction_date,
                 status=TransactionStatus.COMPLETED,
+                source="statement_import",
             )
             self.db.add(tx)
             created_txs.append(tx)

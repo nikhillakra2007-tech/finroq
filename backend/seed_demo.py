@@ -91,37 +91,44 @@ async def seed_demo():
                 Transaction(
                     owner_id=owner_id, account_id=chk_id, category_id=cat_map.get("Salary"),
                     amount=Decimal("5400.00"), transaction_type=TransactionType.INCOME, status=TransactionStatus.COMPLETED,
-                    description="Acme Corp Monthly Payroll Direct Deposit", transaction_date=datetime.utcnow() - timedelta(days=5)
+                    description="Acme Corp Monthly Payroll Direct Deposit", transaction_date=datetime.utcnow() - timedelta(days=5),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=chk_id, category_id=cat_map.get("Housing"),
                     amount=Decimal("2100.00"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
-                    description="Beacon Luxury Apartments Rent", transaction_date=datetime.utcnow() - timedelta(days=10)
+                    description="Beacon Luxury Apartments Rent", transaction_date=datetime.utcnow() - timedelta(days=10),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=crd_id, category_id=cat_map.get("Groceries & Food"),
                     amount=Decimal("184.50"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
-                    description="Whole Foods Market Organic Groceries", transaction_date=datetime.utcnow() - timedelta(days=2)
+                    description="Whole Foods Market Organic Groceries", transaction_date=datetime.utcnow() - timedelta(days=2),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=crd_id, category_id=cat_map.get("Groceries & Food"),
                     amount=Decimal("92.30"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
-                    description="Trader Joe's Weekly Provisions", transaction_date=datetime.utcnow() - timedelta(days=4)
+                    description="Trader Joe's Weekly Provisions", transaction_date=datetime.utcnow() - timedelta(days=4),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=crd_id, category_id=cat_map.get("Transportation"),
                     amount=Decimal("55.00"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
-                    description="Metro Transit Monthly Pass", transaction_date=datetime.utcnow() - timedelta(days=8)
+                    description="Metro Transit Monthly Pass", transaction_date=datetime.utcnow() - timedelta(days=8),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=crd_id, category_id=cat_map.get("Entertainment"),
                     amount=Decimal("45.00"), transaction_type=TransactionType.EXPENSE, status=TransactionStatus.COMPLETED,
-                    description="Criterion Channel & Spotify Subscriptions", transaction_date=datetime.utcnow() - timedelta(days=1)
+                    description="Criterion Channel & Spotify Subscriptions", transaction_date=datetime.utcnow() - timedelta(days=1),
+                    source="seed_demo"
                 ),
                 Transaction(
                     owner_id=owner_id, account_id=chk_id, to_account_id=acc_map.get("High-Yield Savings"),
                     amount=Decimal("1000.00"), transaction_type=TransactionType.TRANSFER, status=TransactionStatus.COMPLETED,
-                    description="Monthly Savings Allocation Transfer", transaction_date=datetime.utcnow() - timedelta(days=6)
+                    description="Monthly Savings Allocation Transfer", transaction_date=datetime.utcnow() - timedelta(days=6),
+                    source="seed_demo"
                 ),
             ]
             session.add_all(txs)

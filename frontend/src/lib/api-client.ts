@@ -23,6 +23,8 @@ import type {
   StatementImportPreviewResponse,
   StatementImportConfirmRequest,
   StatementImportConfirmResponse,
+  DataReadinessReport,
+  SpendLeakAnalysisResponse,
 } from './api-types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -941,7 +943,145 @@ class ApiClient {
       throw err;
     }
   }
+
+  // Spend Leaks & Readiness
+  async getSpendLeakReadiness() {
+    if (this.getToken()?.includes('demo')) {
+      return { data: DEMO_SPEND_LEAK_ANALYSIS.readiness } as any;
+    }
+    try {
+      return await this.client.get<DataReadinessReport>('/spend-leaks/readiness');
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_SPEND_LEAK_ANALYSIS.readiness } as any;
+      }
+      throw err;
+    }
+  }
+
+  async getSpendLeakInsights() {
+    if (this.getToken()?.includes('demo')) {
+      return { data: DEMO_SPEND_LEAK_ANALYSIS } as any;
+    }
+    try {
+      return await this.client.get<SpendLeakAnalysisResponse>('/spend-leaks/insights');
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_SPEND_LEAK_ANALYSIS } as any;
+      }
+      throw err;
+    }
+  }
 }
+
+export const DEMO_SPEND_LEAK_ANALYSIS: SpendLeakAnalysisResponse = {
+  readiness: {
+    account_age_days: 60,
+    available_history_days: 14,
+    observed_active_days: 7,
+    calendar_days_in_window: 14,
+    earliest_transaction_date: '2026-10-01T00:00:00Z',
+    latest_transaction_date: '2026-10-14T00:00:00Z',
+    data_freshness_days: 0,
+    manual_transactions_count: 0,
+    imported_transactions_count: 0,
+    seed_transactions_count: 10,
+    provider_sync_transactions_count: 0,
+    total_eligible_transactions: 10,
+    verified_coverage_status: 'unverified_self_reported',
+    verified_coverage_notes: 'Demo seed dataset with simulated transaction history.',
+    statement_coverage_start: null,
+    statement_coverage_end: null,
+    provider_sync_start: null,
+    provider_last_sync: null,
+    is_synthetic_demo_data: true,
+    accounts_included: [
+      { account_id: 1, account_name: 'HDFC Bank (Salary)', account_type: 'checking', currency: 'INR', is_active: true, transaction_count: 7, earliest_transaction_date: '2026-10-01T00:00:00Z', latest_transaction_date: '2026-10-12T00:00:00Z' },
+      { account_id: 2, account_name: 'ICICI Savings', account_type: 'savings', currency: 'INR', is_active: true, transaction_count: 1, earliest_transaction_date: '2026-10-06T00:00:00Z', latest_transaction_date: '2026-10-06T00:00:00Z' },
+      { account_id: 3, account_name: 'SBI Prime Credit', account_type: 'credit', currency: 'INR', is_active: true, transaction_count: 2, earliest_transaction_date: '2026-10-10T00:00:00Z', latest_transaction_date: '2026-10-11T00:00:00Z' },
+    ],
+    accounts_excluded: [],
+    missing_periods: [],
+    readiness_tier: 'preliminary',
+    readiness_headline: 'Preliminary Observations (Demo Dataset)',
+    readiness_explanation: 'Demo seed transactions observed across 14 calendar days. Patterns are preliminary and demonstrate leak detection mechanics.',
+    recommended_action: 'Import your own bank statement CSV or add real transactions to assess personal recurring expenses.',
+  },
+  insights: [
+    {
+      id: 'demo-insight-1',
+      insight_type: 'annual_subscription_evaluation',
+      status: 'insufficient_evidence',
+      title: 'Annual Subscriptions Cannot Be Reliably Assessed',
+      description: 'Current history spans 14 calendar days. Reliable annual subscription auditing requires at least 365 days of continuous history.',
+      severity: 'low',
+      analysis_start_date: '2026-10-01T00:00:00Z',
+      analysis_end_date: '2026-10-14T00:00:00Z',
+      relevant_transaction_count: 10,
+      supporting_transactions: [],
+      evidence_summary: 'Observation window is 14 days (minimum required: 365 days).',
+      calculation_method: 'Annual window threshold comparison against 365 calendar days.',
+      assumptions: 'Annual recurrence assumes 12-month billing interval.',
+      limitations: 'Detector suppresses annual leak warnings until full year history is imported.',
+      recommended_action: 'Import 12 months of statement data to detect annual renewals.',
+      potential_monthly_savings: '0.00',
+      projected_annual_savings: '0.00',
+      is_savings_projected: false,
+      disclaimer: 'Projections represent uncommitted estimates and are not guaranteed money recovered.',
+    },
+    {
+      id: 'demo-insight-2',
+      insight_type: 'dormant_recurring',
+      status: 'provisional',
+      title: '[Dormant Mandate] Streaming Video Subscription',
+      description: 'Monthly OTT recurring plan identified. No recent user engagement observed; potential recurring drain.',
+      severity: 'high',
+      analysis_start_date: '2026-10-01T00:00:00Z',
+      analysis_end_date: '2026-10-11T00:00:00Z',
+      relevant_transaction_count: 2,
+      supporting_transactions: [
+        { id: 9, transaction_date: '2026-10-11T00:00:00Z', amount: '649.00', description: 'Streaming Video Subscription', source: 'seed_demo' }
+      ],
+      evidence_summary: 'Monthly charge of ₹649.00 detected on credit card.',
+      calculation_method: 'Cadence frequency analysis with merchant pattern matching.',
+      assumptions: 'Assumes ongoing monthly charge of ₹649.00/month. Savings assume complete cancellation.',
+      limitations: 'Analysis based solely on transaction records.',
+      recommended_action: 'Cancel streaming subscription if no longer actively watched.',
+      potential_monthly_savings: '649.00',
+      projected_annual_savings: '7788.00',
+      is_savings_projected: true,
+      disclaimer: 'Savings projections represent uncommitted estimates and are not guaranteed money recovered.',
+    },
+    {
+      id: 'demo-insight-3',
+      insight_type: 'recurring_subscription',
+      status: 'preliminary',
+      title: '[Pattern Detected] Fiber Broadband Internet',
+      description: 'Monthly utility broadband subscription of ₹999.00 observed.',
+      severity: 'medium',
+      analysis_start_date: '2026-10-01T00:00:00Z',
+      analysis_end_date: '2026-10-09T00:00:00Z',
+      relevant_transaction_count: 2,
+      supporting_transactions: [
+        { id: 7, transaction_date: '2026-10-09T00:00:00Z', amount: '999.00', description: 'Fiber Broadband Internet', source: 'seed_demo' }
+      ],
+      evidence_summary: 'Monthly charge of ₹999.00 on checking account.',
+      calculation_method: 'Monthly recurrence cadence matching.',
+      assumptions: 'Essential home broadband utility fee.',
+      limitations: 'Essential utility; consider plan downgrade rather than outright cancellation.',
+      recommended_action: 'Check with service provider for lower-tier speeds or promotional loyalty discounts.',
+      potential_monthly_savings: '300.00',
+      projected_annual_savings: '3600.00',
+      is_savings_projected: true,
+      disclaimer: 'Savings projections represent uncommitted estimates and are not guaranteed money recovered.',
+    }
+  ],
+  total_monthly_leak: '1648.00',
+  total_annual_leak: '19776.00',
+  recoverable_monthly_estimate: '949.00',
+  recoverable_annual_estimate: '11388.00',
+  disclaimer: 'All savings figures are uncommitted mathematical projections based on recurring plan interception. Actual realized savings depend on confirmed merchant cancellation and avoidance of replacement expenditures.',
+};
 
 export function extractErrorMessage(err: unknown, fallback = 'An unexpected error occurred'): string {
   if (axios.isAxiosError(err)) {
