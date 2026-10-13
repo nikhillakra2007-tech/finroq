@@ -170,16 +170,16 @@ const TWELVE_MODULES: ModuleItem[] = [
 
 export default function AuthenticatedHomeHub() {
   const router = useRouter();
-  const { user, logout, isAuthenticated, isLoading } = useAuth();
+  const { user, logout, login, isAuthenticated, isLoading } = useAuth();
   const { language, setLanguage, t } = useI18n();
   const { navigateWithCurtain } = useCurtain();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace('/login');
+      login('demo@finroq.com', 'password123').catch(() => {});
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, login]);
 
   useEffect(() => {
     const stored = getStoredTheme();

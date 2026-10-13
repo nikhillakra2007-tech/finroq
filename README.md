@@ -17,7 +17,7 @@
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
 🌐 **Alternative Production Mirror**: [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
-[Live Interface Exhibits](#-live-interface-exhibits) •
+[Live Application Exhibits](#-live-application-exhibits) •
 [System Architecture](#-system-architecture) •
 [Financial Accounting Lifecycle](#-financial-accounting-lifecycle--data-pipeline) •
 [12 Unified Financial Modules](#-12-unified-financial-modules) •
@@ -29,14 +29,14 @@
 
 ---
 
-## 📸 Live Interface Exhibits
+## 📸 Live Application Exhibits
 
-Captured directly from production on [finroq-app.vercel.app](https://finroq-app.vercel.app):
+High-resolution application captures taken directly from live production on [finroq-app.vercel.app](https://finroq-app.vercel.app):
 
 <div align="center">
 
-### 12-Module Unified Financial Command Center
-*Live workspace view displaying all 12 financial engines with instant language toggle and static non-sticky layout navigation.*
+### 12-Module Unified Financial Workspace Hub
+*Live workspace view displaying all 12 financial engines with instant Hindi/English language toggle and static non-sticky layout navigation.*
 
 ![FINROQ Live 12-Module Hub](docs/assets/finroq-app-home-live.png)
 
@@ -46,15 +46,15 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 
 <div align="center">
 
-| Pre-Spend Decision Engine | Credit Health Architecture |
+| Precision Landing Showcase | Pre-Spend Decision Engine |
 |:---:|:---:|
-| ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) | ![Credit Health](docs/assets/finroq-credit-health.png) |
-| *Real-time pre-purchase simulation on remaining budget caps.* | *Live credit utilization ratios and payment discipline diagnostics.* |
+| ![Landing Showcase](docs/assets/finroq-landing-hero.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
+| *Arbitrary decimal precision hero & ledger verification.* | *Real-time pre-purchase simulation on remaining budget caps.* |
 
-| Spend Leak Detector | Autonomous Daily Budgeting |
+| Credit Health Architecture | Autonomous Daily Budgeting |
 |:---:|:---:|
-| ![Spend Leak Detector](docs/assets/finroq-spend-leak.png) | ![Daily Budgeting](docs/assets/finroq-budgeting.png) |
-| *Automated recurrence audit with potential subscription savings.* | *Active category burn-rate monitoring and auto-rebalancing.* |
+| ![Credit Health](docs/assets/finroq-credit-health.png) | ![Daily Budgeting](docs/assets/finroq-budgeting.png) |
+| *Live credit utilization ratios and payment discipline.* | *Active category burn-rate monitoring and auto-rebalancing.* |
 
 </div>
 
@@ -79,12 +79,12 @@ The FINROQ platform follows a clean, decoupled 4-tier architecture designed for 
 
 ```mermaid
 flowchart TB
-    subgraph CLIENT["Client Tier (Web / Mobile — Next.js 14 App Router)"]
-        UI["React 18 Server & Client Components\n(Tailwind CSS + Lucide Icons)"]
-        I18N["i18n Context Engine\n(Hindi / English Instant Switch)"]
-        THEME["Theme Provider\n(Ivory Light / Forest Dark)"]
-        AUTH_CTX["Auth Context & Token Store\n(Stateless JWT Storage)"]
-        API_CLIENT["Centralized API Client\n(Fetch with Auth Interceptors)"]
+    subgraph CLIENT["Client Tier — Next.js 14 App Router"]
+        UI["React 18 Server & Client Components<br/>Tailwind CSS + Lucide Icons"]
+        I18N["i18n Context Engine<br/>Hindi and English Instant Switch"]
+        THEME["Theme Provider<br/>Ivory Light and Forest Dark"]
+        AUTH_CTX["Auth Context & Token Store<br/>Stateless JWT Storage"]
+        API_CLIENT["Centralized API Client<br/>Fetch with Auth Interceptors"]
         
         UI <--> I18N
         UI <--> THEME
@@ -92,10 +92,10 @@ flowchart TB
         AUTH_CTX --> API_CLIENT
     end
 
-    subgraph GATEWAY["API Gateway & Security Guard (FastAPI / Uvicorn)"]
-        ROUTER["REST Router (/api/v1)"]
-        AUTH_GUARD["Tenant Guard & JWT Validator\n(Argon2id Hashes + Sub Claims)"]
-        RATE_LIMIT["Rate Limiter & Quota Enforcement\n(Tiered Entitlements Engine)"]
+    subgraph GATEWAY["API Gateway & Security — FastAPI"]
+        ROUTER["REST Router /api/v1"]
+        AUTH_GUARD["Tenant Guard & JWT Validator<br/>Argon2id Hashes + Sub Claims"]
+        RATE_LIMIT["Rate Limiter & Quota Guard<br/>Tiered Entitlements Engine"]
         
         API_CLIENT -- "HTTPS / JSON + Bearer JWT" --> ROUTER
         ROUTER --> AUTH_GUARD
@@ -103,27 +103,27 @@ flowchart TB
     end
 
     subgraph DOMAIN["Domain Services Tier"]
-        ACC_SVC["Account Service\n(Checking, Savings, Credit)"]
-        TXN_SVC["Transaction Service\n(Ledger Commits & Statement Ingestion)"]
-        BUDGET_SVC["Budget Service\n(Dynamic Caps & Burn Rate)"]
-        REC_SVC["Recurrence Engine\n(Calendar Clamping 28-31 Days)"]
-        AI_SVC["AI Intelligence Service\n(Context Sanitization & Fallback)"]
+        ACC_SVC["Account Service<br/>Checking, Savings, Credit"]
+        TXN_SVC["Transaction Service<br/>Ledger Commits & Statement Ingestion"]
+        BUDGET_SVC["Budget Service<br/>Dynamic Caps & Burn Rate"]
+        REC_SVC["Recurrence Engine<br/>Calendar Clamping 28 to 31 Days"]
+        AI_SVC["AI Intelligence Service<br/>Context Sanitization & Fallback"]
     end
 
     RATE_LIMIT --> DOMAIN
 
     subgraph ENGINE["Authoritative Mathematical Core"]
-        DECIMAL_ENGINE["Fixed-Point Decimal Math Engine\n(Python Decimal — Zero Floating Point Drift)"]
-        ANALYTICS_CORE["Deterministic Financial Analytics\n(Net Worth, Runway, Health Scoring)"]
+        DECIMAL_ENGINE["Fixed-Point Decimal Math Engine<br/>Python Decimal Math — Zero Float Drift"]
+        ANALYTICS_CORE["Deterministic Financial Analytics<br/>Net Worth, Runway, Health Scoring"]
         
         DOMAIN <--> DECIMAL_ENGINE
         DECIMAL_ENGINE <--> ANALYTICS_CORE
     end
 
-    subgraph PERSISTENCE["Persistence Tier (PostgreSQL 16)"]
-        ORM["SQLAlchemy 2.0 Async ORM\n(asyncpg connection pool)"]
-        DB[(PostgreSQL 16 Database\nNUMERIC(14,2) Columns + Tenant Indexes)]
-        ALEMBIC["Alembic Migrations\n(Strict Versioned Schema)"]
+    subgraph PERSISTENCE["Persistence Tier — PostgreSQL 16"]
+        ORM["SQLAlchemy 2.0 Async ORM<br/>asyncpg connection pool"]
+        DB["PostgreSQL 16 Database<br/>NUMERIC 14,2 Columns + Tenant Indexes"]
+        ALEMBIC["Alembic Migrations<br/>Strict Versioned Schema"]
         
         DOMAIN --> ORM
         ORM --> DB
@@ -131,7 +131,7 @@ flowchart TB
     end
 
     subgraph AI_PROVIDER["External AI Tier"]
-        GEMINI["Google Gemini 1.5 Flash\n(REST API via HTTPX)"]
+        GEMINI["Google Gemini 1.5 Flash<br/>REST API via HTTPX"]
         AI_SVC -. "Sanitized Financial Aggregates Only" .-> GEMINI
     end
 
@@ -151,7 +151,7 @@ Every transaction, whether manually entered, imported from a bank statement, or 
 
 ```mermaid
 flowchart TD
-    START(["Transaction Ingestion Trigger"]) --> SRC{Source Type}
+    START["Transaction Ingestion Trigger"] --> SRC{"Source Type"}
     
     SRC -- "Bank Statement" --> CSV["CSV/TSV Upload"]
     SRC -- "Manual Entry" --> MANUAL["Direct Ledger Entry Form"]
@@ -169,17 +169,17 @@ flowchart TD
     BATCH --> VALID
     
     VALID --> CAST["Strict Decimal Numeric Cast (Paise / Cents)"]
-    CAST --> IS_TFR{Is Inter-Account\nTransfer?}
+    CAST --> IS_TFR{"Is Inter-Account Transfer?"}
     
-    IS_TFR -- Yes --> TFR_LOGIC["Credit Source Account (-)\nDebit Destination Account (+)\nNet Cash Flow Impact: Neutral (₹0.00)"]
-    IS_TFR -- No --> DIR_LOGIC["Single Account Balance Update\nUpdate Category Spend Accumulator"]
+    IS_TFR -- "Yes" --> TFR_LOGIC["Credit Source Account (-)<br/>Debit Destination Account (+)<br/>Net Cash Flow Impact: Neutral (₹0.00)"]
+    IS_TFR -- "No" --> DIR_LOGIC["Single Account Balance Update<br/>Update Category Spend Accumulator"]
     
     TFR_LOGIC --> COMMIT["Atomic ACID Transaction Commit (PostgreSQL)"]
     DIR_LOGIC --> COMMIT
     
-    COMMIT --> RECALC["Real-time Reactive Propagation"]
+    COMMIT --> RECALC["Real-time Reactive Metric Propagation"]
     
-    subgraph MODULES["Reactive Metric Refresh"]
+    subgraph MODULES["Reactive Cross-Module Metric Refresh"]
         RECALC --> M1["Expense Tracking Ledger"]
         RECALC --> M2["Category Budgets & Cushion"]
         RECALC --> M3["Net Worth Architecture"]
@@ -200,24 +200,35 @@ flowchart TD
 All modules are seamlessly integrated into the unified FINROQ navigation shell, sharing identical design language, responsive states, and dual Hindi/English localization:
 
 ```mermaid
-mindmap
-  root((FINROQ Engine))
-    Track & Control
-      Expense Tracking Ledger
-      Daily Category Budgeting
-      Expense Splitter
-    Decide Before Spending
-      Pre-Spend Check Simulator
-      Spend Leak Detector
-      Practical Money Guides
-    Build & Protect Wealth
-      Net Worth Architecture
-      Goal Timeline Simulator
-      Emergency Cushion Calculator
-    Manage Obligations
-      EMI / Debt Watchdog
-      Credit Health Monitor
-      Integrated Financial Health Score
+flowchart LR
+    subgraph CAT1["Track & Control"]
+        M1["Expense Tracking Ledger<br/>/app/expense-tracking"]
+        M2["Daily Category Budgeting<br/>/app/budgeting"]
+        M3["Expense Splitter<br/>/app/splitter"]
+    end
+
+    subgraph CAT2["Decide Before Spending"]
+        M4["Pre-Spend Check Simulator<br/>/app/pre-spend-check"]
+        M5["Spend Leak Detector<br/>/app/spend-leak-detector"]
+        M6["Practical Money Guides<br/>/app/money-guides"]
+    end
+
+    subgraph CAT3["Build & Protect Wealth"]
+        M7["Net Worth Architecture<br/>/app/net-worth"]
+        M8["Goal Timeline Simulator<br/>/app/goal-timeline"]
+        M9["Emergency Cushion Calculator<br/>/app/emergency-cushion"]
+    end
+
+    subgraph CAT4["Manage Obligations"]
+        M10["EMI & Debt Watchdog<br/>/app/debt-watchdog"]
+        M11["Credit Health Monitor<br/>/app/credit-health"]
+        M12["Financial Health Score<br/>/app/financial-health"]
+    end
+
+    style CAT1 fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
+    style CAT2 fill:#F4F8F3,stroke:#247A50,stroke-width:2px;
+    style CAT3 fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
+    style CAT4 fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
 ```
 
 | # | Financial Engine | Route | Core Mathematical & Architectural Function |
@@ -243,10 +254,10 @@ FINROQ features zero-latency bilingual switching and bespoke theming built direc
 
 ```mermaid
 flowchart LR
-    subgraph PRE_HYDRATION["Pre-Hydration Phase (<head>)"]
+    subgraph PRE_HYDRATION["Pre-Hydration Phase (HTML Head)"]
         SCRIPT["Inline Theme Script"] --> LOCAL_STORAGE["Inspect localStorage ('finroq_theme')"]
         LOCAL_STORAGE --> OS_PREF["Fallback: window.matchMedia('(prefers-color-scheme: dark)')"]
-        OS_PREF --> APPLY_ATTR["Set data-theme & .dark on <html> before paint\n(Zero Flash of Unstyled Content)"]
+        OS_PREF --> APPLY_ATTR["Set data-theme and dark class on HTML root<br/>Zero Flash of Unstyled Content"]
     end
 
     subgraph RUNTIME["React Runtime Tier"]
