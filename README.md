@@ -3,7 +3,7 @@
 <div align="center">
 
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.0.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-six-woad-12.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-129%2F129%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
 ![Jest Tests](https://img.shields.io/badge/Jest-22%2F22%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
@@ -14,7 +14,7 @@
   <b>Double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules in bespoke light styling, bank statement ingestion, and deterministic AI intelligence.</b>
 </p>
 
-🔗 **Live Production App**: [https://frontend-six-woad-12.vercel.app](https://frontend-six-woad-12.vercel.app)
+🔗 **Live Production App**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app) (Mirror: [https://finroq-os.vercel.app](https://finroq-os.vercel.app))
 
 [System Architecture](#-system-architecture) •
 [12 Core Financial Modules](#-12-unified-financial-modules) •
@@ -201,7 +201,7 @@ Every test and verification check passes with 100% compliance:
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Production Build** | `npm run build` | **37/37 static routes prerendered** | ✅ PASS |
 | **Demo Seeding** | `python seed_demo.py` | **Idempotent, 0 duplicates created** | ✅ PASS |
-| **Live Vercel Production** | `curl https://frontend-six-woad-12.vercel.app` | **HTTP 200 OK** | ✅ PASS |
+| **Live Vercel Production** | `curl https://finroq-app.vercel.app` | **HTTP 200 OK** | ✅ PASS |
 
 ---
 
@@ -259,7 +259,7 @@ npm run dev
 
 ## 🌐 Production Deployment
 
-- **Frontend**: Deployed on Vercel (`https://frontend-six-woad-12.vercel.app`) using Next.js 14 App Router.
+- **Frontend**: Deployed on Vercel ([https://finroq-app.vercel.app](https://finroq-app.vercel.app) / [https://finroq-os.vercel.app](https://finroq-os.vercel.app)) using Next.js 14 App Router.
 - **Backend**: Containerized with Uvicorn and FastAPI, easily deployable to Render, Railway, AWS ECS, or Fly.io.
 
 ---
