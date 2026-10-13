@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { useI18n } from '@/lib/i18n-context';
@@ -38,13 +38,37 @@ function fmtSigned(paise: number): string {
   return (paise > 0 ? '+' : '') + fmt(paise);
 }
 
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    const targets = el.querySelectorAll('.rv');
+    targets.forEach((t) => observer.observe(t));
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
 export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   const { navigateWithCurtain } = useCurtain();
   const { language, setLanguage, t } = useI18n();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const rootRef = useScrollReveal();
 
-  // FAQ accordion state (closed by default)
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // FAQ accordion state (first item open by default)
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Reverse scroll navbar visibility
   const [navVisible, setNavVisible] = useState(true);
@@ -211,7 +235,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white">
+    <div ref={rootRef} className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white">
       {/* 1. Smart Reverse-Scroll Navigation */}
       <header className={`sticky top-0 z-40 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] transition-all duration-300 ease-in-out ${navVisible ? 'translate-y-0 shadow-xs' : '-translate-y-full shadow-none'}`}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
@@ -274,7 +298,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </header>
 
       {/* 2. Hero Section */}
-      <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[var(--line)]">
+      <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[var(--line)] rv">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-center">
           {/* Left Column: Clean, unbordered, razor-sharp typography */}
           <div className="md:col-span-7 space-y-6">
@@ -283,12 +307,12 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <span>Next-Gen Personal Finance Engine</span>
             </div>
 
-            <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] text-[var(--ink)]">
+            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight leading-[1.05] text-[var(--ink)]">
               Master your wealth,<br />
               with <span className="text-[var(--accent)]">absolute precision.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-[var(--muted)] max-w-xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-[var(--muted)] max-w-xl leading-relaxed">
               Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.
             </p>
 
@@ -345,7 +369,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 3. Proof Strip */}
-      <div className="border-b border-[var(--line)] bg-[var(--soft)]/50 py-4">
+      <div className="border-b border-[var(--line)] bg-[var(--soft)]/50 py-4 rv">
         <div className="max-w-6xl mx-auto px-5 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[var(--muted)] font-semibold tracking-wider">
           <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)]" /> NUMERIC(14,2) DECIMAL LEDGER</span>
           <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-[var(--accent)]" /> ARGON2ID ENCRYPTION</span>
@@ -355,13 +379,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </div>
 
       {/* 4. Feature 1: Spend Tracker & Ledger Demo */}
-      <section id="ledger" className="py-20 md:py-28 border-b border-[var(--line)]">
+      <section id="ledger" className="py-20 md:py-28 border-b border-[var(--line)] rv">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-5 space-y-6 sticky top-24">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Feature One
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--ink)]">
               A ledger that always balances.
             </h2>
             <p className="text-[var(--muted)] leading-relaxed">
@@ -439,7 +463,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 5. Feature 2: Budgets That Monitor Themselves */}
-      <section id="budgets" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--soft)]/20">
+      <section id="budgets" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--soft)]/20 rv relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-7 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-7 shadow-xs order-2 md:order-1 hover:border-[var(--line)] transition-colors">
             {/* Card Header with Live Status Indicator */}
@@ -658,7 +682,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Feature Two
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--ink)]">
               Budgets that monitor themselves.
             </h2>
             <p className="text-[var(--muted)] leading-relaxed">
@@ -695,13 +719,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 6. Section 3: Interactive Budget Comparison Graph */}
-      <section id="comparison" className="py-20 md:py-28 border-b border-[var(--line)]">
+      <section id="comparison" className="py-20 md:py-28 border-b border-[var(--line)] rv">
         <div className="max-w-6xl mx-auto px-5 space-y-12">
           <div className="max-w-2xl space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Interactive Simulation
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--ink)]">
               Dynamic Budget Stress-Testing.
             </h2>
             <p className="text-[var(--muted)] leading-relaxed">
@@ -851,13 +875,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 7. Section 4: Interactive Savings-Goal Timeline Simulator */}
-      <section id="simulator" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--soft)]/20">
+      <section id="simulator" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--soft)]/20 rv relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-5 space-y-12">
           <div className="max-w-2xl space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Timeline Accelerator
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--ink)]">
               Simulate How Spending Shifts Accelerate Wealth.
             </h2>
             <p className="text-[var(--muted)] leading-relaxed">
@@ -1001,13 +1025,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 8. 5 Comprehensive FAQs with Clean Interactive Accordion */}
-      <section id="faq" className="py-20 md:py-28 border-b border-[var(--line)]">
+      <section id="faq" className="py-20 md:py-28 border-b border-[var(--line)] rv">
         <div className="max-w-5xl mx-auto px-5 space-y-12">
           <div className="max-w-2xl space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-2.5 py-1 rounded-md bg-[var(--soft)] border border-[var(--line)]">
               Frequently Asked Questions
             </span>
-            <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-[var(--ink)]">
               Everything you need to know.
             </h2>
             <p className="text-[var(--muted)] text-base leading-relaxed">
@@ -1070,7 +1094,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 9. Technical Precision & Security Section */}
-      <section className="py-16 md:py-24 border-b border-[var(--line)] bg-[var(--soft)]/20">
+      <section className="py-16 md:py-24 border-b border-[var(--line)] bg-[var(--soft)]/20 rv">
         <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-3 gap-8">
           <div className="space-y-3 p-6 rounded-2xl bg-[var(--surface)] border border-[var(--line)]">
             <div className="w-9 h-9 rounded-xl bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center">
@@ -1103,13 +1127,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* 10. Closer CTA & Minimal Footer */}
-      <section className="py-20 md:py-32">
+      <section className="py-20 md:py-32 rv">
         <div className="max-w-6xl mx-auto px-5 flex flex-wrap items-end justify-between gap-8">
           <div className="space-y-4 max-w-lg">
-            <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-[var(--ink)]">
+            <h2 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-[var(--ink)]">
               Open your ledger.
             </h2>
-            <p className="text-[var(--muted)] text-base">
+            <p className="text-[var(--muted)] text-lg">
               Start recording transactions, set intelligent category budgets, and understand your financial trajectory with uncompromising certainty.
             </p>
           </div>

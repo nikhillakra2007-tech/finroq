@@ -18,6 +18,8 @@ const INITIAL_GOALS: Goal[] = [
   { id: 1, name: '6-Month Emergency Cushion', category: 'Safety Net', targetAmount: 300000, currentAmount: 180000, priority: 1 },
   { id: 2, name: 'Flat Down Payment & Registry', category: 'Real Estate', targetAmount: 1500000, currentAmount: 420000, priority: 2 },
   { id: 3, name: 'Annual Family Vacation Fund', category: 'Lifestyle', targetAmount: 200000, currentAmount: 60000, priority: 3 },
+  { id: 4, name: 'New Car Fund', category: 'Lifestyle', targetAmount: 800000, currentAmount: 150000, priority: 4 },
+  { id: 5, name: 'Child Education Fund', category: 'Future', targetAmount: 2000000, currentAmount: 100000, priority: 5 },
 ];
 
 export default function AppGoalTimelinePage() {
@@ -170,7 +172,7 @@ export default function AppGoalTimelinePage() {
         </div>
 
         {/* Goals Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeResults.map((g, idx) => {
             const pct = Math.min(100, Math.round((g.currentAmount / (g.targetAmount || 1)) * 100));
             return (

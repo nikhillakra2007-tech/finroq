@@ -34,31 +34,31 @@ export default function AppFinancialHealthPage() {
 
   const pillars = [
     {
-      name: 'Cash Flow Discipline',
-      score: savingsRate >= 20 ? 'Optimal' : 'Needs Focus',
-      detail: `${savingsRate}% of net income saved after all completed expenses`,
-      benchmark: 'Target: ≥ 20%',
+      name: 'Savings Rate',
+      score: savingsRate >= 20 ? 'Good' : 'Needs Work',
+      detail: `You save ${savingsRate}% of your income`,
+      benchmark: 'Goal: 20%+',
       rating: 'Pass',
     },
     {
-      name: 'Debt Service Ratio',
-      score: 'Controlled',
-      detail: 'Fixed EMI commitments represent < 30% of total recurring income',
-      benchmark: 'Target: < 35%',
+      name: 'Debt Level',
+      score: 'Healthy',
+      detail: 'Your loan EMIs are under 30% of income',
+      benchmark: 'Goal: Under 35%',
       rating: 'Pass',
     },
     {
-      name: 'Emergency Buffer',
-      score: 'Resilient',
-      detail: 'Liquid checking and savings buffer covers over 3 months of survival burn',
-      benchmark: 'Target: ≥ 3 Mo',
+      name: 'Emergency Cover',
+      score: 'Good',
+      detail: 'You have 3+ months of expenses saved',
+      benchmark: 'Goal: 3+ months',
       rating: 'Pass',
     },
     {
-      name: 'Ledger Audit Precision',
-      score: 'Pristine',
-      detail: 'Arbitrary-precision math (paise) with zero floating-point accumulation drift',
-      benchmark: 'Target: 0.00 drift',
+      name: 'Money Accuracy',
+      score: 'Perfect',
+      detail: 'All calculations are exact to the paisa',
+      benchmark: 'Zero errors',
       rating: 'Pass',
     },
   ];
@@ -98,17 +98,17 @@ export default function AppFinancialHealthPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#DCE4DC] dark:border-[var(--line)] gap-3">
             <div>
               <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
-                Financial Health Diagnostic Pillars
+                Your Financial Health at a Glance
               </h3>
               <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-                Continuous 4-vector health assessment derived from ledger accounts
+                Simple view of your money health
               </p>
             </div>
             <button
               onClick={() => setIsDetailOpen(true)}
               className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[#173F2B] text-white text-xs font-bold hover:bg-[#102F21] transition-colors flex items-center gap-2 shadow-xs"
             >
-              <span>Expand Full Breakdown</span>
+              <span>See Details</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -140,7 +140,7 @@ export default function AppFinancialHealthPage() {
             <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[var(--line)] space-y-1">
               <h4 className="font-bold text-sm text-[#173F2B] dark:text-slate-100 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                Executive Summary: Grade A (Resilient)
+                You are doing well!
               </h4>
               <p className="text-xs text-[#4D5D51] dark:text-slate-300 leading-relaxed">
                 Your financial architecture exhibits strong positive cash flow, disciplined monthly savings velocity, and sufficient liquid runway to absorb emergency setbacks without incurring high-interest revolving debt.
@@ -149,7 +149,7 @@ export default function AppFinancialHealthPage() {
 
             <div className="space-y-4">
               <h4 className="font-bold text-xs uppercase tracking-wider font-mono text-[#173F2B] dark:text-slate-200">
-                Vector Evaluations &amp; Thresholds
+                Detailed Breakdown
               </h4>
               <div className="space-y-3">
                 {pillars.map((p, idx) => (
@@ -172,7 +172,7 @@ export default function AppFinancialHealthPage() {
             <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-[#173F2B] dark:text-emerald-300 space-y-1">
               <strong className="block font-bold">🎯 Strategic Recommendation:</strong>
               <p className="text-[#2A4736] dark:text-slate-300">
-                Channel at least 50% of your monthly net surplus into the Goal Timeline Simulator to accelerate your home down payment target while maintaining your 6-month emergency cushion buffer.
+                Tip: Put at least half of your savings into your Goal Timeline Simulator to reach your goals faster while keeping your emergency fund safe.
               </p>
             </div>
 

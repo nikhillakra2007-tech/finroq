@@ -24,6 +24,12 @@ const DEFAULT_LEAKS: LeakItem[] = [
   { id: 4, name: 'Spotify Individual Premium', category: 'Music Streaming', amount: 119, frequency: 'monthly', lastUsedDaysAgo: 14, status: 'active', leakSeverity: 'medium' },
   { id: 5, name: 'Cloud Storage 2TB Tier', category: 'Cloud Backup', amount: 650, frequency: 'monthly', lastUsedDaysAgo: 29, status: 'active', leakSeverity: 'medium' },
   { id: 6, name: 'LinkedIn Premium Career', category: 'Professional SaaS', amount: 1499, frequency: 'monthly', lastUsedDaysAgo: 41, status: 'active', leakSeverity: 'high' },
+  { id: 7, name: 'Disney+ Hotstar Premium', category: 'Streaming & OTT', amount: 299, frequency: 'monthly', lastUsedDaysAgo: 55, status: 'active', leakSeverity: 'high' },
+  { id: 8, name: 'Amazon Prime Membership', category: 'Shopping & Delivery', amount: 299, frequency: 'monthly', lastUsedDaysAgo: 38, status: 'active', leakSeverity: 'medium' },
+  { id: 9, name: 'Gym Membership (Anytime Fitness)', category: 'Fitness & Health', amount: 1899, frequency: 'monthly', lastUsedDaysAgo: 70, status: 'active', leakSeverity: 'high' },
+  { id: 10, name: 'Notion Pro Workspace', category: 'SaaS Software', amount: 400, frequency: 'monthly', lastUsedDaysAgo: 45, status: 'active', leakSeverity: 'medium' },
+  { id: 11, name: 'iCloud Storage 200GB', category: 'Cloud Backup', amount: 219, frequency: 'monthly', lastUsedDaysAgo: 20, status: 'active', leakSeverity: 'low' },
+  { id: 12, name: 'Zomato Gold Membership', category: 'Food Delivery', amount: 129, frequency: 'monthly', lastUsedDaysAgo: 33, status: 'active', leakSeverity: 'medium' },
 ];
 
 export default function AppSpendLeakDetectorPage() {

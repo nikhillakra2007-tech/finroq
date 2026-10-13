@@ -48,38 +48,34 @@ export function CurtainProvider({ children }: { children: React.ReactNode }) {
       const fromY = dir === 'fwd' ? '100%' : '-100%';
       const toY = dir === 'fwd' ? '-100%' : '100%';
 
-      // Curtain Wipe In
       const animIn = curtain.animate(
         [
           { transform: `translateY(${fromY})` },
           { transform: 'translateY(0%)' },
         ],
-        { duration: 520, easing: ease, fill: 'forwards' }
+        { duration: 400, easing: ease, fill: 'forwards' }
       );
 
       animIn.finished.then(() => {
         router.push(href);
 
-        // Curtain Wipe Out
-        setTimeout(() => {
-          const animOut = curtain.animate(
-            [
-              { transform: 'translateY(0%)' },
-              { transform: `translateY(${toY})` },
-            ],
-            { duration: 520, easing: ease, fill: 'forwards' }
-          );
+        const animOut = curtain.animate(
+          [
+            { transform: 'translateY(0%)' },
+            { transform: `translateY(${toY})` },
+          ],
+          { duration: 400, easing: ease, fill: 'forwards' }
+        );
 
-          animOut.finished.then(() => {
-            animIn.cancel();
-            animOut.cancel();
-            setIsOpen(false);
-            setIsBusy(false);
-          }).catch(() => {
-            setIsOpen(false);
-            setIsBusy(false);
-          });
-        }, 120);
+        animOut.finished.then(() => {
+          animIn.cancel();
+          animOut.cancel();
+          setIsOpen(false);
+          setIsBusy(false);
+        }).catch(() => {
+          setIsOpen(false);
+          setIsBusy(false);
+        });
       }).catch(() => {
         setIsOpen(false);
         setIsBusy(false);

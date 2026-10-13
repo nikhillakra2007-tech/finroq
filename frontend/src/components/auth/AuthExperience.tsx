@@ -160,7 +160,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
           </p>
         </div>
 
-        <ul className="space-y-4 border-t border-white/20 pt-8 font-mono text-xs text-white/90">
+        <ul className="space-y-4 border-t border-white/20 pt-8 font-mono text-sm text-white/90">
           <li className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-white" />
             Argon2id cryptographic password hashing
@@ -187,12 +187,12 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
           </button>
         </div>
 
-        <div className="w-full max-w-md mx-auto my-auto py-8">
-          <div className="space-y-2">
-            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#173F2B] dark:text-slate-100">
+          <div className="w-full max-w-md mx-auto my-auto py-8">
+          <div className="space-y-3">
+            <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#173F2B] dark:text-slate-100">
               {mode === 'in' ? 'Welcome back.' : 'Start your ledger.'}
             </h1>
-            <p className="text-sm font-medium text-[#4D5D51] dark:text-slate-400">
+            <p className="text-base font-medium text-[#4D5D51] dark:text-slate-400">
               {mode === 'in'
                 ? 'Sign in to see where you stand this month.'
                 : 'Create an account to bring your budgets and goals together.'}
@@ -205,7 +205,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-2xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs hover:bg-slate-50 transition-all text-sm font-semibold text-[#173F2B] dark:text-slate-200"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-2xl bg-white dark:bg-[#1A2C22] border-2 border-[#DCE4DC] dark:border-[var(--line)] shadow-xs hover:border-[#173F2B] dark:hover:border-emerald-500 transition-all text-base font-semibold text-[#173F2B] dark:text-slate-100"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -246,13 +246,13 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 setAuthMethod('email');
                 setErrorMessage(null);
               }}
-              className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold ${
                 authMethod === 'email'
                   ? 'bg-[#173F2B] text-white shadow-xs'
                   : 'text-[#4D5D51] hover:text-[#173F2B]'
               }`}
             >
-              <Lock className="w-3.5 h-3.5" />
+              <Lock className="w-4 h-4" />
               <span>Email & Password</span>
             </button>
             <button
@@ -261,13 +261,13 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 setAuthMethod('mobile');
                 setErrorMessage(null);
               }}
-              className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold ${
                 authMethod === 'mobile'
                   ? 'bg-[#173F2B] text-white shadow-xs'
                   : 'text-[#4D5D51] hover:text-[#173F2B]'
               }`}
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-4 h-4" />
               <span>Mobile Number (OTP)</span>
             </button>
           </div>
@@ -367,14 +367,14 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
           ) : (
             <>
               {/* Segmented Control for Sign in / Create account */}
-              <div className="p-1 rounded-full bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] grid grid-cols-2 text-xs font-medium">
+              <div               className="p-1 rounded-full bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] grid grid-cols-2 text-sm font-medium">
                 <button
                   type="button"
                   onClick={() => {
                     setMode('in');
                     setErrorMessage(null);
                   }}
-                  className={`py-2 rounded-full transition-all ${
+                  className={`py-2.5 rounded-full transition-all ${
                     mode === 'in'
                       ? 'bg-[#173F2B] text-white shadow-xs font-semibold'
                       : 'text-[#4D5D51] hover:text-[#173F2B]'
@@ -388,7 +388,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                     setMode('up');
                     setErrorMessage(null);
                   }}
-                  className={`py-2 rounded-full transition-all ${
+                  className={`py-2.5 rounded-full transition-all ${
                     mode === 'up'
                       ? 'bg-[#173F2B] text-white shadow-xs font-semibold'
                       : 'text-[#4D5D51] hover:text-[#173F2B]'
@@ -475,19 +475,19 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
           )}
 
           {/* 1-Click Demo Shortcut */}
-          <div className="pt-4 text-center">
+          <div className="pt-6 text-center">
             <button
               type="button"
               onClick={handleDemoSignIn}
               disabled={isLoading}
-              className="text-xs font-mono font-semibold text-[#173F2B] dark:text-emerald-400 hover:underline transition-colors"
+              className="text-sm font-mono font-semibold text-[#173F2B] dark:text-emerald-400 hover:underline transition-colors"
             >
               Use the verified instant demo account (demo@finroq.com)
             </button>
           </div>
 
-          <p className="mt-8 text-center text-[11px] font-mono text-[#4D5D51] dark:text-slate-400">
-            Arbitrary-Precision Ledger (Paise) · Argon2id · Non-custodial privacy
+          <p className="mt-8 text-center text-xs font-mono text-[#4D5D51] dark:text-slate-400">
+            Exact Decimal Ledger · Argon2id Security · Private by Design
           </p>
         </div>
 

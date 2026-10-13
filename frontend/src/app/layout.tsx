@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter, Manrope } from 'next/font/google';
+import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/layout/AppProviders';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
+const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
+const hanken = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'FINROQ — Personal Finance & Wealth Architecture',
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${manrope.variable} font-sans antialiased scroll-smooth`}>
+    <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${jetbrains.variable} font-sans antialiased scroll-smooth`}>
       <body className="min-h-screen bg-finroq-ivory text-finroq-text antialiased selection:bg-finroq-lime selection:text-finroq-forest">
         <SmoothScrollProvider>
           <AppProviders>{children}</AppProviders>

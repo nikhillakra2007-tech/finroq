@@ -42,11 +42,11 @@
 [data-theme="dark"],
 :root.dark {
   --bg: #0D1411;
-  --surface: #141D19;
+  --surface: #16251E;
   --ink: #E6EEE9;
-  --muted: #8E9C95;
-  --line: #24312B;
-  --soft: #18231E;
+  --muted: #A3B5AC;
+  --line: #2A3D33;
+  --soft: #1A2C22;
   --accent: #5ECB9C;
   --accent-ink: #0B1A13;
   --bad: #F28B7F;
@@ -102,6 +102,18 @@ h1, h2, h3, h4, .font-display {
 .rv.in {
   opacity: 1;
   transform: none;
+}
+
+/* Fixed background on scroll */
+.bg-fixed-scroll {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
 @media (prefers-reduced-motion: reduce) {

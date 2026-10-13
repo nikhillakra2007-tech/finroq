@@ -33,6 +33,30 @@ const SEED_MONTHLY_BUDGETS: Record<string, Budget[]> = {
     { id: 705, owner_id: 'usr_demo', category_id: 5, category_name: 'Utilities & Broadband', budget_year: 2026, budget_month: 8, allocated_amount: '4000.00', actual_spending: '3920.00', remaining_amount: '80.00', utilization_percent: '98.0', is_overspent: false, created_at: '2026-08-01T00:00:00Z', updated_at: '2026-08-01T00:00:00Z' },
     { id: 706, owner_id: 'usr_demo', category_id: 6, category_name: 'Subscriptions & OTT', budget_year: 2026, budget_month: 8, allocated_amount: '2500.00', actual_spending: '2500.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-08-01T00:00:00Z', updated_at: '2026-08-01T00:00:00Z' },
   ],
+  '2026-7': [
+    { id: 601, owner_id: 'usr_demo', category_id: 1, category_name: 'Housing & Rent', budget_year: 2026, budget_month: 7, allocated_amount: '28000.00', actual_spending: '28000.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 602, owner_id: 'usr_demo', category_id: 2, category_name: 'Groceries & Quick Commerce', budget_year: 2026, budget_month: 7, allocated_amount: '13000.00', actual_spending: '12800.00', remaining_amount: '200.00', utilization_percent: '98.5', is_overspent: false, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 603, owner_id: 'usr_demo', category_id: 3, category_name: 'Dining & Food Delivery', budget_year: 2026, budget_month: 7, allocated_amount: '6000.00', actual_spending: '6100.00', remaining_amount: '-100.00', utilization_percent: '101.7', is_overspent: true, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 604, owner_id: 'usr_demo', category_id: 4, category_name: 'Fuel & Daily Transit', budget_year: 2026, budget_month: 7, allocated_amount: '5000.00', actual_spending: '4700.00', remaining_amount: '300.00', utilization_percent: '94.0', is_overspent: false, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 605, owner_id: 'usr_demo', category_id: 5, category_name: 'Utilities & Broadband', budget_year: 2026, budget_month: 7, allocated_amount: '3800.00', actual_spending: '3650.00', remaining_amount: '150.00', utilization_percent: '96.1', is_overspent: false, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 606, owner_id: 'usr_demo', category_id: 6, category_name: 'Subscriptions & OTT', budget_year: 2026, budget_month: 7, allocated_amount: '2200.00', actual_spending: '2100.00', remaining_amount: '100.00', utilization_percent: '95.5', is_overspent: false, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  ],
+  '2026-6': [
+    { id: 501, owner_id: 'usr_demo', category_id: 1, category_name: 'Housing & Rent', budget_year: 2026, budget_month: 6, allocated_amount: '27000.00', actual_spending: '27000.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+    { id: 502, owner_id: 'usr_demo', category_id: 2, category_name: 'Groceries & Quick Commerce', budget_year: 2026, budget_month: 6, allocated_amount: '12500.00', actual_spending: '12100.00', remaining_amount: '400.00', utilization_percent: '96.8', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+    { id: 503, owner_id: 'usr_demo', category_id: 3, category_name: 'Dining & Food Delivery', budget_year: 2026, budget_month: 6, allocated_amount: '5500.00', actual_spending: '5200.00', remaining_amount: '300.00', utilization_percent: '94.5', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+    { id: 504, owner_id: 'usr_demo', category_id: 4, category_name: 'Fuel & Daily Transit', budget_year: 2026, budget_month: 6, allocated_amount: '4800.00', actual_spending: '4600.00', remaining_amount: '200.00', utilization_percent: '95.8', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+    { id: 505, owner_id: 'usr_demo', category_id: 5, category_name: 'Utilities & Broadband', budget_year: 2026, budget_month: 6, allocated_amount: '3500.00', actual_spending: '3400.00', remaining_amount: '100.00', utilization_percent: '97.1', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+    { id: 506, owner_id: 'usr_demo', category_id: 6, category_name: 'Subscriptions & OTT', budget_year: 2026, budget_month: 6, allocated_amount: '2000.00', actual_spending: '1950.00', remaining_amount: '50.00', utilization_percent: '97.5', is_overspent: false, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-01T00:00:00Z' },
+  ],
+  '2026-5': [
+    { id: 401, owner_id: 'usr_demo', category_id: 1, category_name: 'Housing & Rent', budget_year: 2026, budget_month: 5, allocated_amount: '27000.00', actual_spending: '27000.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+    { id: 402, owner_id: 'usr_demo', category_id: 2, category_name: 'Groceries & Quick Commerce', budget_year: 2026, budget_month: 5, allocated_amount: '12000.00', actual_spending: '11800.00', remaining_amount: '200.00', utilization_percent: '98.3', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+    { id: 403, owner_id: 'usr_demo', category_id: 3, category_name: 'Dining & Food Delivery', budget_year: 2026, budget_month: 5, allocated_amount: '5000.00', actual_spending: '4800.00', remaining_amount: '200.00', utilization_percent: '96.0', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+    { id: 404, owner_id: 'usr_demo', category_id: 4, category_name: 'Fuel & Daily Transit', budget_year: 2026, budget_month: 5, allocated_amount: '4500.00', actual_spending: '4400.00', remaining_amount: '100.00', utilization_percent: '97.8', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+    { id: 405, owner_id: 'usr_demo', category_id: 5, category_name: 'Utilities & Broadband', budget_year: 2026, budget_month: 5, allocated_amount: '3200.00', actual_spending: '3100.00', remaining_amount: '100.00', utilization_percent: '96.9', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+    { id: 406, owner_id: 'usr_demo', category_id: 6, category_name: 'Subscriptions & OTT', budget_year: 2026, budget_month: 5, allocated_amount: '1800.00', actual_spending: '1750.00', remaining_amount: '50.00', utilization_percent: '97.2', is_overspent: false, created_at: '2026-05-01T00:00:00Z', updated_at: '2026-05-01T00:00:00Z' },
+  ],
 };
 
 export function BudgetList() {
@@ -193,43 +217,43 @@ export function BudgetList() {
             <Calendar className="w-3.5 h-3.5" />
           </span>
           <span className="font-semibold text-[#173F2B] dark:text-slate-200">
-            Historical MoM Pace:
+            Spending Trend (Last 6 Months):
           </span>
           <span className="text-[#3F4F43] dark:text-slate-400 font-medium">
-            August (₹60,760 spent, 98%) → September (₹60,739 spent, 97.5%) → October (₹58,489 spent, 94.8%)
+            May (₹53,950) → Jun (₹55,550) → Jul (₹56,550) → Aug (₹59,520) → Sep (₹60,739) → Oct (₹58,489)
           </span>
         </div>
         <div className="flex items-center gap-2 self-start md:self-auto">
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#173F2B] font-semibold text-[11px]">
-            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> -3.7% Spend Disciplined
+            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> -3.7% This Month
           </span>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-5 bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Total Allocated</div>
-          <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-slate-100">{formatCurrency(totalAllocated)}</div>
+        <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">Total Allocated</div>
+          <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-emerald-300">{formatCurrency(totalAllocated)}</div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">Across {budgets.length} active categories</p>
         </Card>
 
-        <Card className="p-5 bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Actual Spending</div>
+        <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-amber-400">Actual Spending</div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#B77925] dark:text-amber-400">{formatCurrency(totalSpent)}</div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">Eligible ledger expenses</p>
         </Card>
 
-        <Card className="p-5 bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Remaining Pool</div>
+        <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">Remaining Pool</div>
           <div className={cn('mt-2 text-2xl font-bold font-mono', totalRemaining >= 0 ? 'text-[#157A42] dark:text-emerald-400' : 'text-[#B43838] dark:text-rose-400')}>
             {formatCurrency(totalRemaining)}
           </div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">{totalRemaining >= 0 ? 'Within monthly plan' : 'Over allocation'}</p>
         </Card>
 
-        <Card className="p-5 bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">Overall Utilization</div>
+        <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-300">Overall Utilization</div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-slate-100">
             {overallUtilization.toFixed(1)}%
           </div>
@@ -253,7 +277,7 @@ export function BudgetList() {
           ))}
         </div>
       ) : budgets.length === 0 ? (
-        <Card className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC]">
+        <Card className="bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33]">
           <EmptyState
             title={`No budgets for ${monthNames[month - 1]} ${year}`}
             description="Create a category budget to keep your spending on track for this month."
@@ -275,11 +299,11 @@ export function BudgetList() {
             const isOver = b.is_overspent;
 
             return (
-              <Card key={b.id} className="p-5 flex flex-col justify-between hover:shadow-md transition-shadow bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs rounded-2xl">
+              <Card key={b.id} className="p-5 flex flex-col justify-between hover:shadow-md transition-shadow bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs rounded-2xl">
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-display font-bold text-base text-[#173F2B] dark:text-slate-100">{b.category_name}</h3>
+                      <h3 className="font-display font-bold text-base text-[#173F2B] dark:text-emerald-300">{b.category_name}</h3>
                       <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
                         {monthNames[b.budget_month - 1]} {b.budget_year}
                       </p>

@@ -74,6 +74,33 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.desc': 'Every transaction verified, every paisa accounted for, and zero floating-point drift. Complete sovereignty over your money and wealth architecture.',
     'hero.explore_modules': 'Explore All 12 Modules',
     'hero.test_ledger': 'Test Verified Ledger',
+
+    // Auth
+    'auth.welcome_back': 'Welcome back.',
+    'auth.start_ledger': 'Start your ledger.',
+    'auth.signin_subtitle': 'Sign in to see where you stand this month.',
+    'auth.signup_subtitle': 'Create an account to bring your budgets and goals together.',
+    'auth.continue_google': 'Continue with Google',
+    'auth.or_signin': 'Or sign in with',
+    'auth.email_password': 'Email & Password',
+    'auth.mobile_otp': 'Mobile Number (OTP)',
+    'auth.email_label': 'Email Address',
+    'auth.password_label': 'Password',
+    'auth.name_label': 'Full Name',
+    'auth.send_otp': 'Send OTP via SMS',
+    'auth.verify_continue': 'Verify & Continue',
+    'auth.sign_in': 'Sign in',
+    'auth.create_account': 'Create account',
+    'auth.demo_account': 'Use the verified instant demo account (demo@finroq.com)',
+
+    // Common
+    'common.back_home': 'Back to home',
+    'common.sign_out': 'Sign out',
+    'common.open_module': 'Open module',
+    'common.workspace': 'Workspace',
+    'common.welcome_back': 'Welcome back',
+    'common.choose_today': 'Choose what you want to work on today.',
+    'common.financial_workspace': 'Financial Workspace',
   },
   hi: {
     // Nav & Common
@@ -137,6 +164,33 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.desc': 'पाई-पाई का सटीक हिसाब, हर लेन-देन सुरक्षित, और बिना किसी तकनीकी विसंगति के आपकी कुल संपत्ति का संरक्षण।',
     'hero.explore_modules': 'सभी 12 मॉड्यूल देखें',
     'hero.test_ledger': 'सत्यापित खाता जांचें',
+
+    // Auth
+    'auth.welcome_back': 'वापसी पर स्वागत है।',
+    'auth.start_ledger': 'अपना खाता बही शुरू करें।',
+    'auth.signin_subtitle': 'इस महीने अपनी स्थिति देखने के लिए साइन इन करें।',
+    'auth.signup_subtitle': 'अपने बजट और लक्ष्यों को एक साथ लाने के लिए खाता बनाएं।',
+    'auth.continue_google': 'Google से जारी रखें',
+    'auth.or_signin': 'या इससे साइन इन करें',
+    'auth.email_password': 'ईमेल और पासवर्ड',
+    'auth.mobile_otp': 'मोबाइल नंबर (OTP)',
+    'auth.email_label': 'ईमेल पता',
+    'auth.password_label': 'पासवर्ड',
+    'auth.name_label': 'पूरा नाम',
+    'auth.send_otp': 'SMS से OTP भेजें',
+    'auth.verify_continue': 'सत्यापित करें और जारी रखें',
+    'auth.sign_in': 'साइन इन करें',
+    'auth.create_account': 'खाता बनाएं',
+    'auth.demo_account': 'सत्यापित डेमो खाता उपयोग करें (demo@finroq.com)',
+
+    // Common
+    'common.back_home': 'होम पर वापस जाएं',
+    'common.sign_out': 'साइन आउट',
+    'common.open_module': 'मॉड्यूल खोलें',
+    'common.workspace': 'वर्कस्पेस',
+    'common.welcome_back': 'वापसी पर स्वागत है',
+    'common.choose_today': 'आज क्या करना चाहते हैं, चुनें।',
+    'common.financial_workspace': 'वित्तीय कार्यक्षेत्र',
   },
 };
 

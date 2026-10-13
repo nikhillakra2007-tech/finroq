@@ -160,23 +160,25 @@ export function TransactionList() {
             onChange={(e) => setFilters((prev) => ({ ...prev, account_id: e.target.value ? Number(e.target.value) : undefined }))}
             options={accountFilterOptions}
             placeholder="Filter by account"
-            className="w-auto min-w-[170px] font-medium text-[#173F2B] bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
+            className="w-auto min-w-[170px] font-medium text-emerald-700 dark:text-emerald-400 bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
           />
           <Select
             value={filters.transaction_type || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, transaction_type: e.target.value as TransactionType || undefined }))}
             options={typeFilterOptions}
             placeholder="Filter by type"
-            className="w-auto min-w-[140px] font-medium text-[#173F2B] bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
+            className="w-auto min-w-[140px] font-medium text-emerald-700 dark:text-emerald-400 bg-[#F7FAF7] dark:bg-[var(--surface)] border-finroq-border"
           />
-          <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] border-finroq-border hover:bg-finroq-mint/40">
-            <Upload className="h-4 w-4 mr-2 text-[#173F2B]" />
-            Import Statement
-          </Button>
-          <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Transaction
-          </Button>
+          <div className="flex items-center gap-2.5">
+            <Button variant="secondary" onClick={() => setIsImportOpen(true)} className="whitespace-nowrap font-medium text-[#173F2B] dark:text-slate-200 border-finroq-border hover:bg-finroq-mint/40">
+              <Upload className="h-4 w-4 mr-2 text-[#173F2B] dark:text-emerald-400" />
+              Import Statement
+            </Button>
+            <Button variant="primary" onClick={() => setCreateFormOpen(true)} className="whitespace-nowrap font-medium bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Transaction
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -223,13 +225,13 @@ export function TransactionList() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-finroq-border dark:border-[var(--line)] bg-[#F3F7F3] dark:bg-[#16251E]">
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Date</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Account</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Category</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Type</th>
-                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Amount</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Description</th>
-                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-[#A3E5C3]">Actions</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Date</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Account</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Category</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Type</th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Amount</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Description</th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-finroq-border dark:divide-[var(--line)]">
@@ -239,7 +241,7 @@ export function TransactionList() {
                   const isIncome = transaction.transaction_type === 'income';
                   const isTransfer = transaction.transaction_type === 'transfer';
                   return (
-                    <tr key={transaction.id} className="hover:bg-[#F4F8F4] dark:hover:bg-white/5 transition-colors bg-white dark:bg-transparent">
+                    <tr key={transaction.id} className="hover:bg-[#F4F8F4] dark:hover:bg-white/5 transition-colors bg-white dark:bg-[#141D19]">
                       <td className="p-4 text-sm font-mono font-semibold text-[#173F2B] dark:text-slate-100">
                         {formatDate(transaction.transaction_date)}
                       </td>
@@ -270,7 +272,7 @@ export function TransactionList() {
                           {isIncome ? '+' : isTransfer ? '↔ ' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
                         </span>
                       </td>
-                      <td className="p-4 text-sm font-medium text-[#374151] dark:text-slate-300 max-w-xs truncate">
+                      <td className="p-4 text-sm font-medium text-[#374151] dark:text-slate-200 max-w-xs truncate">
                         {transaction.description || '—'}
                       </td>
                       <td className="p-4 text-right">
@@ -280,7 +282,7 @@ export function TransactionList() {
                             size="sm"
                             onClick={() => handleEditClick(transaction)}
                             aria-label="Edit transaction"
-                            className="text-[#173F2B] dark:text-slate-300 hover:text-[#102F21]"
+                            className="text-[#173F2B] dark:text-emerald-400 hover:text-[#102F21]"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>

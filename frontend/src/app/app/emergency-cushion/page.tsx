@@ -64,7 +64,7 @@ export default function AppEmergencyCushionPage() {
     <ModuleShell
       title="Emergency Cushion"
       category="Build & Protect"
-      description="Calculate your survival runway dynamically connected to actual monthly spending from ledger transactions."
+      description="Connected to your actual monthly spending from the expense tracker. Your emergency fund adjusts as your spending changes."
     >
       <div className="grid md:grid-cols-12 gap-8 items-start">
         {/* Controls */}
