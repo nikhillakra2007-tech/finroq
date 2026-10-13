@@ -5,6 +5,7 @@ import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
 import { Account } from '@/lib/api-types';
 import { formatCurrency } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 import { Users, Plus, Trash2, ArrowRight, CheckCircle2, Calculator, Wallet } from 'lucide-react';
 
 interface Participant {
@@ -14,9 +15,10 @@ interface Participant {
 }
 
 export default function AppSplitterPage() {
-  const [description, setDescription] = useState('Weekend Trip & Groceries');
+  const { language, t } = useI18n();
+  const [description, setDescription] = useState(language === 'hi' ? 'सप्ताहांत यात्रा और किराना' : 'Weekend Trip & Groceries');
   const [participants, setParticipants] = useState<Participant[]>([
-    { id: '1', name: 'You', paid: 12000 },
+    { id: '1', name: language === 'hi' ? 'आप' : 'You', paid: 12000 },
     { id: '2', name: 'Sam', paid: 0 },
     { id: '3', name: 'Jordan', paid: 3000 },
   ]);
@@ -54,12 +56,16 @@ export default function AppSplitterPage() {
         amount: sharePerPerson.toFixed(2),
         currency: accounts.find((a) => a.id === selectedAccountId)?.currency || 'INR',
         transaction_type: 'expense',
-        description: `Group Split Share: ${description}`,
+        description: `${language === 'hi' ? 'ग्रुप स्प्लिट हिस्सा' : 'Group Split Share'}: ${description}`,
         transaction_date: new Date().toISOString().split('T')[0],
       });
-      setRecordSuccess(`Successfully committed ${formatCurrency(sharePerPerson)} to ledger.`);
+      setRecordSuccess(
+        language === 'hi'
+          ? `लेजर में ${formatCurrency(sharePerPerson)} सफलतापूर्वक दर्ज किया गया।`
+          : `Successfully committed ${formatCurrency(sharePerPerson)} to ledger.`
+      );
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to record transaction to ledger.');
+      alert(err.response?.data?.detail || (language === 'hi' ? 'लेजर में लेन-देन दर्ज करने में विफल।' : 'Failed to record transaction to ledger.'));
     } finally {
       setIsRecording(false);
     }
@@ -114,21 +120,29 @@ export default function AppSplitterPage() {
 
   return (
     <ModuleShell
-      title="Expense Splitter"
-      category="Track & Control"
-      description="Divide shared group expenses, compute exact equal or custom shares, and resolve multi-party debts with zero drift."
+      title={language === 'hi' ? 'खर्च विभाजक (स्प्लिट)' : 'Expense Splitter'}
+      category={language === 'hi' ? 'ट्रैक एवं नियंत्रण' : 'Track & Control'}
+      description={
+        language === 'hi'
+          ? 'साझा समूह खर्चों को विभाजित करें, सटीक समान या कस्टम हिस्से की गणना करें, और शून्य विचलन के साथ लेन-देन सुलझाएं।'
+          : 'Divide shared group expenses, compute exact equal or custom shares, and resolve multi-party debts with zero drift.'
+      }
     >
       <div className="grid lg:grid-cols-12 gap-8 items-start">
         {/* Left: Input bill & members */}
         <div className="lg:col-span-7 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-            <h3 className="font-display font-bold text-lg">Group Bill Details</h3>
-            <span className="text-xs font-mono text-[var(--muted)]">{participants.length} People</span>
+            <h3 className="font-display font-bold text-lg">
+              {language === 'hi' ? 'समूह बिल विवरण' : 'Group Bill Details'}
+            </h3>
+            <span className="text-xs font-mono text-[var(--muted)]">
+              {participants.length} {language === 'hi' ? 'सदस्य' : 'People'}
+            </span>
           </div>
 
           <div>
             <label className="text-xs font-medium text-[var(--muted)] block mb-1.5">
-              Expense Description
+              {language === 'hi' ? 'खर्च का विवरण' : 'Expense Description'}
             </label>
             <input
               type="text"
@@ -141,14 +155,14 @@ export default function AppSplitterPage() {
           {/* Members list */}
           <div className="space-y-3">
             <label className="text-xs font-medium text-[var(--muted)] block">
-              Who Paid What?
+              {language === 'hi' ? 'किसने कितना चुकाया?' : 'Who Paid What?'}
             </label>
             <div className="divide-y divide-[var(--line)] border border-[var(--line)] rounded-2xl overflow-hidden bg-[var(--bg)]/50">
               {participants.map((p) => (
                 <div key={p.id} className="p-3.5 flex items-center justify-between gap-3 text-sm">
                   <span className="font-semibold text-[var(--ink)] min-w-[80px]">{p.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-[var(--muted)]">Paid:</span>
+                    <span className="text-xs text-[var(--muted)]">{language === 'hi' ? 'चुकाया:' : 'Paid:'}</span>
                     <input
                       type="number"
                       min="0"
@@ -161,7 +175,7 @@ export default function AppSplitterPage() {
                       <button
                         onClick={() => removeParticipant(p.id)}
                         className="p-1.5 text-[var(--muted)] hover:text-[var(--bad)] rounded-lg transition-colors"
-                        title="Remove member"
+                        title={language === 'hi' ? 'सदस्य हटाएं' : 'Remove member'}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -175,7 +189,7 @@ export default function AppSplitterPage() {
             <div className="flex gap-2 pt-2">
               <input
                 type="text"
-                placeholder="New person's name"
+                placeholder={language === 'hi' ? 'नए व्यक्ति का नाम' : "New person's name"}
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addParticipant()}
@@ -186,7 +200,7 @@ export default function AppSplitterPage() {
                 onClick={addParticipant}
                 className="btn-pill sm bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] flex items-center gap-1.5"
               >
-                <Plus className="w-3.5 h-3.5" /> Add
+                <Plus className="w-3.5 h-3.5" /> {language === 'hi' ? 'जोड़ें' : 'Add'}
               </button>
             </div>
           </div>
@@ -196,18 +210,22 @@ export default function AppSplitterPage() {
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
             <h3 className="font-display font-bold text-lg pb-3 border-b border-[var(--line)]">
-              Equal Share Breakdown
+              {language === 'hi' ? 'समान हिस्सा विभाजन' : 'Equal Share Breakdown'}
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-2xl bg-[var(--soft)]/60">
-                <span className="text-xs text-[var(--muted)] block">Total Group Bill</span>
+                <span className="text-xs text-[var(--muted)] block">
+                  {language === 'hi' ? 'कुल ग्रुप बिल' : 'Total Group Bill'}
+                </span>
                 <span className="font-mono text-xl font-bold text-[var(--ink)] block mt-1">
                   {formatCurrency(totalExpense)}
                 </span>
               </div>
               <div className="p-4 rounded-2xl bg-[var(--soft)]/60">
-                <span className="text-xs text-[var(--muted)] block">Share Per Person</span>
+                <span className="text-xs text-[var(--muted)] block">
+                  {language === 'hi' ? 'प्रति व्यक्ति हिस्सा' : 'Share Per Person'}
+                </span>
                 <span className="font-mono text-xl font-bold text-[var(--accent)] block mt-1">
                   {formatCurrency(sharePerPerson)}
                 </span>
@@ -216,14 +234,18 @@ export default function AppSplitterPage() {
 
             <div className="space-y-3 pt-2">
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[var(--muted)] block">
-                Net Balances
+                {language === 'hi' ? 'शुद्ध शेष (बैलेंस)' : 'Net Balances'}
               </span>
               <div className="space-y-2 text-xs">
                 {balances.map((b) => (
                   <div key={b.id} className="flex justify-between items-center py-1 border-b border-[var(--line)]">
                     <span className="font-medium text-[var(--ink)]">{b.name}</span>
                     <span className={`font-mono font-bold ${b.net > 0 ? 'text-[var(--accent)]' : b.net < 0 ? 'text-[var(--bad)]' : 'text-[var(--muted)]'}`}>
-                      {b.net > 0 ? `Gets back ${formatCurrency(b.net)}` : b.net < 0 ? `Owes ${formatCurrency(Math.abs(b.net))}` : 'Settled'}
+                      {b.net > 0
+                        ? (language === 'hi' ? `${formatCurrency(b.net)} वापस मिलेगा` : `Gets back ${formatCurrency(b.net)}`)
+                        : b.net < 0
+                        ? (language === 'hi' ? `${formatCurrency(Math.abs(b.net))} देना है` : `Owes ${formatCurrency(Math.abs(b.net))}`)
+                        : (language === 'hi' ? 'बराबर (चुका दिया)' : 'Settled')}
                     </span>
                   </div>
                 ))}
@@ -232,11 +254,12 @@ export default function AppSplitterPage() {
 
             <div className="space-y-3 pt-4 border-t border-[var(--line)]">
               <h4 className="font-display font-bold text-sm text-[var(--ink)]">
-                Minimal Transfer Settlements
+                {language === 'hi' ? 'न्यूनतम ट्रांसफर निपटान' : 'Minimal Transfer Settlements'}
               </h4>
               {settlements.length === 0 ? (
                 <div className="p-3 rounded-xl bg-[var(--soft)] text-xs text-[var(--accent)] flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" /> All participants are settled evenly!
+                  <CheckCircle2 className="w-4 h-4" />
+                  {language === 'hi' ? 'सभी प्रतिभागियों का हिसाब बराबर है!' : 'All participants are settled evenly!'}
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -262,7 +285,7 @@ export default function AppSplitterPage() {
             {/* Cross-Module Integration: Commit Share to Authoritative Ledger */}
             <div className="pt-5 border-t border-[var(--line)] space-y-3">
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[var(--muted)] block">
-                Record Share into Finroq Ledger
+                {language === 'hi' ? 'फिनरॉक लेजर में हिस्सा दर्ज करें' : 'Record Share into Finroq Ledger'}
               </span>
 
               {recordSuccess ? (
@@ -274,7 +297,9 @@ export default function AppSplitterPage() {
                 <div className="space-y-3">
                   {accounts.length > 0 && (
                     <div>
-                      <label className="text-[11px] text-[var(--muted)] block mb-1">Deduct From Account</label>
+                      <label className="text-[11px] text-[var(--muted)] block mb-1">
+                        {language === 'hi' ? 'खाते से कटौती करें' : 'Deduct From Account'}
+                      </label>
                       <select
                         value={selectedAccountId}
                         onChange={(e) => setSelectedAccountId(Number(e.target.value))}
@@ -296,7 +321,9 @@ export default function AppSplitterPage() {
                     className="w-full py-2.5 px-4 rounded-xl bg-[var(--ink)] text-[var(--bg)] hover:bg-[var(--accent)] disabled:opacity-50 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
                   >
                     <Wallet className="w-3.5 h-3.5" />
-                    {isRecording ? 'Recording...' : `Record Your Share (${formatCurrency(sharePerPerson)})`}
+                    {isRecording
+                      ? (language === 'hi' ? 'दर्ज हो रहा है...' : 'Recording...')
+                      : (language === 'hi' ? `अपना हिस्सा दर्ज करें (${formatCurrency(sharePerPerson)})` : `Record Your Share (${formatCurrency(sharePerPerson)})`)}
                   </button>
                 </div>
               )}
@@ -307,3 +334,4 @@ export default function AppSplitterPage() {
     </ModuleShell>
   );
 }
+

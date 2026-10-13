@@ -204,32 +204,41 @@ export function TransactionList() {
           </div>
           <div>
             <p className="font-bold text-[#173F2B] dark:text-slate-100">
-              Financial Institution Linking (Open Banking / Account Aggregator)
+              {language === 'hi'
+                ? 'वित्तीय संस्थान लिंकिंग (ओपन बैंकिंग / अकाउंट एग्रीगेटर)'
+                : 'Financial Institution Linking (Open Banking / Account Aggregator)'}
             </p>
             <p className="text-[#374A3E] dark:text-slate-400 font-medium">
-              Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.
+              {language === 'hi'
+                ? 'स्थिति: संस्थागत एग्रीगेटर विन्यास हेतु तैयार। नॉन-क्रेडेंशियल सहमति प्रोटोकॉल पर आधारित।'
+                : 'Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.'}
             </p>
           </div>
         </div>
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-[#BAC7BE] dark:border-[#2A3D33] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
-          <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" /> Architecture Ready
+          <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" />
+          {language === 'hi' ? 'आर्किटेक्चर सक्रिय' : 'Architecture Ready'}
         </span>
       </div>
 
       <Card className="overflow-hidden bg-white dark:bg-[#16251E] border border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs">
         {transactions.length === 0 ? (
           <EmptyState
-            title="No transactions found"
-            description="Add your first transaction, import a statement, or adjust your filters."
+            title={language === 'hi' ? 'कोई लेन-देन नहीं मिला' : 'No transactions found'}
+            description={
+              language === 'hi'
+                ? 'अपना पहला लेन-देन जोड़ें, बैंक स्टेटमेंट आयात करें, या अपने फ़िल्टर बदलें।'
+                : 'Add your first transaction, import a statement, or adjust your filters.'
+            }
             action={
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
                   <Upload className="h-4 w-4 mr-2" />
-                  Import Statement
+                  {t('action.import_statement', 'Import Statement')}
                 </Button>
                 <Button onClick={() => setCreateFormOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Transaction
+                  {t('action.add_transaction', 'Add Transaction')}
                 </Button>
               </div>
             }
@@ -239,13 +248,27 @@ export function TransactionList() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-[#DCE4DC] dark:border-[#2A3D33] bg-[#F3F7F3] dark:bg-[#16251E]">
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Date</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Account</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Category</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Type</th>
-                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Amount</th>
-                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Description</th>
-                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">Actions</th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'दिनांक' : 'Date'}
+                  </th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'खाता' : 'Account'}
+                  </th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'श्रेणी' : 'Category'}
+                  </th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'प्रकार' : 'Type'}
+                  </th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'राशि' : 'Amount'}
+                  </th>
+                  <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'विवरण' : 'Description'}
+                  </th>
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                    {language === 'hi' ? 'क्रियाएँ' : 'Actions'}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DCE4DC] dark:divide-[#2A3D33]">
@@ -260,17 +283,21 @@ export function TransactionList() {
                         {formatDate(transaction.transaction_date)}
                       </td>
                       <td className="p-4 text-sm font-bold text-[#111827] dark:text-slate-100">
-                        {account?.name || 'Unknown'}
+                        {account?.name || (language === 'hi' ? 'अज्ञात' : 'Unknown')}
                       </td>
                       <td className="p-4 text-sm font-medium text-[#2A4736] dark:text-slate-300">
-                        {category?.name || (isTransfer ? 'Account Transfer' : '—')}
+                        {category?.name || (isTransfer ? (language === 'hi' ? 'खाता ट्रांसफर' : 'Account Transfer') : '—')}
                       </td>
                       <td className="p-4">
                         <Badge
                           variant={isIncome ? 'success' : isTransfer ? 'info' : 'danger'}
                           size="sm"
                         >
-                          {isIncome ? 'Income' : isTransfer ? 'Transfer' : 'Expense'}
+                          {isIncome
+                            ? (language === 'hi' ? 'आय' : 'Income')
+                            : isTransfer
+                            ? (language === 'hi' ? 'ट्रांसफर' : 'Transfer')
+                            : (language === 'hi' ? 'खर्च' : 'Expense')}
                         </Badge>
                       </td>
                       <td className="p-4 text-right font-mono text-sm font-bold">
@@ -295,7 +322,7 @@ export function TransactionList() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditClick(transaction)}
-                            aria-label="Edit transaction"
+                            aria-label={language === 'hi' ? 'लेन-देन संपादित करें' : 'Edit transaction'}
                             className="text-[#173F2B] dark:text-emerald-400 hover:text-[#102F21]"
                           >
                             <Edit className="h-4 w-4" />
@@ -304,7 +331,7 @@ export function TransactionList() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteTransaction(transaction)}
-                            aria-label="Delete transaction"
+                            aria-label={language === 'hi' ? 'लेन-देन हटाएं' : 'Delete transaction'}
                             className="text-danger-500 hover:text-danger-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -322,7 +349,9 @@ export function TransactionList() {
         {pagination.total > pagination.page_size && (
           <div className="flex items-center justify-between p-4 border-t border-[#DCE4DC] dark:border-[#2A3D33]">
             <p className="text-sm text-finroq-muted dark:text-slate-400">
-              Page {pagination.page} of {Math.ceil(pagination.total / pagination.page_size)}
+              {language === 'hi'
+                ? `पृष्ठ ${pagination.page} / ${Math.ceil(pagination.total / pagination.page_size)}`
+                : `Page ${pagination.page} of ${Math.ceil(pagination.total / pagination.page_size)}`}
             </p>
             <div className="flex gap-2">
               <Button

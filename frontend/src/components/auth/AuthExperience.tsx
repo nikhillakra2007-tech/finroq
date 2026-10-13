@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { useCurtain } from '@/components/layout/CurtainTransition';
-import { Eye, EyeOff, Phone, Lock, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, Phone, Lock, ShieldCheck, CheckCircle2, Globe } from 'lucide-react';
 
 interface AuthExperienceProps {
   initialMode?: 'in' | 'up';
@@ -16,6 +17,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
   const router = useRouter();
   const { login, register } = useAuth();
   const { navigateWithCurtain } = useCurtain();
+  const { language, setLanguage, t } = useI18n();
 
   const [mode, setMode] = useState<'in' | 'up'>(initialMode);
   const [authMethod, setAuthMethod] = useState<'email' | 'mobile'>('email');
@@ -153,49 +155,62 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
 
         <div className="space-y-6 max-w-sm">
           <h2 className="font-display text-4xl xl:text-5xl font-bold leading-tight tracking-tight">
-            Back to a ledger that adds up.
+            {language === 'hi' ? 'एक ऐसा खाता बही जो हमेशा सही हिसाब दे।' : 'Back to a ledger that adds up.'}
           </h2>
           <p className="text-white/80 text-sm leading-relaxed">
-            Every transaction categorized, every paisa accounted for, and zero floating-point drift across your entire net worth.
+            {language === 'hi'
+              ? 'हर लेन-देन सटीक श्रेणी में, पाई-पाई का हिसाब और आपकी पूरी संपत्ति में शून्य दशमलव अंतर।'
+              : 'Every transaction categorized, every paisa accounted for, and zero floating-point drift across your entire net worth.'}
           </p>
         </div>
 
         <ul className="space-y-4 border-t border-white/20 pt-8 font-mono text-sm text-white/90">
           <li className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            Argon2id cryptographic password hashing
+            {language === 'hi' ? 'Argon2id क्रिप्टोग्राफिक पासवर्ड सुरक्षा' : 'Argon2id cryptographic password hashing'}
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            Signed JWT tenant sessions
+            {language === 'hi' ? 'डिजिटल हस्ताक्षरित JWT सत्र सुरक्षा' : 'Signed JWT tenant sessions'}
           </li>
           <li className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            Secure Indian Mobile (+91) OTP Verification
+            {language === 'hi' ? 'सुरक्षित भारतीय मोबाइल (+91) OTP सत्यापन' : 'Secure Indian Mobile (+91) OTP Verification'}
           </li>
         </ul>
       </aside>
 
       {/* Auth Main Form Area */}
       <main className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-12 lg:p-16">
-        <div>
+        <div className="flex items-center justify-between">
           <button
             onClick={() => navigateWithCurtain('/', 'finroq', 'back')}
-            className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
           >
-            ← Back to website
+            ← {language === 'hi' ? 'वेबसाइट पर वापस जाएं' : 'Back to website'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+            className="px-2.5 py-1 rounded-full border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-200 hover:bg-[var(--soft)] flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Switch Language / भाषा बदलें"
+          >
+            <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
+            <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
           </button>
         </div>
 
-          <div className="w-full max-w-md mx-auto my-auto py-8">
+        <div className="w-full max-w-md mx-auto my-auto py-8">
           <div className="space-y-3">
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#173F2B] dark:text-slate-100">
-              {mode === 'in' ? 'Welcome back.' : 'Start your ledger.'}
+              {mode === 'in'
+                ? language === 'hi' ? 'वापसी पर स्वागत है।' : 'Welcome back.'
+                : language === 'hi' ? 'अपना खाता बही शुरू करें।' : 'Start your ledger.'}
             </h1>
             <p className="text-base font-medium text-[#4D5D51] dark:text-slate-400">
               {mode === 'in'
-                ? 'Sign in to see where you stand this month.'
-                : 'Create an account to bring your budgets and goals together.'}
+                ? language === 'hi' ? 'इस महीने अपनी वित्तीय स्थिति देखने के लिए साइन इन करें।' : 'Sign in to see where you stand this month.'
+                : language === 'hi' ? 'अपने बजट और लक्ष्यों को एक साथ लाने के लिए खाता बनाएं।' : 'Create an account to bring your budgets and goals together.'}
             </p>
           </div>
 
@@ -205,7 +220,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-2xl bg-white dark:bg-[#1A2C22] border-2 border-[#DCE4DC] dark:border-[var(--line)] shadow-xs hover:border-[#173F2B] dark:hover:border-emerald-500 transition-all text-base font-semibold text-[#173F2B] dark:text-slate-100"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-2xl bg-white dark:bg-[#1A2C22] border-2 border-[#DCE4DC] dark:border-[var(--line)] shadow-xs hover:border-[#173F2B] dark:hover:border-emerald-500 transition-all text-base font-semibold text-[#173F2B] dark:text-slate-100 cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -225,7 +240,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Continue with Google</span>
+              <span>{language === 'hi' ? 'Google से जारी रखें' : 'Continue with Google'}</span>
             </button>
           </div>
 
@@ -234,7 +249,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
               <div className="w-full border-t border-[#DCE4DC] dark:border-[var(--line)]" />
             </div>
             <span className="relative px-3 bg-[var(--bg)] text-xs font-mono font-medium text-[#4D5D51] dark:text-slate-400 uppercase tracking-wider">
-              Or sign in with
+              {language === 'hi' ? 'या इससे साइन इन करें' : 'Or sign in with'}
             </span>
           </div>
 
@@ -246,14 +261,14 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 setAuthMethod('email');
                 setErrorMessage(null);
               }}
-              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold ${
+              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold cursor-pointer ${
                 authMethod === 'email'
                   ? 'bg-[#173F2B] text-white shadow-xs'
                   : 'text-[#4D5D51] hover:text-[#173F2B]'
               }`}
             >
               <Lock className="w-4 h-4" />
-              <span>Email & Password</span>
+              <span>{language === 'hi' ? 'ईमेल और पासवर्ड' : 'Email & Password'}</span>
             </button>
             <button
               type="button"
@@ -261,14 +276,14 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 setAuthMethod('mobile');
                 setErrorMessage(null);
               }}
-              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold ${
+              className={`py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all text-sm font-semibold cursor-pointer ${
                 authMethod === 'mobile'
                   ? 'bg-[#173F2B] text-white shadow-xs'
                   : 'text-[#4D5D51] hover:text-[#173F2B]'
               }`}
             >
               <Phone className="w-4 h-4" />
-              <span>Mobile Number (OTP)</span>
+              <span>{language === 'hi' ? 'मोबाइल नंबर (OTP)' : 'Mobile Number (OTP)'}</span>
             </button>
           </div>
 
@@ -279,7 +294,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 <form onSubmit={handleSendOtp} className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-[#173F2B] dark:text-slate-200 mb-1.5" htmlFor="mobile">
-                      Indian Mobile Number
+                      {language === 'hi' ? 'भारतीय मोबाइल नंबर' : 'Indian Mobile Number'}
                     </label>
                     <div className="flex rounded-xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] overflow-hidden focus-within:ring-2 focus-within:ring-[#173F2B]">
                       <span className="px-3.5 py-3 bg-[#EEF3EE] dark:bg-[#1A2A20] text-sm font-mono font-bold text-[#173F2B] dark:text-slate-200 border-r border-[#DCE4DC] dark:border-[var(--line)] flex items-center gap-1.5">
@@ -297,7 +312,9 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                       />
                     </div>
                     <p className="mt-1 text-[11px] text-[#4D5D51] dark:text-slate-400">
-                      Standard 10-digit mobile number. We will send an SMS verification OTP.
+                      {language === 'hi'
+                        ? '10-अंकों का मानक मोबाइल नंबर। हम SMS सत्यापन OTP भेजेंगे।'
+                        : 'Standard 10-digit mobile number. We will send an SMS verification OTP.'}
                     </p>
                   </div>
 
@@ -310,9 +327,11 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                   <button
                     type="submit"
                     disabled={isLoading || mobileNumber.length !== 10}
-                    className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold disabled:opacity-50"
+                    className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold disabled:opacity-50 cursor-pointer"
                   >
-                    {isLoading ? 'Sending SMS OTP…' : 'Send OTP via SMS'}
+                    {isLoading
+                      ? (language === 'hi' ? 'SMS OTP भेजा जा रहा है…' : 'Sending SMS OTP…')
+                      : (language === 'hi' ? 'SMS द्वारा OTP भेजें' : 'Send OTP via SMS')}
                   </button>
                 </form>
               ) : (
@@ -320,14 +339,14 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label className="block text-xs font-semibold text-[#173F2B] dark:text-slate-200" htmlFor="otp">
-                        Enter 6-Digit OTP
+                        {language === 'hi' ? '6-अंकों का OTP दर्ज करें' : 'Enter 6-Digit OTP'}
                       </label>
                       <button
                         type="button"
                         onClick={() => setOtpSent(false)}
-                        className="text-xs text-[#173F2B] font-semibold underline"
+                        className="text-xs text-[#173F2B] dark:text-emerald-400 font-semibold underline cursor-pointer"
                       >
-                        Change number
+                        {language === 'hi' ? 'नंबर बदलें' : 'Change number'}
                       </button>
                     </div>
                     <input
@@ -338,7 +357,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="123456"
-                      className="w-full px-4 py-3 rounded-xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] text-center font-mono text-xl tracking-widest font-bold text-[#173F2B] focus:outline-none focus:ring-2 focus:ring-[#173F2B]"
+                      className="w-full px-4 py-3 rounded-xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] text-center font-mono text-xl tracking-widest font-bold text-[#173F2B] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#173F2B]"
                     />
                   </div>
 
@@ -357,9 +376,11 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                   <button
                     type="submit"
                     disabled={isLoading || otpCode.length !== 6}
-                    className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold"
+                    className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold cursor-pointer"
                   >
-                    {isLoading ? 'Verifying OTP…' : 'Verify & Continue'}
+                    {isLoading
+                      ? (language === 'hi' ? 'OTP सत्यापित हो रहा है…' : 'Verifying OTP…')
+                      : (language === 'hi' ? 'सत्यापित करें और आगे बढ़ें' : 'Verify & Continue')}
                   </button>
                 </form>
               )}
@@ -367,20 +388,20 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
           ) : (
             <>
               {/* Segmented Control for Sign in / Create account */}
-              <div               className="p-1 rounded-full bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] grid grid-cols-2 text-sm font-medium">
+              <div className="p-1 rounded-full bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] grid grid-cols-2 text-sm font-medium">
                 <button
                   type="button"
                   onClick={() => {
                     setMode('in');
                     setErrorMessage(null);
                   }}
-                  className={`py-2.5 rounded-full transition-all ${
+                  className={`py-2.5 rounded-full transition-all cursor-pointer ${
                     mode === 'in'
                       ? 'bg-[#173F2B] text-white shadow-xs font-semibold'
                       : 'text-[#4D5D51] hover:text-[#173F2B]'
                   }`}
                 >
-                  Sign in
+                  {language === 'hi' ? 'साइन इन' : 'Sign in'}
                 </button>
                 <button
                   type="button"
@@ -388,13 +409,13 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                     setMode('up');
                     setErrorMessage(null);
                   }}
-                  className={`py-2.5 rounded-full transition-all ${
+                  className={`py-2.5 rounded-full transition-all cursor-pointer ${
                     mode === 'up'
                       ? 'bg-[#173F2B] text-white shadow-xs font-semibold'
                       : 'text-[#4D5D51] hover:text-[#173F2B]'
                   }`}
                 >
-                  Create account
+                  {language === 'hi' ? 'खाता बनाएं' : 'Create account'}
                 </button>
               </div>
 
@@ -403,7 +424,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 {mode === 'up' && (
                   <div>
                     <label className="block text-xs font-semibold text-[#173F2B] dark:text-slate-200 mb-1.5" htmlFor="name">
-                      Full Name
+                      {language === 'hi' ? 'पूरा नाम' : 'Full Name'}
                     </label>
                     <input
                       id="name"
@@ -411,7 +432,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                       required={mode === 'up'}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Nikhil Lakra"
+                      placeholder={language === 'hi' ? 'उदा. निखिल लकड़ा' : 'e.g. Nikhil Lakra'}
                       className="w-full px-4 py-3 rounded-xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[#173F2B] text-sm text-[#173F2B] dark:text-slate-100 transition-all font-medium"
                     />
                   </div>
@@ -419,7 +440,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
 
                 <div>
                   <label className="block text-xs font-semibold text-[#173F2B] dark:text-slate-200 mb-1.5" htmlFor="email">
-                    Email Address
+                    {language === 'hi' ? 'ईमेल पता' : 'Email Address'}
                   </label>
                   <input
                     id="email"
@@ -434,7 +455,7 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
 
                 <div>
                   <label className="block text-xs font-semibold text-[#173F2B] dark:text-slate-200 mb-1.5" htmlFor="password">
-                    Password
+                    {language === 'hi' ? 'पासवर्ड' : 'Password'}
                   </label>
                   <div className="relative">
                     <input
@@ -443,13 +464,13 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="At least 8 characters"
+                      placeholder={language === 'hi' ? 'कम से कम 8 अक्षर' : 'At least 8 characters'}
                       className="w-full px-4 py-3 pr-11 rounded-xl bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] focus:outline-none focus:ring-2 focus:ring-[#173F2B] text-sm text-[#173F2B] dark:text-slate-100 transition-all font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] p-1 transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] p-1 transition-colors cursor-pointer"
                       aria-label="Toggle password visibility"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -466,9 +487,13 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold"
+                  className="btn-pill w-full mt-2 bg-[#173F2B] text-white hover:bg-[#102F21] font-semibold cursor-pointer"
                 >
-                  {isLoading ? 'One moment…' : mode === 'in' ? 'Sign in' : 'Create account'}
+                  {isLoading
+                    ? (language === 'hi' ? 'कृपया प्रतीक्षा करें…' : 'One moment…')
+                    : mode === 'in'
+                    ? (language === 'hi' ? 'कार्यक्षेत्र में साइन इन करें' : 'Sign in to workspace')
+                    : (language === 'hi' ? 'खाता बनाएं और जारी रखें' : 'Create account & continue')}
                 </button>
               </form>
             </>
@@ -480,19 +505,23 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
               type="button"
               onClick={handleDemoSignIn}
               disabled={isLoading}
-              className="text-sm font-mono font-semibold text-[#173F2B] dark:text-emerald-400 hover:underline transition-colors"
+              className="text-sm font-mono font-semibold text-[#173F2B] dark:text-emerald-400 hover:underline transition-colors cursor-pointer"
             >
-              Use the verified instant demo account (demo@finroq.com)
+              {language === 'hi'
+                ? 'सत्यापित त्वरित डेमो खाते का उपयोग करें (demo@finroq.com)'
+                : 'Use the verified instant demo account (demo@finroq.com)'}
             </button>
           </div>
 
           <p className="mt-8 text-center text-xs font-mono text-[#4D5D51] dark:text-slate-400">
-            Exact Decimal Ledger · Argon2id Security · Private by Design
+            {language === 'hi'
+              ? 'सटीक दशमलव बहीखाता · Argon2id सुरक्षा · डिज़ाइन द्वारा सुरक्षित'
+              : 'Exact Decimal Ledger · Argon2id Security · Private by Design'}
           </p>
         </div>
 
         <div className="text-center text-xs text-[#4D5D51] dark:text-slate-400 font-mono">
-          © {new Date().getFullYear()} FINROQ Financial Architecture
+          © {new Date().getFullYear()} FINROQ {language === 'hi' ? 'वित्तीय वास्तुकला' : 'Financial Architecture'}
         </div>
       </main>
     </div>

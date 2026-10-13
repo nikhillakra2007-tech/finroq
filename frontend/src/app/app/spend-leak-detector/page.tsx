@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
 import { formatCurrency } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 import type {
   SpendLeakInsight,
   DataReadinessReport,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react';
 
 export default function AppSpendLeakDetectorPage() {
+  const { language } = useI18n();
   const [analysisData, setAnalysisData] = useState<SpendLeakAnalysisResponse | null>(null);
   const [cancelledIds, setCancelledIds] = useState<Set<string>>(new Set());
   const [expandedInsightId, setExpandedInsightId] = useState<string | null>(null);
@@ -94,23 +96,23 @@ export default function AppSpendLeakDetectorPage() {
     switch (tier) {
       case 'sufficiently_supported':
         return {
-          label: 'Sufficient Evidence (90+ Days)',
+          label: language === 'hi' ? 'पर्याप्त साक्ष्य (90+ दिन)' : 'Sufficient Evidence (90+ Days)',
           bg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
         };
       case 'provisional':
         return {
-          label: 'Provisional Trends (30–89 Days)',
+          label: language === 'hi' ? 'अनंतिम रुझान (30–89 दिन)' : 'Provisional Trends (30–89 Days)',
           bg: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800',
         };
       case 'preliminary':
         return {
-          label: 'Preliminary Observations (7–29 Days)',
+          label: language === 'hi' ? 'प्रारंभिक अवलोकन (7–29 दिन)' : 'Preliminary Observations (7–29 Days)',
           bg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800',
         };
       case 'limited_evidence':
       default:
         return {
-          label: 'Limited Evidence (< 7 Days)',
+          label: language === 'hi' ? 'सीमित साक्ष्य (< 7 दिन)' : 'Limited Evidence (< 7 Days)',
           bg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800',
         };
     }
@@ -120,23 +122,23 @@ export default function AppSpendLeakDetectorPage() {
     switch (status) {
       case 'sufficiently_supported':
         return {
-          label: 'Sufficient Evidence',
+          label: language === 'hi' ? 'पर्याप्त साक्ष्य' : 'Sufficient Evidence',
           className: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 border-emerald-300',
         };
       case 'provisional':
         return {
-          label: 'Provisional Confidence',
+          label: language === 'hi' ? 'अनंतिम विश्वास' : 'Provisional Confidence',
           className: 'bg-teal-100 dark:bg-teal-900/50 text-teal-800 dark:text-teal-200 border-teal-300',
         };
       case 'preliminary':
         return {
-          label: 'Preliminary Observation',
+          label: language === 'hi' ? 'प्रारंभिक अवलोकन' : 'Preliminary Observation',
           className: 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border-amber-300',
         };
       case 'insufficient_evidence':
       default:
         return {
-          label: 'Insufficient Evidence',
+          label: language === 'hi' ? 'अपर्याप्त साक्ष्य' : 'Insufficient Evidence',
           className: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300',
         };
     }
@@ -146,9 +148,13 @@ export default function AppSpendLeakDetectorPage() {
 
   return (
     <ModuleShell
-      title="Spend Leak Detector"
-      category="Decide Before Spending"
-      description="Evidence-driven financial health audit scanning recurring plans, dormant subscriptions, and cost leaks against verified historical baselines."
+      title={language === 'hi' ? 'अवांछित खर्च डिटेक्टर' : 'Spend Leak Detector'}
+      category={language === 'hi' ? 'खर्च से पहले निर्णय' : 'Decide Before Spending'}
+      description={
+        language === 'hi'
+          ? 'प्रमाण-आधारित वित्तीय स्वास्थ्य ऑडिट: आवर्ती योजनाओं, निष्क्रिय सब्सक्रिप्शन और व्यय लीकेज की ऐतिहासिक आधार रेखाओं के आधार पर जांच।'
+          : 'Evidence-driven financial health audit scanning recurring plans, dormant subscriptions, and cost leaks against verified historical baselines.'
+      }
     >
       {isLoading ? (
         <div className="space-y-8">
@@ -168,7 +174,7 @@ export default function AppSpendLeakDetectorPage() {
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100 flex items-center gap-2">
                     <Database className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-                    Data Readiness & History Coverage
+                    {language === 'hi' ? 'डेटा तत्परता और इतिहास कवरेज' : 'Data Readiness & History Coverage'}
                   </h3>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border ${tierBadge.bg}`}
@@ -187,14 +193,14 @@ export default function AppSpendLeakDetectorPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#F0F5EE] hover:bg-[#E0EBE0] dark:bg-[#1A2C22] dark:hover:bg-[#253D30] text-[#173F2B] dark:text-emerald-300 border border-[#DCE4DC] dark:border-[#2A3D33] transition-colors shadow-xs"
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  Import Statement CSV
+                  {language === 'hi' ? 'स्टेटमेंट आयात करें' : 'Import Statement CSV'}
                 </Link>
                 <Link
                   href="/transactions"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#173F2B] hover:bg-[#123322] text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 transition-colors shadow-xs"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  Add Transactions
+                  {language === 'hi' ? 'लेन-देन जोड़ें' : 'Add Transactions'}
                 </Link>
               </div>
             </div>
@@ -204,58 +210,58 @@ export default function AppSpendLeakDetectorPage() {
               <div className="p-4 rounded-2xl bg-[#F7FAF7] dark:bg-[#15231B] border border-[#E3ECE3] dark:border-[#22352A] space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#4D5D51] dark:text-slate-400">
                   <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-                  Available History
+                  {language === 'hi' ? 'उपलब्ध इतिहास' : 'Available History'}
                 </div>
                 <div className="font-mono text-2xl font-bold text-[#173F2B] dark:text-slate-100">
                   {readiness?.available_history_days ?? 0}{' '}
-                  <span className="text-xs font-normal">days</span>
+                  <span className="text-xs font-normal">{language === 'hi' ? 'दिन' : 'days'}</span>
                 </div>
                 <p className="text-[11px] text-[#5E6B65] dark:text-slate-400">
-                  Calendar span of eligible records
+                  {language === 'hi' ? 'पात्र रिकॉर्ड्स की कैलेंडर अवधि' : 'Calendar span of eligible records'}
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#F7FAF7] dark:bg-[#15231B] border border-[#E3ECE3] dark:border-[#22352A] space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#4D5D51] dark:text-slate-400">
                   <Activity className="w-3.5 h-3.5 text-teal-600" />
-                  Observed Activity
+                  {language === 'hi' ? 'अवलोकित गतिविधि' : 'Observed Activity'}
                 </div>
                 <div className="font-mono text-2xl font-bold text-[#173F2B] dark:text-slate-100">
                   {readiness?.observed_active_days ?? 0}{' '}
-                  <span className="text-xs font-normal">active days</span>
+                  <span className="text-xs font-normal">{language === 'hi' ? 'सक्रिय दिन' : 'active days'}</span>
                 </div>
                 <p className="text-[11px] text-[#5E6B65] dark:text-slate-400">
-                  Distinct days with completed txns
+                  {language === 'hi' ? 'पूर्ण लेन-देन वाले विशिष्ट दिन' : 'Distinct days with completed txns'}
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#F7FAF7] dark:bg-[#15231B] border border-[#E3ECE3] dark:border-[#22352A] space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#4D5D51] dark:text-slate-400">
                   <Layers className="w-3.5 h-3.5 text-blue-600" />
-                  Verified Coverage
+                  {language === 'hi' ? 'सत्यापित कवरेज' : 'Verified Coverage'}
                 </div>
                 <div className="font-mono text-sm font-bold text-[#173F2B] dark:text-slate-100 truncate">
                   {readiness?.verified_coverage_status === 'verified_statement'
-                    ? 'Statement Import'
-                    : 'Self-Reported'}
+                    ? (language === 'hi' ? 'स्टेटमेंट आयात' : 'Statement Import')
+                    : (language === 'hi' ? 'स्व-रिपोर्टेड' : 'Self-Reported')}
                 </div>
                 <p className="text-[11px] text-[#5E6B65] dark:text-slate-400 truncate">
-                  {readiness?.imported_transactions_count ?? 0} imported • {readiness?.manual_transactions_count ?? 0} manual
+                  {readiness?.imported_transactions_count ?? 0} {language === 'hi' ? 'आयातित' : 'imported'} • {readiness?.manual_transactions_count ?? 0} {language === 'hi' ? 'मैन्युअल' : 'manual'}
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#F7FAF7] dark:bg-[#15231B] border border-[#E3ECE3] dark:border-[#22352A] space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#4D5D51] dark:text-slate-400">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Data Freshness
+                  {language === 'hi' ? 'डेटा ताज़गी' : 'Data Freshness'}
                 </div>
                 <div className="font-mono text-2xl font-bold text-[#173F2B] dark:text-slate-100">
                   {readiness?.data_freshness_days != null
-                    ? `${readiness.data_freshness_days}d ago`
+                    ? `${readiness.data_freshness_days}${language === 'hi' ? ' दिन पूर्व' : 'd ago'}`
                     : 'N/A'}
                 </div>
                 <p className="text-[11px] text-[#5E6B65] dark:text-slate-400">
-                  {readiness?.accounts_included.length ?? 0} active account(s) analyzed
+                  {readiness?.accounts_included.length ?? 0} {language === 'hi' ? 'सक्रिय खाते विश्लेषित' : 'active account(s) analyzed'}
                 </p>
               </div>
             </div>
@@ -265,7 +271,10 @@ export default function AppSpendLeakDetectorPage() {
               <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 flex items-center gap-3 text-xs text-amber-900 dark:text-amber-200 font-medium">
                 <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <span>
-                  <strong>Demo Seed Dataset Active:</strong> You are viewing simulated sample records. Real user leak detection requires importing your personal statement CSV.
+                  <strong>{language === 'hi' ? 'डेमो सीड डेटासेट सक्रिय:' : 'Demo Seed Dataset Active:'}</strong>{' '}
+                  {language === 'hi'
+                    ? 'आप नमूना रिकॉर्ड्स देख रहे हैं। वास्तविक लीकेज जांच के लिए अपना बैंक स्टेटमेंट CSV आयात करें।'
+                    : 'You are viewing simulated sample records. Real user leak detection requires importing your personal statement CSV.'}
                 </span>
               </div>
             )}
@@ -275,7 +284,7 @@ export default function AppSpendLeakDetectorPage() {
               <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 space-y-1 text-xs text-rose-900 dark:text-rose-200">
                 <div className="font-bold flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                  Detectable Coverage Gaps Observed
+                  {language === 'hi' ? 'कवरेज में अंतराल पाया गया' : 'Detectable Coverage Gaps Observed'}
                 </div>
                 {readiness.missing_periods.map((gap, idx) => (
                   <p key={idx} className="pl-5 text-[11px] text-rose-800 dark:text-rose-300">
@@ -290,38 +299,42 @@ export default function AppSpendLeakDetectorPage() {
           <div className="grid sm:grid-cols-3 gap-5">
             <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 space-y-2 shadow-xs">
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">
-                Recurring Mandates Drag
+                {language === 'hi' ? 'आवर्ती अनिवार्य खर्च' : 'Recurring Mandates Drag'}
               </span>
               <div className="font-mono text-3xl font-bold text-[#B43838] dark:text-rose-400">
                 {formatCurrency(totalMonthlyDrain)}
               </div>
               <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-                Across {activeInsights.length} evaluated pattern{activeInsights.length !== 1 ? 's' : ''}
+                {language === 'hi'
+                  ? `${activeInsights.length} मूल्यांकित पैटर्न में`
+                  : `Across ${activeInsights.length} evaluated pattern${activeInsights.length !== 1 ? 's' : ''}`}
               </p>
             </div>
 
             <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 space-y-2 shadow-xs">
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-400">
-                Annual Projected Drain
+                {language === 'hi' ? 'वार्षिक अनुमानित रिसाव' : 'Annual Projected Drain'}
               </span>
               <div className="font-mono text-3xl font-bold text-[#173F2B] dark:text-slate-100">
                 {formatCurrency(totalAnnualDrain)}
               </div>
               <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-                Uncommitted cost if unmonitored for 12 months
+                {language === 'hi' ? '12 महीनों का अनियंत्रित खर्च' : 'Uncommitted cost if unmonitored for 12 months'}
               </p>
             </div>
 
             <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-emerald-300 dark:border-emerald-800/80 rounded-3xl p-6 space-y-2 shadow-xs bg-emerald-50/40 dark:bg-emerald-950/20">
               <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#157A42] dark:text-emerald-400">
-                Recovered Cash Flow
+                {language === 'hi' ? 'पुनर्प्राप्त कैश फ्लो' : 'Recovered Cash Flow'}
               </span>
               <div className="font-mono text-3xl font-bold text-[#157A42] dark:text-emerald-400">
                 +{formatCurrency(monthlySavingsRecovered)}
-                <span className="text-xs font-normal">/mo</span>
+                <span className="text-xs font-normal">{language === 'hi' ? '/माह' : '/mo'}</span>
               </div>
               <p className="text-xs font-medium text-[#157A42] dark:text-emerald-300">
-                {cancelledInsights.length} leak{cancelledInsights.length !== 1 ? 's' : ''} marked for cancellation
+                {language === 'hi'
+                  ? `${cancelledInsights.length} रिसाव रद्द करने के लिए चिह्नित`
+                  : `${cancelledInsights.length} leak${cancelledInsights.length !== 1 ? 's' : ''} marked for cancellation`}
               </p>
             </div>
           </div>
@@ -332,15 +345,17 @@ export default function AppSpendLeakDetectorPage() {
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-sm font-bold text-[#173F2B] dark:text-emerald-300">
                   <Sparkles className="w-4 h-4 text-emerald-600" />
-                  <span>Wealth Accelerator: Cancelled Outflows Compounding</span>
+                  <span>{language === 'hi' ? 'धन त्वरक: रद्द खर्चों की चक्रवृद्धि बढ़त' : 'Wealth Accelerator: Cancelled Outflows Compounding'}</span>
                 </div>
                 <p className="text-xs text-[#2A4736] dark:text-slate-300 max-w-xl">
-                  By investing your intercepted <strong>{formatCurrency(monthlySavingsRecovered)}/month</strong> into a disciplined 12% Nifty Index SIP instead of leaking it:
+                  {language === 'hi'
+                    ? `बचाए गए ${formatCurrency(monthlySavingsRecovered)}/माह को 12% इंडेक्स SIP में निवेश करने पर:`
+                    : `By investing your intercepted ${formatCurrency(monthlySavingsRecovered)}/month into a disciplined 12% Nifty Index SIP instead of leaking it:`}
                 </p>
               </div>
               <div className="text-left md:text-right shrink-0">
                 <span className="text-xs font-mono uppercase tracking-wider font-bold text-[#157A42] block">
-                  5-Year Projected Corpus
+                  {language === 'hi' ? '5 वर्ष का अनुमानित फंड' : '5-Year Projected Corpus'}
                 </span>
                 <span className="font-mono text-2xl font-black text-[#173F2B] dark:text-emerald-300">
                   {formatCurrency(projected5YearWealth)}
@@ -354,14 +369,16 @@ export default function AppSpendLeakDetectorPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCE4DC] dark:border-[var(--line)] gap-2">
               <div>
                 <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
-                  Evidence-Driven Findings & Subscriptions
+                  {language === 'hi' ? 'प्रमाण-आधारित निष्कर्ष और सब्सक्रिप्शन' : 'Evidence-Driven Findings & Subscriptions'}
                 </h3>
                 <p className="text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-                  Every finding requires verifiable transaction repetitions, merchant identities, or budget ceilings
+                  {language === 'hi'
+                    ? 'प्रत्येक निष्कर्ष के लिए सत्यापन योग्य लेन-देन दोहराव, मर्चेंट पहचान या बजट सीमाएं आवश्यक हैं'
+                    : 'Every finding requires verifiable transaction repetitions, merchant identities, or budget ceilings'}
                 </p>
               </div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold font-mono">
-                {insights.length} Total Findings
+                {language === 'hi' ? `${insights.length} कुल निष्कर्ष` : `${insights.length} Total Findings`}
               </span>
             </div>
 
@@ -369,10 +386,12 @@ export default function AppSpendLeakDetectorPage() {
               <div className="py-12 text-center space-y-3">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                 <h4 className="font-display font-bold text-base text-[#173F2B] dark:text-slate-100">
-                  No Spend Leaks Detected
+                  {language === 'hi' ? 'कोई व्यय रिसाव नहीं मिला' : 'No Spend Leaks Detected'}
                 </h4>
                 <p className="text-xs text-[#4D5D51] dark:text-slate-400 max-w-md mx-auto">
-                  Either your financial history shows no recurring waste, or history is insufficient to establish repeating patterns.
+                  {language === 'hi'
+                    ? 'या तो आपके वित्तीय इतिहास में कोई आवर्ती बर्बादी नहीं है, या पैटर्न स्थापित करने के लिए डेटा अपर्याप्त है।'
+                    : 'Either your financial history shows no recurring waste, or history is insufficient to establish repeating patterns.'}
                 </p>
               </div>
             ) : (
@@ -409,7 +428,7 @@ export default function AppSpendLeakDetectorPage() {
                             </span>
                             {isCancelled && (
                               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold font-mono">
-                                ✓ Intercepted
+                                {language === 'hi' ? '✓ रोका गया' : '✓ Intercepted'}
                               </span>
                             )}
                           </div>
@@ -431,7 +450,7 @@ export default function AppSpendLeakDetectorPage() {
                                 {formatCurrency(monthlyVal)}
                               </span>
                               <span className="text-[11px] text-[#4D5D51] dark:text-slate-400 block font-medium">
-                                /month
+                                {language === 'hi' ? '/माह' : '/month'}
                               </span>
                             </div>
                           )}
@@ -439,13 +458,15 @@ export default function AppSpendLeakDetectorPage() {
                           {monthlyVal > 0 && (
                             <button
                               onClick={() => handleToggleCancel(item.id)}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shadow-xs ${
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shadow-xs cursor-pointer ${
                                 !isCancelled
                                   ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 hover:bg-rose-100'
                                   : 'text-[#173F2B] dark:text-slate-300 border border-[#DCE4DC] hover:bg-slate-100'
                               }`}
                             >
-                              {!isCancelled ? 'Cancel Plan' : 'Undo'}
+                              {!isCancelled
+                                ? (language === 'hi' ? 'प्लान रद्द करें' : 'Cancel Plan')
+                                : (language === 'hi' ? 'पूर्ववत करें' : 'Undo')}
                             </button>
                           )}
 
@@ -453,8 +474,8 @@ export default function AppSpendLeakDetectorPage() {
                             onClick={() =>
                               setExpandedInsightId(isExpanded ? null : item.id)
                             }
-                            className="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
-                            title="Toggle Evidence Details"
+                            className="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                            title={language === 'hi' ? 'साक्ष्य विवरण देखें' : 'Toggle Evidence Details'}
                           >
                             {isExpanded ? (
                               <ChevronUp className="w-4 h-4" />
@@ -471,7 +492,7 @@ export default function AppSpendLeakDetectorPage() {
                           <div className="grid sm:grid-cols-2 gap-3">
                             <div className="space-y-1">
                               <span className="font-mono text-[10px] uppercase font-bold text-[#4D5D51] dark:text-slate-400">
-                                Supporting Evidence
+                                {language === 'hi' ? 'समर्थक साक्ष्य' : 'Supporting Evidence'}
                               </span>
                               <p className="text-[#173F2B] dark:text-slate-200">
                                 {item.evidence_summary}
@@ -479,7 +500,7 @@ export default function AppSpendLeakDetectorPage() {
                             </div>
                             <div className="space-y-1">
                               <span className="font-mono text-[10px] uppercase font-bold text-[#4D5D51] dark:text-slate-400">
-                                Calculation Method
+                                {language === 'hi' ? 'गणना पद्धति' : 'Calculation Method'}
                               </span>
                               <p className="text-[#173F2B] dark:text-slate-200">
                                 {item.calculation_method}
@@ -490,7 +511,7 @@ export default function AppSpendLeakDetectorPage() {
                           {item.supporting_transactions && item.supporting_transactions.length > 0 && (
                             <div className="space-y-1 pt-2 border-t border-[#DCE4DC] dark:border-[#22352A]">
                               <span className="font-mono text-[10px] uppercase font-bold text-[#4D5D51] dark:text-slate-400">
-                                Underlying Recorded Transactions ({item.supporting_transactions.length})
+                                {language === 'hi' ? 'अंतर्निहित दर्ज लेन-देन' : 'Underlying Recorded Transactions'} ({item.supporting_transactions.length})
                               </span>
                               <div className="space-y-1 max-h-32 overflow-y-auto">
                                 {item.supporting_transactions.map((tx) => (
@@ -499,7 +520,7 @@ export default function AppSpendLeakDetectorPage() {
                                     className="flex items-center justify-between font-mono text-[11px] text-[#2A4736] dark:text-slate-300 py-0.5"
                                   >
                                     <span>
-                                      {new Date(tx.transaction_date).toLocaleDateString()} • {tx.description || 'Debit'}
+                                      {new Date(tx.transaction_date).toLocaleDateString()} • {tx.description || (language === 'hi' ? 'डेबिट' : 'Debit')}
                                     </span>
                                     <span className="font-bold text-rose-600 dark:text-rose-400">
                                       {formatCurrency(parseFloat(tx.amount))}

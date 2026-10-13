@@ -20,6 +20,14 @@ export function getStoredTheme(): 'light' | 'dark' {
 
 /** Apply theme to the DOM <html> element and persist to localStorage. */
 export function applyTheme(theme: 'light' | 'dark') {
+  if (typeof document === 'undefined') return;
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem(STORAGE_KEY, theme);
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, theme);
+  } catch {}
 }

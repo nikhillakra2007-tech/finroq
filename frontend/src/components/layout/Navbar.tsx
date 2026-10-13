@@ -34,10 +34,10 @@ import {
 
 const PRIMARY_NAV = [
   { key: 'nav.home', name: '12-Module Home', href: '/app/home', icon: Home },
-  { key: 'nav.ledger', name: 'Ledger', href: '/transactions', icon: CreditCard },
-  { key: 'nav.budgets', name: 'Budgets', href: '/budgets', icon: PieChart },
-  { key: 'mod.net_worth', name: 'Net Worth', href: '/net-worth', icon: TrendingUp },
-  { key: 'nav.ai_insights', name: 'AI Insights', href: '/insights', icon: Sparkles },
+  { key: 'nav.ledger', name: 'Ledger', href: '/app/expense-tracking', icon: CreditCard },
+  { key: 'nav.budgets', name: 'Budgets', href: '/app/budgeting', icon: PieChart },
+  { key: 'mod.net_worth', name: 'Net Worth', href: '/app/net-worth', icon: TrendingUp },
+  { key: 'nav.ai_insights', name: 'AI Insights', href: '/app/spend-leak-detector', icon: Sparkles },
 ];
 
 const ALL_12_MODULES = [
@@ -243,30 +243,44 @@ export function Navbar() {
           )}
         >
           <div className="space-y-1">
-            <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">Primary Hubs</span>
+            <div className="flex items-center justify-between px-3.5 pb-2">
+              <span className="text-[10px] uppercase font-bold text-finroq-muted">
+                {language === 'hi' ? 'मुख्य हब' : 'Primary Hubs'}
+              </span>
+              <button
+                onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+                className="px-2.5 py-1 rounded-xl border border-finroq-border text-xs font-bold text-finroq-forest hover:bg-finroq-mint/40 flex items-center gap-1.5 transition-colors"
+              >
+                <Globe className="w-3.5 h-3.5 text-finroq-forest" />
+                <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+              </button>
+            </div>
+
             {PRIMARY_NAV.map((item) => (
               <Link
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-finroq-text hover:bg-slate-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <item.icon className="h-4 w-4 text-finroq-forest" />
-                {item.name}
+                {t(item.key, item.name)}
               </Link>
             ))}
 
             <div className="pt-2 border-t border-slate-100 mt-2">
-              <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">All 12 Modules</span>
+              <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">
+                {language === 'hi' ? 'सभी 12 वित्तीय मॉड्यूल' : 'All 12 Modules'}
+              </span>
               <div className="grid grid-cols-2 gap-1 px-2 pt-1">
                 {ALL_12_MODULES.map((m) => (
                   <Link
-                    key={m.name}
+                    key={m.key}
                     href={m.href}
                     className="p-2 rounded-lg text-xs font-medium text-finroq-text hover:bg-finroq-mint/40 truncate"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {m.name}
+                    {t(m.key, m.name)}
                   </Link>
                 ))}
               </div>
@@ -282,7 +296,7 @@ export function Navbar() {
                     onClick={handleLogout}
                     className="text-xs text-finroq-negative font-medium"
                   >
-                    Logout
+                    {language === 'hi' ? 'लॉगआउट' : 'Logout'}
                   </button>
                 </div>
               ) : (
@@ -291,14 +305,14 @@ export function Navbar() {
                     onClick={handleInstantDemo}
                     className="w-full py-2 rounded-xl text-xs font-bold bg-finroq-lime text-finroq-forest-deep text-center shadow-xs"
                   >
-                    1-Click Live Demo
+                    {language === 'hi' ? '1-क्लिक लाइव डेमो' : '1-Click Live Demo'}
                   </button>
                   <Link
                     href="/login"
                     className="w-full py-2 rounded-xl text-xs font-semibold text-center border border-finroq-border hover:bg-slate-50"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign In
+                    {language === 'hi' ? 'साइन इन करें' : 'Sign In'}
                   </Link>
                 </div>
               )}

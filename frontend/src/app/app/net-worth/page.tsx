@@ -5,9 +5,11 @@ import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
 import { FinancialSummary, Account } from '@/lib/api-types';
 import { formatCurrency } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Wallet, CreditCard } from 'lucide-react';
 
 export default function AppNetWorthPage() {
+  const { language } = useI18n();
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,9 +49,13 @@ export default function AppNetWorthPage() {
 
   return (
     <ModuleShell
-      title="Net Worth"
-      category="Build & Protect"
-      description="Track total assets minus liabilities across checking, savings, investment, and credit accounts with exact decimal math."
+      title={language === 'hi' ? 'कुल संपत्ति' : 'Net Worth'}
+      category={language === 'hi' ? 'निर्माण और सुरक्षा' : 'Build & Protect'}
+      description={
+        language === 'hi'
+          ? 'चालू, बचत, निवेश और क्रेडिट खातों में कुल संपत्ति में से देनदारियों को घटाकर सटीक दशमलव गणना।'
+          : 'Track total assets minus liabilities across checking, savings, investment, and credit accounts with exact decimal math.'
+      }
     >
       {isLoading ? (
         <div className="space-y-8">
@@ -68,30 +74,38 @@ export default function AppNetWorthPage() {
         {/* Top Net Worth Stat Cards */}
         <div className="grid sm:grid-cols-3 gap-5">
           <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-3 shadow-xs">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">Total Net Worth</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+              {language === 'hi' ? 'कुल शुद्ध संपत्ति' : 'Total Net Worth'}
+            </span>
             <div className="font-mono text-3xl sm:text-4xl font-bold tracking-tight text-[var(--accent)]">
               {formatCurrency(netWorth)}
             </div>
-            <p className="text-xs text-[var(--muted)]">Assets − Liabilities</p>
-          </div>
-
-          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-3 shadow-xs">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">Liquid &amp; Invested Assets</span>
-            <div className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
-              {formatCurrency(totalAssets)}
-            </div>
-            <p className="text-xs text-[var(--accent)] flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> Positive Equity
+            <p className="text-xs text-[var(--muted)]">
+              {language === 'hi' ? 'परिसंपत्तियां − देनदारियां' : 'Assets − Liabilities'}
             </p>
           </div>
 
           <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-3 shadow-xs">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">Total Liabilities &amp; Debt</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+              {language === 'hi' ? 'तरल व निवेशित परिसंपत्तियां' : 'Liquid & Invested Assets'}
+            </span>
+            <div className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
+              {formatCurrency(totalAssets)}
+            </div>
+            <p className="text-xs text-[var(--accent)] flex items-center gap-1">
+              <ArrowUpRight className="w-3.5 h-3.5" /> {language === 'hi' ? 'सकारात्मक इक्विटी' : 'Positive Equity'}
+            </p>
+          </div>
+
+          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-3 shadow-xs">
+            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+              {language === 'hi' ? 'कुल देनदारियां व ऋण' : 'Total Liabilities & Debt'}
+            </span>
             <div className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-[var(--bad)]">
               {formatCurrency(totalLiabilities)}
             </div>
             <p className="text-xs text-[var(--bad)] flex items-center gap-1">
-              <ArrowDownRight className="w-3.5 h-3.5" /> Credit Balances
+              <ArrowDownRight className="w-3.5 h-3.5" /> {language === 'hi' ? 'क्रेडिट बकाया' : 'Credit Balances'}
             </p>
           </div>
         </div>
@@ -99,13 +113,19 @@ export default function AppNetWorthPage() {
         {/* Account Balance Sheet Table */}
         <div className="bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-            <h3 className="font-display font-bold text-lg">Balance Sheet Breakdown</h3>
-            <span className="text-xs font-mono text-[var(--muted)]">{accounts.length} Connected Accounts</span>
+            <h3 className="font-display font-bold text-lg">
+              {language === 'hi' ? 'बैलेंस शीट विवरण' : 'Balance Sheet Breakdown'}
+            </h3>
+            <span className="text-xs font-mono text-[var(--muted)]">
+              {accounts.length} {language === 'hi' ? 'जुड़े हुए खाते' : 'Connected Accounts'}
+            </span>
           </div>
 
           {accounts.length === 0 ? (
             <div className="text-center py-12 text-sm text-[var(--muted)]">
-              No accounts registered yet. Add accounts to populate the live balance sheet.
+              {language === 'hi'
+                ? 'अभी कोई खाता पंजीकृत नहीं है। लाइव बैलेंस शीट देखने के लिए खाते जोड़ें।'
+                : 'No accounts registered yet. Add accounts to populate the live balance sheet.'}
             </div>
           ) : (
             <div className="divide-y divide-[var(--line)]">
@@ -120,7 +140,15 @@ export default function AppNetWorthPage() {
                       </div>
                       <div>
                         <p className="font-semibold text-[var(--ink)]">{acct.name}</p>
-                        <span className="text-xs font-mono text-[var(--muted)] uppercase">{acct.account_type}</span>
+                        <span className="text-xs font-mono text-[var(--muted)] uppercase">
+                          {language === 'hi'
+                            ? acct.account_type === 'credit'
+                              ? 'क्रेडिट'
+                              : acct.account_type === 'checking'
+                              ? 'चालू'
+                              : 'बचत'
+                            : acct.account_type}
+                        </span>
                       </div>
                     </div>
                     <div className="text-right">

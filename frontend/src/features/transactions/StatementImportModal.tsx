@@ -6,6 +6,7 @@ import { apiClient } from '@/lib/api-client';
 import { Modal, Button, Select, Badge } from '@/components/ui';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Upload, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useI18n } from '@/lib/i18n-context';
 
 interface StatementImportModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export function StatementImportModal({
   onSuccess,
   accounts,
 }: StatementImportModalProps) {
+  const { language, t } = useI18n();
   const [selectedAccountId, setSelectedAccountId] = useState<number>(accounts[0]?.id || 0);
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -106,8 +108,12 @@ export function StatementImportModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Import Bank Statement"
-      description="Upload supported statement files (CSV, TSV, text) to review, categorize, and commit transactions into your ledger."
+      title={language === 'hi' ? 'बैंक स्टेटमेंट आयात करें' : 'Import Bank Statement'}
+      description={
+        language === 'hi'
+          ? 'अपने लेजर में लेन-देन की समीक्षा, वर्गीकरण और जोड़ने के लिए समर्थित स्टेटमेंट फाइलें (CSV, TSV, टेक्स्ट) अपलोड करें।'
+          : 'Upload supported statement files (CSV, TSV, text) to review, categorize, and commit transactions into your ledger.'
+      }
       size="xl"
     >
       <div className="space-y-6">
@@ -129,7 +135,7 @@ export function StatementImportModal({
           <div className="space-y-5">
             <div>
               <label className="text-xs font-medium text-finroq-forest dark:text-slate-300 block mb-1.5">
-                Target Account
+                {language === 'hi' ? 'लक्षित खाता' : 'Target Account'}
               </label>
               <select
                 value={selectedAccountId}
@@ -147,10 +153,12 @@ export function StatementImportModal({
             <div className="border-2 border-dashed border-finroq-border rounded-2xl p-8 text-center hover:bg-finroq-mint/20 transition-colors">
               <Upload className="w-10 h-10 text-finroq-forest/40 mx-auto mb-3" />
               <p className="text-sm font-semibold text-finroq-forest mb-1">
-                Choose a bank statement file
+                {language === 'hi' ? 'बैंक स्टेटमेंट फाइल चुनें' : 'Choose a bank statement file'}
               </p>
               <p className="text-xs text-finroq-muted mb-4">
-                Supported formats: CSV, TSV, or plain text export. Max 10MB.
+                {language === 'hi'
+                  ? 'समर्थित प्रारूप: CSV, TSV, या सादा टेक्स्ट। अधिकतम 10MB।'
+                  : 'Supported formats: CSV, TSV, or plain text export. Max 10MB.'}
               </p>
               <input
                 type="file"
@@ -164,13 +172,13 @@ export function StatementImportModal({
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-finroq-mint text-finroq-forest border border-finroq-border text-xs font-semibold cursor-pointer hover:bg-finroq-sage/60 transition-colors"
               >
                 <Upload className="w-3.5 h-3.5" />
-                {file ? file.name : 'Browse Statement File'}
+                {file ? file.name : (language === 'hi' ? 'स्टेटमेंट फाइल ब्राउज़ करें' : 'Browse Statement File')}
               </label>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-finroq-border">
               <Button type="button" variant="secondary" onClick={handleClose}>
-                Cancel
+                {language === 'hi' ? 'रद्द करें' : 'Cancel'}
               </Button>
               <Button
                 type="button"
@@ -179,7 +187,7 @@ export function StatementImportModal({
                 loading={isLoading}
                 disabled={!file}
               >
-                Preview Transactions
+                {language === 'hi' ? 'लेन-देन पूर्वावलोकन' : 'Preview Transactions'}
               </Button>
             </div>
           </div>
@@ -188,19 +196,25 @@ export function StatementImportModal({
             {/* Summary Banner */}
             <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-[#EAF3E7]/40 border border-[#DCE4DC] text-xs dark:bg-[#16251E] dark:border-[#2A3D33]">
               <div>
-                <span className="text-[#4D5D51] dark:text-slate-400 block">Total Parsed</span>
+                <span className="text-[#4D5D51] dark:text-slate-400 block">
+                  {language === 'hi' ? 'कुल पार्स किए गए' : 'Total Parsed'}
+                </span>
                 <span className="font-mono text-base font-bold text-[#173F2B] dark:text-emerald-300">
                   {preview.total_rows}
                 </span>
               </div>
               <div>
-                <span className="text-[#4D5D51] dark:text-slate-400 block">Ready to Import</span>
+                <span className="text-[#4D5D51] dark:text-slate-400 block">
+                  {language === 'hi' ? 'आयात के लिए तैयार' : 'Ready to Import'}
+                </span>
                 <span className="font-mono text-base font-bold text-[#247A50] dark:text-emerald-400">
                   {preview.valid_count}
                 </span>
               </div>
               <div>
-                <span className="text-[#4D5D51] dark:text-slate-400 block">Duplicates Flagged</span>
+                <span className="text-[#4D5D51] dark:text-slate-400 block">
+                  {language === 'hi' ? 'डुप्लीकेट चिन्हित' : 'Duplicates Flagged'}
+                </span>
                 <span className="font-mono text-base font-bold text-[#B77925] dark:text-amber-400">
                   {preview.duplicate_count}
                 </span>
@@ -212,11 +226,21 @@ export function StatementImportModal({
               <table className="w-full text-xs">
                 <thead className="bg-[#EAF3E7]/50 sticky top-0 border-b border-[#DCE4DC] dark:bg-[#1A2C22] dark:border-[#2A3D33]">
                   <tr>
-                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Date</th>
-                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Description</th>
-                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">Suggested Category</th>
-                    <th className="p-3 text-right font-semibold text-[#173F2B] dark:text-emerald-300">Amount</th>
-                    <th className="p-3 text-center font-semibold text-[#173F2B] dark:text-emerald-300">Status</th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">
+                      {language === 'hi' ? 'दिनांक' : 'Date'}
+                    </th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">
+                      {language === 'hi' ? 'विवरण' : 'Description'}
+                    </th>
+                    <th className="p-3 text-left font-semibold text-[#173F2B] dark:text-emerald-300">
+                      {language === 'hi' ? 'सुझाई गई श्रेणी' : 'Suggested Category'}
+                    </th>
+                    <th className="p-3 text-right font-semibold text-[#173F2B] dark:text-emerald-300">
+                      {language === 'hi' ? 'राशि' : 'Amount'}
+                    </th>
+                    <th className="p-3 text-center font-semibold text-[#173F2B] dark:text-emerald-300">
+                      {language === 'hi' ? 'स्थिति' : 'Status'}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-finroq-border">
@@ -237,7 +261,9 @@ export function StatementImportModal({
                             {it.suggested_category_name}
                           </Badge>
                         ) : (
-                          <span className="text-[#4D5D51] dark:text-slate-400">Uncategorized</span>
+                          <span className="text-[#4D5D51] dark:text-slate-400">
+                            {language === 'hi' ? 'अवर्गीकृत' : 'Uncategorized'}
+                          </span>
                         )}
                       </td>
                       <td className="p-3 text-right font-mono font-bold">
@@ -255,15 +281,15 @@ export function StatementImportModal({
                       <td className="p-3 text-center">
                         {it.is_duplicate ? (
                           <Badge variant="warning" size="sm">
-                            Duplicate
+                            {language === 'hi' ? 'डुप्लीकेट' : 'Duplicate'}
                           </Badge>
                         ) : it.is_valid ? (
                           <Badge variant="success" size="sm">
-                            Valid
+                            {language === 'hi' ? 'मान्य' : 'Valid'}
                           </Badge>
                         ) : (
                           <Badge variant="danger" size="sm">
-                            {it.error || 'Invalid'}
+                            {it.error || (language === 'hi' ? 'अमान्य' : 'Invalid')}
                           </Badge>
                         )}
                       </td>
@@ -280,7 +306,7 @@ export function StatementImportModal({
                 onClick={() => setPreview(null)}
                 disabled={isConfirming}
               >
-                Back to File
+                {language === 'hi' ? 'फ़ाइल पर वापस जाएँ' : 'Back to File'}
               </Button>
               <div className="flex gap-3">
                 <Button
@@ -289,7 +315,7 @@ export function StatementImportModal({
                   onClick={handleClose}
                   disabled={isConfirming}
                 >
-                  Cancel
+                  {language === 'hi' ? 'रद्द करें' : 'Cancel'}
                 </Button>
                 <Button
                   type="button"
@@ -298,7 +324,9 @@ export function StatementImportModal({
                   loading={isConfirming}
                   disabled={preview.valid_count === 0}
                 >
-                  Confirm Import ({preview.valid_count} Transactions)
+                  {language === 'hi'
+                    ? `आयात की पुष्टि करें (${preview.valid_count} लेन-देन)`
+                    : `Confirm Import (${preview.valid_count} Transactions)`}
                 </Button>
               </div>
             </div>

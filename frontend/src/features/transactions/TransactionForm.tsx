@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { TransactionCreate, TransactionUpdate, TransactionType, Account, Category } from '@/lib/api-types';
 import { Button, Input, Select, Modal } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 
 const transactionSchema = z.object({
   account_id: z.number().min(1, 'Account is required'),
@@ -51,13 +52,6 @@ const currencyOptions = [
   { value: 'INR', label: 'INR - Indian Rupee (₹)' },
 ];
 
-const typeOptions = [
-  { value: 'income', label: 'Income' },
-  { value: 'expense', label: 'Expense' },
-  { value: 'transfer', label: 'Transfer' },
-];
-
-
 export function TransactionForm({
   isOpen,
   onClose,
@@ -70,6 +64,13 @@ export function TransactionForm({
   defaultAccountId,
   defaultType,
 }: TransactionFormProps) {
+  const { language, t } = useI18n();
+
+  const typeOptions = [
+    { value: 'income', label: language === 'hi' ? 'आय' : 'Income' },
+    { value: 'expense', label: language === 'hi' ? 'खर्च' : 'Expense' },
+    { value: 'transfer', label: language === 'hi' ? 'ट्रांसफर' : 'Transfer' },
+  ];
   const {
     register,
     handleSubmit,
@@ -118,42 +119,50 @@ export function TransactionForm({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Transaction' : 'Add Transaction'}
-      description={isEditing ? 'Update transaction details' : 'Record a new income, expense, or transfer'}
+      title={
+        isEditing
+          ? (language === 'hi' ? 'लेन-देन संपादित करें' : 'Edit Transaction')
+          : (language === 'hi' ? 'लेन-देन जोड़ें' : 'Add Transaction')
+      }
+      description={
+        isEditing
+          ? (language === 'hi' ? 'लेन-देन विवरण अपडेट करें' : 'Update transaction details')
+          : (language === 'hi' ? 'नया आय, खर्च, या ट्रांसफर दर्ज करें' : 'Record a new income, expense, or transfer')
+      }
       size="md"
     >
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
         <Select
-          label="Account"
+          label={language === 'hi' ? 'खाता' : 'Account'}
           options={accounts.map((a) => ({ value: String(a.id), label: a.name }))}
-          placeholder="Select account"
+          placeholder={language === 'hi' ? 'खाता चुनें' : 'Select account'}
           error={errors.account_id?.message}
           {...register('account_id', { valueAsNumber: true })}
         />
 
         <Select
-          label="Type"
+          label={language === 'hi' ? 'प्रकार' : 'Type'}
           options={typeOptions}
-          placeholder="Select type"
+          placeholder={language === 'hi' ? 'प्रकार चुनें' : 'Select type'}
           error={errors.transaction_type?.message}
           {...register('transaction_type')}
         />
 
         {watchedType === 'transfer' ? (
           <Select
-            label="Destination Account"
+            label={language === 'hi' ? 'गंतव्य खाता' : 'Destination Account'}
             options={accounts
               .filter((a) => a.id !== Number(watchedAccountId))
               .map((a) => ({ value: String(a.id), label: a.name }))}
-            placeholder="Select destination account"
+            placeholder={language === 'hi' ? 'गंतव्य खाता चुनें' : 'Select destination account'}
             error={errors.to_account_id?.message}
             {...register('to_account_id', { valueAsNumber: true })}
           />
         ) : (
           <Select
-            label="Category"
+            label={language === 'hi' ? 'श्रेणी' : 'Category'}
             options={filteredCategories.map((c) => ({ value: String(c.id), label: c.name }))}
-            placeholder="Select category (optional)"
+            placeholder={language === 'hi' ? 'श्रेणी चुनें (वैकल्पिक)' : 'Select category (optional)'}
             error={errors.category_id?.message}
             {...register('category_id', { valueAsNumber: true })}
           />
@@ -161,7 +170,7 @@ export function TransactionForm({
 
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Amount"
+            label={language === 'hi' ? 'राशि' : 'Amount'}
             type="number"
             step="0.01"
             min="0.01"
@@ -170,34 +179,36 @@ export function TransactionForm({
             {...register('amount')}
           />
           <Select
-            label="Currency"
+            label={language === 'hi' ? 'मुद्रा' : 'Currency'}
             options={currencyOptions}
-            placeholder="Currency"
+            placeholder={language === 'hi' ? 'मुद्रा' : 'Currency'}
             error={errors.currency?.message}
             {...register('currency')}
           />
         </div>
 
         <Input
-          label="Date"
+          label={language === 'hi' ? 'दिनांक' : 'Date'}
           type="date"
           error={errors.transaction_date?.message}
           {...register('transaction_date')}
         />
 
         <Input
-          label="Description (optional)"
-          placeholder="Transaction details"
+          label={language === 'hi' ? 'विवरण (वैकल्पिक)' : 'Description (optional)'}
+          placeholder={language === 'hi' ? 'लेन-देन का विवरण' : 'Transaction details'}
           error={errors.description?.message}
           {...register('description')}
         />
 
         <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
           <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
-            Cancel
+            {language === 'hi' ? 'रद्द करें' : 'Cancel'}
           </Button>
           <Button type="submit" variant="primary" loading={isLoading}>
-            {isEditing ? 'Save Changes' : 'Add Transaction'}
+            {isEditing
+              ? (language === 'hi' ? 'बदलाव सहेजें' : 'Save Changes')
+              : (language === 'hi' ? 'लेन-देन जोड़ें' : 'Add Transaction')}
           </Button>
         </div>
       </form>

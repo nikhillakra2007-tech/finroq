@@ -26,6 +26,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signout': 'Sign out',
     'nav.demo': '1-Click Demo',
     'nav.ai_insights': 'AI Insights',
+    'nav.switch_module': 'Switch Module:',
 
     // Modules
     'mod.expense_tracking': 'Expense Tracking',
@@ -70,11 +71,70 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Landing Hero
     'hero.badge': 'Next-Gen Personal Finance Engine',
-    'hero.title_part1': 'A financial ledger you can',
-    'hero.title_part2': 'finally trust.',
-    'hero.desc': 'Every transaction verified, every paisa accounted for, and zero floating-point drift. Complete sovereignty over your money and wealth architecture.',
-    'hero.explore_modules': 'Explore All 12 Modules',
-    'hero.test_ledger': 'Test Verified Ledger',
+    'hero.title_part1': 'Master your wealth,',
+    'hero.title_part2': 'with absolute precision.',
+    'hero.desc': 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.',
+    'hero.open_ledger': 'Open your ledger',
+    'hero.explore_demo': 'Explore interactive demo',
+    'hero.net_worth': 'Consolidated Net Worth',
+    'hero.live_state': 'Live Ledger State',
+    'hero.liquid_assets': 'Liquid Assets',
+    'hero.active_liabilities': 'Active Liabilities',
+    'hero.decimal_note': 'Every calculation is backed by exact fixed-point decimal arithmetic, eliminating IEEE 754 floating-point drift.',
+
+    // Proof Strip
+    'proof.numeric': 'NUMERIC(14,2) DECIMAL LEDGER',
+    'proof.argon': 'ARGON2ID ENCRYPTION',
+    'proof.isolation': 'ZERO-TRUST TENANT ISOLATION',
+    'proof.recurrence': 'DETERMINISTIC RECURRENCE ENGINE',
+
+    // Feature 1
+    'feat1.badge': 'Feature One',
+    'feat1.title': 'A ledger that always balances.',
+    'feat1.desc': 'Only completed transactions alter your liquid balance. Pending charges and transfers stay segregated, ensuring income and expenditure metrics are never artificially distorted.',
+    'feat1.exact_math': 'Exact Math',
+    'feat1.exact_math_desc': 'Decimal arithmetic end to end, ensuring your totals balance with zero rounding drift.',
+    'feat1.transfers': 'Transfers',
+    'feat1.transfers_desc': 'Transfer funds between accounts neutrally without bloating monthly revenue.',
+    'feat1.realtime': 'Real-Time',
+    'feat1.realtime_desc': 'True net worth derived continuously across checking, savings, and credit balances.',
+    'feat1.oct_records': 'October Ledger Records',
+    'feat1.sandbox': 'Interactive sandbox demonstration',
+    'feat1.cycle_chip': 'Tap status chip to cycle',
+    'feat1.net_cash_flow': 'Net Liquid Cash Flow',
+    'feat1.completed_only': 'Calculated exclusively on completed transactions',
+
+    // Feature 2
+    'feat2.badge': 'Feature Two',
+    'feat2.title': 'Budgets that monitor themselves.',
+    'feat2.desc': 'No manual receipt spreadsheets or end-of-month regret. FINROQ watches your spending velocity in real-time, warning you before limits are broken and rebalancing surpluses automatically.',
+    'feat2.live_alloc': 'Live Category Allocations',
+    'feat2.guardian': 'Autonomous Guardian',
+    'feat2.realtime_sync': 'Real-Time Sync',
+    'feat2.realtime_sync_desc': 'Every card swipe, UPI transfer, and bank debit categorizes instantly. Zero manual logging.',
+    'feat2.burn_alerts': 'Burn Alerts',
+    'feat2.burn_alerts_desc': 'Proactive velocity warnings flag categories running hot weeks before the month ends.',
+    'feat2.auto_rebalance': 'Auto-Rebalance',
+    'feat2.auto_rebalance_desc': 'When you spend more on dining, FINROQ absorbs it from under-budget surplus without denting your savings.',
+
+    // Feature 3
+    'feat3.badge': 'Interactive Simulation',
+    'feat3.title': 'Dynamic Budget Stress-Testing.',
+    'feat3.desc': 'Compare your intended caps with actual expenditures. Adjust the sliders to examine immediate category health responses in real time.',
+
+    // Feature 4
+    'feat4.badge': 'Timeline Accelerator',
+    'feat4.title': 'Simulate How Spending Shifts Accelerate Wealth.',
+    'feat4.desc': 'Model your timeline to critical savings milestones. Adjust monthly contributions and watch how trimming discretionary leaks brings goals forward.',
+
+    // FAQs
+    'faq.badge': 'Frequently Asked Questions',
+    'faq.title': 'Everything you need to know.',
+    'faq.desc': 'Clear answers regarding our double-entry architecture, decimal math precision, privacy, and deterministic intelligence.',
+
+    // Closer CTA
+    'cta.title': 'Open your ledger.',
+    'cta.desc': 'Start recording transactions, set intelligent category budgets, and understand your financial trajectory with uncompromising certainty.',
 
     // Auth
     'auth.welcome_back': 'Welcome back.',
@@ -117,6 +177,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signout': 'साइन आउट',
     'nav.demo': '1-क्लिक डेमो',
     'nav.ai_insights': 'एआई इनसाइट्स',
+    'nav.switch_module': 'मॉड्यूल बदलें:',
 
     // Modules
     'mod.expense_tracking': 'व्यय ट्रैकिंग (Expense Tracking)',
@@ -161,11 +222,70 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Landing Hero
     'hero.badge': 'अगली पीढ़ी का वित्तीय प्रबंधन इंजन',
-    'hero.title_part1': 'एक ऐसा वित्तीय खाता बही जिस पर आप',
-    'hero.title_part2': 'पूरी तरह भरोसा कर सकते हैं।',
-    'hero.desc': 'पाई-पाई का सटीक हिसाब, हर लेन-देन सुरक्षित, और बिना किसी तकनीकी विसंगति के आपकी कुल संपत्ति का संरक्षण।',
-    'hero.explore_modules': 'सभी 12 मॉड्यूल देखें',
-    'hero.test_ledger': 'सत्यापित खाता जांचें',
+    'hero.title_part1': 'अपनी संपत्ति पर पाएं पूर्ण नियंत्रण,',
+    'hero.title_part2': 'पूर्ण सटीकता और विश्वास के साथ।',
+    'hero.desc': 'फिनरॉक (Finroq) एक उद्यम-स्तरीय वित्तीय लेजर है जो निश्चित दशमलव अंकगणित के साथ तैयार किया गया है। अपने कैश फ्लो, बजट और कुल संपत्ति पर पूरा नियंत्रण पाएं बिना किसी अनुमान के।',
+    'hero.open_ledger': 'अपना खाता बही खोलें',
+    'hero.explore_demo': 'इंटरैक्टिव डेमो देखें',
+    'hero.net_worth': 'कुल संचित संपत्ति',
+    'hero.live_state': 'सत्यापित लेजर स्थिति',
+    'hero.liquid_assets': 'तरल संपत्ति',
+    'hero.active_liabilities': 'सक्रिय देनदारियां',
+    'hero.decimal_note': 'प्रत्येक गणना निश्चित दशमलव अंकगणित पर आधारित है, जिससे फ्लोटिंग-पॉइंट की त्रुटि पूरी तरह समाप्त हो जाती है।',
+
+    // Proof Strip
+    'proof.numeric': 'NUMERIC(14,2) दशमलव लेजर',
+    'proof.argon': 'ARGON2ID क्रिप्टोग्राफिक सुरक्षा',
+    'proof.isolation': 'जीरो-ट्रस्ट व्यक्तिगत डेटा सुरक्षा',
+    'proof.recurrence': 'निश्चयात्मक आवर्ती नियम इंजन',
+
+    // Feature 1
+    'feat1.badge': 'पहला फीचर',
+    'feat1.title': 'एक ऐसा खाता बही जो हमेशा संतुलित रहता है।',
+    'feat1.desc': 'केवल पूर्ण लेन-देन ही आपके खाते की शेष राशि को प्रभावित करते हैं। लंबित भुगतान और ट्रांसफर अलग रहते हैं, ताकि आय और व्यय के आंकड़े कभी गलत न दिखें।',
+    'feat1.exact_math': 'सटीक गणित',
+    'feat1.exact_math_desc': 'शुरुआत से अंत तक दशमलव अंकगणित, जिससे शून्य राउंडिंग अंतर सुनिश्चित होता है।',
+    'feat1.transfers': 'स्थानांतरण',
+    'feat1.transfers_desc': 'मासिक आय को कृत्रिम रूप से बढ़ाए बिना खातों के बीच तटस्थ रूप से फंड ट्रांसफर करें।',
+    'feat1.realtime': 'रियल-टाइम',
+    'feat1.realtime_desc': 'बचत, चालू और क्रेडिट शेष राशि के आधार पर वास्तविक कुल संपत्ति की निरंतर गणना।',
+    'feat1.oct_records': 'अक्टूबर लेजर रिकॉर्ड्स',
+    'feat1.sandbox': 'इंटरैक्टिव सैंडबॉक्स डेमो',
+    'feat1.cycle_chip': 'स्थिति बदलने के लिए चिप पर टैप करें',
+    'feat1.net_cash_flow': 'शुद्ध तरल कैश फ्लो',
+    'feat1.completed_only': 'केवल पूर्ण लेन-देन पर गणना की गई',
+
+    // Feature 2
+    'feat2.badge': 'दूसरा फीचर',
+    'feat2.title': 'बजट जो खुद अपनी निगरानी करते हैं।',
+    'feat2.desc': 'रसीदों के स्प्रेडशीट संभालने और महीने के अंत के पछतावे से छुटकारा। फिनरॉक आपके खर्च की गति पर नजर रखता है और सीमा टूटने से पहले चेतावनी देता है।',
+    'feat2.live_alloc': 'सक्रिय श्रेणी आवंटन',
+    'feat2.guardian': 'स्वायत्त सुरक्षा प्रहरी',
+    'feat2.realtime_sync': 'रियल-टाइम सिंक',
+    'feat2.realtime_sync_desc': 'हर कार्ड स्वाइप, यूपीआई और बैंक डेबिट तुरंत सही श्रेणी में दर्ज होता है।',
+    'feat2.burn_alerts': 'खर्च अलर्ट',
+    'feat2.burn_alerts_desc': 'महीना खत्म होने से पहले ही अधिक खर्च वाली श्रेणियों के लिए पूर्व चेतावनी।',
+    'feat2.auto_rebalance': 'ऑटो-रीबैलेंस',
+    'feat2.auto_rebalance_desc': 'जब आप डाइनिंग पर अधिक खर्च करते हैं, तो फिनरॉक दूसरी श्रेणियों के अतिरिक्त सरप्लस से इसे स्वतः संतुलित कर देता है।',
+
+    // Feature 3
+    'feat3.badge': 'इंटरैक्टिव सिमुलेशन',
+    'feat3.title': 'डायनामिक बजट स्ट्रेस-टेस्टिंग।',
+    'feat3.desc': 'अपने निर्धारित बजट की वास्तविक खर्चों से तुलना करें। स्लाइडर को खिसकाकर वास्तविक समय में श्रेणी स्वास्थ्य जांचें।',
+
+    // Feature 4
+    'feat4.badge': 'समयरेखा त्वरक',
+    'feat4.title': 'देखें कि खर्च में सुधार से बचत का लक्ष्य कैसे जल्दी पूरा होता है।',
+    'feat4.desc': 'अपने वित्तीय लक्ष्यों की समयरेखा तैयार करें। मासिक योगदान बढ़ाएं और देखें कि अवांछित खर्चों को रोककर लक्ष्य कितने महीने पहले हासिल हो सकता है।',
+
+    // FAQs
+    'faq.badge': 'अक्सर पूछे जाने वाले प्रश्न',
+    'faq.title': 'सब कुछ जो आपको जानना आवश्यक है।',
+    'faq.desc': 'हमारे डबल-एंट्री लेजर, दशमलव गणितीय सटीकता, गोपनीयता और स्वायत्त वित्तीय प्रणाली से जुड़े स्पष्ट उत्तर।',
+
+    // Closer CTA
+    'cta.title': 'अपना खाता बही खोलें।',
+    'cta.desc': 'लेन-देन दर्ज करना शुरू करें, बुद्धिमत्तापूर्ण बजट बनाएं और पूर्ण विश्वास के साथ अपनी संपत्ति का निर्माण करें।',
 
     // Auth
     'auth.welcome_back': 'वापसी पर स्वागत है।',
@@ -213,7 +333,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('finroq_lang', lang);
+      try {
+        localStorage.setItem('finroq_lang', lang);
+      } catch {}
     }
   };
 
@@ -222,7 +344,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string, fallback?: string): string => {
-    return translations[language][key] || translations['en'][key] || fallback || key;
+    return translations[language]?.[key] || translations['en']?.[key] || fallback || key;
   };
 
   return (

@@ -3,7 +3,7 @@
 <div align="center">
 
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.0.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://pocketcircle.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq.vercel.app)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-129%2F129%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
 ![Jest Tests](https://img.shields.io/badge/Jest-22%2F22%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
@@ -14,7 +14,7 @@
   <b>Double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, dark/light theming, Hindi/English i18n, bank statement ingestion, and deterministic AI intelligence.</b>
 </p>
 
-🔗 **Live Production App**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app)
+🔗 **Live Production App**: [https://finroq.vercel.app](https://finroq.vercel.app)
 
 [System Architecture](#-system-architecture) •
 [12 Core Financial Modules](#-12-unified-financial-modules) •

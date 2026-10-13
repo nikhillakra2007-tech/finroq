@@ -41,7 +41,8 @@
   color-scheme: light;
 }
 
-[data-theme="dark"] {
+[data-theme="dark"],
+.dark {
   --bg: #0D1411;
   --surface: #16251E;
   --ink: #E6EEE9;
@@ -130,15 +131,14 @@ h1, h2, h3, h4, .font-display {
   letter-spacing: -0.02em;
 }
 
-/* Scroll reveal helper */
+/* Scroll reveal helper — content is fully visible by default */
 .rv {
-  opacity: 0.15;
-  transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.rv.in {
   opacity: 1;
   transform: none;
+}
+
+input, select, textarea {
+  color: var(--ink);
 }
 
 /* Fixed background on scroll */
@@ -273,4 +273,46 @@ html {
   background: linear-gradient(135deg, #FFFFFF 0%, #5ECB9C 60%, #E6EEE9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Custom scrollbar for horizontal module navigation */
+.module-nav-scroller {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.module-nav-scroller::-webkit-scrollbar {
+  height: 6px;
+}
+.module-nav-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+.module-nav-scroller::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 9999px;
+}
+.module-nav-scroller::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Custom scrollbar and scroll isolation for dropdown menus */
+.dropdown-menu-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.dropdown-menu-scroller::-webkit-scrollbar {
+  width: 5px;
+}
+.dropdown-menu-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdown-menu-scroller::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 9999px;
+}
+.dropdown-menu-scroller::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }

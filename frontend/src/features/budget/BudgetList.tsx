@@ -6,6 +6,7 @@ import { apiClient, DEMO_BUDGETS } from '@/lib/api-client';
 import { BudgetForm } from './BudgetForm';
 import { Button, Card, Badge, EmptyState, LoadingCard } from '@/components/ui';
 import { formatCurrency, cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n-context';
 import { Plus, ChevronLeft, ChevronRight, AlertTriangle, CheckCircle2, TrendingDown, TrendingUp, Edit2, Trash2, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const SEED_MONTHLY_BUDGETS: Record<string, Budget[]> = {
@@ -60,6 +61,7 @@ const SEED_MONTHLY_BUDGETS: Record<string, Budget[]> = {
 };
 
 export function BudgetList() {
+  const { language } = useI18n();
   const currentDate = new Date();
   const [year, setYear] = useState(2026);
   const [month, setMonth] = useState(10);
@@ -70,10 +72,15 @@ export function BudgetList() {
   const [createFormOpen, setCreateFormOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
-  const monthNames = [
+  const monthNamesEn = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
+  const monthNamesHi = [
+    'जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून',
+    'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर',
+  ];
+  const monthNames = language === 'hi' ? monthNamesHi : monthNamesEn;
 
   const fetchBudgets = useCallback(async () => {
     try {
@@ -174,9 +181,13 @@ export function BudgetList() {
       {/* Header and Month Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">Monthly Budgets</h1>
+          <h1 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">
+            {language === 'hi' ? 'मासिक बजट' : 'Monthly Budgets'}
+          </h1>
           <p className="text-sm font-medium text-[#4D5D51] dark:text-slate-400">
-            Set and track category spending caps in Indian Rupees (₹)
+            {language === 'hi'
+              ? 'भारतीय रुपये (₹) में श्रेणी व्यय सीमाएं निर्धारित और ट्रैक करें'
+              : 'Set and track category spending caps in Indian Rupees (₹)'}
           </p>
         </div>
 
@@ -184,8 +195,8 @@ export function BudgetList() {
           <div className="flex items-center bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-xl p-1 shadow-xs">
             <button
               onClick={handlePrevMonth}
-              className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors"
-              title="Previous Month"
+              className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors cursor-pointer"
+              title={language === 'hi' ? 'पिछला महीना' : 'Previous Month'}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -194,16 +205,16 @@ export function BudgetList() {
             </span>
             <button
               onClick={handleNextMonth}
-              className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors"
-              title="Next Month"
+              className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors cursor-pointer"
+              title={language === 'hi' ? 'अगला महीना' : 'Next Month'}
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
-          <Button onClick={() => setCreateFormOpen(true)} className="flex items-center gap-2 bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs font-medium">
+          <Button onClick={() => setCreateFormOpen(true)} className="flex items-center gap-2 bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs font-medium cursor-pointer">
             <Plus className="h-4 w-4" />
-            Add Budget
+            {language === 'hi' ? 'बजट जोड़ें' : 'Add Budget'}
           </Button>
         </div>
       </div>
@@ -215,15 +226,17 @@ export function BudgetList() {
             <Calendar className="w-3.5 h-3.5" />
           </span>
           <span className="font-semibold text-[#173F2B] dark:text-slate-200">
-            Spending Trend (Last 6 Months):
+            {language === 'hi' ? 'व्यय रुझान (पिछले 6 महीने):' : 'Spending Trend (Last 6 Months):'}
           </span>
           <span className="text-[#3F4F43] dark:text-slate-400 font-medium">
-            May (₹53,950) → Jun (₹55,550) → Jul (₹56,550) → Aug (₹59,520) → Sep (₹60,739) → Oct (₹58,489)
+            {language === 'hi'
+              ? 'मई (₹53,950) → जून (₹55,550) → जुलाई (₹56,550) → अगस्त (₹59,520) → सितं (₹60,739) → अक्टू (₹58,489)'
+              : 'May (₹53,950) → Jun (₹55,550) → Jul (₹56,550) → Aug (₹59,520) → Sep (₹60,739) → Oct (₹58,489)'}
           </span>
         </div>
         <div className="flex items-center gap-2 self-start md:self-auto">
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#173F2B] font-semibold text-[11px]">
-            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> -3.7% This Month
+            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> {language === 'hi' ? '-3.7% इस महीने' : '-3.7% This Month'}
           </span>
         </div>
       </div>
@@ -231,27 +244,43 @@ export function BudgetList() {
       {/* Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">Total Allocated</div>
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">
+            {language === 'hi' ? 'कुल आवंटित' : 'Total Allocated'}
+          </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-emerald-300">{formatCurrency(totalAllocated)}</div>
-          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">Across {budgets.length} active categories</p>
+          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+            {language === 'hi' ? `${budgets.length} सक्रिय श्रेणियों में` : `Across ${budgets.length} active categories`}
+          </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-amber-400">Actual Spending</div>
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-amber-400">
+            {language === 'hi' ? 'वास्तविक व्यय' : 'Actual Spending'}
+          </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#B77925] dark:text-amber-400">{formatCurrency(totalSpent)}</div>
-          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">Eligible ledger expenses</p>
+          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+            {language === 'hi' ? 'पात्र लेजर व्यय' : 'Eligible ledger expenses'}
+          </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">Remaining Pool</div>
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">
+            {language === 'hi' ? 'शेष बची राशि' : 'Remaining Pool'}
+          </div>
           <div className={cn('mt-2 text-2xl font-bold font-mono', totalRemaining >= 0 ? 'text-[#157A42] dark:text-emerald-400' : 'text-[#B43838] dark:text-rose-400')}>
             {formatCurrency(totalRemaining)}
           </div>
-          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">{totalRemaining >= 0 ? 'Within monthly plan' : 'Over allocation'}</p>
+          <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
+            {totalRemaining >= 0
+              ? (language === 'hi' ? 'मासिक योजना के भीतर' : 'Within monthly plan')
+              : (language === 'hi' ? 'आवंटन से अधिक व्यय' : 'Over allocation')}
+          </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
-          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-300">Overall Utilization</div>
+          <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-300">
+            {language === 'hi' ? 'समग्र उपयोग' : 'Overall Utilization'}
+          </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-slate-100">
             {overallUtilization.toFixed(1)}%
           </div>
@@ -277,12 +306,12 @@ export function BudgetList() {
       ) : budgets.length === 0 ? (
         <Card className="bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33]">
           <EmptyState
-            title={`No budgets for ${monthNames[month - 1]} ${year}`}
-            description="Create a category budget to keep your spending on track for this month."
+            title={language === 'hi' ? `${monthNames[month - 1]} ${year} के लिए कोई बजट नहीं` : `No budgets for ${monthNames[month - 1]} ${year}`}
+            description={language === 'hi' ? 'इस महीने अपने खर्च को नियंत्रण में रखने के लिए श्रेणी बजट बनाएं।' : 'Create a category budget to keep your spending on track for this month.'}
             action={
               <Button onClick={() => setCreateFormOpen(true)} className="bg-[#173F2B] text-white">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Budget
+                {language === 'hi' ? 'बजट बनाएं' : 'Create Budget'}
               </Button>
             }
           />
@@ -310,31 +339,37 @@ export function BudgetList() {
                     {isOver ? (
                       <Badge variant="danger" className="flex items-center gap-1 font-bold">
                         <AlertTriangle className="h-3 w-3" />
-                        Overspent
+                        {language === 'hi' ? 'अधिक व्यय' : 'Overspent'}
                       </Badge>
                     ) : util >= 80 ? (
                       <Badge variant="warning" className="font-bold">
-                        {util.toFixed(0)}% Used
+                        {util.toFixed(0)}% {language === 'hi' ? 'प्रयुक्त' : 'Used'}
                       </Badge>
                     ) : (
                       <Badge variant="success" className="font-bold">
-                        {util.toFixed(0)}% Used
+                        {util.toFixed(0)}% {language === 'hi' ? 'प्रयुक्त' : 'Used'}
                       </Badge>
                     )}
                   </div>
 
                   <div className="mt-4 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="font-medium text-[#4D5D51] dark:text-slate-400">Spent:</span>
+                      <span className="font-medium text-[#4D5D51] dark:text-slate-400">
+                        {language === 'hi' ? 'खर्च:' : 'Spent:'}
+                      </span>
                       <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">{formatCurrency(spent)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="font-medium text-[#4D5D51] dark:text-slate-400">Allocated:</span>
+                      <span className="font-medium text-[#4D5D51] dark:text-slate-400">
+                        {language === 'hi' ? 'आवंटित:' : 'Allocated:'}
+                      </span>
                       <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">{formatCurrency(allocated)}</span>
                     </div>
                     <div className="flex justify-between text-sm border-t border-[#DCE4DC] dark:border-[var(--line)] pt-2 font-semibold">
                       <span className={isOver ? 'text-[#B43838]' : 'text-[#173F2B] dark:text-slate-200'}>
-                        {isOver ? 'Over budget by:' : 'Remaining capacity:'}
+                        {isOver
+                          ? (language === 'hi' ? 'बजट से अधिक:' : 'Over budget by:')
+                          : (language === 'hi' ? 'शेष क्षमता:' : 'Remaining capacity:')}
                       </span>
                       <span className={isOver ? 'text-[#B43838] font-bold font-mono' : 'text-[#157A42] font-bold font-mono'}>
                         {formatCurrency(Math.abs(remaining))}
@@ -362,7 +397,7 @@ export function BudgetList() {
                     className="h-8 px-2 text-[#173F2B] dark:text-slate-300 hover:text-[#102F21]"
                   >
                     <Edit2 className="h-3.5 w-3.5 mr-1" />
-                    Edit
+                    {language === 'hi' ? 'संपादित करें' : 'Edit'}
                   </Button>
                   <Button
                     size="sm"
@@ -371,7 +406,7 @@ export function BudgetList() {
                     className="h-8 px-2 text-danger-500 hover:text-danger-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1" />
-                    Delete
+                    {language === 'hi' ? 'हटाएं' : 'Delete'}
                   </Button>
                 </div>
               </Card>
