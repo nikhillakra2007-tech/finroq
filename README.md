@@ -2,16 +2,17 @@
 
 <div align="center">
 
-![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.0.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
+![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.1.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
-![Pytest Suite](https://img.shields.io/badge/Pytest-129%2F129%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-22%2F22%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Pytest Suite](https://img.shields.io/badge/Pytest-159%2F159%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-25%2F25%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Voice%20%26%20Deterministic%20Tools-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, full Hindi & English internationalization, dark/light themes, bank statement ingestion, and deterministic AI intelligence.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, full Hindi & English internationalization, dark/light themes, bank statement ingestion, and Finroq AI personal financial intelligence agent with voice recognition.</b>
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
@@ -19,6 +20,7 @@
 
 [Live Application Exhibits](#-live-application-exhibits) •
 [System Architecture](#-system-architecture) •
+[Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
 [Financial Accounting Lifecycle](#-financial-accounting-lifecycle--data-pipeline) •
 [12 Unified Financial Modules](#-12-unified-financial-modules) •
 [i18n & Theming Engine](#-full-site-hindienglish-i18n--theming-engine) •
@@ -107,7 +109,7 @@ flowchart TB
         TXN_SVC["Transaction Service<br/>Ledger Commits & Statement Ingestion"]
         BUDGET_SVC["Budget Service<br/>Dynamic Caps & Burn Rate"]
         REC_SVC["Recurrence Engine<br/>Calendar Clamping 28 to 31 Days"]
-        AI_SVC["AI Intelligence Service<br/>Context Sanitization & Fallback"]
+        AI_SVC["AI Financial Agent Service<br/>Bounded Loop Orchestrator"]
     end
 
     RATE_LIMIT --> DOMAIN
@@ -115,24 +117,29 @@ flowchart TB
     subgraph ENGINE["Authoritative Mathematical Core"]
         DECIMAL_ENGINE["Fixed-Point Decimal Math Engine<br/>Python Decimal Math — Zero Float Drift"]
         ANALYTICS_CORE["Deterministic Financial Analytics<br/>Net Worth, Runway, Health Scoring"]
+        TOOLS_ENGINE["12 Deterministic Financial Tools<br/>Tools A–L with Pure Decimal Math"]
         
         DOMAIN <--> DECIMAL_ENGINE
         DECIMAL_ENGINE <--> ANALYTICS_CORE
+        AI_SVC <--> TOOLS_ENGINE
+        TOOLS_ENGINE <--> DECIMAL_ENGINE
     end
 
     subgraph PERSISTENCE["Persistence Tier — PostgreSQL 16"]
         ORM["SQLAlchemy 2.0 Async ORM<br/>asyncpg connection pool"]
         DB["PostgreSQL 16 Database<br/>NUMERIC 14,2 Columns + Tenant Indexes"]
+        AI_STORE["AI Persistence Layer<br/>ai_conversations, ai_messages, ai_usage_logs"]
         ALEMBIC["Alembic Migrations<br/>Strict Versioned Schema"]
         
         DOMAIN --> ORM
         ORM --> DB
+        ORM --> AI_STORE
         ALEMBIC -.-> DB
     end
 
     subgraph AI_PROVIDER["External AI Tier"]
-        GEMINI["Google Gemini 1.5 Flash<br/>REST API via HTTPX"]
-        AI_SVC -. "Sanitized Financial Aggregates Only" .-> GEMINI
+        OPENAI["OpenAI Tool Calling Provider<br/>gpt-4o-mini (Bounded Max 5 Iterations)"]
+        AI_SVC -. "Strict owner_id Scoped Tool Schemas" .-> OPENAI
     end
 
     style CLIENT fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
@@ -144,6 +151,94 @@ flowchart TB
 ```
 
 ---
+
+## 🤖 Finroq AI — Personal Financial Intelligence Agent
+
+FINROQ incorporates an enterprise-grade financial intelligence agent designed for **deterministic certainty**, **zero numerical hallucinations**, and **frictionless multimodal interaction**:
+
+```mermaid
+flowchart LR
+    subgraph INPUT["Client Interaction Tier"]
+        VOICE["🎙️ Web Speech Voice Input<br/>SpeechRecognition API"]
+        TYPE["⌨️ Natural Language Text<br/>Interactive Message Bar"]
+        FLOAT_BTN["Floating Bottom-Right Logo<br/>fixed bottom-6 right-6"]
+        
+        FLOAT_BTN --> VOICE
+        FLOAT_BTN --> TYPE
+    end
+
+    subgraph ORCHESTRATION["Backend Orchestration (FastAPI)"]
+        CHAT_SVC["Chat Service /api/v1/ai/chat<br/>Conversation Lifecycle & Token Accounting"]
+        BOUNDED_LOOP["Bounded Tool Calling Loop<br/>Enforced Max 5 Iterations Guardrail"]
+        SECURITY_GUARD["Tenant Isolation Guard<br/>Strict owner_id Filter on all ORM queries"]
+        
+        VOICE --> CHAT_SVC
+        TYPE --> CHAT_SVC
+        CHAT_SVC --> SECURITY_GUARD
+        SECURITY_GUARD --> BOUNDED_LOOP
+    end
+
+    subgraph TOOLS["12 Deterministic Financial Tools (A–L)"]
+        T1["get_account_balances"]
+        T2["get_cash_flow_summary"]
+        T3["get_budget_status"]
+        T4["get_recurring_commitments"]
+        T5["get_net_worth"]
+        T6["get_debt_and_liabilities"]
+        T7["get_spending_breakdown"]
+        T8["get_emergency_fund_runway"]
+        T9["simulate_purchase_affordability"]
+        T10["get_investment_allocation"]
+        T11["get_goal_milestones"]
+        T12["detect_spending_anomalies"]
+        
+        BOUNDED_LOOP <--> TOOLS
+    end
+
+    subgraph OUTPUT["Rich Structured Client Experience"]
+        SYNTH["Plain-Text Advisory Synthesis"]
+        CARDS["Structured Metric Cards<br/>Cash Flow, Budget Variance, Runway, Bills"]
+        PERSIST["Conversation History DB<br/>ai_conversations, ai_messages"]
+        
+        BOUNDED_LOOP --> SYNTH
+        BOUNDED_LOOP --> CARDS
+        CHAT_SVC --> PERSIST
+    end
+
+    style INPUT fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
+    style ORCHESTRATION fill:#EAF3E7,stroke:#247A50,stroke-width:2px;
+    style TOOLS fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
+    style OUTPUT fill:#DCE7D9,stroke:#173F2B,stroke-width:2px;
+```
+
+### 1. The 12 Deterministic Financial Tools (A–L)
+
+Every metric returned to the language model is executed deterministically against verified ledger rows using Python `Decimal` math quantized to `0.01`:
+
+| Tool Letter | Function Name | Purpose & Arithmetic Specification |
+|:---:|---|---|
+| **A** | `get_account_balances` | Returns checking, savings, investment, and credit accounts with exact balances. |
+| **B** | `get_cash_flow_summary` | Quantizes total income, total expense, and net surplus over custom timeframe; neutral transfers excluded. |
+| **C** | `get_budget_status` | Category-by-category plan vs. actual spending, remaining cushion, and percentage utilized. |
+| **D** | `get_recurring_commitments`| Active subscriptions, auto-debits, frequencies, next due dates, and projected 30-day burden. |
+| **E** | `get_net_worth` | Total assets minus liabilities with full asset/liability breakdown. |
+| **F** | `get_debt_and_liabilities` | Outstanding loan balances, minimum monthly obligations, and debt-to-income (DTI) ratio. |
+| **G** | `get_spending_breakdown` | Category aggregates, percentage of total spend, and top merchant transactions. |
+| **H** | `get_emergency_fund_runway` | Liquid cash reserves divided by monthly burn rate (`Runway = Liquid / MonthlyBurn`). |
+| **I** | `simulate_purchase_affordability` | Pre-transaction check calculating post-purchase category balance, remaining cushion, and safe-to-spend verdict. |
+| **J** | `get_investment_allocation` | Current asset distribution (equity, debt, gold, cash) compared against target allocations. |
+| **K** | `get_goal_milestones` | Savings milestone trajectory and estimated completion months: `ceil((Target - Saved) / MonthlySavings)`. |
+| **L** | `detect_spending_anomalies` | Audits recent charges against 90-day moving averages to flag duplicate bills and unexpected surges. |
+
+### 2. Multi-Modal Interaction: Type & Speak
+- **Floating Bottom-Right Trigger**: Available across all workspace pages (`fixed bottom-6 right-6 z-50`) as an unobtrusive glowing badge.
+- **Web Speech API Voice Input**: Tap the microphone button (`🎙️`) to speak queries in English or Hindi. Real-time speech transcription renders directly into the input bar.
+- **Zero Layout Disruption**: Leaves the classic 12-Module home launcher intact while giving instant access to conversational accounting.
+
+### 3. Security, Guardrails & Bounded Tool Loops
+- **Tenant Isolation**: Every database tool query explicitly joins or filters on `owner_id = current_user.id`. Impossible to leak cross-user ledger records.
+- **Bounded Tool Calling**: Enforces an strict upper bound of **5 iterations** per conversational turn (`AI_MAX_TOOL_ITERATIONS = 5`) to prevent runaway API loops.
+- **Conversation Persistence**: Full thread history stored across PostgreSQL tables `ai_conversations`, `ai_messages`, and `ai_usage_logs` with cascading deletes.
 
 ## 🔄 Financial Accounting Lifecycle & Data Pipeline
 
@@ -281,12 +376,12 @@ Every test and validation check passes with 100% compliance:
 
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
-| **Backend Test Suite** | `pytest` | **129 passed in 110.59s** | ✅ PASS |
-| **Frontend Unit Tests** | `npm test -- --watchAll=false` | **22 passed across 4 test suites** | ✅ PASS |
+| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **159 passed in 122.40s (12 AI Tools + Auth + Double Entry)** | ✅ PASS |
+| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **25 passed across 5 test suites (Components + AI Results)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
-| **Production Build** | `npm run build` | **22/22 static routes prerendered** | ✅ PASS |
-| **Demo Seeding** | `python seed_demo.py` | **Idempotent, 0 duplicates created** | ✅ PASS |
-| **Live Vercel Production** | `Invoke-WebRequest https://finroq-app.vercel.app` | **HTTP 200 OK** | ✅ PASS |
+| **Next.js Production Build** | `npm run build` | **23/23 static routes prerendered cleanly** | ✅ PASS |
+| **Demo Seeding** | `python seed_demo.py` | **Idempotent, verified test fixtures loaded** | ✅ PASS |
+| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Voice Speech + Deterministic AI)** | ✅ PASS |
 
 ---
 
