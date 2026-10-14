@@ -19,6 +19,29 @@ import {
   X,
 } from 'lucide-react';
 
+function MicIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <line x1="12" x2="12" y1="19" y2="22" />
+    </svg>
+  );
+}
+
+function MicOffIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="2" x2="22" y1="2" y2="22" />
+      <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" />
+      <path d="M5 10v2a7 7 0 0 0 12 5" />
+      <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" />
+      <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
+      <line x1="12" x2="12" y1="19" y2="22" />
+    </svg>
+  );
+}
+
 interface FinancialAgentChatProps {
   initialPrompt?: string;
   isCompact?: boolean;
@@ -41,8 +64,70 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
   const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  const toggleListening = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setError('Voice recognition is not supported in this browser. Please use Chrome, Edge, or Safari.');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setError(null);
+      };
+
+      recognition.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript) {
+          setInputMessage(transcript);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        if (event.error === 'not-allowed') {
+          setError('Microphone permission denied.');
+        } else if (event.error !== 'no-speech') {
+          setError(`Voice input error: ${event.error}`);
+        }
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch {
+      setError('Failed to start voice recognition.');
+      setIsListening(false);
+    }
+  };
 
   // Auto-scroll to latest message
   const scrollToBottom = () => {
@@ -360,28 +445,47 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
 
       {/* Input Bar */}
       <div className="p-3 sm:p-4 border-t border-[var(--line)] bg-[#F8FAF8] dark:bg-[#14231B]">
-        <div className="relative flex items-center bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] focus-within:border-[#173F2B] dark:focus-within:border-emerald-500 rounded-2xl shadow-xs transition-colors">
+        <div className={`relative flex items-center bg-white dark:bg-[#16251E] border ${isListening ? 'border-red-500 ring-2 ring-red-500/20' : 'border-[#CBD5CB] dark:border-[#2A3D33] focus-within:border-[#173F2B] dark:focus-within:border-emerald-500'} rounded-2xl shadow-xs transition-all`}>
           <textarea
             ref={textareaRef}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about your spending, budgets, savings, or purchase affordability..."
+            placeholder={isListening ? 'Listening... Speak your financial query' : 'Ask about your spending, budgets, savings, or purchase affordability...'}
             rows={1}
             disabled={isLoading}
             className="w-full resize-none py-3 px-4 text-xs sm:text-sm bg-transparent text-[#173F2B] dark:text-slate-100 placeholder:text-[var(--muted)] focus:outline-none"
           />
-          <button
-            onClick={() => handleSendMessage()}
-            disabled={!inputMessage.trim() || isLoading}
-            className="mr-2 p-2 rounded-xl bg-[#173F2B] text-white hover:bg-[#102F21] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-            aria-label="Send message"
-          >
-            <Send className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-1 mr-2 shrink-0">
+            <button
+              type="button"
+              onClick={toggleListening}
+              className={`p-2 rounded-xl transition-all ${
+                isListening
+                  ? 'bg-red-500 text-white animate-pulse shadow-md'
+                  : 'text-[#173F2B] dark:text-slate-200 hover:bg-[var(--soft)]'
+              }`}
+              title={isListening ? 'Stop listening' : 'Speak (Voice input)'}
+              aria-label="Voice input"
+            >
+              {isListening ? (
+                <MicOffIcon className="w-4 h-4" />
+              ) : (
+                <MicIcon className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+              )}
+            </button>
+            <button
+              onClick={() => handleSendMessage()}
+              disabled={!inputMessage.trim() || isLoading}
+              className="p-2 rounded-xl bg-[#173F2B] text-white hover:bg-[#102F21] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              aria-label="Send message"
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
         <div className="flex items-center justify-between mt-2 px-1 text-[10px] font-mono text-[var(--muted)]">
-          <span>Press Enter to send, Shift+Enter for new line</span>
+          <span>{isListening ? '🎙️ Listening to microphone...' : 'Type or click 🎙️ to speak'}</span>
           <span>Verified math • Zero hallucinations</span>
         </div>
       </div>

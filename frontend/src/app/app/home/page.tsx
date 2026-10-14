@@ -1,33 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { getStoredTheme, applyTheme } from '@/lib/theme';
-import { apiClient } from '@/lib/api-client';
-import { FinancialSummary, Transaction, Budget, RecurringTransaction } from '@/lib/api-types';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { FinancialAgentChat } from '@/features/ai/FinancialAgentChat';
 import {
-  Wallet,
-  ArrowUpRight,
-  ArrowDownRight,
-  PieChart,
-  Repeat,
   CreditCard,
-  Sparkles,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
-  Sun,
-  Moon,
-  LogOut,
-  Globe,
-  Layers,
-  ChevronDown,
+  PieChart,
+  Users,
   ShoppingBag,
   Zap,
   BookOpen,
@@ -37,53 +20,166 @@ import {
   ShieldAlert,
   ShieldCheck,
   Activity,
-  Users,
+  ArrowRight,
+  Sun,
+  Moon,
+  LogOut,
+  Globe,
 } from 'lucide-react';
 
 interface ModuleItem {
   id: string;
   name: string;
+  i18nKey: string;
   desc: string;
+  i18nDescKey: string;
   icon: React.ComponentType<{ className?: string }>;
-  category: string;
+  category: 'Track & Control' | 'Decide Before Spending' | 'Build & Protect' | 'Manage Obligations';
   href: string;
 }
 
-const SECONDARY_MODULES: ModuleItem[] = [
-  { id: 'expense-tracking', name: 'Expense Tracking', desc: 'Ledger records & status filters', icon: CreditCard, category: 'Track', href: '/app/expense-tracking' },
-  { id: 'daily-budgeting', name: 'Daily Budgeting', desc: 'Category caps & utilization', icon: PieChart, category: 'Track', href: '/app/budgeting' },
-  { id: 'splitter', name: 'Splitter', desc: 'Shared bill settlement tracking', icon: Users, category: 'Track', href: '/app/splitter' },
-  { id: 'pre-spend-check', name: 'Pre-Spend Check', desc: 'Purchase simulation', icon: ShoppingBag, category: 'Decide', href: '/app/pre-spend-check' },
-  { id: 'spend-leak-detector', name: 'Spend Leak Detector', desc: 'Subscription & leak interception', icon: Zap, category: 'Decide', href: '/app/spend-leak-detector' },
-  { id: 'money-guides', name: 'Money Guides', desc: 'Financial frameworks & rules', icon: BookOpen, category: 'Decide', href: '/app/money-guides' },
-  { id: 'net-worth', name: 'Net Worth', desc: 'Assets minus liabilities', icon: TrendingUp, category: 'Secondary', href: '/app/net-worth' },
-  { id: 'goal-timeline', name: 'Goal Simulator', desc: 'Milestone target modeling', icon: Target, category: 'Secondary', href: '/app/goal-timeline' },
-  { id: 'emergency-cushion', name: 'Emergency Cushion', desc: 'Liquidity runway ratio', icon: Umbrella, category: 'Secondary', href: '/app/emergency-cushion' },
-  { id: 'debt-watchdog', name: 'EMI Watchdog', desc: 'Loan schedules & obligations', icon: ShieldAlert, category: 'Secondary', href: '/app/debt-watchdog' },
-  { id: 'credit-health', name: 'Credit Health', desc: 'Credit utilization metrics', icon: ShieldCheck, category: 'Secondary', href: '/app/credit-health' },
-  { id: 'financial-health', name: 'Financial Health', desc: 'Holistic liquidity score', icon: Activity, category: 'Secondary', href: '/app/financial-health' },
+const TWELVE_MODULES: ModuleItem[] = [
+  // Category A: Track and Control
+  {
+    id: 'expense-tracking',
+    name: 'Expense Tracking',
+    i18nKey: 'mod.expense_tracking',
+    desc: 'Record and categorize transactions, monitor statuses, and review completed cash flow.',
+    i18nDescKey: 'mod.expense_tracking.desc',
+    icon: CreditCard,
+    category: 'Track & Control',
+    href: '/app/expense-tracking',
+  },
+  {
+    id: 'daily-budgeting',
+    name: 'Daily Budgeting',
+    i18nKey: 'mod.daily_budgeting',
+    desc: 'Set category spending caps, compare plans with actual expenses, and monitor cushions.',
+    i18nDescKey: 'mod.daily_budgeting.desc',
+    icon: PieChart,
+    category: 'Track & Control',
+    href: '/app/budgeting',
+  },
+  {
+    id: 'splitter',
+    name: 'Splitter',
+    i18nKey: 'mod.splitter',
+    desc: 'Divide shared expenses, calculate exact equal or custom shares, and track settlements.',
+    i18nDescKey: 'mod.splitter.desc',
+    icon: Users,
+    category: 'Track & Control',
+    href: '/app/splitter',
+  },
+
+  // Category B: Decide Before Spending
+  {
+    id: 'pre-spend-check',
+    name: 'Pre-Spend Check',
+    i18nKey: 'mod.pre_spend_check',
+    desc: 'Estimate the effect of a planned purchase on remaining budget before spending.',
+    i18nDescKey: 'mod.pre_spend_check.desc',
+    icon: ShoppingBag,
+    category: 'Decide Before Spending',
+    href: '/app/pre-spend-check',
+  },
+  {
+    id: 'spend-leak-detector',
+    name: 'Spend Leak Detector',
+    i18nKey: 'mod.spend_leak_detector',
+    desc: 'Identify recurring subscriptions, auto-debits, and potential spend leaks from ledger history.',
+    i18nDescKey: 'mod.spend_leak_detector.desc',
+    icon: Zap,
+    category: 'Decide Before Spending',
+    href: '/app/spend-leak-detector',
+  },
+  {
+    id: 'money-guides',
+    name: 'Money Guides',
+    i18nKey: 'mod.money_guides',
+    desc: 'Explore practical financial frameworks, emergency ratios, and allocation blueprints.',
+    i18nDescKey: 'mod.money_guides.desc',
+    icon: BookOpen,
+    category: 'Decide Before Spending',
+    href: '/app/money-guides',
+  },
+
+  // Category C: Build and Protect Wealth
+  {
+    id: 'net-worth',
+    name: 'Net Worth',
+    i18nKey: 'mod.net_worth',
+    desc: 'Track assets minus liabilities across checking, savings, and credit accounts.',
+    i18nDescKey: 'mod.net_worth.desc',
+    icon: TrendingUp,
+    category: 'Build & Protect',
+    href: '/app/net-worth',
+  },
+  {
+    id: 'goal-timeline-simulator',
+    name: 'Goal Timeline Simulator',
+    i18nKey: 'mod.goal_timeline',
+    desc: 'Model savings targets, project milestone completion dates, and simulate contribution shifts.',
+    i18nDescKey: 'mod.goal_timeline.desc',
+    icon: Target,
+    category: 'Build & Protect',
+    href: '/app/goal-timeline',
+  },
+  {
+    id: 'emergency-cushion',
+    name: 'Emergency Cushion',
+    i18nKey: 'mod.emergency_cushion',
+    desc: 'Estimate required baseline survival reserves using essential expenses and target months.',
+    i18nDescKey: 'mod.emergency_cushion.desc',
+    icon: Umbrella,
+    category: 'Build & Protect',
+    href: '/app/emergency-cushion',
+  },
+
+  // Category D: Manage Obligations and Financial Health
+  {
+    id: 'emi-debt-watchdog',
+    name: 'EMI/Debt Watchdog',
+    i18nKey: 'mod.debt_watchdog',
+    desc: 'Monitor debt obligations, upcoming loan EMIs, due dates, and recorded payments.',
+    i18nDescKey: 'mod.debt_watchdog.desc',
+    icon: ShieldAlert,
+    category: 'Manage Obligations',
+    href: '/app/debt-watchdog',
+  },
+  {
+    id: 'credit-health',
+    name: 'Credit Health',
+    i18nKey: 'mod.credit_health',
+    desc: 'Review credit utilization metrics, billing schedules, and healthy score maintenance guidance.',
+    i18nDescKey: 'mod.credit_health.desc',
+    icon: ShieldCheck,
+    category: 'Manage Obligations',
+    href: '/app/credit-health',
+  },
+  {
+    id: 'integrated-financial-health',
+    name: 'Integrated Financial Health',
+    i18nKey: 'mod.financial_health',
+    desc: 'Multi-factor holistic view across liquidity, debt ratio, budget discipline, and net savings.',
+    i18nDescKey: 'mod.financial_health.desc',
+    icon: Activity,
+    category: 'Manage Obligations',
+    href: '/app/financial-health',
+  },
 ];
 
 export default function AuthenticatedHomeHub() {
   const router = useRouter();
-  const { user, logout, login, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, logout, login, isAuthenticated, isLoading } = useAuth();
   const { language, setLanguage, t } = useI18n();
   const { navigateWithCurtain } = useCurtain();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Dashboard Data State
-  const [summary, setSummary] = useState<FinancialSummary | null>(null);
-  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
-  const [isDataLoading, setIsDataLoading] = useState(true);
-  const [showSecondaryModules, setShowSecondaryModules] = useState(false);
-
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       login('demo@finroq.com', 'password123').catch(() => {});
     }
-  }, [authLoading, isAuthenticated, login]);
+  }, [isLoading, isAuthenticated, login]);
 
   useEffect(() => {
     const stored = getStoredTheme();
@@ -102,55 +198,9 @@ export default function AuthenticatedHomeHub() {
     navigateWithCurtain('/', 'finroq', 'back');
   };
 
-  // Fetch verified dashboard data
-  const loadDashboardData = useCallback(async () => {
-    try {
-      setIsDataLoading(true);
-      const now = new Date();
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-      const today = now.toISOString().split('T')[0];
-
-      const [sumRes, txRes, bRes, rRes] = await Promise.all([
-        apiClient.getSummary({ start_date: firstDay, end_date: today }),
-        apiClient.listTransactions({ page_size: 5 }),
-        apiClient.listBudgets(now.getFullYear(), now.getMonth() + 1),
-        apiClient.listRecurring(),
-      ]);
-
-      setSummary(sumRes.data);
-      setRecentTransactions(txRes.data.transactions || []);
-      setBudgets(bRes.data || []);
-      setRecurring((rRes.data || []).filter((r: any) => r.status === 'active'));
-    } catch {
-      // Fallback handled safely
-    } finally {
-      setIsDataLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
-
   const displayName = user?.full_name || 'Lakra';
 
-  // Financial figures
-  const totalIncome = summary ? parseFloat(summary.total_income || '0') : 150000;
-  const totalExpenses = summary ? parseFloat(summary.total_expenses || '0') : 42800;
-  const netCashFlow = summary ? parseFloat(summary.net_cash_flow || '0') : totalIncome - totalExpenses;
-
-  // Liquid Cash Balance
-  const liquidBalance = summary?.account_balances
-    ?.filter((a) => a.account_type === 'checking' || a.account_type === 'savings' || a.account_type === 'cash')
-    ?.reduce((sum, a) => sum + parseFloat(a.current_balance), 0) ?? 107200;
-
-  // Remaining budget
-  const totalAllocated = budgets.reduce((sum, b) => sum + parseFloat(b.allocated_amount || '0'), 0);
-  const totalSpent = budgets.reduce((sum, b) => sum + parseFloat(b.actual_spending || '0'), 0);
-  const remainingBudget = Math.max(0, (totalAllocated > 0 ? totalAllocated : 35000) - (totalSpent > 0 ? totalSpent : 26000));
-  const budgetUtilization = totalAllocated > 0 ? (totalSpent / totalAllocated) * 100 : 74.3;
-
-  if (authLoading || !isAuthenticated) {
+  if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -165,7 +215,7 @@ export default function AuthenticatedHomeHub() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--accent)] selection:text-white flex flex-col justify-between">
-      {/* Top App Header */}
+      {/* App Bar - Static, scrolls naturally with the page like landing page */}
       <header className="relative w-full z-30 bg-[var(--bg)] border-b border-[var(--line)]">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -211,301 +261,75 @@ export default function AuthenticatedHomeHub() {
         </div>
       </header>
 
-      {/* Main Simplified Financial Dashboard */}
-      <main className="max-w-6xl w-full mx-auto px-5 py-8 md:py-12 space-y-8 flex-1">
-        {/* Welcome & Context Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold tracking-wider uppercase text-[var(--accent)]">
-                Personal Financial Intelligence
-              </span>
-              <span className="text-xs text-[var(--muted)]">•</span>
-              <span className="text-xs font-mono text-[var(--muted)] font-medium">
-                {new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', { month: 'long', year: 'numeric' })}
-              </span>
-            </div>
-            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[#173F2B] dark:text-slate-50">
-              {language === 'hi' ? `स्वागत है, ${displayName}` : `Welcome back, ${displayName}.`}
-            </h1>
-          </div>
-
+      {/* Main Content Area: Dedicated 12-Module Launcher Grid */}
+      <main className="max-w-6xl w-full mx-auto px-5 py-10 md:py-16 space-y-10 flex-1">
+        {/* Welcome Area */}
+        <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowSecondaryModules((prev) => !prev)}
-              className="px-3.5 py-2 rounded-xl border border-[#CBD5CB] dark:border-[#2A3D33] bg-white dark:bg-[#16251E] text-xs font-bold text-[#173F2B] dark:text-slate-100 hover:border-[#173F2B] transition-colors flex items-center gap-2 shadow-xs"
-            >
-              <Layers className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>{showSecondaryModules ? 'Hide All Modules' : 'All Modules'}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showSecondaryModules ? 'rotate-180' : ''}`} />
-            </button>
+            <span className="text-xs font-mono font-bold tracking-wider uppercase text-[var(--accent)]">
+              {t('common.financial_workspace', 'Financial Workspace')}
+            </span>
+            <span className="text-xs text-[var(--muted)]">•</span>
+            <span className="text-xs font-mono text-[var(--muted)] font-medium">
+              {new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', { month: 'long', year: 'numeric' })}
+            </span>
           </div>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#173F2B] dark:text-slate-50">
+            {language === 'hi' ? `स्वागत है, ${displayName}` : `${t('common.welcome_back', 'Welcome back')}, ${displayName}.`}
+          </h1>
+          <p className="text-base sm:text-lg text-[#2E4035] dark:text-slate-300 max-w-xl font-medium">
+            {t('common.choose_today', 'Choose what you want to work on today.')}
+          </p>
         </div>
 
-        {/* ─────────────────────────────────────────────────────────────
-            1. TOP HIERARCHY: CORE FINANCIAL METRICS (NO DUPLICATION)
-            - Available Balance
-            - Income for Selected Period
-            - Expenses for Selected Period
-            - Remaining Budget
-        ───────────────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {/* Card 1: Available Liquid Balance */}
-          <div className="bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-5 sm:p-6 space-y-2 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--muted)]">
-                Available Balance
-              </span>
-              <div className="w-7 h-7 rounded-lg bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center">
-                <Wallet className="w-3.5 h-3.5" />
-              </div>
-            </div>
-            <p className="font-mono text-2xl sm:text-3xl font-bold text-[#173F2B] dark:text-emerald-400">
-              {formatCurrency(liquidBalance)}
-            </p>
-            <span className="text-[11px] text-[var(--muted)] font-medium block">
-              Liquid checking & savings
-            </span>
-          </div>
-
-          {/* Card 2: Period Income */}
-          <div className="bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-5 sm:p-6 space-y-2 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">
-                Period Income
-              </span>
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-            <p className="font-mono text-2xl sm:text-3xl font-bold text-emerald-700 dark:text-emerald-400">
-              +{formatCurrency(totalIncome)}
-            </p>
-            <span className="text-[11px] text-[var(--muted)] font-medium block">
-              Verified inflows
-            </span>
-          </div>
-
-          {/* Card 3: Period Expenses */}
-          <div className="bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-5 sm:p-6 space-y-2 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-red-800 dark:text-red-400">
-                Period Expenses
-              </span>
-              <div className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 flex items-center justify-center">
-                <ArrowDownRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-            <p className="font-mono text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-400">
-              -{formatCurrency(totalExpenses)}
-            </p>
-            <span className="text-[11px] text-[var(--muted)] font-medium block">
-              Verified ledger debits
-            </span>
-          </div>
-
-          {/* Card 4: Remaining Budget */}
-          <div className="bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-5 sm:p-6 space-y-2 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#173F2B] dark:text-slate-300">
-                Remaining Budget
-              </span>
-              <div className="w-7 h-7 rounded-lg bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center">
-                <PieChart className="w-3.5 h-3.5" />
-              </div>
-            </div>
-            <p className="font-mono text-2xl sm:text-3xl font-bold text-[#173F2B] dark:text-slate-100">
-              {formatCurrency(remainingBudget)}
-            </p>
-            <span className="text-[11px] text-[var(--muted)] font-medium block">
-              {budgetUtilization.toFixed(0)}% used this month
-            </span>
-          </div>
-        </div>
-
-        {/* ─────────────────────────────────────────────────────────────
-            2. SECONDARY WORKSPACE SHELF (COLLAPSIBLE / DE-EMPHASIZED)
-            Net Worth, Credit Health, and EMI Watchdog are placed here.
-        ───────────────────────────────────────────────────────────── */}
-        {showSecondaryModules && (
-          <div className="p-6 rounded-3xl bg-[#F8FAF8] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] space-y-4 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100">
-                  Secondary Financial Modules
-                </h3>
-                <p className="text-xs text-[var(--muted)]">
-                  Dedicated operational tools across tracking, debt watchdog, net worth, and guides.
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {SECONDARY_MODULES.map((m) => {
-                const Icon = m.icon;
-                return (
-                  <button
-                    key={m.id}
-                    onClick={() => navigateWithCurtain(m.href, m.name.toLowerCase(), 'fwd')}
-                    className="p-3.5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] text-left transition-all group flex items-start gap-3 shadow-xs"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center shrink-0 group-hover:bg-[#173F2B] group-hover:text-white transition-colors">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="truncate">
-                      <p className="text-xs font-bold text-[#173F2B] dark:text-slate-100 truncate">{m.name}</p>
-                      <span className="text-[10px] text-[var(--muted)] block truncate">{m.desc}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ─────────────────────────────────────────────────────────────
-            3. PRIORITY 4: FINROQ AI INTERACTIVE INTELLIGENCE AGENT
-        ───────────────────────────────────────────────────────────── */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[var(--accent)]" />
-              <h2 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-100">
-                Finroq AI Intelligence
-              </h2>
-            </div>
-            <span className="text-xs font-mono text-[var(--muted)]">Exact Decimal Math NUMERIC(14,2)</span>
-          </div>
-
-          <FinancialAgentChat isCompact={false} />
-        </section>
-
-        {/* ─────────────────────────────────────────────────────────────
-            4. PRIORITY 5 & 6: RECENT TRANSACTIONS & UPCOMING BILLS
-        ───────────────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Recent Verified Transactions (7 Cols) */}
-          <div className="lg:col-span-7 bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <div className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[var(--accent)]" />
-                <h3 className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100">
-                  Recent Ledger Transactions
-                </h3>
-              </div>
+        {/* EXACTLY TWELVE ROUNDED-SQUARE FEATURE CARDS IN 4x3 GRID */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {TWELVE_MODULES.map((mod) => {
+            const Icon = mod.icon;
+            const localizedName = t(mod.i18nKey, mod.name);
+            const localizedDesc = t(mod.i18nDescKey, mod.desc);
+            return (
               <button
-                onClick={() => navigateWithCurtain('/app/expense-tracking', 'ledger', 'fwd')}
-                className="text-xs font-bold text-[var(--accent)] hover:underline flex items-center gap-1"
+                key={mod.id}
+                onClick={() => navigateWithCurtain(mod.href, mod.name.toLowerCase(), 'fwd')}
+                className="group text-left bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] dark:hover:border-emerald-500 rounded-3xl p-6 sm:p-7 flex flex-col justify-between aspect-square transition-all duration-200 hover:-translate-y-1 shadow-xs hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               >
-                <span>View All</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {recentTransactions.length === 0 ? (
-              <div className="py-8 text-center text-xs text-[var(--muted)]">
-                No recent transactions recorded in your ledger.
-              </div>
-            ) : (
-              <div className="divide-y divide-[var(--line)]">
-                {recentTransactions.slice(0, 4).map((t) => {
-                  const isInc = t.transaction_type === 'income';
-                  const isTfr = t.transaction_type === 'transfer';
-                  return (
-                    <div key={t.id} className="py-3 flex items-center justify-between text-xs">
-                      <div className="space-y-0.5">
-                        <p className="font-bold text-[#173F2B] dark:text-slate-100">{t.description || 'Transaction'}</p>
-                        <span className="text-[11px] text-[var(--muted)] font-mono">
-                          {t.category?.name || 'General'} • {formatDate(t.transaction_date)}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <p className={`font-mono font-bold ${isInc ? 'text-emerald-700 dark:text-emerald-400' : isTfr ? 'text-blue-600' : 'text-[#173F2B] dark:text-slate-100'}`}>
-                          {isInc ? '+' : isTfr ? '' : '-'}{formatCurrency(parseFloat(t.amount), t.currency)}
-                        </p>
-                        <span className="text-[10px] font-mono text-[var(--muted)] uppercase font-semibold">
-                          {t.status}
-                        </span>
-                      </div>
+                {/* Card Top: Category and Icon */}
+                <div className="space-y-4 w-full">
+                  <div className="flex items-center justify-between">
+                    <div className="w-11 h-11 rounded-2xl bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center group-hover:bg-[#173F2B] group-hover:text-white dark:group-hover:bg-emerald-600 transition-colors">
+                      <Icon className="w-5 h-5" />
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Upcoming Scheduled Recurring Bills (5 Cols) */}
-          <div className="lg:col-span-5 bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <div className="flex items-center gap-2">
-                <Repeat className="w-4 h-4 text-[var(--accent)]" />
-                <h3 className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100">
-                  Upcoming Recurring Bills
-                </h3>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--soft)] text-[var(--muted)] font-bold">
-                Scheduled
-              </span>
-            </div>
-
-            {recurring.length === 0 ? (
-              <div className="py-8 text-center text-xs text-[var(--muted)]">
-                No active recurring commitments scheduled.
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {recurring.slice(0, 3).map((r) => (
-                  <div key={r.id} className="p-3 rounded-2xl bg-[var(--soft)]/60 border border-[var(--line)]/50 flex items-center justify-between text-xs">
-                    <div className="space-y-0.5">
-                      <p className="font-bold text-[#173F2B] dark:text-slate-100">{r.description || 'Recurring'}</p>
-                      <span className="text-[10px] font-mono text-[var(--muted)] capitalize">
-                        {r.frequency} • Due: {r.next_occurrence ? formatDate(r.next_occurrence) : 'Scheduled'}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
-                        {formatCurrency(parseFloat(r.amount), r.currency)}
-                      </p>
-                      <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
-                        Active
-                      </span>
-                    </div>
+                    <span className="text-[10px] font-mono tracking-wider uppercase text-[var(--muted)] font-bold">
+                      {mod.category.split(' ')[0]}
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* ─────────────────────────────────────────────────────────────
-            5. PRIORITY 7: HIGH-VALUE FINANCIAL INSIGHTS
-        ───────────────────────────────────────────────────────────── */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-white dark:bg-[#1A2C22] text-[var(--accent)] flex items-center justify-center shadow-xs shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <h4 className="font-bold text-xs sm:text-sm text-[#173F2B] dark:text-slate-100">
-                Cash Flow Discipline: Positive Surplus Verified
-              </h4>
-              <p className="text-xs text-[#4D5D51] dark:text-slate-300">
-                Net cash flow of {formatCurrency(netCashFlow)} reflects a {totalIncome > 0 ? ((netCashFlow / totalIncome) * 100).toFixed(0) : 71}% savings rate. Your liquid buffer covers over 3 months of baseline essential burn.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => navigateWithCurtain('/app/financial-health', 'health', 'fwd')}
-            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[#173F2B] text-white text-xs font-bold hover:bg-[#102F21] transition-colors shrink-0"
-          >
-            Review Health Score
-          </button>
+                  <div>
+                    <h2 className="font-display text-lg font-bold text-[#173F2B] dark:text-slate-50 tracking-tight leading-snug">
+                      {localizedName.split('(')[0].trim()}
+                    </h2>
+                    <p className="text-xs text-[#2E4035] dark:text-slate-300 mt-1.5 leading-relaxed line-clamp-3 font-medium">
+                      {localizedDesc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card Bottom: Open cue */}
+                <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-bold text-[#173F2B] dark:text-slate-200 group-hover:text-[var(--accent)] transition-colors w-full">
+                  <span>{t('common.open_module', 'Open module')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[var(--accent)]" />
+                </div>
+              </button>
+            );
+          })}
         </div>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-[var(--line)] py-6 text-xs text-[var(--muted)] font-mono font-medium">
         <div className="max-w-6xl mx-auto px-5 flex flex-wrap justify-between items-center gap-4">
-          <span>{language === 'hi' ? 'फिनरॉक एआई वित्तीय बुद्धिमत्ता' : 'Finroq AI Personal Financial Intelligence'}</span>
+          <span>{language === 'hi' ? 'फिनरॉक 12-मॉड्यूल वित्तीय इंजन' : 'Finroq 12-Module Financial Engine'}</span>
           <span>{language === 'hi' ? 'सटीक दशमलव अंकगणित NUMERIC(14,2)' : 'Exact Decimal Math NUMERIC(14,2)'}</span>
         </div>
       </footer>
