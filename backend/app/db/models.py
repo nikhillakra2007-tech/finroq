@@ -229,3 +229,43 @@ class RecurringOccurrence(Base):
     __table_args__ = (
         UniqueConstraint("recurring_id", "occurrence_date", name="uq_recurring_occurrence_date"),
     )
+
+
+class AIConversation(Base):
+    __tablename__ = "ai_conversations"
+
+    id = Column(String(36), primary_key=True)
+    owner_id = Column(String(64), nullable=False, index=True)
+    title = Column(String(255), nullable=False, default="New Conversation")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    messages = relationship("AIMessage", back_populates="conversation", cascade="all, delete-orphan", order_by="AIMessage.id")
+
+
+class AIMessage(Base):
+    __tablename__ = "ai_messages"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    conversation_id = Column(String(36), ForeignKey("ai_conversations.id", ondelete="CASCADE"), nullable=False, index=True)
+    role = Column(String(32), nullable=False)
+    content = Column(String(8192), nullable=False)
+    structured_data = Column(String(16384), nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    conversation = relationship("AIConversation", back_populates="messages")
+
+
+class AIUsageLog(Base):
+    __tablename__ = "ai_usage_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_id = Column(String(64), nullable=False, index=True)
+    conversation_id = Column(String(36), nullable=True, index=True)
+    model = Column(String(64), nullable=False)
+    prompt_tokens = Column(Integer, nullable=False, default=0)
+    completion_tokens = Column(Integer, nullable=False, default=0)
+    total_tokens = Column(Integer, nullable=False, default=0)
+    tool_calls_count = Column(Integer, nullable=False, default=0)
+    duration_ms = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)

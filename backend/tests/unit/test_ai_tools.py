@@ -1,0 +1,215 @@
+import pytest
+from datetime import datetime, date, timedelta
+from decimal import Decimal
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import (
+    Account,
+    AccountType,
+    Category,
+    CategoryType,
+    Transaction,
+    TransactionType,
+    TransactionStatus,
+    Budget,
+    RecurringTransaction,
+    RecurrenceFrequency,
+    RecurrenceStatus,
+)
+from app.features.ai.tools import FinancialToolRegistry, TOOL_DEFINITIONS
+
+
+@pytest.mark.asyncio
+class TestFinancialTools:
+    async def test_tool_definitions_valid(self):
+        assert len(TOOL_DEFINITIONS) >= 12
+        for tool in TOOL_DEFINITIONS:
+            assert tool["type"] == "function"
+            fn = tool["function"]
+            assert "name" in fn
+            assert "description" in fn
+            assert "parameters" in fn
+
+    async def test_financial_summary_and_user_isolation(self, db_session: AsyncSession):
+        user_a = "user_alpha"
+        user_b = "user_beta"
+
+        # Setup accounts
+        acc_a = Account(
+            owner_id=user_a,
+            name="Checking A",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("50000.00"),
+        )
+        acc_b = Account(
+            owner_id=user_b,
+            name="Checking B",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("1000000.00"),
+        )
+        db_session.add_all([acc_a, acc_b])
+        await db_session.flush()
+
+        # Add income and expense for user A
+        cat_inc = Category(name="Salary", category_type=CategoryType.INCOME, owner_id=user_a)
+        cat_exp = Category(name="Rent", category_type=CategoryType.EXPENSE, owner_id=user_a)
+        db_session.add_all([cat_inc, cat_exp])
+        await db_session.flush()
+
+        tx_inc = Transaction(
+            owner_id=user_a,
+            account_id=acc_a.id,
+            category_id=cat_inc.id,
+            amount=Decimal("30000.00"),
+            currency="INR",
+            transaction_type=TransactionType.INCOME,
+            status=TransactionStatus.COMPLETED,
+            transaction_date=datetime.utcnow(),
+        )
+        tx_exp = Transaction(
+            owner_id=user_a,
+            account_id=acc_a.id,
+            category_id=cat_exp.id,
+            amount=Decimal("10000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            transaction_date=datetime.utcnow(),
+        )
+        # Secret transaction for user B
+        tx_b = Transaction(
+            owner_id=user_b,
+            account_id=acc_b.id,
+            amount=Decimal("999999.00"),
+            currency="INR",
+            transaction_type=TransactionType.INCOME,
+            status=TransactionStatus.COMPLETED,
+            transaction_date=datetime.utcnow(),
+        )
+        db_session.add_all([tx_inc, tx_exp, tx_b])
+        await db_session.flush()
+
+        registry_a = FinancialToolRegistry(db_session, user_a)
+        summary = await registry_a.tool_get_financial_summary()
+
+        assert summary["total_income"] == "30000.00"
+        assert summary["total_expenses"] == "10000.00"
+        assert summary["net_cash_flow"] == "20000.00"
+        # Liquid cash = initial 50,000 + 30,000 - 10,000 = 70,000
+        assert summary["liquid_cash_available"] == "70000.00"
+
+        # Verify User B's secret 999,999 balance is completely isolated and absent
+        assert "999999.00" not in str(summary)
+
+    async def test_calculate_purchase_affordability(self, db_session: AsyncSession):
+        user_id = "user_afford"
+        acc = Account(
+            owner_id=user_id,
+            name="Bank",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("25000.00"),
+        )
+        db_session.add(acc)
+        await db_session.flush()
+
+        # Add upcoming recurring bill of 5,000
+        bill = RecurringTransaction(
+            owner_id=user_id,
+            account_id=acc.id,
+            amount=Decimal("5000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            frequency=RecurrenceFrequency.MONTHLY,
+            start_date=datetime.utcnow(),
+            next_occurrence=datetime.utcnow() + timedelta(days=5),
+            status=RecurrenceStatus.ACTIVE,
+            description="Broadband & Mobile",
+        )
+        db_session.add(bill)
+        await db_session.flush()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+
+        # 1. Comfortable: ₹5,000 purchase with ₹25,000 balance, ₹5,000 bill, ₹5,000 buffer
+        # Remaining: 25,000 - 5,000 - 5,000 = 15,000 > buffer
+        res1 = await registry.tool_calculate_purchase_affordability(
+            purchase_amount=5000.0, context="Headphones"
+        )
+        assert "Comfortably" in res1["affordability_rating"]
+        assert res1["available_liquid_cash"] == "25000.00"
+
+        # 2. Caution: ₹18,000 purchase. 25,000 - 18,000 - 5,000 = 2,000 < buffer (5,000)
+        res2 = await registry.tool_calculate_purchase_affordability(
+            purchase_amount=18000.0, context="Laptop"
+        )
+        assert "Caution" in res2["affordability_rating"]
+
+        # 3. Not affordable: ₹30,000 purchase > available 25,000
+        res3 = await registry.tool_calculate_purchase_affordability(
+            purchase_amount=30000.0, context="Bike"
+        )
+        assert "Not Affordable" in res3["affordability_rating"]
+
+    async def test_calculate_savings_scenario(self, db_session: AsyncSession):
+        user_id = "user_scenario"
+        acc = Account(
+            owner_id=user_id,
+            name="Savings",
+            account_type=AccountType.SAVINGS,
+            currency="INR",
+            initial_balance=Decimal("10000.00"),
+        )
+        cat = Category(name="Dining", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([acc, cat])
+        await db_session.flush()
+
+        tx = Transaction(
+            owner_id=user_id,
+            account_id=acc.id,
+            category_id=cat.id,
+            amount=Decimal("8000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            transaction_date=datetime.utcnow(),
+        )
+        db_session.add(tx)
+        await db_session.flush()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+
+        # Target savings scenario
+        res_target = await registry.tool_calculate_savings_scenario(target_monthly_savings=2000.0)
+        assert res_target["monthly_target"] == "2000.00"
+        assert res_target["annual_savings_impact"] == "24000.00"
+
+        # Percentage cut scenario on Dining (15%)
+        res_pct = await registry.tool_calculate_savings_scenario(
+            category_name="Dining", reduction_percentage=15.0
+        )
+        # 15% of 8,000 is 1,200
+        assert res_pct["estimated_monthly_savings"] == "1200.00"
+        assert res_pct["estimated_annual_savings"] == "14400.00"
+
+    async def test_estimate_month_end_position(self, db_session: AsyncSession):
+        user_id = "user_monthend"
+        acc = Account(
+            owner_id=user_id,
+            name="Primary Account",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("40000.00"),
+        )
+        db_session.add(acc)
+        await db_session.flush()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+        pos = await registry.tool_estimate_month_end_position()
+
+        assert "scenarios" in pos
+        assert "baseline_projected_cash" in pos["scenarios"]
+        assert "frugal_scenario_cash" in pos["scenarios"]
+        assert "assumptions_and_transparency" in pos

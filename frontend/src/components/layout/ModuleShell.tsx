@@ -28,6 +28,7 @@ import {
   ChevronDown,
   Check,
   Layers,
+  Sparkles,
 } from 'lucide-react';
 
 interface ModuleShellProps {
@@ -38,6 +39,7 @@ interface ModuleShellProps {
 }
 
 const MODULES_NAV = [
+  { href: '/app/ai-assistant', key: 'mod.ai_assistant', label: 'Finroq AI', icon: Sparkles },
   { href: '/app/expense-tracking', key: 'mod.expense_tracking', label: 'Expense Tracking', icon: CreditCard },
   { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Daily Budgeting', icon: PieChart },
   { href: '/app/splitter', key: 'mod.splitter', label: 'Splitter', icon: Users },

@@ -440,3 +440,48 @@ export interface SpendLeakAnalysisResponse {
   recoverable_annual_estimate: string;
   disclaimer: string;
 }
+
+export interface AIChatRequest {
+  message: string;
+  conversation_id?: string | null;
+  metadata?: Record<string, any> | null;
+}
+
+export interface AIChatResponse {
+  conversation_id: string;
+  message: string;
+  is_live_ai: boolean;
+  model_used: string;
+  structured_data?: Record<string, any> | null;
+  tools_executed: Array<{
+    tool: string;
+    arguments: Record<string, any>;
+    result: Record<string, any>;
+  }>;
+  error_code?: string | null;
+  created_at: string;
+}
+
+export interface AIConversationSummary {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+}
+
+export interface AIMessageItem {
+  id: number;
+  role: 'user' | 'assistant' | 'system' | 'tool';
+  content: string;
+  structured_data?: Record<string, any> | null;
+  created_at: string;
+}
+
+export interface AIConversationDetail {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  messages: AIMessageItem[];
+}
