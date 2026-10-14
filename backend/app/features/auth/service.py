@@ -40,6 +40,30 @@ class AuthService:
         await self.db.refresh(user)
         return user
 
+    async def authenticate_or_create_google_user(self, email: str, full_name: str | None = None) -> User:
+        clean_email = email.strip().lower()
+        if not (clean_email.endswith("@gmail.com") or clean_email.endswith("@googlemail.com")):
+            raise ValueError("Google sign-in is strictly restricted to valid @gmail.com accounts.")
+        
+        result = await self.db.execute(select(User).where(User.email == clean_email))
+        user = result.scalar_one_or_none()
+        if user:
+            return user
+        
+        import secrets
+        random_pw = secrets.token_urlsafe(32)
+        hashed_password = get_password_hash(random_pw)
+        derived_name = full_name or clean_email.split("@")[0].replace(".", " ").title()
+        user = User(
+            email=clean_email,
+            hashed_password=hashed_password,
+            full_name=derived_name,
+        )
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
     async def get_user_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()

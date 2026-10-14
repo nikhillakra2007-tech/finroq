@@ -10,6 +10,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (email: string, full_name?: string) => Promise<void>;
+  setAuthenticatedSession: (token: string, user?: User) => Promise<void>;
   register: (email: string, password: string, full_name?: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -36,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await apiClient.getMe();
       setUser(res.data);
     } catch {
-      if (currentToken.includes('demo')) {
+      if (currentToken.includes('demo') || currentToken.includes('google')) {
         setUser(DEMO_USER);
       } else {
         apiClient.logout();
@@ -54,6 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('finroq_logged_out');
+    }
     try {
       const res = await apiClient.login({ email, password });
       const accessToken = res.data.access_token;
@@ -75,8 +80,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async (email: string, full_name?: string) => {
+    setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('finroq_logged_out');
+    }
+    try {
+      const res = await apiClient.googleLogin({ email, full_name });
+      const accessToken = res.data.access_token;
+      setToken(accessToken);
+      apiClient.setToken(accessToken);
+      try {
+        const userRes = await apiClient.getMe();
+        setUser(userRes.data);
+      } catch {
+        const fallbackUser: User = (res.data as any)?.user || {
+          id: 77,
+          email,
+          full_name: full_name || email.split('@')[0],
+          is_active: true,
+          is_superuser: false,
+        };
+        setUser(fallbackUser);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const setAuthenticatedSession = async (tokenString: string, userObj?: User) => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('finroq_logged_out');
+    }
+    apiClient.setToken(tokenString);
+    setToken(tokenString);
+    if (userObj) {
+      setUser(userObj);
+    } else {
+      try {
+        const userRes = await apiClient.getMe();
+        setUser(userRes.data);
+      } catch {
+        setUser(DEMO_USER);
+      }
+    }
+  };
+
   const register = async (email: string, password: string, full_name?: string) => {
     setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('finroq_logged_out');
+    }
     try {
       await apiClient.register({ email, password, full_name });
       const currentToken = apiClient.getToken();
@@ -91,6 +145,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('finroq_logged_out', 'true');
+    }
     apiClient.logout();
     setUser(null);
     setToken(null);
@@ -108,6 +165,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!token && !!user,
         isLoading,
         login,
+        loginWithGoogle,
+        setAuthenticatedSession,
         register,
         logout,
         refreshUser,

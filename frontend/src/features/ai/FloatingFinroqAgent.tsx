@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
-import { AIChatResponse, AIConversationSummary, AIMessageItem } from '@/lib/api-types';
+import { AIChatResponse, AIConversationSummary, AIMessageItem, PublicAIChatResponse } from '@/lib/api-types';
 import { StructuredResults } from './StructuredResults';
 import {
   Sparkles,
@@ -15,7 +15,8 @@ import {
   ChevronDown,
   AlertCircle,
   ArrowRight,
-  RotateCcw,
+  ShieldCheck,
+  Lock,
 } from 'lucide-react';
 
 function MicIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -41,7 +42,28 @@ function MicOffIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-const SUGGESTED_QUESTIONS = [
+const PUBLIC_SUGGESTED_QUESTIONS: Record<string, string[]> = {
+  en: [
+    'What features does Finroq offer?',
+    'How does Finroq protect my financial privacy?',
+    'How does budget and leak tracking work?',
+    'What languages are supported on this site?',
+  ],
+  hi: [
+    'फिनरॉक कौन-कौन सी सुविधाएं प्रदान करता है?',
+    'फिनरॉक मेरी वित्तीय गोपनीयता कैसे सुरक्षित रखता है?',
+    'बजट और खर्च की बचत कैसे काम करती है?',
+    'इस साइट पर कौन-कौन सी भाषाएं उपलब्ध हैं?',
+  ],
+  es: [
+    '¿Qué funciones ofrece Finroq?',
+    '¿Cómo protege Finroq mi privacidad financiera?',
+    '¿Cómo funciona el control de presupuestos y gastos?',
+    '¿Qué idiomas están disponibles?',
+  ],
+};
+
+const APP_SUGGESTED_QUESTIONS = [
   'Analyze my spending this month',
   'Where can I save more?',
   'Can I afford a ₹15,000 purchase?',
@@ -51,8 +73,11 @@ const SUGGESTED_QUESTIONS = [
 
 export function FloatingFinroqAgent() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const { language } = useI18n();
+  const { language, activeLanguageMeta, t } = useI18n();
+
+  const isGuestMode = !isAuthenticated || !pathname?.startsWith('/app');
 
   const [isOpen, setIsOpen] = useState(false);
   const [conversations, setConversations] = useState<AIConversationSummary[]>([]);
@@ -85,9 +110,9 @@ export function FloatingFinroqAgent() {
     }
   }, [messages, isLoading, isOpen]);
 
-  // Load existing conversation on open if none active
+  // Load existing conversation on open if in-app authenticated mode
   useEffect(() => {
-    if (isOpen && isAuthenticated && conversations.length === 0) {
+    if (isOpen && isAuthenticated && !isGuestMode && conversations.length === 0) {
       apiClient
         .listAIConversations()
         .then((res) => {
@@ -102,7 +127,7 @@ export function FloatingFinroqAgent() {
         })
         .catch(() => {});
     }
-  }, [isOpen, isAuthenticated]);
+  }, [isOpen, isAuthenticated, isGuestMode]);
 
   // Speech Recognition toggle
   const toggleListening = () => {
@@ -127,7 +152,8 @@ export function FloatingFinroqAgent() {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = language === 'hi' ? 'hi-IN' : 'en-US';
+      // Wire Speech recognition locale directly to the user's selected language
+      recognition.lang = activeLanguageMeta.speechLocale || 'en-US';
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -165,8 +191,14 @@ export function FloatingFinroqAgent() {
     }
   };
 
-  // Start a fresh conversation thread
+  // Start fresh chat
   const handleStartNewConversation = async () => {
+    if (isGuestMode) {
+      setMessages([]);
+      setError(null);
+      textareaRef.current?.focus();
+      return;
+    }
     try {
       setError(null);
       const res = await apiClient.createAIConversation('New Analysis');
@@ -202,31 +234,56 @@ export function FloatingFinroqAgent() {
     setMessages((prev) => [...prev, tempUserMsg]);
     setIsLoading(true);
 
-    try {
-      const res = await apiClient.chatAI({
-        message: text,
-        conversation_id: currentConversationId,
-      });
+    if (isGuestMode) {
+      // Public Landing Guide Mode (Strictly zero user ledger access)
+      try {
+        const res = await apiClient.chatPublicAI({
+          message: text,
+          language,
+        });
+        const pubData: PublicAIChatResponse = res.data;
+        const assistantMsg: AIMessageItem = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: pubData.message,
+          created_at: pubData.created_at || new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, assistantMsg]);
+      } catch (err) {
+        const errMsg = extractErrorMessage(err, 'Could not retrieve public assistance. Please try again.');
+        setError(errMsg);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      // In-App Ledger Intelligence Mode
+      try {
+        const res = await apiClient.chatAI({
+          message: text,
+          conversation_id: currentConversationId,
+          language,
+        });
 
-      const data: AIChatResponse = res.data;
-      setCurrentConversationId(data.conversation_id);
+        const data: AIChatResponse = res.data;
+        setCurrentConversationId(data.conversation_id);
 
-      const assistantMsg: AIMessageItem = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: data.message,
-        structured_data: data.structured_data,
-        created_at: data.created_at || new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, assistantMsg]);
+        const assistantMsg: AIMessageItem = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: data.message,
+          structured_data: data.structured_data,
+          created_at: data.created_at || new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, assistantMsg]);
 
-      // Refresh list
-      apiClient.listAIConversations().then((r) => setConversations(r.data || [])).catch(() => {});
-    } catch (err) {
-      const errMsg = extractErrorMessage(err, 'Failed to complete analysis. Please try again.');
-      setError(errMsg);
-    } finally {
-      setIsLoading(false);
+        // Refresh list
+        apiClient.listAIConversations().then((r) => setConversations(r.data || [])).catch(() => {});
+      } catch (err) {
+        const errMsg = extractErrorMessage(err, 'Failed to complete analysis. Please try again.');
+        setError(errMsg);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -237,10 +294,14 @@ export function FloatingFinroqAgent() {
     }
   };
 
-  // Hide widget if unauthenticated or on landing page or already on full /app/ai-assistant page
-  if (authLoading || !isAuthenticated || !pathname?.startsWith('/app') || pathname === '/app/ai-assistant') {
+  // Hide widget if on the dedicated full-page AI screen
+  if (pathname === '/app/ai-assistant') {
     return null;
   }
+
+  const suggestedQuestions = isGuestMode
+    ? PUBLIC_SUGGESTED_QUESTIONS[language] || PUBLIC_SUGGESTED_QUESTIONS['en']
+    : APP_SUGGESTED_QUESTIONS;
 
   return (
     <>
@@ -251,7 +312,7 @@ export function FloatingFinroqAgent() {
         <div className="fixed bottom-6 right-6 z-50 animate-in fade-in zoom-in-95 duration-200">
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-[#173F2B] text-white dark:bg-emerald-600 hover:bg-[#102F21] dark:hover:bg-emerald-700 shadow-2xl hover:shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-200 border border-emerald-400/30 cursor-pointer focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+            className="group relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-[#173F2B] text-white dark:bg-emerald-600 hover:bg-[#102F21] dark:hover:bg-emerald-700 shadow-2xl hover:shadow-emerald-900/25 hover:scale-105 active:scale-95 transition-all duration-200 border border-emerald-400/30 cursor-pointer focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
             aria-label="Open Finroq AI"
           >
             {/* Pulsing online badge */}
@@ -263,10 +324,13 @@ export function FloatingFinroqAgent() {
             {/* Sparkles Emblem */}
             <Sparkles className="w-5 h-5 text-emerald-300 group-hover:rotate-12 transition-transform duration-200" />
 
-            {/* Label */}
-            <span className="font-display font-bold text-sm tracking-tight">
-              Finroq AI
-            </span>
+            {/* Label & Active Language Badge */}
+            <div className="flex items-center gap-1.5 font-display font-bold text-sm tracking-tight">
+              <span>{isGuestMode ? 'Finroq Guide' : 'Finroq AI'}</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-bold">
+                {activeLanguageMeta.badge}
+              </span>
+            </div>
           </button>
         </div>
       )}
@@ -275,7 +339,7 @@ export function FloatingFinroqAgent() {
           2. EXPANDED FLOATING MESSAGE PANEL
       ───────────────────────────────────────────────────────────── */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[94vw] sm:w-[420px] h-[580px] max-h-[85vh] flex flex-col bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[94vw] sm:w-[430px] h-[600px] max-h-[85vh] flex flex-col bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
           {/* Header */}
           <div className="px-4 py-3 border-b border-[var(--line)] bg-[#F8FAF8] dark:bg-[#14231B] flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -285,13 +349,24 @@ export function FloatingFinroqAgent() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100">
-                    Finroq AI
+                    {isGuestMode ? 'Finroq Guide' : 'Finroq AI'}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
-                    Live Ledger
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border flex items-center gap-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                    {isGuestMode ? (
+                      <>
+                        <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                        Public Guide
+                      </>
+                    ) : (
+                      'Live Ledger'
+                    )}
                   </span>
                 </div>
-                <p className="text-[10px] text-[var(--muted)] font-medium">Type or speak your financial query</p>
+                <p className="text-[10px] text-[var(--muted)] font-medium">
+                  {isGuestMode
+                    ? `Public assistance in ${activeLanguageMeta.nativeName} (${activeLanguageMeta.name})`
+                    : `Private financial intelligence in ${activeLanguageMeta.nativeName}`}
+                </p>
               </div>
             </div>
 
@@ -306,13 +381,30 @@ export function FloatingFinroqAgent() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-[var(--line)] text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
-                title="Minimize Finroq AI"
+                title="Minimize"
                 aria-label="Close"
               >
                 <ChevronDown className="w-4 h-4" />
               </button>
             </div>
           </div>
+
+          {/* Guest Mode Banner: Privacy & Scope */}
+          {isGuestMode && (
+            <div className="px-3.5 py-2 bg-emerald-50/80 dark:bg-emerald-950/40 border-b border-emerald-100 dark:border-emerald-900/60 flex items-center justify-between text-[11px] text-emerald-900 dark:text-emerald-200">
+              <div className="flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span className="font-medium">Public mode: Zero user data access.</span>
+              </div>
+              <button
+                onClick={() => router.push('/auth/sign-in')}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-700 text-white font-semibold text-[10px] hover:bg-emerald-800 transition-colors"
+              >
+                Sign In
+                <ArrowRight className="w-2.5 h-2.5" />
+              </button>
+            </div>
+          )}
 
           {/* Conversation Body */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
@@ -323,10 +415,12 @@ export function FloatingFinroqAgent() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-display text-base font-bold text-[#173F2B] dark:text-slate-100">
-                    Your finances, understood.
+                    {isGuestMode ? 'Welcome to Finroq!' : 'Your finances, understood.'}
                   </h4>
                   <p className="text-[11px] text-[#4D5D51] dark:text-slate-300 max-w-xs leading-relaxed">
-                    Type or tap the microphone to speak. I answer questions directly using your verified ledger records.
+                    {isGuestMode
+                      ? `Ask me anything about our 12 features, bank statement imports, and zero-trust privacy in ${activeLanguageMeta.nativeName}.`
+                      : `Type or tap the microphone to speak in ${activeLanguageMeta.nativeName}. I answer simply and to the point using your ledger.`}
                   </p>
                 </div>
 
@@ -335,7 +429,7 @@ export function FloatingFinroqAgent() {
                     Quick Suggestions
                   </span>
                   <div className="flex flex-col gap-1.5">
-                    {SUGGESTED_QUESTIONS.map((q, idx) => (
+                    {suggestedQuestions.map((q, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleSendMessage(q)}
@@ -354,13 +448,13 @@ export function FloatingFinroqAgent() {
                 return (
                   <div key={m.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                     <div
-                      className={`max-w-[88%] p-3.5 rounded-2xl space-y-2 leading-relaxed ${
+                      className={`max-w-[88%] p-3.5 rounded-2xl space-y-2 leading-relaxed break-words [overflow-wrap:anywhere] overflow-hidden ${
                         isUser
                           ? 'bg-[#173F2B] text-white dark:bg-emerald-700 rounded-tr-xs'
                           : 'bg-[#F8FAF8] dark:bg-[#14231B] border border-[#CBD5CB]/60 dark:border-[#2A3D33] text-[#173F2B] dark:text-slate-100 rounded-tl-xs shadow-2xs'
                       }`}
                     >
-                      <div className="whitespace-pre-wrap">{m.content}</div>
+                      <div className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{m.content}</div>
 
                       {/* Render Structured Results Card if Present */}
                       {m.structured_data && (
@@ -379,7 +473,9 @@ export function FloatingFinroqAgent() {
               <div className="flex items-start">
                 <div className="p-3 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-bl-xs flex items-center gap-2 text-xs text-[var(--muted)]">
                   <div className="w-3.5 h-3.5 border-2 border-[var(--accent)]/30 border-t-[var(--accent)] rounded-full animate-spin" />
-                  <span className="font-mono text-[11px]">Computing verified ledger data...</span>
+                  <span className="font-mono text-[11px]">
+                    {isGuestMode ? 'Retrieving guidance...' : 'Computing verified ledger data...'}
+                  </span>
                 </div>
               </div>
             )}
@@ -405,7 +501,13 @@ export function FloatingFinroqAgent() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={isListening ? 'Listening... Speak your financial query' : 'Type or speak your financial query...'}
+                placeholder={
+                  isListening
+                    ? `Listening in ${activeLanguageMeta.nativeName}...`
+                    : isGuestMode
+                    ? `Ask about Finroq in ${activeLanguageMeta.nativeName}...`
+                    : `Ask or speak in ${activeLanguageMeta.nativeName}...`
+                }
                 rows={1}
                 disabled={isLoading}
                 className="w-full resize-none py-2.5 pl-3.5 pr-2 text-xs bg-transparent text-[#173F2B] dark:text-slate-100 placeholder:text-[var(--muted)] focus:outline-none"
@@ -421,7 +523,7 @@ export function FloatingFinroqAgent() {
                       ? 'bg-red-500 text-white animate-pulse shadow-md'
                       : 'text-[#173F2B] dark:text-slate-200 hover:bg-[var(--soft)]'
                   }`}
-                  title={isListening ? 'Stop listening' : 'Speak (Voice input)'}
+                  title={isListening ? 'Stop listening' : `Speak in ${activeLanguageMeta.name}`}
                   aria-label="Voice input"
                 >
                   {isListening ? (
@@ -445,8 +547,12 @@ export function FloatingFinroqAgent() {
             </div>
 
             <div className="flex items-center justify-between mt-1.5 px-1 text-[9px] font-mono text-[var(--muted)]">
-              <span>{isListening ? '🎙️ Listening to microphone...' : 'Type or click 🎙️ to speak'}</span>
-              <span>Exact Decimal NUMERIC(14,2)</span>
+              <span>
+                {isListening
+                  ? `🎙️ Listening (${activeLanguageMeta.speechLocale})...`
+                  : `Language: ${activeLanguageMeta.nativeName}`}
+              </span>
+              <span>{isGuestMode ? 'Zero-Trust · Private & Isolated' : 'Exact Decimal NUMERIC(14,2)'}</span>
             </div>
           </div>
         </div>

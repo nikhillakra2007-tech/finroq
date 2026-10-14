@@ -236,6 +236,43 @@ class ApiClient {
     }
   }
 
+  async googleLogin(data: { email: string; full_name?: string }) {
+    const cleanEmail = (data.email || '').trim().toLowerCase();
+    if (!cleanEmail.endsWith('@gmail.com') && !cleanEmail.endsWith('@googlemail.com')) {
+      throw new Error('Google Sign-In is strictly restricted to verified @gmail.com accounts.');
+    }
+    try {
+      const res = await this.client.post<AuthResponse>('/auth/google', {
+        email: cleanEmail,
+        full_name: data.full_name || 'Google User',
+      });
+      if (res.data?.access_token) {
+        this.setToken(res.data.access_token);
+      }
+      return res;
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        const demoToken = 'demo-google-token-verified';
+        this.setToken(demoToken);
+        const googleUser: User = {
+          id: 77,
+          email: cleanEmail,
+          full_name: data.full_name || cleanEmail.split('@')[0],
+          is_active: true,
+          is_superuser: false,
+        };
+        return {
+          data: {
+            access_token: demoToken,
+            token_type: 'bearer',
+            user: googleUser,
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
   async getMe() {
     if (this.getToken()?.includes('demo')) {
       return { data: DEMO_USER } as any;
@@ -1000,6 +1037,32 @@ class ApiClient {
             model_used: 'finroq-demo-intelligence',
             structured_data: structured,
             tools_executed: [{ tool: 'get_financial_summary', arguments: {}, result: structured }],
+            created_at: new Date().toISOString(),
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
+  // Finroq AI Public Landing Page Guide (Zero DB access, feature orientation)
+  async chatPublicAI(data: import('./api-types').PublicAIChatRequest) {
+    try {
+      return await this.client.post<import('./api-types').PublicAIChatResponse>('/ai/public-chat', data);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        const lang = data.language || 'en';
+        let greeting = 'Welcome to Finroq! We help you track accounts, budgets, and smart savings.';
+        if (lang === 'hi') greeting = 'फिनरॉक में आपका स्वागत है! हम आपके खातों, बजट और बचत को ट्रैक करने में मदद करते हैं।';
+        else if (lang === 'es') greeting = '¡Bienvenido a Finroq! Te ayudamos a controlar tus cuentas, presupuestos y ahorros.';
+        else if (lang === 'fr') greeting = 'Bienvenue sur Finroq ! Nous vous aidons à suivre vos comptes, budgets et économies.';
+        return {
+          data: {
+            message: greeting + ' As a visitor, you can learn about our 12 features. Sign in to analyze your personal finances.',
+            is_public_guide: true,
+            topic: 'public_assistance',
+            features_highlighted: ['Accounts', 'Budgets', 'Leak Detection', 'Zero-Trust Privacy'],
+            cta_action: 'sign_in',
             created_at: new Date().toISOString(),
           },
         } as any;

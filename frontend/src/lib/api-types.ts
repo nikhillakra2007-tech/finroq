@@ -445,6 +445,21 @@ export interface AIChatRequest {
   message: string;
   conversation_id?: string | null;
   metadata?: Record<string, any> | null;
+  language?: string;
+}
+
+export interface PublicAIChatRequest {
+  message: string;
+  language?: string;
+}
+
+export interface PublicAIChatResponse {
+  message: string;
+  is_public_guide: boolean;
+  topic?: string;
+  features_highlighted?: string[];
+  cta_action?: string;
+  created_at: string;
 }
 
 export interface AIChatResponse {

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { getStoredTheme, applyTheme } from '@/lib/theme';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
 import {
   CreditCard,
   PieChart,
@@ -175,11 +176,20 @@ export default function AuthenticatedHomeHub() {
   const { navigateWithCurtain } = useCurtain();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+  const isSigningOutRef = useRef(false);
+
   useEffect(() => {
+    if (
+      isSigningOutRef.current ||
+      (typeof window !== 'undefined' && sessionStorage.getItem('finroq_logged_out') === 'true')
+    ) {
+      router.replace('/');
+      return;
+    }
     if (!isLoading && !isAuthenticated) {
       login('demo@finroq.com', 'password123').catch(() => {});
     }
-  }, [isLoading, isAuthenticated, login]);
+  }, [isLoading, isAuthenticated, login, router]);
 
   useEffect(() => {
     const stored = getStoredTheme();
@@ -194,6 +204,10 @@ export default function AuthenticatedHomeHub() {
   };
 
   const handleSignOut = () => {
+    isSigningOutRef.current = true;
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('finroq_logged_out', 'true');
+    }
     logout();
     navigateWithCurtain('/', 'finroq', 'back');
   };
@@ -235,14 +249,7 @@ export default function AuthenticatedHomeHub() {
             <span className="text-sm font-bold text-[#173F2B] dark:text-slate-200 hidden md:inline-block">
               {displayName}
             </span>
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-              className="px-2.5 py-1 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all flex items-center gap-1 text-xs font-bold text-[#173F2B] dark:text-slate-100"
-              title="Switch Language / भाषा बदलें"
-            >
-              <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>{language === 'en' ? 'हिन्दी' : 'EN'}</span>
-            </button>
+            <LanguageSelector variant="compact" align="right" />
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all"

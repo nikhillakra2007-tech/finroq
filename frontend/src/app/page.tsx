@@ -10,6 +10,9 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('finroq_logged_out') === 'true') {
+      return;
+    }
     if (!isLoading && isAuthenticated) {
       router.replace('/app/home');
     }

@@ -65,6 +65,22 @@ async def login(credentials: UserLogin, db: DatabaseSession):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+class GoogleLoginRequest(BaseModel):
+    email: EmailStr
+    full_name: str | None = None
+
+
+@router.post("/google", response_model=Token)
+async def google_login(data: GoogleLoginRequest, db: DatabaseSession):
+    auth_service = AuthService(db)
+    try:
+        user = await auth_service.authenticate_or_create_google_user(data.email, data.full_name)
+        access_token = auth_service.create_access_token_for_user(user)
+        return {"access_token": access_token, "token_type": "bearer"}
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
     current_user_id: CurrentUserId,

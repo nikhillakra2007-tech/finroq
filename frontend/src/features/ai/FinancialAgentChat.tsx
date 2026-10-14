@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useI18n } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem } from '@/lib/api-types';
 import { StructuredResults } from './StructuredResults';
@@ -56,6 +57,7 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 export function FinancialAgentChat({ initialPrompt, isCompact = false }: FinancialAgentChatProps) {
+  const { language, activeLanguageMeta } = useI18n();
   const [conversations, setConversations] = useState<AIConversationSummary[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<AIMessageItem[]>([]);
@@ -91,7 +93,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = activeLanguageMeta.speechLocale || 'en-US';
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -230,6 +232,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
       const res = await apiClient.chatAI({
         message: text,
         conversation_id: currentConversationId,
+        language,
       });
 
       const data: AIChatResponse = res.data;

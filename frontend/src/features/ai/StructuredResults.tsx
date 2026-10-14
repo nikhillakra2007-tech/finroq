@@ -32,7 +32,7 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
           </span>
           <span className="text-[11px] font-mono text-[var(--muted)]">{data.data_freshness || 'Verified'}</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
             <span className="text-[10px] text-[var(--muted)] font-mono block">Liquid Cash</span>
             <span className="font-mono font-bold text-[#173F2B] dark:text-emerald-300">

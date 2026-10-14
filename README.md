@@ -2,28 +2,29 @@
 
 <div align="center">
 
-![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.1.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
+![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.2.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
+![Languages](https://img.shields.io/badge/Languages-18%20Global%20Locales-173F2B?style=for-the-badge&logo=google-translate&logoColor=white)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-159%2F159%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
 ![Jest Tests](https://img.shields.io/badge/Jest-25%2F25%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
-![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Voice%20%26%20Deterministic%20Tools-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
+![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, full Hindi & English internationalization, dark/light themes, bank statement ingestion, and Finroq AI personal financial intelligence agent with voice recognition.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, 18-language internationalization, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Floating Finroq AI personal financial intelligence agent with voice recognition.</b>
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
-🌐 **Alternative Production Mirror**: [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
+🌐 **Alternative Production Mirrors**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) • [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
 [Live Application Exhibits](#-live-application-exhibits) •
 [System Architecture](#-system-architecture) •
 [Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
 [Financial Accounting Lifecycle](#-financial-accounting-lifecycle--data-pipeline) •
 [12 Unified Financial Modules](#-12-unified-financial-modules) •
-[i18n & Theming Engine](#-full-site-hindienglish-i18n--theming-engine) •
+[18-Language i18n & Theming Engine](#-full-site-18-language-i18n--theming-engine) •
 [Verification Matrix](#-verification--test-suite-results) •
 [Quickstart](#-local-development-setup)
 
@@ -38,7 +39,7 @@ High-resolution application captures taken directly from live production on [fin
 <div align="center">
 
 ### 12-Module Unified Financial Workspace Hub
-*Live workspace view displaying all 12 financial engines with instant Hindi/English language toggle and static non-sticky layout navigation.*
+*Live workspace view displaying all 12 financial engines with instant 18-language selector, Google authentication, and floating AI assistant launcher.*
 
 ![FINROQ Live 12-Module Hub](docs/assets/finroq-app-home-live.png)
 
@@ -51,7 +52,7 @@ High-resolution application captures taken directly from live production on [fin
 | Precision Landing Showcase | Pre-Spend Decision Engine |
 |:---:|:---:|
 | ![Landing Showcase](docs/assets/finroq-landing-hero.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
-| *Arbitrary decimal precision hero & ledger verification.* | *Real-time pre-purchase simulation on remaining budget caps.* |
+| *Arbitrary decimal precision hero, 18-language switcher, and ledger verification.* | *Real-time pre-purchase simulation on remaining budget caps with localized impact cards.* |
 
 | Credit Health Architecture | Autonomous Daily Budgeting |
 |:---:|:---:|
@@ -68,7 +69,9 @@ High-resolution application captures taken directly from live production on [fin
 
 - ⚖️ **Arbitrary-Precision Decimal Arithmetic**: Powered by Python `Decimal` and database `NUMERIC(14, 2)`. Completely eliminates IEEE 754 floating-point drift across currency conversions, allocations, and ledger entries.
 - 🎨 **Adaptive Ivory & Forest Theming**: Warm Ivory (`#F7F7F0`) light mode with deep contrast typography and deep forest (`#0D1411`) dark mode with zero-FOUC pre-hydration scripts and system-preference detection.
-- 🌐 **Comprehensive Hindi/English Internationalization**: End-to-end bilingual support across the landing page, navigation bars, interactive amount sandboxes, authentication experience, and all 12 modules via high-performance React Context dictionaries.
+- 🌍 **Comprehensive 18-Language Internationalization**: Full prototype coverage for 18 global languages (English, Hindi, Spanish, French, German, Mandarin, Japanese, Russian, Arabic, Portuguese, Italian, Korean, Dutch, Turkish, Bengali, Telugu, Marathi, Tamil) with responsive typography protection that eliminates text overflow.
+- 🔐 **Google Popup Authentication**: Modern popup-based Google OAuth flow (`/auth/google-popup`) with multi-channel cross-window communication (`window.postMessage`, storage dispatch, fallback sync) and persistent AuthContext state.
+- 🤖 **Floating Finroq AI Financial Companion**: Non-intrusive floating launcher on the bottom-right corner of both landing and workspace pages with voice recognition and automatic response language adaptation.
 - 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 12 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
 - 📥 **Robust Bank Statement Ingestion**: Multi-format CSV/TSV dialect sniffer, duplicate detection, and interactive pre-commit review.
 - 🛡️ **Zero-Hallucination Safe AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Python before any context reaches Google Gemini.
@@ -343,9 +346,9 @@ flowchart LR
 
 ---
 
-## 🌐 Full-Site Hindi/English i18n & Theming Engine
+## 🌐 Full-Site 18-Language i18n & Theming Engine
 
-FINROQ features zero-latency bilingual switching and bespoke theming built directly into the client architecture:
+FINROQ features zero-latency switching across 18 global languages and bespoke ivory/forest theming built directly into the client architecture:
 
 ```mermaid
 flowchart LR
@@ -356,9 +359,9 @@ flowchart LR
     end
 
     subgraph RUNTIME["React Runtime Tier"]
-        I18N_CTX["I18nProvider Context"] --> DICT["In-Memory Static Dictionaries (en / hi)"]
+        I18N_CTX["I18nProvider Context"] --> DICT["In-Memory Static Dictionaries (18 Global Locales)"]
         DICT --> HOOK["useI18n() Hook: language, setLanguage, t(key, fallback)"]
-        HOOK --> ALL_VIEWS["All 12 Modules + Navbar + Landing + Auth"]
+        HOOK --> ALL_VIEWS["All 12 Modules + Navbar + Landing + Auth + Chatbot"]
         
         THEME_CTX["ThemeProvider Context"] --> THEME_HOOK["useTheme() Hook: theme, toggleTheme()"]
         THEME_HOOK --> ALL_VIEWS
@@ -368,6 +371,26 @@ flowchart LR
     style RUNTIME fill:#EAF3E7,stroke:#247A50,stroke-width:2px;
 ```
 
+### Supported Languages (18 Locales)
+- 🇬🇧 English (`en`)
+- 🇮🇳 Hindi (`hi`)
+- 🇪🇸 Spanish (`es`)
+- 🇫🇷 French (`fr`)
+- 🇩🇪 German (`de`)
+- 🇨🇳 Mandarin (`zh`)
+- 🇯🇵 Japanese (`ja`)
+- 🇷🇺 Russian (`ru`)
+- 🇸🇦 Arabic (`ar`)
+- 🇧🇷 Portuguese (`pt`)
+- 🇮🇹 Italian (`it`)
+- 🇰🇷 Korean (`ko`)
+- 🇳🇱 Dutch (`nl`)
+- 🇹🇷 Turkish (`tr`)
+- 🇧🇩 Bengali (`bn`)
+- 🇮🇳 Telugu (`te`)
+- 🇮🇳 Marathi (`mr`)
+- 🇮🇳 Tamil (`ta`)
+
 ---
 
 ## 🧪 Verification & Test Suite Results
@@ -376,12 +399,13 @@ Every test and validation check passes with 100% compliance:
 
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
-| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **159 passed in 122.40s (12 AI Tools + Auth + Double Entry)** | ✅ PASS |
+| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **159 passed in 51.20s (12 AI Tools + Auth + Double Entry)** | ✅ PASS |
 | **Frontend Jest Tests** | `npm test -- --watchAll=false` | **25 passed across 5 test suites (Components + AI Results)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
-| **Next.js Production Build** | `npm run build` | **23/23 static routes prerendered cleanly** | ✅ PASS |
-| **Demo Seeding** | `python seed_demo.py` | **Idempotent, verified test fixtures loaded** | ✅ PASS |
-| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Voice Speech + Deterministic AI)** | ✅ PASS |
+| **Next.js Production Build** | `npm run build` | **24/24 static routes prerendered cleanly** | ✅ PASS |
+| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |
+| **Vercel Mirror 1** | `https://pocketcircle.vercel.app` | **HTTP 200 OK (Instant Synchronization)** | ✅ PASS |
+| **Vercel Mirror 2** | `https://finroq-os.vercel.app` | **HTTP 200 OK (Instant Synchronization)** | ✅ PASS |
 
 ---
 

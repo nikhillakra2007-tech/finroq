@@ -17,8 +17,11 @@ from app.features.ai.chat_service import (
     FinancialChatService,
     AIChatRequest,
     AIChatResponse,
+    PublicAIChatRequest,
+    PublicAIChatResponse,
     ConversationSummary,
     ConversationDetail,
+    get_public_guidance,
 )
 from app.features.entitlements.service import EntitlementService
 
@@ -27,6 +30,12 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 class CreateConversationRequest(BaseModel):
     title: Optional[str] = None
+
+
+@router.post("/public-chat", response_model=PublicAIChatResponse, status_code=status.HTTP_200_OK)
+async def public_visitor_chat(request: PublicAIChatRequest):
+    """Public guide endpoint for unauthenticated landing page visitors across 18 languages."""
+    return await get_public_guidance(request.message, request.language)
 
 
 @router.post("/chat", response_model=AIChatResponse, status_code=status.HTTP_200_OK)

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { useI18n } from '@/lib/i18n-context';
 import { getStoredTheme, applyTheme } from '@/lib/theme';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
 import {
   ArrowRight,
   Sun,
@@ -107,7 +108,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     const paisa = Math.round(val * 100);
     const newRow = {
       id: Date.now(),
-      d: newLedgerDesc.trim() || (newLedgerType === 'income' ? (language === 'hi' ? 'कस्टम आय' : 'Custom Income') : (language === 'hi' ? 'कस्टम व्यय' : 'Custom Expense')),
+      d: newLedgerDesc.trim() || (newLedgerType === 'income' ? t('feat1.income_opt', 'Custom Income') : t('feat1.expense_opt', 'Custom Expense')),
       s: 'Completed' as const,
       t: newLedgerType,
       a: paisa,
@@ -210,66 +211,36 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     () => [
       {
         id: 0,
-        badge: language === 'hi' ? 'सटीकता' : 'PRECISION',
-        q:
-          language === 'hi'
-            ? 'फिनरॉक सभी खातों में सटीक दशमलव संतुलन कैसे सुनिश्चित करता है?'
-            : 'How does FINROQ guarantee absolute mathematical precision across accounts?',
-        a:
-          language === 'hi'
-            ? 'अधिकांश वित्तीय ऐप्स मानक फ़्लोटिंग-पॉइंट नंबरों पर निर्भर करते हैं, जो राउंडिंग अंतर पैदा करते हैं। फिनरॉक पाइथन डेसीमल और पोस्टग्रेएसक्यूएल NUMERIC(14,2) के माध्यम से सटीक दशमलव अंकगणित लागू करता है। हर शेष राशि, लेजर प्रविष्टि और आवंटन बिना किसी अंतर के संतुलित होता है।'
-            : 'Most personal finance apps rely on standard IEEE 754 floating-point numbers, which accumulate fractional rounding drift across hundreds of transactions. FINROQ enforces arbitrary-precision decimal mathematics through Python Decimal and PostgreSQL NUMERIC(14,2) end to end. Every balance, ledger entry, category allocation, and transfer balances with zero drift.',
+        badge: t('faq.b0', 'PRECISION'),
+        q: t('faq.q0', 'Why is exact decimal arithmetic necessary for personal finance?'),
+        a: t('faq.a0', 'Most personal finance apps rely on standard IEEE 754 floating-point numbers, which accumulate fractional rounding drift across hundreds of transactions. FINROQ enforces arbitrary-precision decimal mathematics through Python Decimal and PostgreSQL NUMERIC(14,2) end to end. Every balance, ledger entry, category allocation, and transfer balances with zero drift.'),
       },
       {
         id: 1,
-        badge: language === 'hi' ? 'संरचना' : 'ARCHITECTURE',
-        q:
-          language === 'hi'
-            ? 'फिनरॉक सामान्य बजट ऐप्स और एक्सेल शीट्स से किस तरह अलग है?'
-            : 'How is FINROQ fundamentally different from spreadsheets and standard budgeting apps?',
-        a:
-          language === 'hi'
-            ? 'असंरचित स्प्रेडशीट के विपरीत, फिनरॉक सख्त डबल-एंट्री लेजर सिद्धांत लागू करता है। खातों के बीच आंतरिक ट्रांसफर आय या खर्च को गलत तरीके से बढ़ाए बिना स्थानांतरित होते हैं। लंबित लेन-देन सुरक्षित रूप से अलग रखे जाते हैं।'
-            : 'Unlike unstructured spreadsheets or superficial budget trackers, FINROQ implements strict double-entry ledger semantics. Internal transfers move money between accounts neutrally without falsely inflating income or expenses. Pending transactions remain isolated from liquid balances, and calendar schedules clamp automatically across leap years and month ends.',
+        badge: t('faq.b1', 'ARCHITECTURE'),
+        q: t('faq.q1', 'How is FINROQ fundamentally different from spreadsheets and standard budgeting apps?'),
+        a: t('faq.a1', 'Unlike unstructured spreadsheets or superficial budget trackers, FINROQ implements strict double-entry ledger semantics. Internal transfers move money between accounts neutrally without falsely inflating income or expenses. Pending transactions remain isolated from liquid balances, and calendar schedules clamp automatically across leap years and month ends.'),
       },
       {
         id: 2,
-        badge: language === 'hi' ? 'स्वचालन' : 'AUTOMATION',
-        q:
-          language === 'hi'
-            ? 'क्या मैं बिना डुप्लीकेट प्रविष्टियों के आवर्ती सब्सक्रिप्शन को स्वचालित कर सकता हूँ?'
-            : 'Can I automate recurring subscriptions and bills without risk of duplicate entries?',
-        a:
-          language === 'hi'
-            ? 'हाँ। फिनरॉक में एक निश्चयात्मक आवर्ती नियम इंजन शामिल है जो डुप्लीकेट खर्चों को रोकता है। आपको बिना किसी अतिरिक्त खर्च के पारदर्शी और सटीक आवर्ती प्रविष्टियां मिलती हैं।'
-            : 'Yes. FINROQ includes a deterministic, idempotent recurring rules engine. Even if an occurrence trigger fires multiple times in a billing cycle, the system checks previous ledger records and prevents duplicate entries. You get predictable, transparent recurrence without phantom expenses.',
+        badge: t('faq.b2', 'AUTOMATION'),
+        q: t('faq.q2', 'Can I automate recurring subscriptions and bills without risk of duplicate entries?'),
+        a: t('faq.a2', 'Yes. FINROQ includes a deterministic, idempotent recurring rules engine. Even if an occurrence trigger fires multiple times in a billing cycle, the system checks previous ledger records and prevents duplicate entries. You get predictable, transparent recurrence without phantom expenses.'),
       },
       {
         id: 3,
-        badge: language === 'hi' ? 'सुरक्षा' : 'SECURITY',
-        q:
-          language === 'hi'
-            ? 'मेरा वित्तीय डेटा कैसे सुरक्षित और निजी रखा जाता है?'
-            : 'How is my financial data protected, isolated, and kept private?',
-        a:
-          language === 'hi'
-            ? 'फिनरॉक जीरो-ट्रस्ट डेटा अलगाव लागू करता है। पासवर्ड Argon2id से क्रिप्टोग्राफिक रूप से एन्क्रिप्ट किए जाते हैं और आपका डेटा कभी बेचा या किसी तीसरे पक्ष से साझा नहीं किया जाता।'
-            : 'FINROQ enforces a zero-trust tenant architecture where all database queries explicitly scope to your verified account identity on the server. Authentication is backed by Argon2id cryptographic password hashing and tamper-proof JWT tokens. Your private financial metrics are never harvested, sold, or shared with third parties.',
+        badge: t('faq.b3', 'SECURITY'),
+        q: t('faq.q3', 'How is my financial data protected, isolated, and kept private?'),
+        a: t('faq.a3', 'FINROQ enforces a zero-trust tenant architecture where all database queries explicitly scope to your verified account identity on the server. Authentication is backed by Argon2id cryptographic password hashing and tamper-proof JWT tokens. Your private financial metrics are never harvested, sold, or shared with third parties.'),
       },
       {
         id: 4,
-        badge: language === 'hi' ? 'संप्रभुता' : 'SOVEREIGNTY',
-        q:
-          language === 'hi'
-            ? 'क्या मैं बैंक लॉगिन विवरण साझा किए बिना फिनरॉक का सुरक्षित उपयोग कर सकता हूँ?'
-            : 'Can I use FINROQ privately without exposing real banking login credentials?',
-        a:
-          language === 'hi'
-            ? 'बिल्कुल। फिनरॉक आपसे बैंकिंग पासवर्ड या डेटा स्क्रैपिंग की अनुमति नहीं मांगता। आप अपनी सुविधा अनुसार लेन-देन दर्ज कर सकते हैं या सीएसवी स्टेटमेंट आयात कर सकते हैं।'
-            : 'Absolutely. FINROQ does not require you to provide banking passwords or grant broad OAuth access to third-party scraping brokers. You maintain sovereign ownership over your books, with the ability to record ledger entries manually, import CSV statements, and explore every simulation tool in a clean, self-contained environment.',
+        badge: t('faq.b4', 'SOVEREIGNTY'),
+        q: t('faq.q4', 'Can I use FINROQ privately without exposing real banking login credentials?'),
+        a: t('faq.a4', 'Absolutely. FINROQ does not require you to provide banking passwords or grant broad OAuth access to third-party scraping brokers. You maintain sovereign ownership over your books, with the ability to record ledger entries manually, import CSV statements, and explore every simulation tool in a clean, self-contained environment.'),
       },
     ],
-    [language]
+    [language, t]
   );
 
   return (
@@ -285,7 +256,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm font-bold text-[#173F2B] dark:text-slate-100">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-sm font-bold text-[#173F2B] dark:text-slate-100 shrink-0">
             <a href="#ledger" className="hover:text-[var(--accent)] transition-colors">
               {t('nav.ledger', 'Ledger')}
             </a>
@@ -293,7 +264,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               {t('nav.budgets', 'Budgets')}
             </a>
             <a href="#amount-sandbox" className="hover:text-[var(--accent)] transition-colors text-[var(--accent)]">
-              {language === 'hi' ? 'राशि परीक्षक' : 'Amount Lab'}
+              {t('nav.amount_lab', 'Amount Lab')}
             </a>
             <a href="#comparison" className="hover:text-[var(--accent)] transition-colors">
               {t('nav.comparison', 'Comparison')}
@@ -306,31 +277,24 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </a>
           </nav>
 
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-              className="px-2.5 py-1 rounded-full border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-200 hover:bg-[var(--soft)] flex items-center gap-1.5 transition-colors"
-              title="Switch Language / भाषा बदलें"
-            >
-              <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
-            </button>
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <LanguageSelector variant="pill" align="right" />
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all"
+              className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all shrink-0"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-sm font-bold text-[#173F2B] dark:text-slate-100 hover:text-[var(--accent)] px-2 transition-colors"
+              className="text-sm font-bold text-[#173F2B] dark:text-slate-100 hover:text-[var(--accent)] px-2 transition-colors whitespace-nowrap"
             >
               {t('nav.signin', 'Sign in')}
             </button>
             <button
               onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill sm bg-[#173F2B] text-white hover:bg-[var(--accent)] shadow-sm font-bold"
+              className="btn-pill sm bg-[#173F2B] text-white hover:bg-[var(--accent)] shadow-sm font-bold whitespace-nowrap"
             >
               {t('nav.getstarted', 'Get started')}
             </button>
@@ -349,23 +313,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </div>
 
             <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[2.9rem] xl:text-[3.15rem] font-bold tracking-tight leading-[1.14] text-[#173F2B] dark:text-slate-50">
-              {language === 'hi' ? (
-                <>
-                  अपनी संपत्ति पर पाएं पूर्ण नियंत्रण,<br />
-                  पूर्ण <span className="text-[var(--accent)]">सटीकता और विश्वास</span> के साथ।
-                </>
-              ) : (
-                <>
-                  Master your wealth,<br />
-                  with <span className="text-[var(--accent)]">absolute precision.</span>
-                </>
-              )}
+              {t('hero.title_part1', 'Master your wealth,')}
+              <br />
+              {t('hero.title_with', 'with')}{' '}
+              <span className="text-[var(--accent)]">{t('hero.title_part2', 'absolute precision.')}</span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-[1.125rem] text-[#2E4035] dark:text-slate-300 max-w-xl leading-relaxed font-normal">
-              {language === 'hi'
-                ? 'फिनरॉक (Finroq) एक उद्यम-स्तरीय वित्तीय लेजर है जो निश्चित दशमलव अंकगणित के साथ तैयार किया गया है। अपने कैश फ्लो, बजट और कुल संपत्ति पर पूरा नियंत्रण पाएं बिना किसी अनुमान के।'
-                : 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.'}
+              {t('hero.description', 'Finroq is an enterprise-grade financial ledger engineered with exact decimal arithmetic. Gain complete command over cash flow, dynamic category budgets, and net worth trajectory with zero guesswork.')}
             </p>
 
             <div className="pt-2 flex flex-wrap gap-3">
@@ -385,7 +340,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 href="#amount-sandbox"
                 className="btn-pill ghost hover:border-[var(--accent)] font-bold text-sm sm:text-base text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5"
               >
-                <span>{language === 'hi' ? '⚡ विशिष्ट राशि जोड़ें' : '⚡ Test Specific Amount'}</span>
+                <span>{t('hero.test_amount', '⚡ Test Specific Amount')}</span>
               </a>
             </div>
           </div>
@@ -428,8 +383,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               {/* Asset Solvency Ratio Progress Bar */}
               <div className="space-y-2 pt-1">
                 <div className="flex justify-between text-xs font-mono font-semibold text-[#2E4035] dark:text-slate-300">
-                  <span>{language === 'hi' ? 'परिसंपत्ति सुरक्षा अनुपात' : 'Asset Solvency Ratio'}</span>
-                  <span className="text-[var(--accent)] font-bold">96.2% {language === 'hi' ? 'सुरक्षित' : 'Solvent'}</span>
+                  <span>{t('hero.solvency_ratio', 'Asset Solvency Ratio')}</span>
+                  <span className="text-[var(--accent)] font-bold">96.2% {t('hero.solvent', 'Solvent')}</span>
                 </div>
                 <div className="w-full bg-[var(--soft)] h-2.5 rounded-full overflow-hidden">
                   <div className="bg-[var(--accent)] h-full rounded-full transition-all duration-500" style={{ width: '96.2%' }} />
@@ -437,7 +392,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               </div>
 
               <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs font-mono font-semibold text-[#2E4035] dark:text-slate-300">
-                <span>{language === 'hi' ? 'मासिक शुद्ध अधिशेष:' : 'Monthly Net Surplus:'}</span>
+                <span>{t('hero.net_surplus', 'Monthly Net Surplus:')}</span>
                 <span className="text-[var(--accent)] font-bold text-sm">+₹1,07,200.00</span>
               </div>
 
@@ -451,11 +406,11 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
       {/* 3. Proof Strip */}
       <div className="border-b border-[var(--line)] bg-[var(--soft)]/50 py-4">
-        <div className="max-w-6xl mx-auto px-5 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#173F2B] dark:text-slate-200 font-bold tracking-wider">
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)]" /> {t('proof.numeric', 'NUMERIC(14,2) DECIMAL LEDGER')}</span>
-          <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-[var(--accent)]" /> {t('proof.argon', 'ARGON2ID ENCRYPTION')}</span>
-          <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[var(--accent)]" /> {t('proof.isolation', 'ZERO-TRUST TENANT ISOLATION')}</span>
-          <span className="flex items-center gap-1.5"><RotateCcw className="w-3.5 h-3.5 text-[var(--accent)]" /> {t('proof.recurrence', 'DETERMINISTIC RECURRENCE ENGINE')}</span>
+        <div className="max-w-6xl mx-auto px-5 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono text-[#173F2B] dark:text-slate-200 font-bold tracking-wider">
+          <span className="flex items-center gap-1.5 break-words [overflow-wrap:anywhere]"><ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" /> <span>{t('proof.numeric', 'NUMERIC(14,2) DECIMAL LEDGER')}</span></span>
+          <span className="flex items-center gap-1.5 break-words [overflow-wrap:anywhere]"><Shield className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" /> <span>{t('proof.argon', 'ARGON2ID ENCRYPTION')}</span></span>
+          <span className="flex items-center gap-1.5 break-words [overflow-wrap:anywhere]"><Lock className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" /> <span>{t('proof.isolation', 'ZERO-TRUST TENANT ISOLATION')}</span></span>
+          <span className="flex items-center gap-1.5 break-words [overflow-wrap:anywhere]"><RotateCcw className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" /> <span>{t('proof.recurrence', 'DETERMINISTIC RECURRENCE ENGINE')}</span></span>
         </div>
       </div>
 
@@ -541,9 +496,11 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                     ? language === 'hi' ? 'आय जमा (Income Deposit)' : 'Income Deposit'
                     : language === 'hi' ? 'प्रत्यक्ष व्यय (Direct Expense)' : 'Direct Expense';
                 const localizedChip =
-                  language === 'hi'
-                    ? r.s === 'Completed' ? 'पूर्ण' : r.s === 'Pending' ? 'लंबित' : 'रद्द'
-                    : r.s;
+                  r.s === 'Completed'
+                    ? t('feat1.status_completed', 'Completed')
+                    : r.s === 'Pending'
+                    ? t('feat1.status_pending', 'Pending')
+                    : t('feat1.status_cancelled', 'Cancelled');
 
                 return (
                   <div key={r.id} className="py-3.5 flex items-center justify-between gap-3 text-sm hover:bg-[var(--soft)]/40 px-2 rounded-xl transition-colors">
@@ -561,7 +518,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                       <button
                         onClick={() => cycleStatus(r.id)}
                         className={`chip ${r.s}`}
-                        title={language === 'hi' ? 'स्थिति बदलने के लिए क्लिक करें' : 'Click to cycle status'}
+                        title="Click to cycle status"
                       >
                         {localizedChip}
                       </button>
@@ -574,13 +531,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             {/* Quick Add Custom Specific Amount to Sandbox Ledger */}
             <form onSubmit={handleAddCustomLedgerRow} className="pt-3 border-t border-[var(--line)] space-y-2.5">
               <div className="flex items-center justify-between text-xs font-bold text-[#173F2B] dark:text-slate-200">
-                <span>{language === 'hi' ? '➕ लेजर में अपनी राशि जोड़ें:' : '➕ Add Specific Amount to Ledger:'}</span>
-                <span className="text-[11px] font-mono text-[var(--muted)]">{language === 'hi' ? 'लाइव परीक्षण' : 'Instant live test'}</span>
+                <span>{t('feat1.add_custom', '➕ Add Specific Amount to Ledger:')}</span>
+                <span className="text-[11px] font-mono text-[var(--muted)]">{t('feat1.instant_live', 'Instant live test')}</span>
               </div>
               <div className="grid grid-cols-12 gap-2">
                 <input
                   type="text"
-                  placeholder={language === 'hi' ? 'विवरण (उदा. फ्रीलांस आय, डिनर)' : 'Description (e.g. Freelance, Dinner)'}
+                  placeholder={t('feat1.desc_placeholder', 'Description (e.g. Freelance, Dinner)')}
                   value={newLedgerDesc}
                   onChange={(e) => setNewLedgerDesc(e.target.value)}
                   className="col-span-12 sm:col-span-5 px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16251E] text-[#173F2B] dark:text-slate-100 border border-[#CBD5CB] dark:border-[#2A3D33] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
@@ -602,15 +559,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   onChange={(e) => setNewLedgerType(e.target.value as 'income' | 'expense')}
                   className="col-span-5 sm:col-span-3 px-2 py-2 text-xs font-bold rounded-xl bg-white dark:bg-[#16251E] text-[#173F2B] dark:text-slate-100 border border-[#CBD5CB] dark:border-[#2A3D33] focus:outline-none"
                 >
-                  <option value="expense">{language === 'hi' ? 'खर्च (−)' : 'Expense (−)'}</option>
-                  <option value="income">{language === 'hi' ? 'आय (+)' : 'Income (+)'}</option>
+                  <option value="expense">{t('feat1.expense_opt', 'Expense (−)')}</option>
+                  <option value="income">{t('feat1.income_opt', 'Income (+)')}</option>
                 </select>
               </div>
               <button
                 type="submit"
                 className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#173F2B] text-white hover:bg-[#102F21] dark:bg-emerald-600 dark:hover:bg-emerald-500 transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>{language === 'hi' ? '+ राशि जोड़ें और तुरंत कैश फ्लो देखें' : '+ Add Amount & Calculate Net Cash Flow'}</span>
+                <span>{t('feat1.add_btn', '+ Add Amount & Calculate Net Cash Flow')}</span>
               </button>
             </form>
 
@@ -642,7 +599,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   {t('feat2.live_alloc', 'Live Category Allocations')}
                 </h3>
                 <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                  {language === 'hi' ? 'सत्यापित लेन-देन पर निरंतर खर्च निगरानी' : 'Continuous burn-rate monitoring on verified transactions'}
+                  {t('feat2.burn_rate', 'Continuous burn-rate monitoring on verified transactions')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -659,9 +616,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-bold text-[var(--ink)] flex items-center gap-2">
-                    {language === 'hi' ? 'किराना और आवश्यक वस्तुएं' : 'Groceries & Essentials'}
+                    {t('feat2.groceries', 'Groceries & Essentials')}
                     <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-mono uppercase font-semibold">
-                      {language === 'hi' ? 'नियंत्रण में' : 'On Track'}
+                      {t('feat2.on_track', 'On Track')}
                     </span>
                   </span>
                   <span className="font-mono text-xs font-semibold text-[var(--muted)]">
@@ -672,8 +629,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <i style={{ width: '81.1%', backgroundColor: 'var(--accent)' }} />
                 </div>
                 <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
-                  <span>81.1% {language === 'hi' ? 'खर्च' : 'consumed'}</span>
-                  <span>{language === 'hi' ? 'शेष सुरक्षित:' : 'Remaining:'} {fmt(123000)}</span>
+                  <span>81.1% {t('feat2.consumed', 'consumed')}</span>
+                  <span>{t('feat2.remaining', 'Remaining:')} {fmt(123000)}</span>
                 </div>
               </div>
 
@@ -681,9 +638,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-bold text-[var(--ink)] flex items-center gap-2">
-                    {language === 'hi' ? 'आवागमन और ईंधन' : 'Commute & Fuel'}
+                    {t('feat2.commute', 'Commute & Fuel')}
                     <span className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-[11px] font-mono uppercase font-semibold">
-                      {language === 'hi' ? 'अतिरिक्त कुशन' : 'Surplus Cushion'}
+                      {t('feat2.surplus_cushion', 'Surplus Cushion')}
                     </span>
                   </span>
                   <span className="font-mono text-xs font-semibold text-[var(--muted)]">
@@ -699,8 +656,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   />
                 </div>
                 <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
-                  <span>{((138000 / simCommuteCap) * 100).toFixed(1)}% {language === 'hi' ? 'खर्च' : 'consumed'}</span>
-                  <span className="text-sky-700 font-semibold">{language === 'hi' ? 'उपलब्ध सरप्लस:' : 'Available Surplus:'} {fmt(simCommuteCap - 138000)}</span>
+                  <span>{((138000 / simCommuteCap) * 100).toFixed(1)}% {t('feat2.consumed', 'consumed')}</span>
+                  <span className="text-sky-700 font-semibold">{t('feat2.available_surplus', 'Available Surplus:')} {fmt(simCommuteCap - 138000)}</span>
                 </div>
               </div>
 
@@ -708,22 +665,22 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2 p-4 rounded-2xl bg-[var(--soft)]/60 border border-[var(--line)]">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-bold text-[var(--ink)] flex items-center gap-2">
-                    {language === 'hi' ? 'रेस्तरां और डाइनिंग' : 'Dining & Outings'}
+                    {t('feat2.dining', 'Dining & Outings')}
                     {simRebalanceDone ? (
                       <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-mono uppercase font-bold">
-                        {language === 'hi' ? '✓ संतुलित' : '✓ Rebalanced'}
+                        {t('feat2.rebalanced', '✓ Rebalanced')}
                       </span>
                     ) : diningOver ? (
                       <span className="px-2 py-0.5 rounded-full bg-[var(--bad-soft)] text-[var(--bad)] text-[11px] font-mono uppercase font-bold animate-pulse">
-                        {language === 'hi' ? 'सीमा से अधिक' : 'Over Limit'}
+                        {t('feat2.over_limit', 'Over Limit')}
                       </span>
                     ) : diningPct >= 85 ? (
                       <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-mono uppercase font-bold">
-                        {language === 'hi' ? 'गति चेतावनी' : 'Velocity Warning'}
+                        {t('feat2.velocity_warning', 'Velocity Warning')}
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-mono uppercase font-semibold">
-                        {language === 'hi' ? 'सुरक्षित गति' : 'Safe Pace'}
+                        {t('feat2.safe_pace', 'Safe Pace')}
                       </span>
                     )}
                   </span>
@@ -746,13 +703,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <div className="flex justify-between text-xs font-mono text-[var(--muted)] font-medium">
                   <span className={diningOver ? 'text-[var(--bad)] font-bold' : ''}>
                     {diningOver
-                      ? language === 'hi' ? `घाटा: ${fmt(diningDeficit)}` : `Deficit: ${fmt(diningDeficit)}`
-                      : language === 'hi' ? `${diningPct.toFixed(1)}% खर्च` : `${diningPct.toFixed(1)}% consumed`}
+                      ? `${t('feat2.deficit', 'Deficit:')} ${fmt(diningDeficit)}`
+                      : `${diningPct.toFixed(1)}% ${t('feat2.consumed', 'consumed')}`}
                   </span>
                   <span>
                     {diningOver
-                      ? language === 'hi' ? 'पुनर्संतुलन आवश्यक' : 'Rebalance needed'
-                      : language === 'hi' ? `सुरक्षित शेष: ${fmt(simDiningCap - simDiningSpend)}` : `Safe remaining: ${fmt(simDiningCap - simDiningSpend)}`}
+                      ? t('feat2.rebalance_needed', 'Rebalance needed')
+                      : `${t('feat2.safe_remaining', 'Safe remaining:')} ${fmt(simDiningCap - simDiningSpend)}`}
                   </span>
                 </div>
               </div>
@@ -920,17 +877,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         <div className="max-w-6xl mx-auto px-5 space-y-12">
           <div className="max-w-3xl space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)]">
-              {language === 'hi' ? 'इंटरैक्टिव राशि प्रयोगशाला (Amount Sandbox)' : 'Interactive Amount Lab'}
+              {t('lab.badge', 'Interactive Amount Lab')}
             </span>
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#173F2B] dark:text-slate-50">
-              {language === 'hi'
-                ? 'विशिष्ट राशि दर्ज करें और तुरंत वित्तीय प्रभाव जांचें।'
-                : 'Enter any specific amount to see its instant financial impact.'}
+              {t('lab.title', 'Enter any specific amount to see its instant financial impact.')}
             </h2>
             <p className="text-[#2E4035] dark:text-slate-300 text-lg leading-relaxed font-medium">
-              {language === 'hi'
-                ? 'कोई भी बड़ी खरीदारी करने से पहले जांचें कि क्या यह सुरक्षित है, अपनी आय का 50/30/20 विभाजन देखें, या सीधे लाइव लेजर में जोड़कर परीक्षण करें।'
-                : 'Test pre-spend purchase safety, calculate your 50/30/20 wealth allocation, or feed this amount directly into the live sandbox ledger with zero signup required.'}
+              {t('lab.desc', 'Test pre-spend purchase safety, calculate your 50/30/20 wealth allocation, or feed this amount directly into the live sandbox ledger with zero signup required.')}
             </p>
           </div>
 
@@ -939,7 +892,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <div className="md:col-span-5 bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
               <div className="space-y-2">
                 <label className="text-xs font-mono uppercase tracking-wider font-bold text-[#173F2B] dark:text-slate-200 block">
-                  {language === 'hi' ? 'विशिष्ट राशि दर्ज करें (₹):' : 'Enter Specific Amount (₹):'}
+                  {t('lab.enter_amount', 'Enter Specific Amount (₹):')}
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-3.5 text-xl font-bold text-[var(--muted)]">₹</span>
@@ -957,7 +910,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               {/* Quick Preset Amount Buttons */}
               <div className="space-y-1.5">
                 <span className="text-[11px] font-mono text-[var(--muted)] font-bold">
-                  {language === 'hi' ? 'त्वरित विकल्प:' : 'Quick Presets:'}
+                  {t('lab.quick_presets', 'Quick Presets:')}
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {[1500, 5000, 15000, 45000, 100000].map((amt) => (
@@ -980,7 +933,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               {/* Lens Mode Tabs */}
               <div className="space-y-2 pt-2 border-t border-[var(--line)]">
                 <span className="text-xs font-bold text-[#173F2B] dark:text-slate-200 block">
-                  {language === 'hi' ? 'विश्लेषण का प्रकार चुनें:' : 'Select Analysis Lens:'}
+                  {t('lab.select_lens', 'Select Analysis Lens:')}
                 </span>
                 <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] text-xs font-bold">
                   <button
@@ -992,7 +945,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                         : 'text-[#4D5D51] dark:text-slate-300 hover:text-[#173F2B]'
                     }`}
                   >
-                    {language === 'hi' ? 'खरीद जांच' : 'Pre-Spend'}
+                    {t('lab.lens_prespend', 'Pre-Spend')}
                   </button>
                   <button
                     type="button"
@@ -1003,7 +956,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                         : 'text-[#4D5D51] dark:text-slate-300 hover:text-[#173F2B]'
                     }`}
                   >
-                    {language === 'hi' ? '50/30/20' : '50/30/20'}
+                    {t('lab.lens_503020', '50/30/20')}
                   </button>
                   <button
                     type="button"
@@ -1014,7 +967,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                         : 'text-[#4D5D51] dark:text-slate-300 hover:text-[#173F2B]'
                     }`}
                   >
-                    {language === 'hi' ? 'लक्ष्य गति' : 'Milestones'}
+                    {t('lab.lens_milestones', 'Milestones')}
                   </button>
                 </div>
               </div>
@@ -1028,7 +981,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                     setLedgerRows((prev) => [
                       {
                         id: Date.now(),
-                        d: language === 'hi' ? `कस्टम टेस्ट खरीद (₹${testAmount.toLocaleString('en-IN')})` : `Custom Test Spend (₹${testAmount.toLocaleString('en-IN')})`,
+                        d: `${t('lab.lens_prespend', 'Test Spend')} (₹${testAmount.toLocaleString('en-IN')})`,
                         s: 'Completed',
                         t: 'expense',
                         a: paisa,
@@ -1039,7 +992,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   }}
                   className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 hover:bg-[#DCE7D9] dark:hover:bg-[#253D30] border border-[#CBD5CB] dark:border-[#2A3D33] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
-                  <span>{language === 'hi' ? '➕ इस राशि को लाइव लेजर में जोड़ें' : '➕ Add This Amount to Live Ledger'}</span>
+                  <span>{t('lab.add_to_ledger', '➕ Add This Amount to Live Ledger')}</span>
                 </button>
               </div>
             </div>
@@ -1051,10 +1004,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
                     <div>
                       <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                        {language === 'hi' ? 'खरीद पूर्व सुरक्षा विश्लेषण' : 'Pre-Spend Purchase Safety Verdict'}
+                        {t('lab.prespend_title', 'Pre-Spend Purchase Safety Verdict')}
                       </h4>
                       <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                        {language === 'hi' ? '₹35,000 मासिक विवेकाधीन बजट के संदर्भ में गणना' : 'Calculated against reference ₹35,000 monthly discretionary buffer'}
+                        {t('lab.prespend_sub', 'Calculated against reference ₹35,000 monthly discretionary buffer')}
                       </p>
                     </div>
                     <span
@@ -1067,67 +1020,61 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                       }`}
                     >
                       {testAmount <= 5000
-                        ? language === 'hi' ? '✓ सुरक्षित खरीद' : '✓ Safe & Approved'
+                        ? t('lab.safe_approved', '✓ Safe & Approved')
                         : testAmount <= 18000
-                        ? language === 'hi' ? '⚠️ मध्यम प्रभाव' : '⚠️ Velocity Warning'
-                        : language === 'hi' ? '🚨 उच्च प्रभाव (बजट पार)' : '🚨 High Discretionary Drain'}
+                        ? t('lab.vel_warning', '⚠️ Velocity Warning')
+                        : t('lab.high_drain', '🚨 High Discretionary Drain')}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33]">
                       <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                        {language === 'hi' ? 'बजट खपत अनुपात' : 'Buffer Ratio'}
+                        {t('lab.buffer_ratio', 'Buffer Ratio')}
                       </span>
                       <span className="font-mono text-xl font-extrabold text-[#173F2B] dark:text-slate-50 block mt-1">
                         {((testAmount / 35000) * 100).toFixed(1)}%
                       </span>
                       <span className="text-[11px] text-[var(--muted)] font-medium">
-                        {language === 'hi' ? 'मासिक पूल का' : 'of discretionary pool'}
+                        {t('lab.buffer_sub', 'of discretionary pool')}
                       </span>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33]">
                       <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                        {language === 'hi' ? 'कार्य समय समकक्ष' : 'Work Equivalent'}
+                        {t('lab.work_equiv', 'Work Equivalent')}
                       </span>
                       <span className="font-mono text-xl font-extrabold text-[#173F2B] dark:text-slate-50 block mt-1">
-                        {(testAmount / 350).toFixed(0)} {language === 'hi' ? 'घंटे' : 'hrs'}
+                        {(testAmount / 350).toFixed(0)} {t('lab.work_hours', 'hrs')}
                       </span>
                       <span className="text-[11px] text-[var(--muted)] font-medium">
-                        {language === 'hi' ? 'कमाई समय' : 'at ₹350/hr earning'}
+                        {t('lab.earning_rate', 'at ₹350/hr earning')}
                       </span>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] col-span-2 sm:col-span-1">
                       <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                        {language === 'hi' ? 'दैनिक असर' : 'Daily Drag'}
+                        {t('lab.daily_drag', 'Daily Drag')}
                       </span>
                       <span className="font-mono text-xl font-extrabold text-[var(--bad)] block mt-1">
                         −₹{(testAmount / 30).toFixed(0)}
                       </span>
                       <span className="text-[11px] text-[var(--muted)] font-medium">
-                        {language === 'hi' ? 'प्रति दिन 30 दिनों में' : 'per day over 30 days'}
+                        {t('lab.daily_drag_sub', 'per day over 30 days')}
                       </span>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-[#FCFDFC] dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] text-xs leading-relaxed space-y-1">
                     <p className="font-bold text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5">
-                      <span>💡 {language === 'hi' ? 'फिनरॉक की स्वायत्त सलाह:' : 'FINROQ Autonomous Recommendation:'}</span>
+                      <span>💡 {t('lab.rec_title', 'FINROQ Autonomous Recommendation:')}</span>
                     </p>
                     <p className="text-[#2E4035] dark:text-slate-300 font-medium">
                       {testAmount <= 5000
-                        ? language === 'hi'
-                          ? `₹${testAmount.toLocaleString('en-IN')} का खर्च आपके बजट के पूर्णतः अनुकूल है। यह आपके मासिक कैश फ्लो को बाधित नहीं करेगा।`
-                          : `Spending ₹${testAmount.toLocaleString('en-IN')} is well within safe velocity. It represents a negligible 1-day cash flow impact.`
+                        ? t('lab.rec_safe', `Spending ₹${testAmount.toLocaleString('en-IN')} is well within safe velocity. It represents a negligible 1-day cash flow impact.`)
                         : testAmount <= 18000
-                        ? language === 'hi'
-                          ? `₹${testAmount.toLocaleString('en-IN')} खर्च करने से इस माह अन्य श्रेणियों के दैनिक खर्च को ₹${(testAmount / 30).toFixed(0)}/दिन कम करना होगा।`
-                          : `This purchase consumes a notable chunk of discretionary buffer. Recommend trimming dining or transport by ₹${(testAmount / 30).toFixed(0)}/day.`
-                        : language === 'hi'
-                          ? `चेतावनी: ₹${testAmount.toLocaleString('en-IN')} इस महीने के सुरक्षित आवंटन से अधिक है! 15 दिनों के लिए खरीद टालने या सिंक किए गए बचत फंड का उपयोग करने की सलाह दी जाती है।`
-                          : `Alert: ₹${testAmount.toLocaleString('en-IN')} triggers major runway velocity drag. Recommend deferring purchase or splitting into scheduled allocations.`}
+                        ? t('lab.rec_warning', `This purchase consumes a notable chunk of discretionary buffer. Recommend trimming dining or transport by ₹${(testAmount / 30).toFixed(0)}/day.`)
+                        : t('lab.rec_danger', `Alert: ₹${testAmount.toLocaleString('en-IN')} triggers major runway velocity drag. Recommend deferring purchase or splitting into scheduled allocations.`)}
                     </p>
                   </div>
                 </div>
@@ -1138,63 +1085,61 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
                     <div>
                       <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                        {language === 'hi' ? '50/30/20 मासिक आय खाका' : '50/30/20 Smart Allocation Blueprint'}
+                        {t('lab.blueprint_title', '50/30/20 Smart Allocation Blueprint')}
                       </h4>
                       <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                        {language === 'hi' ? `₹${testAmount.toLocaleString('en-IN')} मासिक आय पर आधारित वितरण` : `Calculated assuming ₹${testAmount.toLocaleString('en-IN')} monthly take-home`}
+                        {t('lab.blueprint_sub', 'Calculated assuming monthly take-home')}: ₹{testAmount.toLocaleString('en-IN')}
                       </p>
                     </div>
                     <span className="px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                      {language === 'hi' ? 'संतुलित मॉडल' : 'Balanced Engine'}
+                      {t('lab.balanced_engine', 'Balanced Engine')}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        50% {language === 'hi' ? 'अनिवार्य ज़रूरतें' : 'Essentials'}
+                        50% {t('lab.essentials', 'Essentials')}
                       </span>
                       <p className="font-mono text-xl font-black text-[#173F2B] dark:text-slate-50">
                         ₹{(testAmount * 0.5).toLocaleString('en-IN')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'किराना, किराया, बिजली बिल' : 'Groceries, rent, utilities'}
+                        {t('lab.essentials_desc', 'Groceries, rent, utilities')}
                       </p>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        30% {language === 'hi' ? 'जीवनशैली व शौक' : 'Lifestyle'}
+                        30% {t('lab.lifestyle', 'Lifestyle')}
                       </span>
                       <p className="font-mono text-xl font-black text-amber-700 dark:text-amber-400">
                         ₹{(testAmount * 0.3).toLocaleString('en-IN')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'बाहर खाना, मनोरंजन, शॉपिंग' : 'Dining, outings, shopping'}
+                        {t('lab.lifestyle_desc', 'Dining, outings, shopping')}
                       </p>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        20% {language === 'hi' ? 'चक्रवृद्धि बचत' : 'Compounding'}
+                        20% {t('lab.compounding', 'Compounding')}
                       </span>
                       <p className="font-mono text-xl font-black text-emerald-700 dark:text-emerald-400">
                         ₹{(testAmount * 0.2).toLocaleString('en-IN')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'इमर्जेंसी फंड और निवेश' : 'Emergency & wealth assets'}
+                        {t('lab.compounding_desc', 'Emergency & wealth assets')}
                       </p>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-[#FCFDFC] dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] text-xs leading-relaxed space-y-1">
                     <p className="font-bold text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5">
-                      <span>📈 {language === 'hi' ? '12 महीने का संपत्ति प्रक्षेपण:' : '12-Month Projected Wealth:'}</span>
+                      <span>📈 {t('lab.projected_title', '12-Month Projected Wealth:')}</span>
                     </p>
                     <p className="text-[#2E4035] dark:text-slate-300 font-medium">
-                      {language === 'hi'
-                        ? `इस 20% बचत नियम के साथ, आप 1 वर्ष में ₹${(testAmount * 0.2 * 12).toLocaleString('en-IN')} का शुद्ध सुरक्षा कुशन तैयार कर लेंगे, और आपका दैनिक सुरक्षित खर्च ₹${((testAmount * 0.3) / 30).toFixed(0)}/दिन रहेगा।`
-                        : `Disciplined adherence yields ₹${(testAmount * 0.2 * 12).toLocaleString('en-IN')} in pure asset reserves over 12 months, with a safe spending velocity of ₹${((testAmount * 0.3) / 30).toFixed(0)}/day.`}
+                      {t('lab.projected_desc', `Disciplined adherence yields ₹${(testAmount * 0.2 * 12).toLocaleString('en-IN')} in pure asset reserves over 12 months, with a safe spending velocity of ₹${((testAmount * 0.3) / 30).toFixed(0)}/day.`)}
                     </p>
                   </div>
                 </div>
@@ -1205,63 +1150,61 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
                     <div>
                       <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                        {language === 'hi' ? 'मासिक बचत लक्ष्य समयरेखा' : 'Savings Velocity to Key Milestones'}
+                        {t('lab.milestones_title', 'Savings Velocity to Key Milestones')}
                       </h4>
                       <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                        {language === 'hi' ? `यदि आप प्रति माह ₹${testAmount.toLocaleString('en-IN')} बचाते हैं` : `Assuming ₹${testAmount.toLocaleString('en-IN')} dedicated monthly contribution`}
+                        {t('lab.milestones_sub', 'Assuming dedicated monthly contribution')}: ₹{testAmount.toLocaleString('en-IN')}
                       </p>
                     </div>
                     <span className="px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                      {language === 'hi' ? 'त्वरक मॉडल' : 'Milestone Engine'}
+                      {t('lab.milestone_engine', 'Milestone Engine')}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        ₹1,00,000 (1 {language === 'hi' ? 'लाख' : 'Lakh'})
+                        ₹1,00,000 (1 {t('lab.lakh', 'Lakh')})
                       </span>
                       <p className="font-mono text-xl font-black text-[#173F2B] dark:text-slate-50">
-                        {Math.ceil(100000 / (testAmount || 1))} {language === 'hi' ? 'महीने' : 'Months'}
+                        {Math.ceil(100000 / (testAmount || 1))} {t('lab.months', 'Months')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'शुरुआती आपातकालीन फंड' : 'Starter emergency buffer'}
+                        {t('lab.m1_desc', 'Starter emergency buffer')}
                       </p>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        ₹5,00,000 (5 {language === 'hi' ? 'लाख' : 'Lakh'})
+                        ₹5,00,000 (5 {t('lab.lakh', 'Lakh')})
                       </span>
                       <p className="font-mono text-xl font-black text-emerald-700 dark:text-emerald-400">
-                        {Math.ceil(500000 / (testAmount || 1))} {language === 'hi' ? 'महीने' : 'Months'}
+                        {Math.ceil(500000 / (testAmount || 1))} {t('lab.months', 'Months')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'स्थिर सुरक्षा कवच' : 'Full resilience cushion'}
+                        {t('lab.m2_desc', 'Full resilience cushion')}
                       </p>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] space-y-1">
                       <span className="text-xs font-mono font-bold text-[#173F2B] dark:text-slate-300 uppercase">
-                        ₹25,00,000 (25 {language === 'hi' ? 'लाख' : 'Lakh'})
+                        ₹25,00,000 (25 {t('lab.lakh', 'Lakh')})
                       </span>
                       <p className="font-mono text-xl font-black text-emerald-800 dark:text-emerald-300">
-                        {(2500000 / (testAmount || 1) / 12).toFixed(1)} {language === 'hi' ? 'वर्ष' : 'Years'}
+                        {(2500000 / (testAmount || 1) / 12).toFixed(1)} {t('lab.years', 'Years')}
                       </p>
                       <p className="text-[11px] text-[var(--muted)]">
-                        {language === 'hi' ? 'दीर्घकालिक धन सृजन' : 'Major wealth foundation'}
+                        {t('lab.m3_desc', 'Major wealth foundation')}
                       </p>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-[#FCFDFC] dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] text-xs leading-relaxed space-y-1">
                     <p className="font-bold text-[#173F2B] dark:text-slate-100 flex items-center gap-1.5">
-                      <span>🎯 {language === 'hi' ? 'लक्ष्य इनसाइट:' : 'Milestone Insight:'}</span>
+                      <span>🎯 {t('lab.insight_title', 'Milestone Insight:')}</span>
                     </p>
                     <p className="text-[#2E4035] dark:text-slate-300 font-medium">
-                      {language === 'hi'
-                        ? `प्रति माह ₹${testAmount.toLocaleString('en-IN')} का निरंतर निवेश आपको मात्र ${Math.ceil(100000 / (testAmount || 1))} महीनों में पहले ₹1 लाख तक पहुंचा देता है।`
-                        : `Committing ₹${testAmount.toLocaleString('en-IN')}/month compounds rapidly, crossing your first ₹1 Lakh in just ${Math.ceil(100000 / (testAmount || 1))} months.`}
+                      {t('lab.insight_desc', `Committing ₹${testAmount.toLocaleString('en-IN')}/month compounds rapidly, crossing your first ₹1 Lakh in just ${Math.ceil(100000 / (testAmount || 1))} months.`)}
                     </p>
                   </div>
                 </div>
@@ -1290,25 +1233,23 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             {/* Interactive Sliders */}
             <div className="md:col-span-5 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-6 shadow-xs hover:border-[var(--line)] transition-colors">
               <h4 className="text-xs font-mono uppercase tracking-wider font-bold text-[#173F2B] dark:text-slate-300">
-                {language === 'hi' ? 'आवंटन नियंत्रण' : 'Allocation Controls'}
+                {t('comp.controls', 'Allocation Controls')}
               </h4>
 
               <div>
                 <label className="text-xs font-bold text-[#173F2B] dark:text-slate-300 block mb-2">
-                  {language === 'hi' ? 'जांच के अधीन श्रेणी' : 'Category Under Review'}
+                  {t('comp.cat_review', 'Category Under Review')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['Food', 'Shopping', 'Transport', 'Entertainment'] as const).map((cat) => {
                     const label =
-                      language === 'hi'
-                        ? cat === 'Food'
-                          ? 'भोजन'
-                          : cat === 'Shopping'
-                          ? 'खरीदारी'
-                          : cat === 'Transport'
-                          ? 'परिवहन'
-                          : 'मनोरंजन'
-                        : cat;
+                      cat === 'Food'
+                        ? t('comp.cat_food', 'Food & Dining')
+                        : cat === 'Shopping'
+                        ? t('comp.cat_shopping', 'Shopping & Retail')
+                        : cat === 'Transport'
+                        ? t('comp.cat_transport', 'Transport & Fuel')
+                        : t('comp.cat_entertainment', 'Entertainment');
                     return (
                       <button
                         key={cat}
@@ -1330,7 +1271,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-[#2E4035] dark:text-slate-300">
-                    {language === 'hi' ? 'आवंटित बजट सीमा:' : 'Allocated Budget Cap:'}
+                    {t('comp.cap_label', 'Allocated Budget Cap:')}
                   </span>
                   <span className="font-mono text-[#173F2B] dark:text-slate-50">₹{activeCap.toLocaleString('en-IN')}</span>
                 </div>
@@ -1351,7 +1292,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-[#2E4035] dark:text-slate-300">
-                    {language === 'hi' ? 'अनुमानित वास्तविक खर्च:' : 'Simulated Actual Spending:'}
+                    {t('comp.spend_label', 'Simulated Actual Spending:')}
                   </span>
                   <span className="font-mono text-[#173F2B] dark:text-slate-50">₹{activeSpend.toLocaleString('en-IN')}</span>
                 </div>
@@ -1374,19 +1315,17 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
                 <div>
                   <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                    {language === 'hi'
-                      ? budgetCat === 'Food'
-                        ? 'भोजन'
-                        : budgetCat === 'Shopping'
-                        ? 'खरीदारी'
-                        : budgetCat === 'Transport'
-                        ? 'परिवहन'
-                        : 'मनोरंजन'
-                      : budgetCat}{' '}
-                    {language === 'hi' ? 'स्वास्थ्य विश्लेषण' : 'Health Diagnostic'}
+                    {budgetCat === 'Food'
+                      ? t('comp.cat_food', 'Food & Dining')
+                      : budgetCat === 'Shopping'
+                      ? t('comp.cat_shopping', 'Shopping & Retail')
+                      : budgetCat === 'Transport'
+                      ? t('comp.cat_transport', 'Transport & Fuel')
+                      : t('comp.cat_entertainment', 'Entertainment')}{' '}
+                    {t('comp.diag_title', 'Health Diagnostic')}
                   </h4>
                   <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                    {language === 'hi' ? 'योजनाबद्ध सीमा बनाम सक्रिय व्यय' : 'Planned cap versus active expenditures'}
+                    {t('comp.diag_sub', 'Planned cap versus active expenditures')}
                   </p>
                 </div>
                 <span
@@ -1397,8 +1336,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   }`}
                 >
                   {isBudgetOver
-                    ? language === 'hi' ? 'घाटे की चेतावनी' : 'Deficit Warning'
-                    : language === 'hi' ? 'बजट सीमा में' : 'Within Allocation'}
+                    ? t('comp.deficit_warning', 'Deficit Warning')
+                    : t('comp.within_alloc', 'Within Allocation')}
                 </span>
               </div>
 
@@ -1407,7 +1346,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
                     <span className="text-[#2E4035] dark:text-slate-300">
-                      {language === 'hi' ? 'आवंटित सीमा' : 'Allocated Cap'}
+                      {t('comp.alloc_cap', 'Allocated Cap')}
                     </span>
                     <span className="font-mono text-[#173F2B] dark:text-slate-50">₹{activeCap.toLocaleString('en-IN')}</span>
                   </div>
@@ -1419,7 +1358,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
                     <span className="text-[#2E4035] dark:text-slate-300">
-                      {language === 'hi' ? 'अनुमानित व्यय' : 'Simulated Spend'} ({budgetUtilization}%)
+                      {t('comp.sim_spend', 'Simulated Spend')} ({budgetUtilization}%)
                     </span>
                     <span className={`font-mono ${isBudgetOver ? 'text-rose-700 dark:text-rose-400 font-extrabold' : 'text-emerald-700 dark:text-emerald-400 font-extrabold'}`}>
                       ₹{activeSpend.toLocaleString('en-IN')}
@@ -1449,20 +1388,16 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   <p className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
                     <span>
-                      <strong>{language === 'hi' ? 'घाटे का अलर्ट:' : 'Deficit Alert:'}</strong>{' '}
-                      {language === 'hi'
-                        ? `वर्तमान व्यय निर्धारित सीमा से ₹${Math.abs(activeRemaining).toLocaleString('hi-IN')} अधिक है। गैर-जरूरी खर्च टालें या अतिरिक्त फंड स्थानांतरित करें।`
-                        : `Spending currently exceeds planned cap by ₹${Math.abs(activeRemaining).toLocaleString('en-IN')}. Defer discretionary purchases or reallocate surplus funds.`}
+                      <strong>{t('comp.deficit_alert', 'Deficit Alert:')}</strong>{' '}
+                      {t('comp.deficit_desc', `Spending currently exceeds planned cap by ₹${Math.abs(activeRemaining).toLocaleString('en-IN')}. Defer discretionary purchases or reallocate surplus funds.`)}
                     </span>
                   </p>
                 ) : (
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
                     <span>
-                      <strong>{language === 'hi' ? 'सुरक्षित कुशन:' : 'Healthy Cushion:'}</strong>{' '}
-                      {language === 'hi'
-                        ? `इस चक्र के लिए ₹${activeRemaining.toLocaleString('hi-IN')} (${100 - budgetUtilization}% कुशन) सुरक्षित शेष है।`
-                        : `You have ₹${activeRemaining.toLocaleString('en-IN')} remaining (${100 - budgetUtilization}% cushion) for this cycle.`}
+                      <strong>{t('comp.healthy_cushion', 'Healthy Cushion:')}</strong>{' '}
+                      {t('comp.healthy_desc', `You have ₹${activeRemaining.toLocaleString('en-IN')} remaining (${100 - budgetUtilization}% cushion) for this cycle.`)}
                     </span>
                   </p>
                 )}
@@ -1491,13 +1426,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             {/* Simulator Controls */}
             <div className="md:col-span-5 bg-[var(--surface)] border border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-5 shadow-xs hover:border-[var(--line)] transition-colors">
               <h4 className="text-xs font-mono uppercase tracking-wider font-bold text-[#173F2B] dark:text-slate-300">
-                {language === 'hi' ? 'लक्ष्य पैरामीटर' : 'Milestone Parameters'}
+                {t('sim.badge', 'Milestone Parameters')}
               </h4>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-[#2E4035] dark:text-slate-300">
-                    {language === 'hi' ? 'लक्ष्य राशि:' : 'Milestone Target:'}
+                    {t('sim.target_label', 'Milestone Target:')}
                   </span>
                   <span className="font-mono text-[#173F2B] dark:text-slate-50">₹{goalTarget.toLocaleString('en-IN')}</span>
                 </div>
@@ -1515,7 +1450,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-[#2E4035] dark:text-slate-300">
-                    {language === 'hi' ? 'अब तक की बचत:' : 'Principal Saved to Date:'}
+                    {t('sim.saved_label', 'Principal Saved to Date:')}
                   </span>
                   <span className="font-mono text-emerald-700 dark:text-emerald-400">₹{goalCurrent.toLocaleString('en-IN')}</span>
                 </div>
@@ -1533,7 +1468,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-[#2E4035] dark:text-slate-300">
-                    {language === 'hi' ? 'मानक मासिक योगदान:' : 'Standard Monthly Allocation:'}
+                    {t('sim.allocation_label', 'Standard Monthly Allocation:')}
                   </span>
                   <span className="font-mono text-[#173F2B] dark:text-slate-50">₹{baseContribution.toLocaleString('en-IN')}</span>
                 </div>
@@ -1551,7 +1486,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="space-y-2 pt-3 border-t border-[var(--line)]">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-emerald-700 dark:text-emerald-400">
-                    {language === 'hi' ? '+ खर्च में कटौती से बचत:' : '+ Discretionary Trims Redirected:'}
+                    {t('sim.trims_label', '+ Discretionary Trims Redirected:')}
                   </span>
                   <span className="font-mono text-emerald-700 dark:text-emerald-400">₹{spendCutRedirect.toLocaleString('en-IN')}</span>
                 </div>
@@ -1565,9 +1500,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   className="w-full accent-[var(--accent)] cursor-pointer"
                 />
                 <span className="text-[11px] text-[#2E4035] dark:text-slate-400 block font-medium">
-                  {language === 'hi'
-                    ? 'अनावश्यक सब्सक्रिप्शन को रद्द करके अतिरिक्त राशि को लक्ष्य में जोड़ने का सिमुलेशन करें।'
-                    : 'Simulate cutting creeping recurring subscriptions and directing the surplus into your goal.'}
+                  {t('sim.trims_desc', 'Simulate cutting creeping recurring subscriptions and directing the surplus into your goal.')}
                 </span>
               </div>
             </div>
@@ -1577,22 +1510,22 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
                 <div>
                   <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                    {language === 'hi' ? 'निश्चयात्मक क्षितिज पूर्वानुमान' : 'Deterministic Horizon Forecast'}
+                    {t('sim.title', 'Deterministic Horizon Forecast')}
                   </h4>
                   <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                    {language === 'hi' ? 'गणितीय सूत्र: ceil((लक्ष्य − संचित) / मासिक कुल)' : 'Mathematical formula: ceil((Target − Saved) / Monthly Total)'}
+                    {t('sim.formula', 'Mathematical formula: ceil((Target − Saved) / Monthly Total)')}
                   </p>
                 </div>
                 <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                  {goalProgressPct}% {language === 'hi' ? 'पूर्ण' : 'Funded'}
+                  {goalProgressPct}% {t('sim.funded', 'Funded')}
                 </span>
               </div>
 
               {/* Progress bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono text-[#2E4035] dark:text-slate-300 font-bold">
-                  <span>{language === 'hi' ? 'वर्तमान:' : 'Current:'} ₹{goalCurrent.toLocaleString('en-IN')}</span>
-                  <span>{language === 'hi' ? 'शेष अंतर:' : 'Funding Gap:'} ₹{goalRemaining.toLocaleString('en-IN')}</span>
+                  <span>{t('sim.current', 'Current:')} ₹{goalCurrent.toLocaleString('en-IN')}</span>
+                  <span>{t('sim.gap', 'Funding Gap:')} ₹{goalRemaining.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="w-full bg-[var(--soft)] h-4 rounded-full overflow-hidden">
                   <div
@@ -1606,7 +1539,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-[var(--line)]">
                 <div className="p-4 rounded-2xl bg-[var(--soft)]/70">
                   <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                    {language === 'hi' ? 'कुल मासिक' : 'Total Monthly'}
+                    {t('sim.total_monthly', 'Total Monthly')}
                   </span>
                   <span className="font-mono text-lg font-extrabold text-[#173F2B] dark:text-slate-50 block mt-1">
                     ₹{totalMonthlySavings.toLocaleString('en-IN')}
@@ -1614,27 +1547,25 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 </div>
                 <div className="p-4 rounded-2xl bg-[var(--soft)]/70">
                   <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                    {language === 'hi' ? 'लक्ष्य तक समय' : 'Time to Target'}
+                    {t('sim.time_target', 'Time to Target')}
                   </span>
                   <span className="font-mono text-lg font-extrabold text-emerald-700 dark:text-emerald-400 block mt-1">
-                    {acceleratedMonthsNeeded} {language === 'hi' ? 'महीने' : 'Months'}
+                    {acceleratedMonthsNeeded} {t('sim.months', 'Months')}
                   </span>
                 </div>
                 <div className="p-4 rounded-2xl bg-[var(--soft)]/70 col-span-2 sm:col-span-1">
                   <span className="text-xs text-[#2E4035] dark:text-slate-300 font-bold block">
-                    {language === 'hi' ? 'बचाया गया समय' : 'Time Saved'}
+                    {t('sim.time_saved', 'Time Saved')}
                   </span>
                   <span className="font-mono text-lg font-extrabold text-emerald-700 dark:text-emerald-400 block mt-1">
-                    +{monthsSaved} {language === 'hi' ? 'महीने' : 'Months'}
+                    +{monthsSaved} {t('sim.months', 'Months')}
                   </span>
                 </div>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#F4F7F3] dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] text-xs text-[#173F2B] dark:text-slate-200 leading-relaxed font-medium">
-                💡 <strong>{language === 'hi' ? 'अनुकूलन इनसाइट:' : 'Optimization Insight:'}</strong>{' '}
-                {language === 'hi'
-                  ? `अतिरिक्त ₹${spendCutRedirect.toLocaleString('hi-IN')}/माह इस लक्ष्य में लगाने से आपका लक्ष्य ${baseMonthsNeeded} महीने के बजाय केवल ${acceleratedMonthsNeeded} महीने में हासिल हो जाता है, जिससे आपके ${monthsSaved} महीने बचते हैं।`
-                  : `Redirecting an additional ₹${spendCutRedirect.toLocaleString('en-IN')}/mo into this milestone achieves your target in ${acceleratedMonthsNeeded} months instead of ${baseMonthsNeeded} months, reclaiming ${monthsSaved} full months of waiting.`}
+                💡 <strong>{t('sim.insight_label', 'Optimization Insight:')}</strong>{' '}
+                {t('sim.insight_desc', `Redirecting an additional ₹${spendCutRedirect.toLocaleString('en-IN')}/mo into this milestone achieves your target in ${acceleratedMonthsNeeded} months instead of ${baseMonthsNeeded} months, reclaiming ${monthsSaved} full months of waiting.`)}
               </div>
             </div>
           </div>
@@ -1718,12 +1649,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <ShieldCheck className="w-4 h-4" />
             </div>
             <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-              {language === 'hi' ? 'सटीक दशमलव अंकगणित' : 'Arbitrary Decimal Arithmetic'}
+              {t('sec.decimal_title', 'Arbitrary Decimal Arithmetic')}
             </h4>
             <p className="text-xs text-[#2E4035] dark:text-slate-300 leading-relaxed font-medium">
-              {language === 'hi'
-                ? 'पाइथन डेसीमल और डेटाबेस NUMERIC प्रकारों पर आधारित। खाता शेष, आवंटन और मुद्रा हस्तांतरण में फ्लोटिंग-पॉइंट की त्रुटि पूरी तरह समाप्त।'
-                : 'Backed by Python Decimal and database NUMERIC types. Eliminates binary floating-point roundoff errors across account balances, allocations, and currency transfers.'}
+              {t('sec.decimal_desc', 'Backed by Python Decimal and database NUMERIC types. Eliminates binary floating-point roundoff errors across account balances, allocations, and currency transfers.')}
             </p>
           </div>
           <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs">
@@ -1731,12 +1660,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <Lock className="w-4 h-4" />
             </div>
             <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-              {language === 'hi' ? 'जीरो-ट्रस्ट डेटा अलगाव' : 'Zero-Trust Isolation'}
+              {t('sec.isolation_title', 'Zero-Trust Isolation')}
             </h4>
             <p className="text-xs text-[#2E4035] dark:text-slate-300 leading-relaxed font-medium">
-              {language === 'hi'
-                ? 'सर्वर-स्तरीय डेटा सुरक्षा। क्रिप्टोग्राफिक Argon2id पासवर्ड हैशिंग के साथ सुरक्षित टोकन आपकी व्यक्तिगत पहचान की रक्षा करते हैं।'
-                : 'Hard server-enforced per-user data tenancy on all SQL operations. Signed stateless JWTs with cryptographic Argon2id password hashing protect your identity.'}
+              {t('sec.isolation_desc', 'Hard server-enforced per-user data tenancy on all SQL operations. Signed stateless JWTs with cryptographic Argon2id password hashing protect your identity.')}
             </p>
           </div>
           <div className="space-y-3 p-6 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs">
@@ -1744,12 +1671,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <Zap className="w-4 h-4" />
             </div>
             <h4 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-              {language === 'hi' ? 'निश्चयात्मक तर्क और पूर्वानुमान' : 'Deterministic Logic'}
+              {t('sec.deterministic_title', 'Deterministic Logic')}
             </h4>
             <p className="text-xs text-[#2E4035] dark:text-slate-300 leading-relaxed font-medium">
-              {language === 'hi'
-                ? 'पारदर्शी समयरेखा और आपातकालीन फंड पूर्वानुमान। प्रत्येक वित्तीय गणना स्पष्ट, सत्यापन योग्य और ऑडिट योग्य है।'
-                : 'Transparent timeline and emergency projections with zero invented returns. Every financial calculation is explainable, verifiable, and mathematically auditable.'}
+              {t('sec.deterministic_desc', 'Transparent timeline and emergency projections with zero invented returns. Every financial calculation is explainable, verifiable, and mathematically auditable.')}
             </p>
           </div>
         </div>
@@ -1786,10 +1711,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       <footer className="border-t border-[var(--line)] py-8 text-xs text-[var(--muted)] font-mono">
         <div className="max-w-6xl mx-auto px-5 flex flex-wrap justify-between items-center gap-4">
           <span className="font-medium">
-            {language === 'hi' ? 'फिनरॉक (Finroq) · बुद्धिमान वित्तीय लेखांकन इंजन' : 'Finroq · Intelligent Financial Accounting Engine'}
+            {t('footer.brand', 'Finroq · Intelligent Financial Accounting Engine')}
           </span>
           <span>
-            {language === 'hi' ? 'मार्केटिंग पूर्वावलोकन में प्रदर्शित नमूना आंकड़े' : 'Sample figures shown throughout marketing preview'}
+            {t('footer.disclaimer', 'Sample figures shown throughout marketing preview')}
           </span>
         </div>
       </footer>
