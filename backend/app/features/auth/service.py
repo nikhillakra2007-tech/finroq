@@ -64,6 +64,33 @@ class AuthService:
         await self.db.refresh(user)
         return user
 
+    async def authenticate_or_create_otp_user(self, identifier: str, full_name: str | None = None) -> User:
+        clean_identifier = identifier.strip().lower()
+        if "@" in clean_identifier:
+            email = clean_identifier
+        else:
+            digits = "".join(c for c in clean_identifier if c.isdigit())
+            email = f"phone_{digits or 'user'}@otp.finroq.internal"
+
+        result = await self.db.execute(select(User).where(User.email == email))
+        user = result.scalar_one_or_none()
+        if user:
+            return user
+
+        import secrets
+        random_pw = secrets.token_urlsafe(32)
+        hashed_password = get_password_hash(random_pw)
+        derived_name = full_name or (clean_identifier if "@" in clean_identifier else f"+91 {clean_identifier}")
+        user = User(
+            email=email,
+            hashed_password=hashed_password,
+            full_name=derived_name,
+        )
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
     async def get_user_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()

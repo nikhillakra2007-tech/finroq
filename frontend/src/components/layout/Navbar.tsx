@@ -36,11 +36,12 @@ const PRIMARY_NAV = [
   { key: 'nav.home', name: '12-Module Home', href: '/app/home', icon: Home },
   { key: 'nav.ledger', name: 'Ledger', href: '/app/expense-tracking', icon: CreditCard },
   { key: 'nav.budgets', name: 'Budgets', href: '/app/budgeting', icon: PieChart },
-  { key: 'mod.net_worth', name: 'Net Worth', href: '/app/net-worth', icon: TrendingUp },
+  { key: 'nav.crash_test', name: 'Crash-Test', href: '/app/crash-test', icon: ShieldAlert },
   { key: 'nav.ai_insights', name: 'AI Insights', href: '/app/spend-leak-detector', icon: Sparkles },
 ];
 
 const ALL_12_MODULES = [
+  { key: 'mod.crash_test', name: 'Crash-Test / Agentic Run', href: '/app/crash-test', icon: ShieldAlert, cat: 'Health' },
   { key: 'mod.expense_tracking', name: 'Expense Tracking', href: '/app/expense-tracking', icon: CreditCard, cat: 'Track' },
   { key: 'mod.daily_budgeting', name: 'Daily Budgeting', href: '/app/budgeting', icon: PieChart, cat: 'Track' },
   { key: 'mod.splitter', name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Track' },
@@ -149,7 +150,7 @@ export function Navbar() {
                 {modulesDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#16251E] rounded-2xl shadow-lg border border-[#BAC7BE] dark:border-[#2A3D33] p-2 grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3 py-1.5 border-b border-slate-100 dark:border-[#2A3D33] flex items-center justify-between text-[11px] font-bold text-[#173F2B] dark:text-slate-300 uppercase tracking-wider">
-                      <span>{language === 'hi' ? 'सभी 12 वित्तीय मॉड्यूल' : 'All 12 Financial Modules'}</span>
+                      <span>{language === 'hi' ? 'सभी 13 वित्तीय फीचर्स' : 'All 13 Financial Features'}</span>
                     </div>
 
                     <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 dark:divide-[#2A3D33] space-y-0.5">

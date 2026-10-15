@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { apiClient } from '@/lib/api-client';
 import { FinancialSummary } from '@/lib/api-types';
@@ -92,6 +93,31 @@ export default function AppFinancialHealthPage() {
         </div>
       ) : (
       <div className="space-y-8">
+        {/* Agentic Crash-Test Discovery Insight */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                Crash-Test Engine
+              </span>
+              <span className="text-xs text-[var(--muted)] font-mono">Resilience Score: 74/100</span>
+            </div>
+            <h4 className="font-bold text-sm text-[#173F2B] dark:text-white">
+              Autonomous Stress-Test Analysis Available
+            </h4>
+            <p className="text-xs text-[#4D5D51] dark:text-slate-300 max-w-xl">
+              Finroq independently tested compound income losses and emergency shocks against your liquid reserves.
+            </p>
+          </div>
+          <Link
+            href="/app/crash-test"
+            className="btn-pill sm bg-[#173F2B] text-white hover:bg-[#123122] text-xs font-bold shrink-0 flex items-center gap-1.5"
+          >
+            <span>View Crash-Test Results</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
         {/* Clean Summary Metric Cards */}
         <div className="grid sm:grid-cols-3 gap-5">
           <div className="bg-[#FCFDFC] dark:bg-[var(--surface)] border border-[#DCE4DC] dark:border-[var(--line)] rounded-3xl p-6 sm:p-7 space-y-2 shadow-xs">

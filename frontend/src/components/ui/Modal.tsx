@@ -26,16 +26,27 @@ export function Modal({
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
-      document.documentElement.style.position = 'fixed';
-      document.documentElement.style.width = '100%';
+
+      const handleWheel = (e: WheelEvent) => {
+        // Prevent scroll event bubbling to window
+        const target = e.target as HTMLElement;
+        const modalContent = target.closest('[role="dialog"]');
+        if (!modalContent) {
+          e.preventDefault();
+        }
+      };
+
+      window.addEventListener('wheel', handleWheel, { passive: false });
+
       return () => {
-        document.body.style.overflow = originalOverflow;
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.position = '';
-        document.documentElement.style.width = '';
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        window.removeEventListener('wheel', handleWheel);
       };
     }
   }, [isOpen]);
@@ -52,12 +63,12 @@ export function Modal({
   return (
     <Fragment>
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 overscroll-contain transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-transparent"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto overscroll-contain bg-transparent"
         onClick={onClose}
         role="dialog"
         aria-modal="true"

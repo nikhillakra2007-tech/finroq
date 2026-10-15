@@ -40,7 +40,7 @@ interface ModuleShellProps {
 }
 
 const MODULES_NAV = [
-  { href: '/app/ai-assistant', key: 'mod.ai_assistant', label: 'Finroq AI', icon: Sparkles },
+  { href: '/app/crash-test', key: 'mod.crash_test', label: 'Crash-Test / Agentic Run', icon: ShieldAlert },
   { href: '/app/expense-tracking', key: 'mod.expense_tracking', label: 'Expense Tracking', icon: CreditCard },
   { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Daily Budgeting', icon: PieChart },
   { href: '/app/splitter', key: 'mod.splitter', label: 'Splitter', icon: Users },
@@ -104,6 +104,20 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
     navigateWithCurtain('/', 'finroq', 'back');
   };
 
+  const categoryTranslations: Record<string, string> = {
+    'Track & Control': t('cat.track_control', 'Track & Control'),
+    'Decide Before Spending': t('cat.decide_before', 'Decide Before Spending'),
+    'Build & Protect': t('cat.build_protect', 'Build & Protect'),
+    'Manage Obligations': t('cat.manage_obligations', 'Manage Obligations'),
+    'Stress Testing & Resilience': t('cat.stress_resilience', 'Stress Testing & Resilience'),
+    'Financial Resilience': t('cat.financial_resilience', 'Financial Resilience'),
+    'Autonomous Intelligence': t('cat.autonomous_intelligence', 'Autonomous Intelligence'),
+  };
+
+  const displayCategory = categoryTranslations[category] || category;
+  const displayTitle = t(activeMod.key, title);
+  const displayDesc = t(activeMod.key + '.desc', description);
+
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col justify-between">
       {/* Top App Bar */}
@@ -152,7 +166,7 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-[var(--muted)] shrink-0">
               <Layers className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>{language === 'hi' ? 'फीचर चुनें:' : 'Select Feature:'}</span>
+              <span>{t('nav.switch_module', 'Select Feature:')}</span>
             </div>
 
             <div className="relative flex-1 sm:flex-initial" ref={dropdownRef}>
@@ -181,7 +195,7 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
                   className="absolute left-0 top-full mt-1.5 w-full sm:w-[320px] max-h-[290px] overflow-y-auto dropdown-menu-scroller overscroll-contain rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xl z-50 p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-150"
                 >
                   <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--muted)] opacity-75 border-b border-[var(--line)]/60 mb-1">
-                    {language === 'hi' ? 'सभी 12 फीचर्स' : 'All 12 Features'}
+                    {t('common.all_13_features', `All ${MODULES_NAV.length} Features`)}
                   </div>
                   {MODULES_NAV.map((mod) => {
                     const Icon = mod.icon;
@@ -222,7 +236,7 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
           {/* Current Category Pill */}
           <div className="hidden sm:flex items-center gap-2 text-xs">
             <span className="px-2.5 py-1 rounded-full bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold border border-[#CBD5CB] dark:border-[#2A3D33]">
-              {category}
+              {displayCategory}
             </span>
           </div>
         </div>
@@ -233,14 +247,14 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
         <div className="space-y-2 border-b border-[var(--line)] pb-6">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-medium tracking-wider uppercase text-[var(--accent)]">
-              {category}
+              {displayCategory}
             </span>
           </div>
           <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[var(--ink)]">
-            {title}
+            {displayTitle}
           </h1>
           <p className="text-sm sm:text-base text-[var(--muted)] max-w-2xl">
-            {description}
+            {displayDesc}
           </p>
         </div>
 
@@ -250,8 +264,8 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
       {/* Footer */}
       <footer className="border-t border-[var(--line)] py-6 text-xs text-[var(--muted)] font-mono">
         <div className="max-w-6xl mx-auto px-5 flex flex-wrap justify-between items-center gap-4">
-          <span>Finroq · {title}</span>
-          <span>{language === 'hi' ? 'प्रामाणिक वित्तीय इंजन' : 'Authoritative Financial Engine'}</span>
+          <span>Finroq · {displayTitle}</span>
+          <span>{t('footer.authoritative', 'Authoritative Financial Engine')}</span>
         </div>
       </footer>
     </div>

@@ -11,6 +11,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (email: string, full_name?: string) => Promise<void>;
+  loginWithOtp: (identifier: string, otp: string, full_name?: string) => Promise<void>;
+  sendOtp: (identifier: string) => Promise<{ message: string; dev_otp?: string }>;
   setAuthenticatedSession: (token: string, user?: User) => Promise<void>;
   register: (email: string, password: string, full_name?: string) => Promise<void>;
   logout: () => void;
@@ -108,6 +110,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const sendOtp = async (identifier: string) => {
+    const res = await apiClient.sendOtp(identifier);
+    return res.data;
+  };
+
+  const loginWithOtp = async (identifier: string, otp: string, full_name?: string) => {
+    setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('finroq_logged_out');
+    }
+    try {
+      const res = await apiClient.verifyOtp(identifier, otp, full_name);
+      const accessToken = res.data.access_token;
+      setToken(accessToken);
+      apiClient.setToken(accessToken);
+      try {
+        const userRes = await apiClient.getMe();
+        setUser(userRes.data);
+      } catch {
+        const fallbackUser: User = (res.data as any)?.user || {
+          id: 88,
+          email: identifier.includes('@') ? identifier : `phone_${identifier.replace(/\D/g, '')}@otp.finroq.internal`,
+          full_name: full_name || (identifier.includes('@') ? identifier.split('@')[0] : `+91 ${identifier}`),
+          is_active: true,
+          is_superuser: false,
+        };
+        setUser(fallbackUser);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const setAuthenticatedSession = async (tokenString: string, userObj?: User) => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('finroq_logged_out');
@@ -166,6 +201,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         loginWithGoogle,
+        loginWithOtp,
+        sendOtp,
         setAuthenticatedSession,
         register,
         logout,

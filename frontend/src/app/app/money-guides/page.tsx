@@ -463,7 +463,163 @@ const HINDI_TRANSLATIONS: Record<string, {
     ],
     proTip: '₹5,000 की मासिक एसआईपी 30 साल में 12% पर ₹1.76 करोड़ बन जाती है। आज से ही शुरुआत करें।',
   },
+  'crash-liquid-runway': {
+    title: 'सुरक्षा अवधि (लिक्विड रनवे)',
+    tag: 'क्रैश-टेस्ट',
+    readTime: '1 मिनट',
+    summary: 'यदि आज आपकी सारी आय बंद हो जाए, तो आपका परिवार कितने महीने तक सामान्य जीवन जी सकता है।',
+    coreConcept: 'लिक्विड रनवे आपके कुल बैंक बैलेंस को आपके अनिवार्य मासिक खर्चों से विभाजित करके निकाला जाता है।',
+    whyItMatters: 'बिना पर्याप्त रनवे के, 1-2 महीने की भी नौकरी छूटने पर व्यक्ति कर्ज में डूब सकता है। लक्ष्य कम से कम 3 से 6 महीने का होना चाहिए।',
+    actionSteps: [
+      'अपने सभी बचत बैंक खातों और आपातकालीन लिक्विड फंड को जोड़ें।',
+      'अपने अनिवार्य मासिक बिलों (किराया, भोजन, ईएमआई, उपयोगिताएं) की गणना करें।',
+      'बैंक बैलेंस को मासिक बिलों से विभाजित करें — यही आपका लिक्विड रनवे है।',
+    ],
+    proTip: 'अपने रनवे को हमेशा लिक्विड बचत खाते में रखें, स्टॉक्स या रियल एस्टेट में नहीं।',
+  },
+  'crash-fixed-burn': {
+    title: 'अनिवार्य खर्च (फिक्स्ड लिविंग बर्न)',
+    tag: 'क्रैश-टेस्ट',
+    readTime: '1 मिनट',
+    summary: 'वे अनिवार्य मासिक खर्चे जिन्हें किसी भी परिस्थिति में टाला या छोड़ा नहीं जा सकता: किराया, भोजन, बिजली और ऋण ईएमआई।',
+    coreConcept: 'यह वह न्यूनतम नकद राशि है जिसकी आपको हर 30 दिन में जीवित रहने और कानूनी देनदारियों को पूरा करने के लिए आवश्यकता होती है।',
+    whyItMatters: 'संकट के समय इसे कम नहीं किया जा सकता। इसे जितना कम रखेंगे, आपकी वित्तीय लचीलापन उतनी ही मजबूत रहेगी।',
+    actionSteps: [
+      'मकान किराया, रखरखाव और उपयोगिता बिलों को अलग सूचीबद्ध करें।',
+      'खाद्य सामग्री और आवश्यक दवाओं के खर्च जोड़ें।',
+      'बैंक ऋण और क्रेडिट कार्ड की न्यूनतम अनिवार्य किस्तें शामिल करें।',
+    ],
+    proTip: 'फिक्स्ड लिविंग बर्न आपकी शुद्ध मासिक आय के 50% से कम होना चाहिए।',
+  },
+  'crash-discretionary-levers': {
+    title: 'लचीला खर्च (डिस्क्रिशनरी लीवर्स)',
+    tag: 'क्रैश-टेस्ट',
+    readTime: '1 मिनट',
+    summary: 'वैकल्पिक खर्चे जैसे वीकेंड पर बाहर खाना, फिल्में, और सब्सक्रिप्शन जिन्हें संकट के समय तुरंत रोका जा सकता है।',
+    coreConcept: 'वित्तीय संकट आने पर यह आपका पहला रक्षा कवच है जिसे रोककर बुनियादी जरूरतों को बचाया जाता है।',
+    whyItMatters: 'बिना नया कर्ज लिए केवल इस खर्च को अस्थायी रूप से रोककर नकदी की कमी को तुरंत हल किया जा सकता है।',
+    actionSteps: [
+      'ओटीटी सब्सक्रिप्शन, डाइनिंग आउट और ऑनलाइन शॉपिंग के मासिक योग की जांच करें।',
+      'आय में अचानक गिरावट आने पर इन सभी गैर-ज़रूरी खर्चों को तुरंत रोक दें।',
+      'बचाई गई राशि को अनिवार्य बिलों और आपातकालीन फंड में पुनर्निर्देशित करें।',
+    ],
+    proTip: 'संकट टलते ही आप इन्हें धीरे-धीरे फिर से शुरू कर सकते हैं।',
+  },
+  'crash-compound-crises': {
+    title: 'दोहरा संकट (कंपाउंड क्राइसिस)',
+    tag: 'क्रैश-टेस्ट',
+    readTime: '1 मिनट',
+    summary: 'वास्तविक जीवन में आपात स्थिति अकेले नहीं आती। अक्सर वेतन कटौती के साथ ही चिकित्सा बिल या परिवार में बड़ा खर्च आ जाता है।',
+    coreConcept: 'दोहरे संकट का परीक्षण करके यह सुनिश्चित किया जाता है कि संयुक्त झटके में भी आपका बैंक बैलेंस शून्य न हो।',
+    whyItMatters: 'एकल झटके के लिए तैयार व्यक्ति अक्सर दोहरे झटके में दिवालिया हो जाते हैं। दोनों का एक साथ परीक्षण सुरक्षा सुनिश्चित करता है।',
+    actionSteps: [
+      'नौकरी में 3 महीने के व्यवधान और ₹50,000 के आपातकालीन अस्पताल बिल का संयुक्त मॉडल बनाएं।',
+      'जांचें कि क्या आपकी कुल लिक्विड बचत दोनों को कवर कर सकती है।',
+    ],
+    proTip: 'पर्याप्त स्वास्थ्य बीमा दोहरे संकट के जोखिम को 80% तक कम कर देता है।',
+  },
+  'crash-solvency-margin': {
+    title: 'न्यूनतम शेष (सॉल्वेंसी मार्जिन)',
+    tag: 'क्रैश-टेस्ट',
+    readTime: '1 मिनट',
+    summary: 'किसी भी वित्तीय झटके के दौरान आपके बैंक खातों में बचने वाली सबसे कम राशि। जब तक यह ₹0 से ऊपर है, आप सुरक्षित हैं।',
+    coreConcept: 'गणितीय प्रमाण यह सुनिश्चित करता है कि तनाव की स्थिति में भी आपकी नकदी कभी भी नकारात्मक (ऋणग्रस्त) न हो।',
+    whyItMatters: 'सॉल्वेंसी मार्जिन शून्य से नीचे जाने का मतलब है कि आपको मजबूरन उच्च ब्याज वाले व्यक्तिगत ऋण लेने पड़ेंगे।',
+    actionSteps: [
+      '6 महीने के सबसे गंभीर तनाव परिदृश्य के बाद अपने बैंक बैलेंस का अनुमान लगाएं।',
+      'सॉल्वेंसी मार्जिन को हमेशा कम से कम ₹25,000 से ऊपर बनाए रखने का लक्ष्य रखें।',
+    ],
+    proTip: 'सॉल्वेंसी मार्जिन जितना बड़ा होगा, बाजार में मंदी के दौरान आपका आत्मविश्वास उतना ही अधिक रहेगा।',
+  },
 };
+
+const CRASH_TEST_GUIDES: Guide[] = [
+  {
+    id: 'crash-liquid-runway',
+    title: 'Liquid Runway: Survival Buffer',
+    tag: 'Crash-Test',
+    readTime: '1 min read',
+    summary: 'How many months your family can survive if all income stops today. Calculated by dividing your total bank cash by your essential monthly bills.',
+    fullBody: {
+      coreConcept: 'Liquid Runway measures your cash survival timeline in months. It takes your accessible bank balances and divides by essential living expenses.',
+      whyItMatters: 'Without an adequate runway, even a brief 60-day job interruption or medical leave triggers high-interest borrowing or insolvency.',
+      actionSteps: [
+        'Sum up your checking, savings, and liquid sweep deposits.',
+        'Calculate your non-negotiable monthly expenses (rent, groceries, utilities, EMIs).',
+        'Divide your liquid funds by monthly essentials. Target: 3 to 6 months minimum.',
+      ],
+      proTip: 'Keep your runway funds strictly in high-yield savings or overnight funds, never in volatile stock investments.',
+    },
+  },
+  {
+    id: 'crash-fixed-burn',
+    title: 'Fixed Living Burn: Non-Negotiable Bills',
+    tag: 'Crash-Test',
+    readTime: '1 min read',
+    summary: 'The non-negotiable costs you must pay every single month to live: rent, groceries, electricity, wifi, and loan EMIs. These cannot be skipped.',
+    fullBody: {
+      coreConcept: 'Fixed Living Burn is the baseline outflow required every 30 days to keep a roof over your head, feed your family, and service credit obligations.',
+      whyItMatters: 'In a financial emergency, these expenses cannot be paused without facing eviction, utility disconnection, or credit default.',
+      actionSteps: [
+        'Audit your monthly recurring bank debits and loan EMIs.',
+        'Identify unavoidable living expenses: rent, grocery staples, utilities, health medicines.',
+        'Ensure your total fixed burn does not exceed 50% of your take-home income.',
+      ],
+      proTip: 'Refinancing high-cost debt or downsizing housing can permanently lower your monthly fixed burn.',
+    },
+  },
+  {
+    id: 'crash-discretionary-levers',
+    title: 'Discretionary Levers: Flexible Budget',
+    tag: 'Crash-Test',
+    readTime: '1 min read',
+    summary: 'Flexible spending (weekend dining out, shopping, OTT subscriptions) that you can immediately pause during a crisis without hurting basic necessities.',
+    fullBody: {
+      coreConcept: 'Discretionary levers represent spending that can be instantly throttled to zero without impacting your family’s physical security or credit record.',
+      whyItMatters: 'During a career pause or salary delay, pausing discretionary levers preserves cash instantly without taking on debt.',
+      actionSteps: [
+        'Review your monthly statements for flexible spends (food deliveries, OTT, shopping).',
+        'Set up a quick pause plan to freeze these discretionary expenses during any shock.',
+        'Redirect recovered cash immediately to your emergency cushion.',
+      ],
+      proTip: 'Trimming just 3 recurring subscriptions and dining out can recover ₹10,000 to ₹15,000 every single month.',
+    },
+  },
+  {
+    id: 'crash-compound-crises',
+    title: 'Compound Crises: Simultaneous Shocks',
+    tag: 'Crash-Test',
+    readTime: '1 min read',
+    summary: 'Real emergencies often hit together (e.g. losing your job right when an emergency medical bill arrives). Testing both together prevents surprise bankruptcy.',
+    fullBody: {
+      coreConcept: 'Compound crises model the reality that stressors correlate in life: an income contraction frequently coincides with an emergency outflow spike.',
+      whyItMatters: 'Planning for single isolated shocks creates a false sense of security. Compound models prove your true solvency under extreme real-world conditions.',
+      actionSteps: [
+        'Test a simulated 3-month salary disruption coupled with a ₹50,000 emergency expense.',
+        'Verify whether your combined liquid reserves and flexible levers maintain positive cash flow.',
+        'Put adequate term and health insurance in place to eliminate the catastrophic tail risk.',
+      ],
+      proTip: 'A ₹10 Lakh family floater health insurance policy eliminates 90% of compound medical crisis risk.',
+    },
+  },
+  {
+    id: 'crash-solvency-margin',
+    title: 'Solvency Margin: Non-Negative Proof',
+    tag: 'Crash-Test',
+    readTime: '1 min read',
+    summary: 'The lowest balance your bank accounts drop to during a shock. As long as this remains above ₹0, your financial plan is completely solvent.',
+    fullBody: {
+      coreConcept: 'The Solvency Margin is the minimum cash trough reached across a multi-month shock trajectory. If minimum balance > ₹0, the plan is mathematically solvent.',
+      whyItMatters: 'Reaching ₹0 triggers dishonored payments, penalty charges, and forced emergency loans. Keeping a positive cushion prevents panic.',
+      actionSteps: [
+        'Inspect the month-by-month cash trajectory during simulated stress tests.',
+        'Verify that the lowest trough stays above your minimum safety buffer (e.g. ₹25,000).',
+        'Apply verified recovery shields if your margin ever dips below zero.',
+      ],
+      proTip: 'Finroq mathematically proves your solvency margin using zero-hallucination ledger verification.',
+    },
+  },
+];
 
 export default function AppMoneyGuidesPage() {
   const { language, t } = useI18n();
@@ -501,7 +657,79 @@ export default function AppMoneyGuidesPage() {
           : 'Jargon-free financial rules, allocation blueprints, and cyber-safety protocols designed for everyday Indian households.'
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Crash-Test & Resilience Technical Terms Demystified Section */}
+        <section id="crash-test-guide" className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
+                  {language === 'hi' ? 'क्रैश-टेस्ट शब्दावली' : 'Crash-Test Terminology'}
+                </span>
+                <span className="text-xs text-[#4D5D51] dark:text-slate-400 font-mono">• Plain English, Zero Jargon</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold font-display text-[#173F2B] dark:text-emerald-300">
+                {language === 'hi'
+                  ? 'क्रैश-टेस्ट और वित्तीय लचीलापन के 5 मुख्य सिद्धांत'
+                  : '5 Core Resilience Terms Used in Financial Stress-Testing'}
+              </h2>
+              <p className="text-xs text-[#4D5D51] dark:text-slate-300 leading-relaxed font-medium">
+                {language === 'hi'
+                  ? 'ये 5 प्रमुख शब्द आपको अपनी आपातकालीन सुरक्षा और बफर समझने में मदद करते हैं।'
+                  : 'Learn how Liquid Runway, Fixed Living Burn, and Solvency Margins protect your household in Indian Rupees (₹).'}
+              </p>
+            </div>
+            <a
+              href="/app/crash-test"
+              className="btn-pill sm bg-[#173F2B] dark:bg-emerald-600 text-white hover:bg-[#102F21] dark:hover:bg-emerald-500 font-bold shrink-0 flex items-center gap-2 shadow-xs transition-transform hover:scale-105"
+            >
+              <span>{language === 'hi' ? 'क्रैश-टेस्ट चलाएं' : 'Launch Crash-Test'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {CRASH_TEST_GUIDES.map((rawGuide) => {
+              const g = getGuideData(rawGuide);
+              return (
+                <div
+                  key={g.id}
+                  className="bg-white dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-4 shadow-xs hover:shadow-md transition-shadow"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#173F2B] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                        {g.tag}
+                      </span>
+                      <span className="text-xs font-mono font-medium text-[#4D5D51] dark:text-slate-400">
+                        {g.readTime}
+                      </span>
+                    </div>
+                    <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-emerald-300">
+                      {g.title}
+                    </h3>
+                    <p className="text-xs font-medium text-[#2A4736] dark:text-slate-300 leading-relaxed">
+                      {g.summary}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-[#DCE4DC] dark:border-[var(--line)]">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedGuide(rawGuide)}
+                      className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 text-xs font-bold hover:bg-[#DCE7D9] transition-colors cursor-pointer"
+                    >
+                      <span>{language === 'hi' ? 'पूर्ण एक्शन गाइड खोलें' : 'Open Full Action Guide'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         <div className="grid md:grid-cols-2 gap-6">
           {GUIDES.map((rawGuide) => {
             const g = getGuideData(rawGuide);
@@ -529,8 +757,9 @@ export default function AppMoneyGuidesPage() {
 
                 <div className="pt-3 border-t border-[#DCE4DC] dark:border-[var(--line)]">
                   <button
-                    onClick={() => { setSelectedGuide(rawGuide); document.body.style.overflow = 'hidden'; }}
-                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 text-xs font-bold hover:bg-[#DCE7D9] transition-colors"
+                    type="button"
+                    onClick={() => setSelectedGuide(rawGuide)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#EAF3E7] dark:bg-[#1A2C22] text-[#173F2B] dark:text-emerald-300 text-xs font-bold hover:bg-[#DCE7D9] transition-colors cursor-pointer"
                   >
                     <span>{language === 'hi' ? 'पूर्ण एक्शन गाइड खोलें' : 'Open Full Action Guide'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />

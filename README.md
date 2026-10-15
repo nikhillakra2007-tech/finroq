@@ -2,30 +2,29 @@
 
 <div align="center">
 
-![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.2.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
+![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.3.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
-![Languages](https://img.shields.io/badge/Languages-18%20Global%20Locales-173F2B?style=for-the-badge&logo=google-translate&logoColor=white)
-![Pytest Suite](https://img.shields.io/badge/Pytest-159%2F159%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-25%2F25%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
+![Pytest Suite](https://img.shields.io/badge/Pytest-168%2F168%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-28%2F28%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 12 unified financial modules, 18-language internationalization, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Floating Finroq AI personal financial intelligence agent with voice recognition.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 13 unified financial modules, 6-agent autonomous financial crash-testing, 18-language internationalization, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Floating Finroq AI personal financial intelligence agent with voice recognition.</b>
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
 🌐 **Alternative Production Mirrors**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) • [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
 [Live Application Exhibits](#-live-application-exhibits) •
+[6-Agent Crash-Test Engine](#-autonomous-6-agent-financial-crash-test-engine) •
 [System Architecture](#-system-architecture) •
 [Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
-[Financial Accounting Lifecycle](#-financial-accounting-lifecycle--data-pipeline) •
-[12 Unified Financial Modules](#-12-unified-financial-modules) •
+[13 Unified Financial Modules](#-13-unified-financial-modules) •
 [18-Language i18n & Theming Engine](#-full-site-18-language-i18n--theming-engine) •
-[Verification Matrix](#-verification--test-suite-results) •
 [Quickstart](#-local-development-setup)
 
 </div>
@@ -38,8 +37,8 @@ High-resolution application captures taken directly from live production on [fin
 
 <div align="center">
 
-### 12-Module Unified Financial Workspace Hub
-*Live workspace view displaying all 12 financial engines with instant 18-language selector, Google authentication, and floating AI assistant launcher.*
+### 13-Module Unified Financial Workspace Hub
+*Live workspace view displaying all 13 financial engines with instant 18-language selector, Google authentication, autonomous 6-agent crash-test pipeline, and floating AI assistant launcher.*
 
 ![FINROQ Live 12-Module Hub](docs/assets/finroq-app-home-live.png)
 
@@ -72,9 +71,74 @@ High-resolution application captures taken directly from live production on [fin
 - 🌍 **Comprehensive 18-Language Internationalization**: Full prototype coverage for 18 global languages (English, Hindi, Spanish, French, German, Mandarin, Japanese, Russian, Arabic, Portuguese, Italian, Korean, Dutch, Turkish, Bengali, Telugu, Marathi, Tamil) with responsive typography protection that eliminates text overflow.
 - 🔐 **Google Popup Authentication**: Modern popup-based Google OAuth flow (`/auth/google-popup`) with multi-channel cross-window communication (`window.postMessage`, storage dispatch, fallback sync) and persistent AuthContext state.
 - 🤖 **Floating Finroq AI Financial Companion**: Non-intrusive floating launcher on the bottom-right corner of both landing and workspace pages with voice recognition and automatic response language adaptation.
-- 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 12 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
+- 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 13 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
 - 📥 **Robust Bank Statement Ingestion**: Multi-format CSV/TSV dialect sniffer, duplicate detection, and interactive pre-commit review.
 - 🛡️ **Zero-Hallucination Safe AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Python before any context reaches Google Gemini.
+
+---
+
+## 🛡️ Autonomous 6-Agent Financial Crash-Test Engine
+
+The **Crash-Test Engine** (`/app/crash-test`) is an interconnected 6-agent system that stress-tests a user's verified financial baseline against severe real-world shocks, identifies hidden fragility, and generates mathematically proven recovery plans without taking on high-cost debt.
+
+### Interconnected 6-Agent Orchestration Flowchart
+
+```mermaid
+flowchart TD
+    subgraph LEDGER["Authoritative PostgreSQL Core (₹ INR)"]
+        DATA["Verified Accounts & Transactions<br/>Checking: ₹1.85L • Emergency Cushion: ₹4.75L<br/>Monthly Inflow: ₹1.50L • Fixed Burn: ₹28K/mo Rent + ₹8.5K EMI"]
+    end
+
+    subgraph AGENT1["Agent 1: Context Ingestion Agent"]
+        A1["Financial Context Profiler<br/>• Reconciles liquid reserves & essential living burn<br/>• Derives net cash flow & savings rate (63.0%)<br/>• Calculates liquid runway in months"]
+    end
+
+    subgraph AGENT2["Agent 2: Risk Investigation Agent"]
+        A2["Autonomous Fragility Hunter<br/>• Formulates 5 proactive vulnerability hypotheses<br/>• Tests rigidity index & discretionary cushion (₹14.8K/mo)<br/>• Uncovers compound sensitivity (96% confidence)"]
+    end
+
+    subgraph AGENT3["Agent 3: Adaptive Crash-Test Engine"]
+        A3["Multi-Shock Traversal Simulator<br/>• Evaluates 6 severe stress scenarios over 6-month horizon<br/>• Career pause, salary reduction, inflation surge, hospital bills<br/>• Models compound dual crises and pinpoints cash gap month"]
+    end
+
+    subgraph AGENT4["Agent 4: Recovery Planner Agent"]
+        A4["Mathematical Budget Optimizer<br/>• Linear expenditure reallocation<br/>• Throttles flexible leisure spending to preserve liquidity<br/>• Conserves up to ₹1,08,000 cash across 6 months"]
+    end
+
+    subgraph AGENT5["Agent 5: Constraint Verifier Agent"]
+        A5["Formal Invariant Proof Engine<br/>• Proves: ∀ t ∈ [1, H]: Reserves(t) ≥ 0<br/>• Verifies solvency margins & credit covenant limits<br/>• Mathematical guarantee: 100% feasibility, zero hallucinations"]
+    end
+
+    subgraph AGENT6["Agent 6: Action & Audit Orchestrator"]
+        A6["Plain-English Delivery & Execution<br/>• Ranks actionable shields with confidence metrics<br/>• 1-Click user approval & score boost (+26 pts)<br/>• Telemetry audit trail & performance benchmarks"]
+    end
+
+    DATA -- "Verified Ledger History" --> A1
+    A1 -- "Net Cash Flow & Liquid Runway" --> A2
+    A2 -- "Stress Hypotheses & Rigid Commitments" --> A3
+    A3 -- "6-Month Cash Gap Trajectories" --> A4
+    A4 -- "Candidate Recovery Shields" --> A5
+    A5 -- "Mathematically Proven Plans" --> A6
+
+    style LEDGER fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
+    style AGENT1 fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
+    style AGENT2 fill:#F4F8F3,stroke:#247A50,stroke-width:2px;
+    style AGENT3 fill:#FEF3C7,stroke:#B45309,stroke-width:2px;
+    style AGENT4 fill:#E0E7FF,stroke:#3730A3,stroke-width:2px;
+    style AGENT5 fill:#DCFCE7,stroke:#166534,stroke-width:2px;
+    style AGENT6 fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
+```
+
+### The 6 Logical Agents Explained
+
+| # | Agent Name | Architecture & Core Responsibilities | Mathematical Tooling & Guardrails |
+|:---:|---|---|---|
+| 1 | **Context Ingestion Agent** | Reconciles checking, savings, payroll, and debt commitments in INR (`₹`) into an immutable snapshot. | `account_balance()`, `fixed_burn()`, `liquid_runway = accessible_cash / fixed_monthly_expenses`. |
+| 2 | **Risk Investigation Agent** | Autonomously formulates and tests structural cash-flow hypotheses without prompt assistance. | `rigidity_index()`, `discretionary_buffer_levers()`, multi-shock sensitivity matrix. |
+| 3 | **Crash-Test Simulation Engine** | Traverses 6 multi-scenario shock graphs across a 6-month horizon to pinpoint deficit months. | Deterministic monthly balance trajectory: $B_t = B_{t-1} + \Delta\text{Inflow}_t - \Delta\text{Outflow}_t$. |
+| 4 | **Recovery Planner Agent** | Formulates self-funded budget recovery paths by throttling flexible spending instead of borrowing. | Linear budget reallocation, discretionary pause pacing, emergency cushion preservation. |
+| 5 | **Constraint Verifier Agent** | Rigorously proves non-negativity across all shock months, eliminating AI hallucinations. | Invariant validation: $\forall t \in [1, 6]: \text{Reserves}(t) \ge 0$, debt covenant checking. |
+| 6 | **Action & Audit Orchestrator** | Synthesizes verified math into plain-English advice and 1-click user authorization hooks. | Priority rank matrix, 1-click ledger execution, benchmark telemetry reporting. |
 
 ---
 
@@ -293,7 +357,7 @@ flowchart TD
 
 ---
 
-## 🧩 12 Unified Financial Modules
+## 🧩 13 Unified Financial Modules
 
 All modules are seamlessly integrated into the unified FINROQ navigation shell, sharing identical design language, responsive states, and dual Hindi/English localization:
 
@@ -323,10 +387,15 @@ flowchart LR
         M12["Financial Health Score<br/>/app/financial-health"]
     end
 
+    subgraph CAT5["Stress-Test & Autonomous Agents"]
+        M13["Crash-Test & Resilience Engine<br/>/app/crash-test"]
+    end
+
     style CAT1 fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
     style CAT2 fill:#F4F8F3,stroke:#247A50,stroke-width:2px;
     style CAT3 fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
     style CAT4 fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
+    style CAT5 fill:#FEF3C7,stroke:#B45309,stroke-width:2px;
 ```
 
 | # | Financial Engine | Route | Core Mathematical & Architectural Function |
@@ -340,9 +409,10 @@ flowchart LR
 | 7 | **Spend Leak Detector** | `/app/spend-leak-detector` | Evidence-driven audit identifying recurring subscriptions, phantom micro-charges, and irregular spend surges. |
 | 8 | **Goal Timeline Simulator** | `/app/goal-timeline` | Mathematical milestone projector using formula `ceil((Target - Saved) / MonthlySavings)`. |
 | 9 | **Emergency Cushion** | `/app/emergency-cushion` | Computes liquid burn runway in months based on essential vs discretionary historical spending. |
-| 10 | **Money Guides** | `/app/money-guides` | Curated editorial frameworks (50/30/20 rule, debt avalanche/snowball, liquidity buffers) with visual models. |
+| 10 | **Money Guides** | `/app/money-guides` | Curated editorial frameworks (50/30/20 rule, debt avalanche/snowball, liquidity buffers, crash-test terminologies) with visual models. |
 | 11 | **Credit Health** | `/app/credit-health` | Monitors credit card utilization against aggregate limits to protect credit scores. |
 | 12 | **Financial Health Score** | `/app/financial-health` | Composite vitality diagnostic (0–100) aggregating savings rate, debt ratio, runway, and budget discipline. |
+| 13 | **Crash-Test & Resilience** | `/app/crash-test` | Autonomous 6-agent shock traversal, multi-scenario compound crisis simulation, and mathematical invariant recovery proof. |
 
 ---
 
@@ -361,7 +431,7 @@ flowchart LR
     subgraph RUNTIME["React Runtime Tier"]
         I18N_CTX["I18nProvider Context"] --> DICT["In-Memory Static Dictionaries (18 Global Locales)"]
         DICT --> HOOK["useI18n() Hook: language, setLanguage, t(key, fallback)"]
-        HOOK --> ALL_VIEWS["All 12 Modules + Navbar + Landing + Auth + Chatbot"]
+        HOOK --> ALL_VIEWS["All 13 Modules + Navbar + Landing + Auth + Chatbot"]
         
         THEME_CTX["ThemeProvider Context"] --> THEME_HOOK["useTheme() Hook: theme, toggleTheme()"]
         THEME_HOOK --> ALL_VIEWS

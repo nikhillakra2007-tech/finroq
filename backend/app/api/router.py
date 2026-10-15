@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.routes import health, accounts, transactions, categories, summary, auth, budgets, recurring, ai, spend_leaks
+from app.api.routes import health, accounts, transactions, categories, summary, auth, budgets, recurring, ai, spend_leaks, crash_tests
 
 
 api_router = APIRouter(prefix="/api/v1")
@@ -14,3 +14,4 @@ api_router.include_router(budgets.router)
 api_router.include_router(recurring.router)
 api_router.include_router(ai.router)
 api_router.include_router(spend_leaks.router)
+api_router.include_router(crash_tests.router)

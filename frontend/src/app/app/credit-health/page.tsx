@@ -39,24 +39,23 @@ export default function AppCreditHealthPage() {
 
   return (
     <ModuleShell
-      title={language === 'hi' ? 'क्रेडिट स्वास्थ्य' : 'Credit Health'}
-      category={language === 'hi' ? 'देनदारियों का प्रबंधन' : 'Manage Obligations'}
-      description={
-        language === 'hi'
-          ? 'क्रेडिट कार्ड सीमा का सुरक्षित अनुपात (30% के भीतर) बनाए रखें और भारी ब्याज से बचें।'
-          : 'Review credit utilization metrics, payment punctuality, and healthy credit maintenance without fabricated bureau scores.'
-      }
+      title={t('mod.credit_health', 'Credit Health')}
+      category={t('cat.manage_obligations', 'Manage Obligations')}
+      description={t(
+        'mod.credit_health.desc',
+        'Review credit utilization metrics, payment punctuality, and healthy credit maintenance without fabricated bureau scores.'
+      )}
     >
       <div className="grid md:grid-cols-12 gap-8 items-start">
-        {/* Controls — crisp white in light mode, dark emerald in dark mode */}
+        {/* Controls */}
         <div className="md:col-span-5 bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
           <h3 className="font-display font-bold text-lg pb-3 border-b border-[#CBD5CB] dark:border-[#2A3D33] text-[#173F2B] dark:text-slate-50">
-            {language === 'hi' ? 'क्रेडिट सीमा इनपुट' : 'Credit Line Inputs'}
+            {t('credit.inputs', 'Credit Line Inputs')}
           </h3>
 
           <div>
             <label className="text-xs font-bold text-[#173F2B] dark:text-slate-200 block mb-1.5">
-              {language === 'hi' ? 'कुल संयुक्त क्रेडिट सीमा (₹)' : 'Total Combined Credit Limit (₹)'}
+              {t('credit.total_limit', 'Total Combined Credit Limit (₹)')}
             </label>
             <input
               type="number"
@@ -70,7 +69,7 @@ export default function AppCreditHealthPage() {
 
           <div>
             <label className="text-xs font-bold text-[#173F2B] dark:text-slate-200 block mb-1.5">
-              {language === 'hi' ? 'वर्तमान बकाया शेष (₹)' : 'Current Outstanding Balance (₹)'}
+              {t('credit.current_balance', 'Current Outstanding Balance (₹)')}
             </label>
             <input
               type="number"
@@ -83,15 +82,15 @@ export default function AppCreditHealthPage() {
           </div>
         </div>
 
-        {/* Verdict — crisp white in light mode, dark emerald in dark mode */}
+        {/* Verdict */}
         <div className="md:col-span-7 bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="flex items-center justify-between pb-3 border-b border-[#CBD5CB] dark:border-[#2A3D33]">
             <div>
               <h3 className="font-display font-bold text-lg text-[#173F2B] dark:text-slate-50">
-                {language === 'hi' ? 'रिवॉल्विंग क्रेडिट स्थिति' : 'Revolving Credit Health'}
+                {t('credit.revolving_health', 'Revolving Credit Health')}
               </h3>
               <p className="text-xs text-[#2E4035] dark:text-slate-300 font-medium">
-                {language === 'hi' ? 'लक्षित उपयोग: ≤ 30%' : 'Target Utilization: ≤ 30%'}
+                {t('credit.target_utilization', 'Target Utilization: ≤ 30%')}
               </p>
             </div>
             <span
@@ -102,15 +101,15 @@ export default function AppCreditHealthPage() {
               }`}
             >
               {isHealthy
-                ? language === 'hi' ? 'आदर्श अनुपात' : 'Optimal Utilization'
-                : language === 'hi' ? 'अधिक उपयोग' : 'High Utilization'}
+                ? t('credit.optimal', 'Optimal Utilization')
+                : t('credit.high', 'High Utilization')}
             </span>
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono text-[#2E4035] dark:text-slate-300 font-medium">
-              <span>{language === 'hi' ? 'उपयोग किया गया:' : 'Utilized:'} {formatCurrency(currentCreditBalance)}</span>
-              <span>{language === 'hi' ? 'सीमा:' : 'Limit:'} {formatCurrency(totalCreditLimit)}</span>
+              <span>{t('credit.utilized', 'Utilized:')} {formatCurrency(currentCreditBalance)}</span>
+              <span>{t('credit.limit', 'Limit:')} {formatCurrency(totalCreditLimit)}</span>
             </div>
             <div className="track">
               <i
@@ -121,7 +120,7 @@ export default function AppCreditHealthPage() {
               />
             </div>
             <span className="text-xs font-mono font-bold block text-right text-[#173F2B] dark:text-slate-100">
-              {utilizationRate.toFixed(1)}% {language === 'hi' ? 'अनुपात' : 'Ratio'}
+              {utilizationRate.toFixed(1)}% {t('credit.ratio', 'Ratio')}
             </span>
           </div>
 
@@ -136,17 +135,18 @@ export default function AppCreditHealthPage() {
               <p className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
                 <span>
-                  <strong>{language === 'hi' ? 'सुरक्षित अनुपात:' : 'Healthy Ratio:'}</strong>{' '}
-                  {language === 'hi'
-                    ? '30% से कम उपयोग बनाए रखना कम क्रेडिट जोखिम को दर्शाता है और भारी ब्याज से बचाता है।'
-                    : 'Maintaining revolving balances below 30% signals low credit risk and avoids interest spirals.'}
+                  <strong>{t('credit.healthy_ratio', 'Healthy Ratio:')}</strong>{' '}
+                  {t(
+                    'credit.healthy_desc',
+                    'Maintaining revolving balances below 30% signals low credit risk and avoids interest spirals.'
+                  )}
                 </span>
               </p>
             ) : (
               <p className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                 <span>
-                  <strong>{language === 'hi' ? 'सावधानी:' : 'Caution:'}</strong>{' '}
+                  <strong>{t('credit.caution', 'Caution:')}</strong>{' '}
                   {language === 'hi'
                     ? `30% से अधिक उपयोग क्रेडिट स्कोर को प्रभावित कर सकता है। सुरक्षित सीमा में आने के लिए ₹${Math.max(0, Math.round(currentCreditBalance - totalCreditLimit * 0.3)).toLocaleString('hi-IN')} का भुगतान करें।`
                     : `Utilization above 30% can depress creditworthiness and incur heavy compounding finance charges. Pay down ₹${Math.max(0, Math.round(currentCreditBalance - totalCreditLimit * 0.3)).toLocaleString('en-IN')} to return under 30%.`}

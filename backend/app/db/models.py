@@ -13,6 +13,7 @@ from sqlalchemy import (
     CheckConstraint,
     UniqueConstraint,
     Boolean,
+    Text,
 )
 from sqlalchemy.orm import relationship, declared_attr
 from app.db.session import Base
@@ -269,3 +270,78 @@ class AIUsageLog(Base):
     tool_calls_count = Column(Integer, nullable=False, default=0)
     duration_ms = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class CrashTestRun(Base):
+    __tablename__ = "crash_test_runs"
+
+    id = Column(String(36), primary_key=True)
+    owner_id = Column(String(64), nullable=False, index=True)
+    status = Column(String(32), nullable=False, default="completed")
+    resilience_score = Column(Integer, nullable=False, default=70)
+    scenarios_tested_count = Column(Integer, nullable=False, default=0)
+    failures_detected_count = Column(Integer, nullable=False, default=0)
+    context_snapshot = Column(Text, nullable=True)
+    investigations_json = Column(Text, nullable=True)
+    executive_summary = Column(Text, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    scenarios = relationship("CrashTestScenario", back_populates="run", cascade="all, delete-orphan", order_by="CrashTestScenario.id")
+    recommendations = relationship("CrashTestRecommendation", back_populates="run", cascade="all, delete-orphan", order_by="CrashTestRecommendation.priority_rank")
+
+
+class CrashTestScenario(Base):
+    __tablename__ = "crash_test_scenarios"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    run_id = Column(String(36), ForeignKey("crash_test_runs.id", ondelete="CASCADE"), nullable=False, index=True)
+    scenario_key = Column(String(64), nullable=False)
+    scenario_name = Column(String(128), nullable=False)
+    category = Column(String(64), nullable=False)
+    shocks_json = Column(Text, nullable=False)
+    is_failure = Column(Boolean, nullable=False, default=False)
+    cash_flow_impact_monthly = Column(Numeric(14, 2), nullable=False, default=Decimal("0.00"))
+    first_deficit_month = Column(Integer, nullable=True)
+    minimum_reserve_reached = Column(Numeric(14, 2), nullable=False, default=Decimal("0.00"))
+    additional_funding_required = Column(Numeric(14, 2), nullable=False, default=Decimal("0.00"))
+    primary_constraint_violated = Column(String(128), nullable=True)
+    explanation = Column(Text, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    run = relationship("CrashTestRun", back_populates="scenarios")
+
+
+class CrashTestRecommendation(Base):
+    __tablename__ = "crash_test_recommendations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    run_id = Column(String(36), ForeignKey("crash_test_runs.id", ondelete="CASCADE"), nullable=False, index=True)
+    scenario_id = Column(Integer, ForeignKey("crash_test_scenarios.id", ondelete="SET NULL"), nullable=True, index=True)
+    title = Column(String(255), nullable=False)
+    problem_addressed = Column(Text, nullable=False)
+    why_it_matters = Column(Text, nullable=False)
+    action_plan_json = Column(Text, nullable=False)
+    expected_impact_json = Column(Text, nullable=False)
+    trade_offs = Column(Text, nullable=False)
+    confidence_score = Column(Numeric(5, 2), nullable=False, default=Decimal("0.90"))
+    priority_rank = Column(Integer, nullable=False, default=1)
+    verification_status = Column(String(32), nullable=False, default="verified")
+    verification_details = Column(Text, nullable=True)
+    requires_approval = Column(Boolean, nullable=False, default=True)
+    status = Column(String(32), nullable=False, default="proposed")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    run = relationship("CrashTestRun", back_populates="recommendations")
+
+
+class UserPlanDecision(Base):
+    __tablename__ = "user_plan_decisions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_id = Column(String(64), nullable=False, index=True)
+    run_id = Column(String(36), ForeignKey("crash_test_runs.id", ondelete="CASCADE"), nullable=False, index=True)
+    recommendation_id = Column(Integer, ForeignKey("crash_test_recommendations.id", ondelete="CASCADE"), nullable=False, index=True)
+    decision = Column(String(32), nullable=False)
+    modification_notes = Column(Text, nullable=True)
+    applied_at = Column(DateTime, nullable=False, default=datetime.utcnow)

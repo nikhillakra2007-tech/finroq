@@ -140,6 +140,7 @@ export function TransactionList() {
     { value: '', label: t('action.all_types', 'All Types') },
     { value: 'income', label: t('action.income', 'Income') },
     { value: 'expense', label: t('action.expense', 'Expense') },
+    { value: 'transfer', label: language === 'hi' ? 'ट्रांसफर' : 'Transfer' },
   ];
 
   const accountFilterOptions = [
@@ -260,7 +261,7 @@ export function TransactionList() {
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
                     {language === 'hi' ? 'प्रकार' : 'Type'}
                   </th>
-                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
+                  <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300 whitespace-nowrap min-w-[130px]">
                     {language === 'hi' ? 'राशि' : 'Amount'}
                   </th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
@@ -300,17 +301,18 @@ export function TransactionList() {
                             : (language === 'hi' ? 'खर्च' : 'Expense')}
                         </Badge>
                       </td>
-                      <td className="p-4 text-right font-mono text-sm font-bold">
+                      <td className="p-4 text-right font-mono text-sm font-bold whitespace-nowrap">
                         <span
-                          className={
+                          className={`inline-flex items-center justify-end whitespace-nowrap gap-0.5 ${
                             isIncome
                               ? 'text-[#157A42] dark:text-[#4ADE80]'
                               : isTransfer
                               ? 'text-[#173F2B] dark:text-slate-200'
                               : 'text-[#B43838] dark:text-[#F87171]'
-                          }
+                          }`}
                         >
-                          {isIncome ? '+' : isTransfer ? '↔ ' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
+                          <span>{isIncome ? '+' : isTransfer ? '↔' : '-'}</span>
+                          <span>{formatCurrency(transaction.amount, transaction.currency)}</span>
                         </span>
                       </td>
                       <td className="p-4 text-sm font-medium text-[#374151] dark:text-slate-200 max-w-xs truncate">

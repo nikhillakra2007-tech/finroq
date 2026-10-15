@@ -16,7 +16,7 @@ interface AuthExperienceProps {
 
 export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
   const router = useRouter();
-  const { login, register, loginWithGoogle, setAuthenticatedSession, refreshUser } = useAuth();
+  const { login, register, loginWithGoogle, loginWithOtp, sendOtp, setAuthenticatedSession, refreshUser } = useAuth();
   const { navigateWithCurtain } = useCurtain();
   const { language, t, activeLanguageMeta } = useI18n();
 
@@ -84,36 +84,41 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
     }
   };
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     const cleanedNumber = mobileNumber.replace(/\D/g, '');
     if (cleanedNumber.length !== 10) {
-      setErrorMessage('Please enter a valid 10-digit Indian mobile number.');
+      setErrorMessage(t('auth_error_mobile', 'Please enter a valid 10-digit Indian mobile number.'));
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const res = await sendOtp(cleanedNumber);
       setOtpSent(true);
-      setSuccessMessage(`OTP sent successfully to +91 ${cleanedNumber}. Enter any 6-digit code or 123456 to continue.`);
-    }, 600);
+      setSuccessMessage(res.message || `OTP sent to +91 ${cleanedNumber}. Enter 123456 to continue.`);
+    } catch (err) {
+      setErrorMessage(extractErrorMessage(err, 'Failed to send OTP. Please try again.'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    if (otpCode.trim().length !== 6) {
-      setErrorMessage('Please enter the 6-digit verification code.');
+    const cleanedOtp = otpCode.trim();
+    if (cleanedOtp.length !== 6) {
+      setErrorMessage(t('auth_error_otp', 'Please enter the 6-digit verification code.'));
       return;
     }
     setIsLoading(true);
     try {
-      await login('demo@finroq.com', 'password123');
+      const cleanedNumber = mobileNumber.replace(/\D/g, '');
+      await loginWithOtp(cleanedNumber, cleanedOtp, name.trim() || undefined);
       navigateWithCurtain('/app/home', 'home', 'fwd');
-    } catch {
-      apiClient.setToken('mobile-otp-session-verified');
-      navigateWithCurtain('/app/home', 'home', 'fwd');
+    } catch (err) {
+      setErrorMessage(extractErrorMessage(err, 'Invalid or expired OTP. Please use code 123456.'));
     } finally {
       setIsLoading(false);
     }

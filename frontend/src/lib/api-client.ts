@@ -25,6 +25,10 @@ import type {
   StatementImportConfirmResponse,
   DataReadinessReport,
   SpendLeakAnalysisResponse,
+  CrashTestRunResponse,
+  CrashTestRunRequest,
+  RecommendationDecisionRequest,
+  CrashTestEvaluationBenchmark,
 } from './api-types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -272,6 +276,63 @@ class ApiClient {
       throw err;
     }
   }
+
+  async sendOtp(identifier: string) {
+    try {
+      const res = await this.client.post<{ message: string; identifier: string; expires_in_seconds: number; dev_otp: string }>(
+        '/auth/otp/send',
+        { identifier }
+      );
+      return res;
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return {
+          data: {
+            message: `6-digit verification OTP successfully sent to ${identifier}`,
+            identifier,
+            expires_in_seconds: 600,
+            dev_otp: '123456',
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
+  async verifyOtp(identifier: string, otp: string, full_name?: string) {
+    try {
+      const res = await this.client.post<AuthResponse>('/auth/otp/verify', {
+        identifier,
+        otp,
+        full_name,
+      });
+      if (res.data?.access_token) {
+        this.setToken(res.data.access_token);
+      }
+      return res;
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        const demoToken = 'demo-otp-token-verified';
+        this.setToken(demoToken);
+        const otpUser: User = {
+          id: 88,
+          email: identifier.includes('@') ? identifier : `phone_${identifier.replace(/\D/g, '')}@otp.finroq.internal`,
+          full_name: full_name || (identifier.includes('@') ? identifier.split('@')[0] : `+91 ${identifier}`),
+          is_active: true,
+          is_superuser: false,
+        };
+        return {
+          data: {
+            access_token: demoToken,
+            token_type: 'bearer',
+            user: otpUser,
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
 
   async getMe() {
     if (this.getToken()?.includes('demo')) {
@@ -1183,6 +1244,77 @@ class ApiClient {
       throw err;
     }
   }
+
+  // Crash-Test & Recovery Engine
+  async runCrashTest(request?: CrashTestRunRequest) {
+    if (this.getToken()?.includes('demo')) {
+      return { data: DEMO_CRASH_TEST_RUN } as any;
+    }
+    try {
+      return await this.client.post<CrashTestRunResponse>('/crash-tests/run', request || {});
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_CRASH_TEST_RUN } as any;
+      }
+      throw err;
+    }
+  }
+
+  async getCrashTestRuns(limit = 10) {
+    if (this.getToken()?.includes('demo')) {
+      return { data: [DEMO_CRASH_TEST_RUN] } as any;
+    }
+    try {
+      return await this.client.get<any[]>(`/crash-tests/runs?limit=${limit}`);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: [DEMO_CRASH_TEST_RUN] } as any;
+      }
+      throw err;
+    }
+  }
+
+  async getCrashTestRun(id: string) {
+    if (this.getToken()?.includes('demo')) {
+      return { data: DEMO_CRASH_TEST_RUN } as any;
+    }
+    try {
+      return await this.client.get<CrashTestRunResponse>(`/crash-tests/runs/${id}`);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_CRASH_TEST_RUN } as any;
+      }
+      throw err;
+    }
+  }
+
+  async recordRecommendationDecision(runId: string, recId: number, req: RecommendationDecisionRequest) {
+    if (this.getToken()?.includes('demo')) {
+      return { data: { status: 'success', decision: req.decision, recommendation_id: recId } } as any;
+    }
+    try {
+      return await this.client.post(`/crash-tests/runs/${runId}/recommendations/${recId}/decision`, req);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: { status: 'success', decision: req.decision, recommendation_id: recId } } as any;
+      }
+      throw err;
+    }
+  }
+
+  async getCrashTestBenchmarks() {
+    if (this.getToken()?.includes('demo')) {
+      return { data: DEMO_CRASH_TEST_BENCHMARKS } as any;
+    }
+    try {
+      return await this.client.get<CrashTestEvaluationBenchmark>('/crash-tests/benchmarks');
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_CRASH_TEST_BENCHMARKS } as any;
+      }
+      throw err;
+    }
+  }
 }
 
 export const DEMO_SPEND_LEAK_ANALYSIS: SpendLeakAnalysisResponse = {
@@ -1293,6 +1425,265 @@ export const DEMO_SPEND_LEAK_ANALYSIS: SpendLeakAnalysisResponse = {
   recoverable_annual_estimate: '11388.00',
   disclaimer: 'All savings figures are uncommitted mathematical projections based on recurring plan interception. Actual realized savings depend on confirmed merchant cancellation and avoidance of replacement expenditures.',
 };
+
+export const DEMO_CRASH_TEST_RUN: CrashTestRunResponse = {
+  id: 'demo-crash-test-run-1',
+  status: 'completed',
+  resilience_score: 74,
+  scenarios_tested_count: 6,
+  failures_detected_count: 2,
+  simulation_budget: 8,
+  context: {
+    monthly_income: '150000.00',
+    essential_expenses: '32399.00',
+    discretionary_expenses: '10401.00',
+    total_monthly_expenses: '42800.00',
+    monthly_surplus: '107200.00',
+    liquid_reserves: '475400.00',
+    total_debt_balances: '24500.00',
+    monthly_debt_obligations: '2450.00',
+    emergency_runway_months: '13.6',
+    savings_rate_percent: '71.5',
+    debt_to_income_percent: '1.6',
+    currency: 'INR',
+    data_quality_warnings: [
+      'Verified ledger balances active across checking and high-yield savings.',
+      'Demonstration dataset detected with simulated transaction history.',
+    ],
+    known_constraints: [
+      'Essential living commitments: ₹32,399.00/mo (Housing, Utilities, Groceries).',
+      'Mandatory credit card minimum payment: ₹2,450.00/mo.',
+      'Current liquid reserve buffer: ₹4,75,400.00 (13.6 months runway).',
+    ],
+    observed_transaction_count: 10,
+    accounts_audited_count: 3,
+  },
+  investigations: [
+    {
+      id: 'inv-emergency-runway',
+      question: 'Is the current liquid safety reserve sufficient to survive a temporary income disruption?',
+      hypothesis: 'A sudden 3-month income loss will deplete liquid cash if emergency runway is under 3 months.',
+      status: 'Completed',
+      urgency: 'low',
+      potential_impact: 'medium',
+      confidence: '0.96',
+      evidence_found: 'Liquid reserves: ₹4,75,400.00; Monthly essential commitments: ₹32,399.00; Calculated runway: 13.6 months.',
+      observable_result: 'Healthy Cushion: Liquid reserves cover 13.6 months of non-negotiable living obligations (₹4,75,400.00 available).',
+    },
+    {
+      id: 'inv-unplanned-expense-shock',
+      question: 'Can liquid savings absorb a sudden ₹50,000.00 emergency expense?',
+      hypothesis: 'An unplanned hospital bill or major home repair of ₹50,000.00 may force high-interest credit rollover if unbuffered.',
+      status: 'Completed',
+      urgency: 'low',
+      potential_impact: 'high',
+      confidence: '0.92',
+      evidence_found: 'Available liquid reserves: ₹4,75,400.00. Estimated one-time emergency expense: ₹50,000.00.',
+      observable_result: 'Passed: Reserves can comfortably absorb the one-time shock without breaching emergency safety buffers. Post-shock cushion remains ₹4,25,400.00.',
+    },
+    {
+      id: 'inv-fixed-rigidity',
+      question: 'Are fixed non-negotiable commitments consuming too much monthly cash-flow flexibility?',
+      hypothesis: 'If essential expenses and debt consume more than 50% of income, discretionary trimming alone cannot avert a cash deficit during income shocks.',
+      status: 'Completed',
+      urgency: 'low',
+      potential_impact: 'medium',
+      confidence: '0.94',
+      evidence_found: 'Essential expenses: ₹32,399.00/mo. Debt service: ₹2,450.00/mo. Fixed commitment ratio: 23.2% of monthly income.',
+      observable_result: 'Flexible: Fixed commitments represent only 23.2% of take-home income. Ample monthly discretionary surplus exists to absorb economic volatility.',
+    },
+    {
+      id: 'inv-compound-crisis-interaction',
+      question: 'What happens when an income reduction coincides with an unplanned expense spike?',
+      hypothesis: 'Simultaneous shocks accelerate liquidity failure non-linearly compared to isolated events.',
+      status: 'Completed',
+      urgency: 'high',
+      potential_impact: 'high',
+      confidence: '0.91',
+      evidence_found: 'Dual shock simulation reveals rapid liquidity compression under prolonged salary reduction paired with an emergency medical outflow.',
+      observable_result: 'Elevated Interaction Risk: Dual shocks deplete reserves significantly faster than individual stressors because burn rate accelerates precisely when replenishment is suppressed.',
+    },
+  ],
+  scenarios: [
+    {
+      scenario_key: 'compound_salary_cut_and_medical',
+      scenario_name: 'Compound Crisis: Salary Cut (25%) + Emergency Outflow Spike',
+      category: 'compound_crisis',
+      shocks: [
+        {
+          shock_type: 'income_reduction',
+          description: '25% salary reduction across Months 1-6',
+          duration_months: 6,
+          magnitude: '0.25',
+          timing_month: 1,
+        },
+        {
+          shock_type: 'expense_spike',
+          description: 'Simultaneous unexpected hospital bill of ₹48,000.00 in Month 2',
+          duration_months: 1,
+          magnitude: '48000.00',
+          timing_month: 2,
+        },
+      ],
+      is_failure: true,
+      cash_flow_impact_monthly: '45500.00',
+      first_deficit_month: 2,
+      minimum_reserve_reached: '389900.00',
+      additional_funding_required: '0.00',
+      primary_constraint_violated: 'emergency_cushion_breached',
+      monthly_balances: ['475400.00', '545100.00', '497100.00', '566800.00', '636500.00', '706200.00', '775900.00'],
+      explanation: 'In the compound stress test, liquidity experiences a sharp contraction of ₹45,500.00/month during Month 2. While outright insolvency is avoided, your safety cushion dips into caution territory.',
+    },
+    {
+      scenario_key: 'temporary_job_loss_3m',
+      scenario_name: 'Temporary Career Pause (3-Month Income Loss)',
+      category: 'income_shock',
+      shocks: [
+        {
+          shock_type: 'income_loss',
+          description: '100% loss of take-home income for 3 months (Months 1-3)',
+          duration_months: 3,
+          magnitude: '1.00',
+          timing_month: 1,
+        },
+      ],
+      is_failure: true,
+      cash_flow_impact_monthly: '75000.00',
+      first_deficit_month: 1,
+      minimum_reserve_reached: '347000.00',
+      additional_funding_required: '0.00',
+      primary_constraint_violated: 'emergency_cushion_breached',
+      monthly_balances: ['475400.00', '432600.00', '389800.00', '347000.00', '454200.00', '561400.00', '668600.00'],
+      explanation: 'In Temporary Career Pause, zero income for 90 days forces a burn of ₹42,800.00/mo. Your liquid reserves absorb the shock without borrowing, but cushion is depleted by ₹1,28,400.00.',
+    },
+    {
+      scenario_key: 'emergency_outflow_spike',
+      scenario_name: 'Major Unplanned Expense (₹50,000)',
+      category: 'expense_shock',
+      shocks: [
+        {
+          shock_type: 'expense_spike',
+          description: 'Immediate unplanned outflow of ₹50,000.00 in Month 2',
+          duration_months: 1,
+          magnitude: '50000.00',
+          timing_month: 2,
+        },
+      ],
+      is_failure: false,
+      cash_flow_impact_monthly: '8333.33',
+      first_deficit_month: null,
+      minimum_reserve_reached: '475400.00',
+      additional_funding_required: '0.00',
+      primary_constraint_violated: null,
+      monthly_balances: ['475400.00', '582600.00', '639800.00', '747000.00', '854200.00', '961400.00', '1068600.00'],
+      explanation: 'Under the Major Unplanned Expense stress test, your finances remained resilient throughout the 6-month horizon. Monthly surplus readily replenished reserves.',
+    },
+  ],
+  recommendations: [
+    {
+      id: 1,
+      scenario_key: 'compound_salary_cut_and_medical',
+      title: 'Rank #1: Balanced Resilience Shield (Pragmatic Hybrid)',
+      problem_addressed: 'Vulnerability uncovered in Compound Crisis',
+      why_it_matters: 'In the compound stress test, sudden medical expenses coincide with pay cuts. Implementing this verified plan conserves ₹4,640.00/month, fully protecting your 1-year safety runway.',
+      action_steps: [
+        'Moderate 35% reduction on flexible dining and leisure outflow (₹3,640.00/month conserved).',
+        'Audit recurring auto-debits to capture ₹1,000/month in non-essential OTT subscription savings.',
+        'Direct 100% of realized savings into high-yield liquid emergency reserves.',
+        'Re-evaluate recovery status after Month 3 as income stabilizes.',
+      ],
+      expected_impact: {
+        monthly_cash_flow_conserved: '₹4,640.00',
+        deficit_reduction_percent: '100.0%',
+        runway_extension_months: '+1.8 months',
+        cumulative_6m_savings: '₹27,840.00',
+      },
+      trade_offs: 'Optimal balance: sustainable moderate lifestyle adjustment paired with progressive buffer rebuilding. Zero debt risk.',
+      confidence_score: '0.95',
+      priority_rank: 1,
+      verification_status: 'verified',
+      requires_approval: true,
+      status: 'proposed',
+    },
+    {
+      id: 2,
+      scenario_key: 'temporary_job_loss_3m',
+      title: 'Rank #2: Recurring Mandates & Subscription Pause',
+      problem_addressed: 'Vulnerability uncovered in Career Pause',
+      why_it_matters: 'Temporarily pausing automated subscriptions during career transitions preserves cash runway without requiring severe lifestyle changes.',
+      action_steps: [
+        'Temporarily pause non-essential digital memberships and video streaming subscriptions (₹1,500/mo).',
+        'Apply a light 20% trim on discretionary weekend outings (₹2,080.00/month).',
+        'Conserve total ₹3,580.00/month without drastic disruption.',
+      ],
+      expected_impact: {
+        monthly_cash_flow_conserved: '₹3,580.00',
+        deficit_reduction_percent: '84.0%',
+        runway_extension_months: '+1.4 months',
+        cumulative_6m_savings: '₹21,480.00',
+      },
+      trade_offs: 'Mild convenience friction. Eliminates recurring automated leaks while keeping core lifestyle intact.',
+      confidence_score: '0.94',
+      priority_rank: 2,
+      verification_status: 'verified',
+      requires_approval: true,
+      status: 'proposed',
+    },
+  ],
+  executive_summary: 'Finroq Financial Resilience Score: 74/100. Autonomous testing discovered 2 vulnerability points across 6 stress simulations. The most severe contraction occurred in Compound Crisis, creating a temporary cash compression of ₹45,500.00 in Month 2. An independent deterministic verifier approved 2 recovery plans. Your top verified action is Balanced Resilience Shield.',
+  agent_execution_summary: [
+    {
+      agent_name: 'Context Profiler',
+      status: 'Verified',
+      latency_ms: 3.4,
+      model_used: 'Ledger Math Engine',
+    },
+    {
+      agent_name: 'Fragility Hunter',
+      status: 'Completed',
+      latency_ms: 2.8,
+      model_used: 'Adaptive Discovery Heuristic',
+    },
+    {
+      agent_name: 'Stress Simulator',
+      status: 'Simulated',
+      latency_ms: 5.2,
+      model_used: 'Deterministic Stress Trajectory',
+    },
+    {
+      agent_name: 'Recovery Planner',
+      status: 'Formulated',
+      latency_ms: 4.1,
+      model_used: 'Linear Budget Reallocation',
+    },
+    {
+      agent_name: 'Constraint Verifier',
+      status: '100% Proved',
+      latency_ms: 1.9,
+      model_used: 'Mathematical Proof Engine',
+    },
+    {
+      agent_name: 'Action Orchestrator',
+      status: 'Ready',
+      latency_ms: 2.6,
+      model_used: 'Plain-English Synthesizer',
+    },
+  ],
+  created_at: new Date().toISOString(),
+};
+
+export const DEMO_CRASH_TEST_BENCHMARKS: CrashTestEvaluationBenchmark = {
+  synthetic_profiles_tested: 3,
+  agentic_failures_discovered: 7,
+  baseline_failures_discovered: 2,
+  agentic_time_to_first_failure_ms: 18.4,
+  baseline_time_to_first_failure_ms: 26.1,
+  duplicate_scenario_rate_percent: 0.0,
+  recovery_plan_feasibility_rate_percent: 100.0,
+  runtime_ms: 45.2,
+  execution_summary: 'Agentic Crash-Test search discovered 7 distinct failure modes across 3 synthetic profiles, compared to only 2 by static fixed testing. Deduplication rate was 0.0% duplicates, with a 100% deterministic recovery plan feasibility verification pass rate.',
+};
+
 
 export function extractErrorMessage(err: unknown, fallback = 'An unexpected error occurred'): string {
   if (axios.isAxiosError(err)) {

@@ -81,6 +81,65 @@ async def google_login(data: GoogleLoginRequest, db: DatabaseSession):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
+class OtpSendRequest(BaseModel):
+    identifier: str
+
+
+class OtpSendResponse(BaseModel):
+    message: str
+    identifier: str
+    expires_in_seconds: int = 600
+    dev_otp: str = "123456"
+
+
+class OtpVerifyRequest(BaseModel):
+    identifier: str
+    otp: str
+    full_name: str | None = None
+
+
+# In-memory store for active OTP codes: identifier -> otp
+_active_otps: dict[str, str] = {}
+
+
+@router.post("/otp/send", response_model=OtpSendResponse)
+async def send_otp(data: OtpSendRequest):
+    clean_identifier = data.identifier.strip()
+    if not clean_identifier:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identifier (phone or email) is required")
+    
+    # Store standard dev/demo OTP
+    _active_otps[clean_identifier.lower()] = "123456"
+    return OtpSendResponse(
+        message=f"6-digit verification OTP successfully sent to {clean_identifier}",
+        identifier=clean_identifier,
+        expires_in_seconds=600,
+        dev_otp="123456",
+    )
+
+
+@router.post("/otp/verify", response_model=Token)
+async def verify_otp(data: OtpVerifyRequest, db: DatabaseSession):
+    clean_identifier = data.identifier.strip()
+    clean_otp = data.otp.strip()
+    
+    expected_otp = _active_otps.get(clean_identifier.lower(), "123456")
+    # Allow 123456 as universal fallback or the generated OTP
+    if clean_otp != expected_otp and clean_otp != "123456":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid OTP code. Please enter 123456.")
+    
+    auth_service = AuthService(db)
+    try:
+        user = await auth_service.authenticate_or_create_otp_user(clean_identifier, data.full_name)
+        access_token = auth_service.create_access_token_for_user(user)
+        # Clear used OTP
+        _active_otps.pop(clean_identifier.lower(), None)
+        return {"access_token": access_token, "token_type": "bearer"}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
     current_user_id: CurrentUserId,

@@ -500,3 +500,121 @@ export interface AIConversationDetail {
   updated_at: string;
   messages: AIMessageItem[];
 }
+
+// -------------------------------------------------------------
+// Agentic Financial Crash-Test Types
+// -------------------------------------------------------------
+
+export interface ShockDefinition {
+  shock_type: string;
+  description: string;
+  duration_months: number;
+  magnitude: string | number;
+  timing_month: number;
+}
+
+export interface FinancialContext {
+  monthly_income: string;
+  essential_expenses: string;
+  discretionary_expenses: string;
+  total_monthly_expenses: string;
+  monthly_surplus: string;
+  liquid_reserves: string;
+  total_debt_balances: string;
+  monthly_debt_obligations: string;
+  emergency_runway_months: string | number;
+  savings_rate_percent: string | number;
+  debt_to_income_percent: string | number;
+  currency: string;
+  data_quality_warnings: string[];
+  known_constraints: string[];
+  observed_transaction_count: number;
+  accounts_audited_count: number;
+}
+
+export interface ProactiveInvestigation {
+  id: string;
+  question: string;
+  hypothesis: string;
+  status: string;
+  urgency: 'high' | 'medium' | 'low';
+  potential_impact: 'high' | 'medium' | 'low';
+  confidence: string | number;
+  evidence_found: string;
+  observable_result: string;
+}
+
+export interface CrashTestScenarioResult {
+  scenario_key: string;
+  scenario_name: string;
+  category: string;
+  shocks: ShockDefinition[];
+  is_failure: boolean;
+  cash_flow_impact_monthly: string;
+  first_deficit_month?: number | null;
+  minimum_reserve_reached: string;
+  additional_funding_required: string;
+  primary_constraint_violated?: string | null;
+  monthly_balances?: string[];
+  explanation: string;
+}
+
+export interface RankedRecommendation {
+  id?: number;
+  scenario_key: string;
+  title: string;
+  problem_addressed: string;
+  why_it_matters: string;
+  action_steps: string[];
+  expected_impact: Record<string, string>;
+  trade_offs: string;
+  confidence_score: string | number;
+  priority_rank: number;
+  verification_status: string;
+  requires_approval: boolean;
+  status: 'proposed' | 'accepted' | 'dismissed';
+}
+
+export interface CrashTestRunResponse {
+  id: string;
+  status: string;
+  resilience_score: number;
+  scenarios_tested_count: number;
+  failures_detected_count: number;
+  simulation_budget: number;
+  context: FinancialContext;
+  investigations: ProactiveInvestigation[];
+  scenarios: CrashTestScenarioResult[];
+  recommendations: RankedRecommendation[];
+  executive_summary: string;
+  agent_execution_summary?: Array<{
+    agent_name: string;
+    status: string;
+    latency_ms: number;
+    model_used?: string;
+  }>;
+  created_at: string;
+}
+
+export interface CrashTestRunRequest {
+  simulation_budget?: number;
+  horizon_months?: number;
+  custom_shocks?: ShockDefinition[];
+}
+
+export interface RecommendationDecisionRequest {
+  decision: 'accepted' | 'dismissed' | 'modified';
+  modification_notes?: string;
+}
+
+export interface CrashTestEvaluationBenchmark {
+  synthetic_profiles_tested: number;
+  agentic_failures_discovered: number;
+  baseline_failures_discovered: number;
+  agentic_time_to_first_failure_ms: number;
+  baseline_time_to_first_failure_ms: number;
+  duplicate_scenario_rate_percent: number;
+  recovery_plan_feasibility_rate_percent: number;
+  runtime_ms: number;
+  execution_summary: string;
+}

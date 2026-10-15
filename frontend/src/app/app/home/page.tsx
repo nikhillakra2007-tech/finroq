@@ -289,6 +289,32 @@ export default function AuthenticatedHomeHub() {
           </p>
         </div>
 
+        {/* Agentic Financial Crash-Test Feature Banner */}
+        <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#173F2B] to-[#0F291C] text-white border border-emerald-800/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+          <div className="space-y-1.5 max-w-xl">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                <ShieldAlert className="w-3 h-3" />
+                Agentic Intelligence Layer
+              </span>
+              <span className="text-xs text-emerald-200/60 font-mono">• Active Crash-Testing</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-white">
+              Financial Crash-Test & Resilience Engine
+            </h3>
+            <p className="text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+              Autonomously discovers potential financial weaknesses, models compound shocks (salary drops, medical emergencies), and generates mathematically verified recovery plans.
+            </p>
+          </div>
+          <button
+            onClick={() => navigateWithCurtain('/app/crash-test', 'crash-test', 'fwd')}
+            className="btn-pill sm bg-white text-[#173F2B] hover:bg-emerald-50 font-bold shrink-0 flex items-center gap-2 shadow-xs"
+          >
+            Launch Stress Test
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
         {/* EXACTLY TWELVE ROUNDED-SQUARE FEATURE CARDS IN 4x3 GRID */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {TWELVE_MODULES.map((mod) => {
