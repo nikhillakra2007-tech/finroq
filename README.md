@@ -441,25 +441,30 @@ flowchart LR
     style RUNTIME fill:#EAF3E7,stroke:#247A50,stroke-width:2px;
 ```
 
-### Supported Languages (18 Locales)
+### Supported Languages (18 Global & Indic Locales)
 - 🇬🇧 English (`en`)
-- 🇮🇳 Hindi (`hi`)
-- 🇪🇸 Spanish (`es`)
-- 🇫🇷 French (`fr`)
-- 🇩🇪 German (`de`)
-- 🇨🇳 Mandarin (`zh`)
-- 🇯🇵 Japanese (`ja`)
-- 🇷🇺 Russian (`ru`)
-- 🇸🇦 Arabic (`ar`)
-- 🇧🇷 Portuguese (`pt`)
-- 🇮🇹 Italian (`it`)
-- 🇰🇷 Korean (`ko`)
-- 🇳🇱 Dutch (`nl`)
-- 🇹🇷 Turkish (`tr`)
-- 🇧🇩 Bengali (`bn`)
-- 🇮🇳 Telugu (`te`)
-- 🇮🇳 Marathi (`mr`)
-- 🇮🇳 Tamil (`ta`)
+- 🇮🇳 Hindi (`hi` • हिन्दी)
+- 🇧🇩 Bengali (`bn` • বাংলা)
+- 🇮🇳 Gujarati (`gu` • ગુજરાતી)
+- 🇮🇳 Marathi (`mr` • मराठी)
+- 🇮🇳 Tamil (`ta` • தமிழ்)
+- 🇮🇳 Telugu (`te` • తెలుగు)
+- 🇮🇳 Kannada (`kn` • ಕನ್ನಡ)
+- 🇮🇳 Malayalam (`ml` • മലയാളം)
+- 🇮🇳 Punjabi (`pa` • ਪੰਜਾਬੀ)
+- 🇮🇳 Odia (`or` • ଓଡ଼ିଆ)
+- 🇮🇳 Assamese (`as` • অসমীয়া)
+- 🇵🇰 Urdu (`ur` • اردو)
+- 🇪🇸 Spanish (`es` • Español)
+- 🇫🇷 French (`fr` • Français)
+- 🇩🇪 German (`de` • Deutsch)
+- 🇯🇵 Japanese (`ja` • 日本語)
+- 🇨🇳 Chinese / Mandarin (`zh` • 中文)
+
+### 🤖 Adaptive Model-Isolated Multilingual Intelligence
+- **In-Modal Language Dropdown**: Switch assistant language directly inside the chatbot header across all 18 languages.
+- **Dynamic Natural Language Adaptation**: Ask the assistant in English *"Answer me in Gujarati"*, *"Explain in Bengali"*, or type directly in native script. The model detects the target language on-the-fly and continues the conversation strictly in that language.
+- **Site Isolation Guarantee**: Language changes made within the model are strictly scoped to the AI companion, preserving the main site's language navigation and UI layout intact.
 
 ---
 
