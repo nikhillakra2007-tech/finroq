@@ -290,25 +290,27 @@ export default function AuthenticatedHomeHub() {
         </div>
 
         {/* Agentic Financial Crash-Test Feature Banner */}
-        <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#173F2B] to-[#0F291C] text-white border border-emerald-800/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-gradient-to-r dark:from-emerald-950 dark:via-[#173F2B] dark:to-[#0F291C] border border-[#CBD5CB] dark:border-emerald-800/40 shadow-xs hover:border-[#173F2B] dark:hover:border-emerald-500/60 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           <div className="space-y-1.5 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <ShieldAlert className="w-3 h-3" />
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-[#EAF3E7] text-[#173F2B] border border-[#CAD5CA] dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 flex items-center gap-1">
+                <ShieldAlert className="w-3.5 h-3.5 text-[#173F2B] dark:text-emerald-300" />
                 Agentic Intelligence Layer
               </span>
-              <span className="text-xs text-emerald-200/60 font-mono">• Active Crash-Testing</span>
+              <span className="text-xs text-[#2E4035]/80 dark:text-emerald-200/60 font-mono font-medium">
+                • Active Crash-Testing
+              </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-white">
+            <h3 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-[#173F2B] dark:text-white">
               Financial Crash-Test & Resilience Engine
             </h3>
-            <p className="text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#2E4035] dark:text-emerald-100/80 leading-relaxed font-medium">
               Autonomously discovers potential financial weaknesses, models compound shocks (salary drops, medical emergencies), and generates mathematically verified recovery plans.
             </p>
           </div>
           <button
             onClick={() => navigateWithCurtain('/app/crash-test', 'crash-test', 'fwd')}
-            className="btn-pill sm bg-white text-[#173F2B] hover:bg-emerald-50 font-bold shrink-0 flex items-center gap-2 shadow-xs"
+            className="btn-pill sm bg-[#173F2B] text-white hover:bg-[#102F21] border border-[#173F2B] dark:bg-white dark:text-[#173F2B] dark:border-white dark:hover:bg-emerald-50 font-bold shrink-0 flex items-center gap-2 shadow-xs transition-all"
           >
             Launch Stress Test
             <ArrowRight className="w-4 h-4" />
