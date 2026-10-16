@@ -17,9 +17,12 @@
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
+🚀 **Live Financial Workspace (App Hub)**: [https://finroq-app.vercel.app/app/home](https://finroq-app.vercel.app/app/home)  
+🛡️ **Live Crash-Test & Resilience Engine**: [https://finroq-app.vercel.app/app/crash-test](https://finroq-app.vercel.app/app/crash-test)  
 🌐 **Alternative Production Mirrors**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) • [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
 [Live Application Exhibits](#-live-application-exhibits) •
+[Latest Release Updates](#-latest-release-updates-v131) •
 [6-Agent Crash-Test Engine](#-autonomous-6-agent-financial-crash-test-engine) •
 [System Architecture](#-system-architecture) •
 [Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
@@ -59,6 +62,18 @@ High-resolution application captures taken directly from live production on [fin
 | *Live credit utilization ratios and payment discipline.* | *Active category burn-rate monitoring and auto-rebalancing.* |
 
 </div>
+
+---
+
+## 🆕 Latest Release Updates (v1.3.1)
+
+- 🎨 **Light & Dark Mode Crash-Test Banner Harmonization**:
+  - **Light Mode Module Alignment**: Redesigned the Financial Crash-Test & Resilience Engine launcher card on [`/app/home`](https://finroq-app.vercel.app/app/home) to seamlessly conform to the 12-module card design language (clean `#FFFFFF` card surface, soft `#CBD5CB` border, `#173F2B` headings, `#2E4035` descriptions, and soft sage badge).
+  - **Finroq Forest Green Action Button**: Converted the **Launch Stress Test** CTA button into a solid Finroq forest-green action button (`bg-[#173F2B] text-white hover:bg-[#102F21]`) in light mode, giving it prominent visual contrast on the clean ivory canvas.
+  - **Dark Mode Fidelity**: Preserved the dark emerald-to-forest gradient (`dark:bg-gradient-to-r dark:from-emerald-950 dark:via-[#173F2B] dark:to-[#0F291C]`) with glowing accents and white CTA button in dark mode.
+- 🛡️ **Autonomous 6-Agent Financial Crash-Test Engine**: Deep integration across the 6-agent simulation pipeline evaluating compound financial shocks with formal non-negativity mathematical proofs.
+- 🌐 **18-Language Multilingual Adaptation with Model Isolation**: Dynamic in-modal language selection and prompt translation across 18 regional and global locales.
+- ⚡ **Next.js 14 Production Optimization**: All 25/25 static routes verified and pre-rendered with zero errors.
 
 ---
 
@@ -477,8 +492,10 @@ Every test and validation check passes with 100% compliance:
 | **Backend Pytest Suite** | `pytest -o pythonpath=.` | **159 passed in 51.20s (12 AI Tools + Auth + Double Entry)** | ✅ PASS |
 | **Frontend Jest Tests** | `npm test -- --watchAll=false` | **25 passed across 5 test suites (Components + AI Results)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
-| **Next.js Production Build** | `npm run build` | **24/24 static routes prerendered cleanly** | ✅ PASS |
+| **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
 | **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |
+| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (Harmonized 12-Module Hub + Green CTA)** | ✅ PASS |
+| **Live Crash-Test Engine** | `https://finroq-app.vercel.app/app/crash-test` | **HTTP 200 OK (6-Agent Autonomous Stress Testing)** | ✅ PASS |
 | **Vercel Mirror 1** | `https://pocketcircle.vercel.app` | **HTTP 200 OK (Instant Synchronization)** | ✅ PASS |
 | **Vercel Mirror 2** | `https://finroq-os.vercel.app` | **HTTP 200 OK (Instant Synchronization)** | ✅ PASS |
 
@@ -539,6 +556,8 @@ npm run dev
 ## 🌐 Production Deployment
 
 - **Primary Production URL**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)**
+- **Direct Workspace Hub**: **[https://finroq-app.vercel.app/app/home](https://finroq-app.vercel.app/app/home)**
+- **Autonomous Crash-Test Engine**: **[https://finroq-app.vercel.app/app/crash-test](https://finroq-app.vercel.app/app/crash-test)**
 - **Alternative Mirror**: **[https://finroq-os.vercel.app](https://finroq-os.vercel.app)**
 - **GitHub Repository**: **[https://github.com/nikhillakra2007-tech/finroq](https://github.com/nikhillakra2007-tech/finroq)**
 
