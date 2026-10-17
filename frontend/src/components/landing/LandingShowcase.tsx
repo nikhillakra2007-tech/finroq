@@ -22,6 +22,9 @@ import {
   Globe,
   Menu,
   X,
+  Target,
+  ShoppingBag,
+  ArrowUpRight,
 } from 'lucide-react';
 
 /* Money formatting in integer paise */
@@ -124,6 +127,105 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // Dedicated Amount Sandbox State (Landing Page Only)
   const [testAmount, setTestAmount] = useState<number>(15000);
   const [testLens, setTestLens] = useState<'prespend' | 'allocation' | 'milestones'>('prespend');
+
+  // Interactive AI Copilot Decision Showcase State
+  const [activeCopilotScenario, setActiveCopilotScenario] = useState<number>(0);
+  const [customCopilotQuery, setCustomCopilotQuery] = useState('');
+  const [customQueryApplied, setCustomQueryApplied] = useState(false);
+
+  const COPILOT_SCENARIOS = useMemo(
+    () => [
+      {
+        id: 'affordability',
+        category: 'Pre-Spend Assessment',
+        question: 'Can I afford a ₹15,000 smart monitor purchase today?',
+        badge: 'Deterministic Decimal Engine · Provenance Verified',
+        verdict: 'Affordable with Caution',
+        verdictType: 'caution' as const,
+        explanation:
+          'Your liquid buffer (₹5,63,650.00) easily clears the transaction. However, this purchase exceeds your monthly Electronics & Gear budget cap by ₹3,500.00. It is safely absorbed by your remaining ₹1,07,200.00 monthly cash surplus after scheduled rent and active bills.',
+        metrics: [
+          { label: 'Purchase Cost', val: '₹15,000.00', tone: 'bad' },
+          { label: 'Liquid Cash', val: '₹5,63,650.00', tone: 'good' },
+          { label: 'Upcoming Bills', val: '₹22,340.00', tone: 'neutral' },
+          { label: 'Budget Cap Exceeded', val: '+₹3,500.00', tone: 'caution' },
+        ],
+        actionText: 'Simulate in Pre-Spend Engine',
+        actionHref: '#amount-sandbox',
+      },
+      {
+        id: 'rebalance',
+        category: 'Discretionary Optimization',
+        question: 'Where can I safely trim ₹5,000 from monthly spend?',
+        badge: 'Category Variance Analyzer · Exact Decimal Ledger',
+        verdict: 'Rebalance Blueprint Identified',
+        verdictType: 'positive' as const,
+        explanation:
+          'Finroq identified ₹3,200.00 of dining spend over target and ₹1,800.00 in recurring streaming subscriptions. Shifting these caps frees ₹5,000.00/month without touching fixed survival obligations.',
+        metrics: [
+          { label: 'Dining Variance', val: '−₹3,200.00', tone: 'good' },
+          { label: 'Sub-Tracker Leak', val: '−₹1,800.00', tone: 'good' },
+          { label: 'Annual Savings', val: '+₹60,000.00', tone: 'accent' },
+          { label: 'Survival Reserves', val: 'Untouched', tone: 'neutral' },
+        ],
+        actionText: 'Inspect Budget Allocation',
+        actionHref: '#budgets',
+      },
+      {
+        id: 'pacing',
+        category: 'Category Budget Pacing',
+        question: 'Am I pacing within my Dining & Social budget this month?',
+        badge: 'Decimal Utilization Tracker · Zero IEEE 754 Drift',
+        verdict: 'Within Target (68% Cap)',
+        verdictType: 'positive' as const,
+        explanation:
+          'You have spent ₹10,200.00 of your ₹15,000.00 monthly cap with 11 days remaining. Your current burn rate of ₹536.00/day leaves a comfortable ₹436.36/day allowance for the remainder of the month.',
+        metrics: [
+          { label: 'Spent to Date', val: '₹10,200.00', tone: 'neutral' },
+          { label: 'Monthly Cap', val: '₹15,000.00', tone: 'neutral' },
+          { label: 'Remaining Cap', val: '₹4,800.00', tone: 'good' },
+          { label: 'Safe Daily Burn', val: '₹436.36/day', tone: 'good' },
+        ],
+        actionText: 'Review Category Budgets',
+        actionHref: '#budgets',
+      },
+      {
+        id: 'milestone',
+        category: 'Goal Milestone Projection',
+        question: 'When will I reach my emergency fund target if I add ₹4,000/mo?',
+        badge: 'Continuous Compound Simulation · NUMERIC(14,2)',
+        verdict: 'Target Accelerated by 3.4 Months',
+        verdictType: 'positive' as const,
+        explanation:
+          'Increasing your monthly contribution from ₹8,000.00 to ₹12,000.00 brings your ₹3,00,000.00 Emergency Fund completion date forward from November 2027 to August 2027.',
+        metrics: [
+          { label: 'Target Reserve', val: '₹3,00,000.00', tone: 'neutral' },
+          { label: 'Current Savings', val: '₹1,24,000.00', tone: 'good' },
+          { label: 'New Monthly Rate', val: '₹12,000.00', tone: 'accent' },
+          { label: 'Time to Goal', val: '14.7 months', tone: 'good' },
+        ],
+        actionText: 'Simulate in Goal Lab',
+        actionHref: '#simulator',
+      },
+    ],
+    []
+  );
+
+  const handleCustomCopilotSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customCopilotQuery.trim()) return;
+    const q = customCopilotQuery.trim().toLowerCase();
+    if (q.includes('save') || q.includes('trim') || q.includes('cut') || q.includes('leak')) {
+      setActiveCopilotScenario(1);
+    } else if (q.includes('budget') || q.includes('dining') || q.includes('pacing') || q.includes('pace')) {
+      setActiveCopilotScenario(2);
+    } else if (q.includes('goal') || q.includes('emergency') || q.includes('target') || q.includes('timeline')) {
+      setActiveCopilotScenario(3);
+    } else {
+      setActiveCopilotScenario(0);
+    }
+    setCustomQueryApplied(true);
+  };
 
   const cycleStatus = (id: number) => {
     setLedgerRows((prev) =>
@@ -243,7 +345,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         a: t('faq.a4', 'Absolutely. FINROQ does not require you to provide banking passwords or grant broad OAuth access to third-party scraping brokers. You maintain sovereign ownership over your books, with the ability to record ledger entries manually, import CSV statements, and explore every simulation tool in a clean, self-contained environment.'),
       },
     ],
-    [language, t]
+    [t]
   );
 
   return (
@@ -274,13 +376,17 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
           {/* Desktop Navigation Links (visible at xl and up: >= 1280px) */}
           <nav className="hidden xl:flex items-center gap-2.5 2xl:gap-6 text-xs 2xl:text-sm font-bold text-[#173F2B] dark:text-slate-100 shrink min-w-0">
+            <a href="#copilot" className="hover:text-[var(--accent)] transition-colors text-[var(--accent)] whitespace-nowrap flex items-center gap-1 font-extrabold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Copilot AI</span>
+            </a>
             <a href="#ledger" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.ledger', 'Ledger')}
             </a>
             <a href="#budgets" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.budgets', 'Budgets')}
             </a>
-            <a href="#amount-sandbox" className="hover:text-[var(--accent)] transition-colors text-[var(--accent)] whitespace-nowrap">
+            <a href="#amount-sandbox" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.amount_lab', 'Amount Lab')}
             </a>
             <a href="#comparison" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
@@ -323,6 +429,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         {mobileMenuOpen && (
           <div className="xl:hidden bg-[var(--surface)] border-b border-[var(--line)] px-4 sm:px-6 py-4 shadow-lg animate-in slide-in-from-top-2 duration-150">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm font-bold text-[#173F2B] dark:text-slate-100">
+              <a
+                href="#copilot"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors text-[var(--accent)] flex items-center gap-2"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Copilot AI</span>
+              </a>
               <a
                 href="#ledger"
                 onClick={() => setMobileMenuOpen(false)}
@@ -427,7 +541,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   {t('hero.net_worth', 'Consolidated Net Worth')}
                 </span>
                 <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-[var(--soft)] text-[var(--accent)] border border-[var(--line)]">
-                  {t('hero.live_state', 'Live Ledger State')}
+                  {t('hero.sample_state', 'Sample Model State')}
                 </span>
               </div>
 
@@ -470,6 +584,20 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <span className="text-[var(--accent)] font-bold text-sm">+₹1,07,200.00</span>
               </div>
 
+              {/* Copilot Decision Insight Banner */}
+              <div className="p-3.5 rounded-2xl bg-[var(--soft)]/80 border border-[var(--line)] flex items-start gap-2.5">
+                <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+                <div className="space-y-0.5 text-xs">
+                  <div className="flex items-center gap-1.5 font-bold text-[#173F2B] dark:text-slate-100">
+                    <span>Copilot Decision Brief</span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 rounded font-semibold">Sample Scenario</span>
+                  </div>
+                  <p className="text-[#2E4035] dark:text-slate-300 text-[11px] leading-snug">
+                    Sample model: Surplus of ₹1,07,200 safely covers upcoming commitments. Discretionary spending capacity: ₹28,400.
+                  </p>
+                </div>
+              </div>
+
               <p className="text-xs text-[#2E4035] dark:text-slate-400 pt-2 border-t border-[var(--line)] leading-relaxed font-medium">
                 {t('hero.decimal_note', 'Every calculation is backed by exact fixed-point decimal arithmetic, eliminating IEEE 754 floating-point drift.')}
               </p>
@@ -487,6 +615,188 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           <span className="flex items-center gap-1.5 break-words [overflow-wrap:anywhere]"><RotateCcw className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" /> <span>{t('proof.recurrence', 'DETERMINISTIC RECURRENCE ENGINE')}</span></span>
         </div>
       </div>
+
+      {/* 3.5 Section: Interactive AI Copilot Decision Showcase */}
+      <section id="copilot" className="py-20 md:py-28 border-b border-[var(--line)] bg-[var(--surface)]/40 relative">
+        <div className="max-w-6xl mx-auto px-5 space-y-12">
+          {/* Section Header */}
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-bold text-[#173F2B] dark:text-slate-100">
+              <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <span>Interactive Decision Copilot</span>
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#173F2B] dark:text-slate-50">
+              Financial Intelligence, Not Financial Guesswork.
+            </h2>
+            <p className="text-base sm:text-lg text-[#2E4035] dark:text-slate-300 leading-relaxed font-normal">
+              Most tools give you passive charts and leave you to do the mental math. Finroq Copilot is connected directly to your verified decimal ledger, active budget caps, and scheduled commitments to evaluate financial choices with strict mathematical rigor.
+            </p>
+          </div>
+
+          {/* Interactive Copilot Console */}
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Left: Scenario Selector Chips */}
+            <div className="lg:col-span-5 space-y-3">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] block">
+                Select a Real-World Financial Query:
+              </span>
+              <div className="space-y-2.5">
+                {COPILOT_SCENARIOS.map((sc, idx) => {
+                  const isActive = activeCopilotScenario === idx;
+                  return (
+                    <button
+                      key={sc.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveCopilotScenario(idx);
+                        setCustomQueryApplied(false);
+                      }}
+                      className={`w-full text-left p-4 rounded-2xl border transition-all text-xs space-y-1.5 ${
+                        isActive
+                          ? 'bg-white dark:bg-[#16251E] border-[var(--accent)] shadow-md ring-2 ring-[var(--accent)]/20'
+                          : 'bg-[var(--surface)] border-[var(--line)] hover:border-[var(--ink)]/50 text-[#2E4035] dark:text-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">
+                          {sc.category}
+                        </span>
+                        {isActive && (
+                          <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+                        )}
+                      </div>
+                      <div className="font-semibold text-sm text-[#173F2B] dark:text-slate-100">
+                        {sc.question}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Query Input Box */}
+              <form onSubmit={handleCustomCopilotSubmit} className="pt-2">
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    value={customCopilotQuery}
+                    onChange={(e) => setCustomCopilotQuery(e.target.value)}
+                    placeholder="Test your own question (e.g. Can I afford ₹20,000?)..."
+                    className="w-full pl-3.5 pr-20 py-2.5 rounded-xl bg-white dark:bg-[#16251E] border border-[var(--line)] text-xs text-[#173F2B] dark:text-slate-100 placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all shadow-xs"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-1.5 px-3 py-1.5 rounded-lg bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-[11px] font-bold transition-colors"
+                  >
+                    Simulate
+                  </button>
+                </div>
+                {customQueryApplied ? (
+                  <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 pt-1 block font-semibold">
+                    ● Demonstrating closest sample ledger blueprint for: &ldquo;{customCopilotQuery}&rdquo;
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-[var(--muted)] pt-1 block">
+                    Interactive sample simulation: matches queries to sample decision models. Authenticated accounts run live tool calls.
+                  </span>
+                )}
+              </form>
+            </div>
+
+            {/* Right: Live Copilot Grounded Decision Card */}
+            <div className="lg:col-span-7 bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl p-6 sm:p-8 space-y-6 shadow-md">
+              {/* Provenance Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--line)] gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-[var(--soft)] text-[var(--accent)] flex items-center justify-center font-bold">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100 block">
+                      Finroq Copilot Analysis
+                    </span>
+                    <span className="text-[10px] font-mono text-[var(--muted)]">
+                      {COPILOT_SCENARIOS[activeCopilotScenario].badge}
+                    </span>
+                  </div>
+                </div>
+
+                <span
+                  className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+                    COPILOT_SCENARIOS[activeCopilotScenario].verdictType === 'caution'
+                      ? 'bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
+                      : 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                  }`}
+                >
+                  {COPILOT_SCENARIOS[activeCopilotScenario].verdict}
+                </span>
+              </div>
+
+              {/* User Prompt Bubble */}
+              <div className="p-3.5 rounded-2xl bg-[var(--soft)]/70 border border-[var(--line)] text-xs text-[#173F2B] dark:text-slate-200 font-medium flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-[#173F2B] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                  Q
+                </span>
+                <span className="font-semibold text-sm">
+                  &ldquo;{COPILOT_SCENARIOS[activeCopilotScenario].question}&rdquo;
+                </span>
+              </div>
+
+              {/* Copilot Grounded Reasoning */}
+              <div className="space-y-2">
+                <span className="text-[11px] font-mono uppercase font-bold text-[var(--muted)] tracking-wider block">
+                  Deterministic Financial Reasoning:
+                </span>
+                <p className="text-xs sm:text-sm text-[#2E4035] dark:text-slate-300 leading-relaxed font-normal">
+                  {COPILOT_SCENARIOS[activeCopilotScenario].explanation}
+                </p>
+              </div>
+
+              {/* Calculation Metrics Breakdown Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                {COPILOT_SCENARIOS[activeCopilotScenario].metrics.map((m, mIdx) => (
+                  <div
+                    key={mIdx}
+                    className="p-3 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)]/60 text-xs space-y-1"
+                  >
+                    <span className="text-[10px] text-[var(--muted)] font-mono block truncate">
+                      {m.label}
+                    </span>
+                    <span
+                      className={`font-mono font-bold text-sm block ${
+                        m.tone === 'good'
+                          ? 'text-emerald-700 dark:text-emerald-400'
+                          : m.tone === 'bad'
+                          ? 'text-red-600 dark:text-red-400'
+                          : m.tone === 'caution'
+                          ? 'text-amber-700 dark:text-amber-400'
+                          : m.tone === 'accent'
+                          ? 'text-[var(--accent)] font-extrabold'
+                          : 'text-[#173F2B] dark:text-slate-100'
+                      }`}
+                    >
+                      {m.val}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Callout Footer */}
+              <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs font-semibold gap-2 flex-wrap">
+                <span className="text-[11px] font-mono text-[var(--muted)]">
+                  Deterministic Math · Provenance: Sample Verified Ledger Model
+                </span>
+                <a
+                  href={COPILOT_SCENARIOS[activeCopilotScenario].actionHref}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+                >
+                  <span>{COPILOT_SCENARIOS[activeCopilotScenario].actionText}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 4. Feature 1: Spend Tracker & Ledger Demo */}
       <section id="ledger" className="py-20 md:py-28 border-b border-[var(--line)]">

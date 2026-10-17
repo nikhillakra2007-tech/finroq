@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 import { apiClient } from '@/lib/api-client';
 import {
@@ -15,6 +16,7 @@ import {
   ShieldAlert,
   Check,
   Layers,
+  ArrowUpRight,
 } from 'lucide-react';
 
 interface StructuredResultsProps {
@@ -97,29 +99,49 @@ function BudgetProposalCard({ data, currency = 'INR' }: { data: Record<string, a
       </div>
 
       {status === 'success' ? (
-        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>Verified Ledger Updated: Successfully applied {data.category_name} budget adjustment.</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Verified Ledger Updated: Successfully applied {data.category_name} budget adjustment.</span>
+          </div>
+          <div className="flex justify-end">
+            <Link
+              href="/app/budgeting"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+            >
+              <span>View Active Budgets in Ledger</span>
+              <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
         </div>
       ) : (
-        <div className="flex items-center justify-end gap-2 pt-1">
-          {errorMessage && (
-            <span className="text-xs text-red-600 font-mono mr-auto">{errorMessage}</span>
-          )}
-          <button
-            onClick={handleApply}
-            disabled={status === 'loading'}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+        <div className="flex items-center justify-between gap-2 pt-1">
+          <Link
+            href="/app/budgeting"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--accent)] transition-colors group"
           >
-            {status === 'loading' ? (
-              <span>Applying...</span>
-            ) : (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Confirm & Apply Budget Cap</span>
-              </>
+            <span>Current Budgets</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+          <div className="flex items-center gap-2">
+            {errorMessage && (
+              <span className="text-xs text-red-600 font-mono mr-2">{errorMessage}</span>
             )}
-          </button>
+            <button
+              onClick={handleApply}
+              disabled={status === 'loading'}
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+            >
+              {status === 'loading' ? (
+                <span>Applying...</span>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Confirm & Apply Budget Cap</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -189,29 +211,49 @@ function RecurringProposalCard({ data, currency = 'INR' }: { data: Record<string
       </div>
 
       {status === 'success' ? (
-        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>Verified Ledger Updated: Successfully scheduled &apos;{data.description}&apos; as an active recurring bill.</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Verified Ledger Updated: Successfully scheduled &apos;{data.description}&apos; as an active recurring bill.</span>
+          </div>
+          <div className="flex justify-end">
+            <Link
+              href="/app/debt-watchdog"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+            >
+              <span>View Obligations in Debt Watchdog</span>
+              <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
         </div>
       ) : (
-        <div className="flex items-center justify-end gap-2 pt-1">
-          {errorMessage && (
-            <span className="text-xs text-red-600 font-mono mr-auto">{errorMessage}</span>
-          )}
-          <button
-            onClick={handleSchedule}
-            disabled={status === 'loading'}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+        <div className="flex items-center justify-between gap-2 pt-1">
+          <Link
+            href="/app/debt-watchdog"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--accent)] transition-colors group"
           >
-            {status === 'loading' ? (
-              <span>Scheduling...</span>
-            ) : (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Confirm & Schedule Recurring Bill</span>
-              </>
+            <span>Active Obligations</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+          <div className="flex items-center gap-2">
+            {errorMessage && (
+              <span className="text-xs text-red-600 font-mono mr-2">{errorMessage}</span>
             )}
-          </button>
+            <button
+              onClick={handleSchedule}
+              disabled={status === 'loading'}
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+            >
+              {status === 'loading' ? (
+                <span>Scheduling...</span>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Confirm & Schedule Recurring Bill</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -289,6 +331,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             {data.explanation}
           </p>
         )}
+        <div className="pt-1.5 flex justify-end">
+          <Link
+            href="/app/goal-timeline"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Open Goal Simulator</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -341,6 +392,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
               {formatCurrency(parseFloat(data.net_cash_flow), currency)}
             </span>
           </div>
+        </div>
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/expense-tracking"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Explore Cash Flow in Expense Tracking</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
         </div>
       </div>
     );
@@ -410,6 +470,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </div>
           </div>
         )}
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/pre-spend-check"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Run Scenario in Pre-Spend Check</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -444,6 +513,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </div>
           ))}
         </div>
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/expense-tracking"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>View Full Ledger Breakdown</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -477,6 +555,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </div>
           ))}
         </div>
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/budgeting"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Manage All Category Budgets</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -508,6 +595,15 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </span>
           </div>
         </div>
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/goal-timeline"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Simulate in Goal Timeline</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -538,9 +634,19 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </div>
           ))}
         </div>
+        <div className="pt-1 flex justify-end">
+          <Link
+            href="/app/debt-watchdog"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors group"
+          >
+            <span>Manage Obligations in Debt Watchdog</span>
+            <ArrowUpRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        </div>
       </div>
     );
   }
 
   return null;
 }
+

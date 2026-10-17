@@ -370,10 +370,13 @@ export default function AuthenticatedHomeHub() {
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-bold bg-[#EAF3E7] text-[#173F2B] dark:bg-emerald-500/20 dark:text-emerald-300 border border-[#CBD5CB] dark:border-emerald-500/30">
                   <Sparkles className="w-3.5 h-3.5 text-[#173F2B] dark:text-emerald-300" />
                   Primary Decision Assistant
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold border border-emerald-200 dark:border-emerald-800">
+                  Deterministic Arithmetic
                 </span>
                 <span className="text-xs text-[var(--muted)] font-mono">Bounded Tool Execution</span>
               </div>
@@ -466,27 +469,38 @@ export default function AuthenticatedHomeHub() {
           {/* Key Authoritative Metric Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1: Net Worth */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-2">
+            <Link
+              href="/app/net-worth"
+              className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] dark:hover:border-emerald-500 shadow-xs hover:shadow-md transition-all space-y-2 group block"
+            >
               <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono font-medium">
-                <span>Net Worth</span>
-                <TrendingUp className="w-4 h-4 text-[var(--accent)]" />
+                <span className="group-hover:text-[#173F2B] dark:group-hover:text-slate-200 transition-colors">Net Worth</span>
+                <TrendingUp className="w-4 h-4 text-[var(--accent)] group-hover:scale-110 transition-transform" />
               </div>
               <p className="font-display text-2xl font-bold tracking-tight text-[#173F2B] dark:text-white">
                 {isDataLoading ? '—' : formatCurrency(netWorthVal)}
               </p>
-              <p className="text-[11px] text-[var(--muted)] font-mono">
-                Assets minus liabilities (credit liabilities deducted)
-              </p>
-            </div>
+              <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
+                <span className="truncate">Assets minus liabilities</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
 
             {/* Card 2: Monthly Cash Flow */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-2">
+            <Link
+              href="/app/expense-tracking"
+              className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] dark:hover:border-emerald-500 shadow-xs hover:shadow-md transition-all space-y-2 group block"
+            >
               <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono font-medium">
-                <span>Net Cash Flow (Month)</span>
+                <span className="group-hover:text-[#173F2B] dark:group-hover:text-slate-200 transition-colors">Net Cash Flow (Month)</span>
                 {netCashFlowVal >= 0 ? (
-                  <ArrowUpRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold">
+                    +Surplus
+                  </span>
                 ) : (
-                  <ArrowDownRight className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 font-bold">
+                    −Deficit
+                  </span>
                 )}
               </div>
               <p
@@ -498,40 +512,49 @@ export default function AuthenticatedHomeHub() {
               >
                 {isDataLoading ? '—' : formatCurrency(netCashFlowVal)}
               </p>
-              <p className="text-[11px] text-[var(--muted)] font-mono">
-                Income ({formatCurrency(incomeVal)}) vs Outflow ({formatCurrency(expenseVal)})
-              </p>
-            </div>
+              <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
+                <span className="truncate">Income vs Outflow</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
 
             {/* Card 3: Inception Liquid Accounts */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-2">
+            <Link
+              href="/app/net-worth"
+              className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] dark:hover:border-emerald-500 shadow-xs hover:shadow-md transition-all space-y-2 group block"
+            >
               <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono font-medium">
-                <span>Accounts Active</span>
-                <CreditCard className="w-4 h-4 text-[var(--accent)]" />
+                <span className="group-hover:text-[#173F2B] dark:group-hover:text-slate-200 transition-colors">Accounts Active</span>
+                <CreditCard className="w-4 h-4 text-[var(--accent)] group-hover:scale-110 transition-transform" />
               </div>
               <p className="font-display text-2xl font-bold tracking-tight text-[#173F2B] dark:text-white">
                 {isDataLoading
                   ? '—'
                   : `${summary?.account_balances?.length || 0} Accounts`}
               </p>
-              <p className="text-[11px] text-[var(--muted)] font-mono truncate">
-                Checking, Savings & Credit cards tracked
-              </p>
-            </div>
+              <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
+                <span className="truncate">Checking, Savings & Credit</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
 
             {/* Card 4: Upcoming Commitments */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-2">
+            <Link
+              href="/app/debt-watchdog"
+              className="p-5 rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] hover:border-[#173F2B] dark:hover:border-emerald-500 shadow-xs hover:shadow-md transition-all space-y-2 group block"
+            >
               <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono font-medium">
-                <span>Upcoming Commitments</span>
-                <Calendar className="w-4 h-4 text-[var(--accent)]" />
+                <span className="group-hover:text-[#173F2B] dark:group-hover:text-slate-200 transition-colors">Upcoming Commitments</span>
+                <Calendar className="w-4 h-4 text-[var(--accent)] group-hover:scale-110 transition-transform" />
               </div>
               <p className="font-display text-2xl font-bold tracking-tight text-[#173F2B] dark:text-white">
                 {isDataLoading ? '—' : `${recurringCount} Active`}
               </p>
-              <p className="text-[11px] text-[var(--muted)] font-mono">
-                Scheduled rent, EMIs, and recurring bills
-              </p>
-            </div>
+              <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
+                <span className="truncate">Scheduled rent & bills</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
           </div>
         </section>
 
