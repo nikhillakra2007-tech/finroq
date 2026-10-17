@@ -81,4 +81,7 @@ declare module 'lucide-react' {
   export const Split: LucideIcon;
   export const HeartHandshake: LucideIcon;
   export const XCircle: LucideIcon;
+  export const Flame: LucideIcon;
+  export const Gauge: LucideIcon;
+  export const SlidersHorizontal: LucideIcon;
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
-import { apiClient, extractErrorMessage } from '@/lib/api-client';
+import { apiClient, extractErrorMessage, TRUSTED_DEMO_TOKEN } from '@/lib/api-client';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { LanguageSelector } from '@/components/layout/LanguageSelector';
 import { Eye, EyeOff, Phone, Lock, ShieldCheck, CheckCircle2, Globe, X } from 'lucide-react';
@@ -244,7 +244,8 @@ export function AuthExperience({ initialMode = 'in' }: AuthExperienceProps) {
       await login('demo@finroq.com', 'password123');
       navigateWithCurtain('/app/home', 'home', 'fwd');
     } catch {
-      apiClient.setToken('demo-session-token-verified');
+      apiClient.setDemoSession(true);
+      apiClient.setToken(TRUSTED_DEMO_TOKEN);
       navigateWithCurtain('/app/home', 'home', 'fwd');
     } finally {
       setIsLoading(false);

@@ -64,7 +64,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await apiClient.login({ email, password });
       const accessToken = res.data.access_token;
-      apiClient.setDemoSession(false);
+      if (email.toLowerCase() === 'demo@finroq.com' || accessToken === TRUSTED_DEMO_TOKEN) {
+        apiClient.setDemoSession(true);
+      } else {
+        apiClient.setDemoSession(false);
+      }
       apiClient.setToken(accessToken);
       setToken(accessToken);
       // Fetch user profile

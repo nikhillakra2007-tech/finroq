@@ -552,7 +552,10 @@ export function FloatingFinroqAgent() {
           2. EXPANDED FLOATING MESSAGE PANEL
       ───────────────────────────────────────────────────────────── */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[94vw] sm:w-[440px] h-[610px] max-h-[85vh] flex flex-col bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
+        <div
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[94vw] sm:w-[440px] h-[610px] max-h-[85vh] flex flex-col bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200"
+          data-lenis-prevent
+        >
           {/* Header */}
           <div className="px-4 py-3 border-b border-[var(--line)] bg-[#F8FAF8] dark:bg-[#14231B] flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">

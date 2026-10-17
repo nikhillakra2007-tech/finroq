@@ -291,7 +291,11 @@ class ApiClient {
       return res;
     } catch (err) {
       if (data.email.toLowerCase() === 'demo@finroq.com' || this.isOfflineOrDemo(err)) {
-        const demoToken = 'demo-session-token-verified';
+        const isDemo = data.email.toLowerCase() === 'demo@finroq.com';
+        const demoToken = isDemo ? TRUSTED_DEMO_TOKEN : 'demo-session-token-verified';
+        if (isDemo) {
+          this.setDemoSession(true);
+        }
         this.setToken(demoToken);
         return {
           data: {
@@ -1128,12 +1132,25 @@ class ApiClient {
         };
 
         if (q.includes("afford") || q.includes("buy") || q.includes("purchase")) {
-          reply = "Based on your simulated demo balance of ₹1,07,200.00 and upcoming demo bills of ₹16,500.00, this purchase appears affordable in this sample ledger.";
+          const match = q.match(/(?:₹|rs\.?|inr)?\s*([0-9,]+)/i);
+          let purchaseVal = 15000;
+          if (match && match[1]) {
+            const parsed = parseFloat(match[1].replace(/,/g, ''));
+            if (!isNaN(parsed) && parsed > 0) purchaseVal = parsed;
+          }
+          const availableBuffer = 107200;
+          const bills = 16500;
+          const netLiquidity = availableBuffer - bills;
+          const isAffordable = purchaseVal <= netLiquidity;
+          const rating = purchaseVal <= netLiquidity * 0.5 ? 'Comfortably Affordable' : isAffordable ? 'Feasible with Caution' : 'Exceeds Free Reserves';
+          reply = isAffordable
+            ? `Based on your simulated demo balance of ₹${availableBuffer.toLocaleString('en-IN')}.00 and upcoming demo bills of ₹${bills.toLocaleString('en-IN')}.00, a ₹${purchaseVal.toLocaleString('en-IN')} purchase appears affordable in this sample ledger (leaves ₹${(netLiquidity - purchaseVal).toLocaleString('en-IN')} safe cushion).`
+            : `Based on your simulated demo balance of ₹${availableBuffer.toLocaleString('en-IN')}.00 and upcoming demo bills of ₹${bills.toLocaleString('en-IN')}.00, a ₹${purchaseVal.toLocaleString('en-IN')} purchase exceeds your immediate safe liquidity cushion of ₹${netLiquidity.toLocaleString('en-IN')}.`;
           structured = {
-            available_liquid_cash: "107200.00",
-            upcoming_known_bills: "16500.00",
-            purchase_amount: "15000.00",
-            affordability_rating: "Comfortably Affordable",
+            available_liquid_cash: String(availableBuffer),
+            upcoming_known_bills: String(bills),
+            purchase_amount: String(purchaseVal),
+            affordability_rating: rating,
             data_freshness: "Simulated Demo (Sample Ledger)",
             is_simulated: true,
             currency: "INR",
