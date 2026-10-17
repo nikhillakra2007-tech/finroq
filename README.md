@@ -17,19 +17,6 @@
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
-🚀 **Live Financial Workspace (App Hub)**: [https://finroq-app.vercel.app/app/home](https://finroq-app.vercel.app/app/home)  
-🛡️ **Live Crash-Test & Resilience Engine**: [https://finroq-app.vercel.app/app/crash-test](https://finroq-app.vercel.app/app/crash-test)  
-🌐 **Alternative Production Mirrors**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) • [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
-
-[Live Application Exhibits](#-live-application-exhibits) •
-[Latest Release Updates](#-latest-release-updates-v132) •
-[6-Agent Crash-Test Engine](#-autonomous-6-agent-financial-crash-test-engine) •
-[System Architecture](#-system-architecture) •
-[Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
-[13 Unified Financial Modules](#-13-unified-financial-modules) •
-[18-Language i18n & Theming Engine](#-full-site-18-language-i18n--theming-engine) •
-[Quickstart](#-local-development-setup)
-
 </div>
 
 ---
