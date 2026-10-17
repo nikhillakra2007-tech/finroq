@@ -8,6 +8,7 @@ for OpenAI tool calling.
 from __future__ import annotations
 
 import calendar
+import math
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
@@ -163,6 +164,10 @@ TOOL_DEFINITIONS = [
                         "type": "number",
                         "description": "Optional user-desired minimum cash cushion to protect.",
                     },
+                    "category_name": {
+                        "type": "string",
+                        "description": "Optional category name (e.g. Dining, Electronics, Groceries) to verify against category budget limits.",
+                    },
                 },
                 "required": ["purchase_amount"],
                 "additionalProperties": False,
@@ -279,6 +284,93 @@ TOOL_DEFINITIONS = [
                     },
                 },
                 "required": ["metric_name"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "simulate_financial_goal",
+            "description": "Simulate savings goal timeline, funding gap, and monthly contribution feasibility using deterministic projection math.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "goal_name": {
+                        "type": "string",
+                        "description": "The milestone or goal name (e.g. 'Emergency Fund', 'New Laptop', 'Vacation').",
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "description": "Target savings amount to accumulate.",
+                    },
+                    "monthly_contribution": {
+                        "type": "number",
+                        "description": "Planned monthly contribution toward the goal.",
+                    },
+                    "current_savings": {
+                        "type": "number",
+                        "description": "Existing funds already accumulated for this goal.",
+                    },
+                },
+                "required": ["goal_name", "target_amount", "monthly_contribution"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "propose_budget_adjustment",
+            "description": "Prepare a formal proposed budget adjustment for an expense category. Does not modify the ledger autonomously; prepares a structured proposal requiring explicit user confirmation before applying.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "category_name": {
+                        "type": "string",
+                        "description": "The expense category name to adjust (e.g. Groceries, Dining, Commute).",
+                    },
+                    "proposed_amount": {
+                        "type": "number",
+                        "description": "The proposed new budget allocation amount.",
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Justification or context for the proposed adjustment.",
+                    },
+                },
+                "required": ["category_name", "proposed_amount"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "propose_recurring_bill",
+            "description": "Prepare a formal proposed recurring bill or subscription commitment. Does not modify the ledger autonomously; prepares a structured proposal requiring explicit user confirmation before creating the recurring record.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string",
+                        "description": "Name or description of recurring commitment (e.g. Netflix, Gym, Apartment Rent).",
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Recurring obligation amount.",
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "enum": ["daily", "weekly", "monthly", "yearly"],
+                        "description": "Recurrence frequency. Defaults to monthly.",
+                    },
+                    "category_name": {
+                        "type": "string",
+                        "description": "Expense category name (e.g. Subscriptions, Rent, Utilities).",
+                    },
+                },
+                "required": ["description", "amount"],
                 "additionalProperties": False,
             },
         },
@@ -542,7 +634,7 @@ class FinancialToolRegistry:
                 "budget_limit": str(allocated),
                 "spent_to_date": str(spent),
                 "remaining": str(rem),
-                "percentage_used": f"{b.utilization_percentage:.1f}%" if b.utilization_percentage is not None else "0.0%",
+                "percentage_used": f"{b.utilization_percent:.1f}%" if b.utilization_percent is not None else "0.0%",
                 "is_overspent": is_over,
                 "period_end_date": period_end,
             })
@@ -605,6 +697,7 @@ class FinancialToolRegistry:
         purchase_amount: float,
         context: Optional[str] = None,
         minimum_reserve: Optional[float] = None,
+        category_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         amount_dec = Decimal(str(purchase_amount))
         reserve_dec = Decimal(str(minimum_reserve)) if minimum_reserve else Decimal("5000.00")
@@ -650,6 +743,30 @@ class FinancialToolRegistry:
                 f"you will retain an estimated surplus of {currency} {(cash_after_purchase - reserve_dec):,.2f}."
             )
 
+        # Category-specific budget check (Pre-Spend Check integration)
+        category_budget_assessment = None
+        if category_name:
+            c_name_lower = category_name.strip().lower()
+            matching_b = next((b for b in budget_tool.get("budgets", []) if c_name_lower in b["category_name"].lower()), None)
+            if matching_b:
+                allocated_b = Decimal(matching_b["budget_limit"])
+                spent_b = Decimal(matching_b["spent_to_date"])
+                rem_before = max(ZERO, allocated_b - spent_b)
+                rem_after = rem_before - amount_dec
+                will_overrun = rem_after < ZERO
+                category_budget_assessment = {
+                    "category_name": matching_b["category_name"],
+                    "allocated_amount": str(allocated_b),
+                    "spent_to_date": str(spent_b),
+                    "remaining_before_purchase": str(rem_before),
+                    "remaining_after_purchase": str(rem_after),
+                    "will_overspend_category_budget": will_overrun,
+                    "overrun_amount": str(abs(rem_after)) if will_overrun else "0.00",
+                }
+                if will_overrun and "Not Affordable" not in rating:
+                    rating = f"Caution: Category Budget Exceeded ({matching_b['category_name']})"
+                    recommendation += f" However, note that this purchase will exceed your allocated {matching_b['category_name']} budget cap by {currency} {abs(rem_after):,.2f}."
+
         return {
             "purchase_amount": str(amount_dec),
             "currency": currency,
@@ -658,6 +775,7 @@ class FinancialToolRegistry:
             "upcoming_known_bills": str(upcoming_commitments),
             "safety_reserve_protected": str(reserve_dec),
             "projected_cash_after_purchase_and_bills": str(cash_after_purchase),
+            "category_budget_assessment": category_budget_assessment,
             "affordability_rating": rating,
             "recommendation": recommendation,
             "assumptions": [
@@ -916,4 +1034,179 @@ class FinancialToolRegistry:
             "metric": metric_name,
             "specification": info,
             "guarantee": "No binary floating-point roundoff errors or arbitrary approximations.",
+        }
+
+    # ─────────────────────────────────────────────────────────────
+    # Tool M: simulate_financial_goal
+    # ─────────────────────────────────────────────────────────────
+    async def tool_simulate_financial_goal(
+        self,
+        goal_name: str,
+        target_amount: float,
+        monthly_contribution: float,
+        current_savings: float = 0.0,
+    ) -> Dict[str, Any]:
+        target_dec = Decimal(str(target_amount)).quantize(Decimal("0.01"))
+        current_dec = Decimal(str(max(0.0, current_savings))).quantize(Decimal("0.01"))
+        monthly_dec = Decimal(str(monthly_contribution)).quantize(Decimal("0.01"))
+        funding_gap = max(ZERO, target_dec - current_dec)
+
+        if monthly_dec <= ZERO:
+            months_needed = None
+            feasibility = "Unfeasible (zero or negative monthly contribution)"
+            explanation = "Monthly contribution must be greater than zero to accumulate toward a financial goal."
+        elif funding_gap == ZERO:
+            months_needed = 0
+            feasibility = "Goal Already Achieved"
+            explanation = f"Your current accumulated savings ({current_dec:,.2f}) meet or exceed the target amount ({target_dec:,.2f})."
+        else:
+            months_needed = math.ceil(float(funding_gap) / float(monthly_dec))
+            feasibility = "Comfortably Feasible" if months_needed <= 24 else "Long-Term Milestone"
+            explanation = f"At ₹{monthly_dec:,.2f}/month, you will accumulate the required ₹{funding_gap:,.2f} in {months_needed} months."
+
+        return {
+            "type": "goal_timeline_simulation",
+            "goal_name": goal_name,
+            "target_amount": str(target_dec),
+            "current_savings": str(current_dec),
+            "funding_gap": str(funding_gap),
+            "monthly_contribution": str(monthly_dec),
+            "projected_months_needed": months_needed,
+            "projected_completion_timeline": f"{months_needed} months" if months_needed is not None else "Indefinite",
+            "feasibility_status": feasibility,
+            "explanation": explanation,
+            "disclaimer": "Projection assumes steady monthly contributions with zero unplanned withdrawals.",
+        }
+
+    # ─────────────────────────────────────────────────────────────
+    # Tool N: propose_budget_adjustment
+    # ─────────────────────────────────────────────────────────────
+    async def tool_propose_budget_adjustment(
+        self,
+        category_name: str,
+        proposed_amount: float,
+        reason: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        proposed_dec = Decimal(str(proposed_amount)).quantize(Decimal("0.01"))
+        now = datetime.now()
+
+        # Find matching category
+        cat_stmt = select(Category).where(
+            and_(
+                Category.name.ilike(f"%{category_name.strip()}%"),
+                or_(Category.owner_id == self.owner_id, Category.owner_id.is_(None)),
+            )
+        )
+        cat_res = await self.db.execute(cat_stmt)
+        category = cat_res.scalars().first()
+
+        if not category:
+            return {
+                "status": "error",
+                "error": f"Category '{category_name}' was not found in your ledger. Please specify a valid expense category.",
+            }
+
+        # Check existing budget
+        budget_service = BudgetService(self.db, self.owner_id)
+        existing_budgets = await budget_service.list(now.year, now.month)
+        existing_b = next((b for b in existing_budgets if b.category_id == category.id), None)
+        current_allocated = Decimal(existing_b.allocated_amount) if existing_b else ZERO
+        current_spent = Decimal(existing_b.actual_spending) if existing_b else ZERO
+        diff = proposed_dec - current_allocated
+
+        return {
+            "type": "budget_adjustment_proposal",
+            "requires_confirmation": True,
+            "category_id": category.id,
+            "category_name": category.name,
+            "budget_id": existing_b.id if existing_b else None,
+            "year": now.year,
+            "month": now.month,
+            "current_allocated": str(current_allocated),
+            "current_spent": str(current_spent),
+            "proposed_allocated": str(proposed_dec),
+            "difference": str(diff),
+            "reason": reason or "User requested budget optimization",
+            "impact_summary": (
+                f"Increasing {category.name} monthly budget by ₹{diff:,.2f}"
+                if diff > ZERO
+                else f"Trimming {category.name} monthly budget by ₹{-diff:,.2f}"
+                if diff < ZERO
+                else f"Budget remains unchanged at ₹{proposed_dec:,.2f}"
+            ),
+            "consequential_action_notice": "Consequential change: This proposal will update your active budget limits. Click Confirm in the interface to apply this adjustment to your ledger.",
+        }
+
+    # ─────────────────────────────────────────────────────────────
+    # Tool O: propose_recurring_bill
+    # ─────────────────────────────────────────────────────────────
+    async def tool_propose_recurring_bill(
+        self,
+        description: str,
+        amount: float,
+        frequency: str = "monthly",
+        category_name: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        amount_dec = Decimal(str(amount)).quantize(Decimal("0.01"))
+        clean_freq = frequency.lower() if frequency in ("daily", "weekly", "monthly", "yearly") else "monthly"
+
+        # Find matching category if supplied
+        category_id = None
+        resolved_cat_name = "Unassigned"
+        if category_name:
+            cat_stmt = select(Category).where(
+                and_(
+                    Category.name.ilike(f"%{category_name.strip()}%"),
+                    or_(Category.owner_id == self.owner_id, Category.owner_id.is_(None)),
+                )
+            )
+            cat_res = await self.db.execute(cat_stmt)
+            cat = cat_res.scalars().first()
+            if cat:
+                category_id = cat.id
+                resolved_cat_name = cat.name
+
+        # Find default checking or cash account
+        acc_stmt = select(Account).where(
+            and_(
+                Account.owner_id == self.owner_id,
+                Account.is_active.is_(True),
+            )
+        )
+        acc_res = await self.db.execute(acc_stmt)
+        accounts = acc_res.scalars().all()
+        default_acc = next((a for a in accounts if a.account_type in (AccountType.CHECKING, AccountType.SAVINGS)), accounts[0] if accounts else None)
+
+        if not default_acc:
+            return {
+                "status": "error",
+                "error": "No active account found to associate with recurring bill.",
+            }
+
+        today = date.today()
+        # Monthly impact
+        monthly_multiplier = Decimal("1.0")
+        if clean_freq == "yearly":
+            monthly_multiplier = Decimal("1.0") / Decimal("12.0")
+        elif clean_freq == "weekly":
+            monthly_multiplier = Decimal("4.33")
+        elif clean_freq == "daily":
+            monthly_multiplier = Decimal("30.0")
+
+        monthly_commitment = (amount_dec * monthly_multiplier).quantize(Decimal("0.01"))
+
+        return {
+            "type": "recurring_bill_proposal",
+            "requires_confirmation": True,
+            "description": description.strip(),
+            "amount": str(amount_dec),
+            "currency": default_acc.currency,
+            "frequency": clean_freq,
+            "account_id": default_acc.id,
+            "account_name": default_acc.name,
+            "category_id": category_id,
+            "category_name": resolved_cat_name,
+            "start_date": str(today),
+            "estimated_monthly_commitment": str(monthly_commitment),
+            "consequential_action_notice": f"Consequential change: Scheduling '{description}' will create a recurring financial obligation of ₹{amount_dec:,.2f} ({clean_freq}) affecting your upcoming commitments. Click Confirm in the interface to save to your ledger.",
         }

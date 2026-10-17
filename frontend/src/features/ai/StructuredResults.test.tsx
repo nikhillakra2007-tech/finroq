@@ -62,6 +62,63 @@ describe('StructuredResults', () => {
     expect(screen.getByText(/Simulated Demo \(Sample Ledger\)/i)).toBeInTheDocument();
   });
 
+  it('renders goal timeline projection card when goal data is provided', () => {
+    const goalData = {
+      type: 'goal_timeline_simulation',
+      goal_name: 'Emergency Fund 6 Months',
+      target_amount: '300000.00',
+      current_savings: '60000.00',
+      monthly_contribution: '20000.00',
+      projected_months_needed: 12,
+      projected_completion_timeline: '12 months',
+      feasibility_status: 'Comfortably Feasible',
+      explanation: 'At ₹20,000/month, you will accumulate the required ₹2,40,000 in 12 months.',
+    };
+
+    render(<StructuredResults data={goalData} currency="INR" />);
+    expect(screen.getByText(/Goal Timeline Projection/i)).toBeInTheDocument();
+    expect(screen.getByText(/Emergency Fund 6 Months/i)).toBeInTheDocument();
+    expect(screen.getByText(/Comfortably Feasible/i)).toBeInTheDocument();
+    expect(screen.getByText(/₹3,00,000.00/i)).toBeInTheDocument();
+  });
+
+  it('renders budget proposal card with confirmation badge and action button', () => {
+    const budgetProposal = {
+      type: 'budget_adjustment_proposal',
+      requires_confirmation: true,
+      category_id: 2,
+      category_name: 'Groceries & Food',
+      current_allocated: '6500.00',
+      proposed_allocated: '7500.00',
+      difference: '1000.00',
+      impact_summary: 'Increasing Groceries & Food monthly budget by ₹1,000.00',
+      consequential_action_notice: 'Consequential change: Clicking Confirm will update your active budget cap in the verified ledger.',
+    };
+
+    render(<StructuredResults data={budgetProposal} currency="INR" />);
+    expect(screen.getByText(/Proposed Budget Adjustment/i)).toBeInTheDocument();
+    expect(screen.getByText(/Requires Confirmation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Confirm & Apply Budget Cap/i)).toBeInTheDocument();
+  });
+
+  it('renders recurring bill proposal card with confirmation badge and action button', () => {
+    const recurringProposal = {
+      type: 'recurring_bill_proposal',
+      requires_confirmation: true,
+      description: 'Netflix Premium 4K',
+      amount: '649.00',
+      currency: 'INR',
+      frequency: 'monthly',
+      category_name: 'Subscriptions',
+      consequential_action_notice: 'Consequential change: Scheduling will create an active recurring commitment in your ledger.',
+    };
+
+    render(<StructuredResults data={recurringProposal} currency="INR" />);
+    expect(screen.getByText(/Proposed Recurring Commitment/i)).toBeInTheDocument();
+    expect(screen.getByText(/Netflix Premium 4K/i)).toBeInTheDocument();
+    expect(screen.getByText(/Confirm & Schedule Recurring Bill/i)).toBeInTheDocument();
+  });
+
   it('renders nothing when data is empty', () => {
     const { container } = render(<StructuredResults data={{}} />);
     expect(container.firstChild).toBeNull();

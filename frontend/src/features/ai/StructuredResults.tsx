@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { formatCurrency } from '@/lib/utils';
+import { apiClient } from '@/lib/api-client';
 import {
   PieChart,
   ShoppingBag,
@@ -10,12 +11,211 @@ import {
   CheckCircle2,
   AlertTriangle,
   Sparkles,
-  Info,
+  Target,
+  ShieldAlert,
+  Check,
+  Layers,
 } from 'lucide-react';
 
 interface StructuredResultsProps {
   data: Record<string, any>;
   currency?: string;
+}
+
+function BudgetProposalCard({ data, currency = 'INR' }: { data: Record<string, any>; currency: string }) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleApply = async () => {
+    try {
+      setStatus('loading');
+      setErrorMessage(null);
+
+      const proposed = parseFloat(data.proposed_allocated);
+      if (data.budget_id) {
+        await apiClient.updateBudget(data.budget_id, {
+          allocated_amount: proposed.toFixed(2),
+        });
+      } else {
+        await apiClient.createBudget({
+          category_id: data.category_id,
+          budget_year: data.year,
+          budget_month: data.month,
+          allocated_amount: proposed.toFixed(2),
+        });
+      }
+      setStatus('success');
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMessage(err?.response?.data?.detail || err?.message || 'Failed to apply budget adjustment.');
+    }
+  };
+
+  const diffNum = parseFloat(data.difference || '0');
+
+  return (
+    <div className="mt-3 p-4 rounded-2xl bg-white dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-3">
+      <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
+        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] flex items-center gap-1.5">
+          <Layers className="w-3.5 h-3.5" />
+          Proposed Budget Adjustment
+        </span>
+        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 flex items-center gap-1">
+          <ShieldAlert className="w-3 h-3" />
+          Requires Confirmation
+        </span>
+      </div>
+
+      <div className="text-xs text-[var(--muted)]">
+        {data.impact_summary || `Proposed adjustment for ${data.category_name}`}
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Current Cap</span>
+          <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
+            {formatCurrency(parseFloat(data.current_allocated || '0'), currency)}
+          </span>
+        </div>
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Proposed Cap</span>
+          <span className="font-mono font-bold text-[#173F2B] dark:text-emerald-300">
+            {formatCurrency(parseFloat(data.proposed_allocated || '0'), currency)}
+          </span>
+        </div>
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Net Adjustment</span>
+          <span className={`font-mono font-bold ${diffNum > 0 ? 'text-emerald-700 dark:text-emerald-400' : diffNum < 0 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-600'}`}>
+            {diffNum > 0 ? '+' : ''}{formatCurrency(diffNum, currency)}
+          </span>
+        </div>
+      </div>
+
+      <div className="text-[11px] text-amber-900 dark:text-amber-300/90 bg-amber-50 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800/60 flex items-start gap-2">
+        <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+        <span>{data.consequential_action_notice || 'Consequential change: Clicking Confirm will update your active budget cap in the verified ledger.'}</span>
+      </div>
+
+      {status === 'success' ? (
+        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <span>Verified Ledger Updated: Successfully applied {data.category_name} budget adjustment.</span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-end gap-2 pt-1">
+          {errorMessage && (
+            <span className="text-xs text-red-600 font-mono mr-auto">{errorMessage}</span>
+          )}
+          <button
+            onClick={handleApply}
+            disabled={status === 'loading'}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+          >
+            {status === 'loading' ? (
+              <span>Applying...</span>
+            ) : (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                <span>Confirm & Apply Budget Cap</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RecurringProposalCard({ data, currency = 'INR' }: { data: Record<string, any>; currency: string }) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSchedule = async () => {
+    try {
+      setStatus('loading');
+      setErrorMessage(null);
+
+      await apiClient.createRecurring({
+        account_id: data.account_id,
+        category_id: data.category_id,
+        amount: parseFloat(data.amount).toFixed(2),
+        currency: data.currency || currency,
+        frequency: data.frequency || 'monthly',
+        start_date: data.start_date || new Date().toISOString().split('T')[0],
+        description: data.description,
+        transaction_type: 'expense',
+      });
+      setStatus('success');
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMessage(err?.response?.data?.detail || err?.message || 'Failed to schedule recurring commitment.');
+    }
+  };
+
+  return (
+    <div className="mt-3 p-4 rounded-2xl bg-white dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-3">
+      <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
+        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] flex items-center gap-1.5">
+          <Calendar className="w-3.5 h-3.5" />
+          Proposed Recurring Commitment
+        </span>
+        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 flex items-center gap-1">
+          <ShieldAlert className="w-3 h-3" />
+          Requires Confirmation
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Commitment</span>
+          <span className="font-semibold text-[#173F2B] dark:text-slate-100">{data.description}</span>
+        </div>
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Obligation Amount</span>
+          <span className="font-mono font-bold text-red-600 dark:text-red-400">
+            {formatCurrency(parseFloat(data.amount || '0'), data.currency || currency)}
+            <span className="text-[10px] text-[var(--muted)] font-normal ml-1">/{data.frequency}</span>
+          </span>
+        </div>
+        <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50 col-span-2 sm:col-span-1">
+          <span className="text-[10px] text-[var(--muted)] font-mono block">Category</span>
+          <span className="font-semibold text-[#173F2B] dark:text-slate-100">{data.category_name || 'Unassigned'}</span>
+        </div>
+      </div>
+
+      <div className="text-[11px] text-amber-900 dark:text-amber-300/90 bg-amber-50 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800/60 flex items-start gap-2">
+        <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+        <span>{data.consequential_action_notice || 'Consequential change: Scheduling will create an active recurring commitment in your ledger.'}</span>
+      </div>
+
+      {status === 'success' ? (
+        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <span>Verified Ledger Updated: Successfully scheduled '{data.description}' as an active recurring bill.</span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-end gap-2 pt-1">
+          {errorMessage && (
+            <span className="text-xs text-red-600 font-mono mr-auto">{errorMessage}</span>
+          )}
+          <button
+            onClick={handleSchedule}
+            disabled={status === 'loading'}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#173F2B] hover:bg-[#102F21] dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+          >
+            {status === 'loading' ? (
+              <span>Scheduling...</span>
+            ) : (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                <span>Confirm & Schedule Recurring Bill</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function StructuredResults({ data, currency = 'INR' }: StructuredResultsProps) {
@@ -31,6 +231,67 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
     typeof data.data_freshness === 'string' &&
     data.data_freshness.toLowerCase().includes('verified')
   );
+
+  // Proposal: Budget Adjustment
+  if (data.type === 'budget_adjustment_proposal') {
+    return <BudgetProposalCard data={data} currency={currency} />;
+  }
+
+  // Proposal: Recurring Bill
+  if (data.type === 'recurring_bill_proposal') {
+    return <RecurringProposalCard data={data} currency={currency} />;
+  }
+
+  // Goal Timeline Simulation
+  if (data.type === 'goal_timeline_simulation' || (data.projected_months_needed !== undefined && data.goal_name)) {
+    return (
+      <div className="mt-3 p-4 rounded-2xl bg-white dark:bg-[#1A2C22] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] flex items-center gap-1.5">
+            <Target className="w-3.5 h-3.5" />
+            Goal Timeline Projection
+          </span>
+          <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+            {data.feasibility_status || 'Projection Model'}
+          </span>
+        </div>
+        <div className="text-xs font-semibold text-[#173F2B] dark:text-slate-100">
+          {data.goal_name}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="p-2 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+            <span className="text-[10px] text-[var(--muted)] font-mono block">Target</span>
+            <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
+              {formatCurrency(parseFloat(data.target_amount || '0'), currency)}
+            </span>
+          </div>
+          <div className="p-2 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+            <span className="text-[10px] text-[var(--muted)] font-mono block">Saved</span>
+            <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
+              {formatCurrency(parseFloat(data.current_savings || '0'), currency)}
+            </span>
+          </div>
+          <div className="p-2 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">
+            <span className="text-[10px] text-[var(--muted)] font-mono block">Monthly</span>
+            <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
+              {formatCurrency(parseFloat(data.monthly_contribution || '0'), currency)}
+            </span>
+          </div>
+          <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+            <span className="text-[10px] text-emerald-800 dark:text-emerald-300 font-mono block">Timeline</span>
+            <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
+              {data.projected_completion_timeline || `${data.projected_months_needed} mos`}
+            </span>
+          </div>
+        </div>
+        {data.explanation && (
+          <p className="text-[11px] text-[var(--muted)] font-mono">
+            {data.explanation}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   // 1. Financial Summary Overview
   if (data.total_income && data.total_expenses && data.liquid_cash_available) {
@@ -129,6 +390,26 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
             </span>
           </div>
         </div>
+
+        {data.category_budget_assessment && (
+          <div className="p-2.5 rounded-xl bg-[var(--soft)]/80 border border-[var(--line)] text-xs space-y-1.5">
+            <div className="flex justify-between items-center font-semibold">
+              <span className="text-[#173F2B] dark:text-slate-100 flex items-center gap-1">
+                <PieChart className="w-3.5 h-3.5 text-[var(--accent)]" />
+                Category Budget: {data.category_budget_assessment.category_name}
+              </span>
+              <span className={data.category_budget_assessment.will_overspend_category_budget ? 'text-red-600 font-bold' : 'text-emerald-700 font-bold'}>
+                {data.category_budget_assessment.will_overspend_category_budget
+                  ? `Exceeds cap by ${formatCurrency(parseFloat(data.category_budget_assessment.overrun_amount), currency)}`
+                  : `Within remaining cap (${formatCurrency(parseFloat(data.category_budget_assessment.remaining_before_purchase), currency)})`}
+              </span>
+            </div>
+            <div className="flex justify-between text-[11px] text-[var(--muted)] font-mono">
+              <span>Allocated: {formatCurrency(parseFloat(data.category_budget_assessment.allocated_amount), currency)}</span>
+              <span>Spent so far: {formatCurrency(parseFloat(data.category_budget_assessment.spent_to_date), currency)}</span>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

@@ -348,3 +348,122 @@ class TestFinancialTools:
         # Query for non-existent category
         res_none = await registry_1.tool_get_transactions(category_name="NonExistentCategory123")
         assert res_none["transaction_count"] == 0
+
+    async def test_simulate_financial_goal(self, db_session: AsyncSession):
+        registry = FinancialToolRegistry(db_session, "user_goal_test")
+        res = await registry.tool_simulate_financial_goal(
+            goal_name="Emergency Reserve",
+            target_amount=100000.0,
+            monthly_contribution=10000.0,
+            current_savings=20000.0,
+        )
+        assert res["type"] == "goal_timeline_simulation"
+        assert res["goal_name"] == "Emergency Reserve"
+        assert res["target_amount"] == "100000.00"
+        assert res["current_savings"] == "20000.00"
+        assert res["funding_gap"] == "80000.00"
+        assert res["monthly_contribution"] == "10000.00"
+        assert res["projected_months_needed"] == 8
+        assert res["feasibility_status"] == "Comfortably Feasible"
+
+    async def test_propose_budget_adjustment_requires_confirmation(self, db_session: AsyncSession):
+        user_id = "user_budget_prop"
+        cat = Category(name="Entertainment", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add(cat)
+        await db_session.flush()
+
+        now = datetime.now()
+        b = Budget(
+            owner_id=user_id,
+            category_id=cat.id,
+            budget_year=now.year,
+            budget_month=now.month,
+            allocated_amount=Decimal("5000.00"),
+        )
+        db_session.add(b)
+        await db_session.commit()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+        res = await registry.tool_propose_budget_adjustment(
+            category_name="Entertainment",
+            proposed_amount=7500.0,
+            reason="Holiday season adjustment",
+        )
+
+        assert res["type"] == "budget_adjustment_proposal"
+        assert res["requires_confirmation"] is True
+        assert res["category_name"] == "Entertainment"
+        assert res["current_allocated"] == "5000.00"
+        assert res["proposed_allocated"] == "7500.00"
+        assert res["difference"] == "2500.00"
+        assert "Consequential change" in res["consequential_action_notice"]
+
+    async def test_propose_recurring_bill_requires_confirmation(self, db_session: AsyncSession):
+        user_id = "user_rec_prop"
+        acc = Account(
+            owner_id=user_id,
+            name="Salary Account",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("50000.00"),
+        )
+        cat = Category(name="Subscriptions", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([acc, cat])
+        await db_session.commit()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+        res = await registry.tool_propose_recurring_bill(
+            description="Gym Membership",
+            amount=2000.0,
+            frequency="monthly",
+            category_name="Subscriptions",
+        )
+
+        assert res["type"] == "recurring_bill_proposal"
+        assert res["requires_confirmation"] is True
+        assert res["description"] == "Gym Membership"
+        assert res["amount"] == "2000.00"
+        assert res["frequency"] == "monthly"
+        assert res["account_id"] == acc.id
+        assert res["category_name"] == "Subscriptions"
+        assert "Consequential change" in res["consequential_action_notice"]
+
+    async def test_calculate_purchase_affordability_with_category_budget(self, db_session: AsyncSession):
+        user_id = "user_afford_cat"
+        acc = Account(
+            owner_id=user_id,
+            name="Checking",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("40000.00"),
+        )
+        cat = Category(name="Electronics", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([acc, cat])
+        await db_session.flush()
+
+        now = datetime.now()
+        b = Budget(
+            owner_id=user_id,
+            category_id=cat.id,
+            budget_year=now.year,
+            budget_month=now.month,
+            allocated_amount=Decimal("10000.00"),
+        )
+        db_session.add(b)
+        await db_session.commit()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+        # Purchase of 15000: Affordable by liquid cash (40000 > 15000 + 5000 reserve),
+        # but exceeds the 10000 Electronics budget cap!
+        res = await registry.tool_calculate_purchase_affordability(
+            purchase_amount=15000.0,
+            category_name="Electronics",
+        )
+
+        assert "Category Budget Exceeded" in res["affordability_rating"]
+        cat_assessment = res.get("category_budget_assessment")
+        assert cat_assessment is not None
+        assert cat_assessment["category_name"] == "Electronics"
+        assert cat_assessment["will_overspend_category_budget"] is True
+        assert cat_assessment["overrun_amount"] == "5000.00"
+

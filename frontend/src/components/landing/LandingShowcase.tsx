@@ -20,6 +20,8 @@ import {
   Lock,
   Zap,
   Globe,
+  Menu,
+  X,
 } from 'lucide-react';
 
 /* Money formatting in integer paise */
@@ -71,6 +73,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
   // FAQ accordion state (collapsed by default)
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Theme management — read from localStorage and apply on mount
   useEffect(() => {
@@ -247,37 +250,52 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     <div ref={rootRef} className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       {/* 1. Stationary Top Navigation - Does not pop up or stick during scrolling */}
       <header className="relative w-full z-40 bg-[var(--bg)] border-b border-[var(--line)]">
-        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight text-[var(--ink)] hover:opacity-90 transition-opacity"
-          >
-            <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
-            <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
-          </Link>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            {/* Mobile / Tablet Menu Button (visible below xl) */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="xl:hidden p-2 rounded-lg border border-[var(--line)] hover:border-[var(--ink)] text-[var(--ink)] hover:bg-[var(--soft)] transition-colors shrink-0"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
 
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-sm font-bold text-[#173F2B] dark:text-slate-100 shrink-0">
-            <a href="#ledger" className="hover:text-[var(--accent)] transition-colors">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight text-[var(--ink)] hover:opacity-90 transition-opacity"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
+              <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation Links (visible at xl and up: >= 1280px) */}
+          <nav className="hidden xl:flex items-center gap-2.5 2xl:gap-6 text-xs 2xl:text-sm font-bold text-[#173F2B] dark:text-slate-100 shrink min-w-0">
+            <a href="#ledger" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.ledger', 'Ledger')}
             </a>
-            <a href="#budgets" className="hover:text-[var(--accent)] transition-colors">
+            <a href="#budgets" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.budgets', 'Budgets')}
             </a>
-            <a href="#amount-sandbox" className="hover:text-[var(--accent)] transition-colors text-[var(--accent)]">
+            <a href="#amount-sandbox" className="hover:text-[var(--accent)] transition-colors text-[var(--accent)] whitespace-nowrap">
               {t('nav.amount_lab', 'Amount Lab')}
             </a>
-            <a href="#comparison" className="hover:text-[var(--accent)] transition-colors">
+            <a href="#comparison" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.comparison', 'Comparison')}
             </a>
-            <a href="#simulator" className="hover:text-[var(--accent)] transition-colors">
+            <a href="#simulator" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.simulator', 'Goal Simulator')}
             </a>
-            <a href="#faq" className="hover:text-[var(--accent)] transition-colors">
+            <a href="#faq" className="hover:text-[var(--accent)] transition-colors whitespace-nowrap">
               {t('nav.faq', 'FAQ')}
             </a>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          {/* Right Action Controls */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <LanguageSelector variant="pill" align="right" />
             <button
               onClick={toggleTheme}
@@ -288,18 +306,74 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-sm font-bold text-[#173F2B] dark:text-slate-100 hover:text-[var(--accent)] px-2 transition-colors whitespace-nowrap"
+              className="text-xs sm:text-sm font-bold text-[#173F2B] dark:text-slate-100 hover:text-[var(--accent)] px-1.5 sm:px-2 transition-colors whitespace-nowrap"
             >
               {t('nav.signin', 'Sign in')}
             </button>
             <button
               onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill sm bg-[#173F2B] text-white hover:bg-[var(--accent)] shadow-sm font-bold whitespace-nowrap"
+              className="btn-pill sm bg-[#173F2B] text-white hover:bg-[var(--accent)] shadow-sm font-bold whitespace-nowrap text-xs sm:text-sm px-2.5 sm:px-4 py-1.5"
             >
               {t('nav.getstarted', 'Get started')}
             </button>
           </div>
         </div>
+
+        {/* Mobile / Tablet Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="xl:hidden bg-[var(--surface)] border-b border-[var(--line)] px-4 sm:px-6 py-4 shadow-lg animate-in slide-in-from-top-2 duration-150">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm font-bold text-[#173F2B] dark:text-slate-100">
+              <a
+                href="#ledger"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.ledger', 'Ledger')}</span>
+              </a>
+              <a
+                href="#budgets"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.budgets', 'Budgets')}</span>
+              </a>
+              <a
+                href="#amount-sandbox"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors text-[var(--accent)] flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.amount_lab', 'Amount Lab')}</span>
+              </a>
+              <a
+                href="#comparison"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.comparison', 'Comparison')}</span>
+              </a>
+              <a
+                href="#simulator"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.simulator', 'Goal Simulator')}</span>
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                <span>{t('nav.faq', 'FAQ')}</span>
+              </a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 2. Hero Section */}
