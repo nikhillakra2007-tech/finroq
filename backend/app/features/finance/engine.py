@@ -113,7 +113,9 @@ def account_balance(account, transactions: Iterable) -> Decimal:
             income += _net_amount(t, refunds)
         elif _is_expense(t) and t.account_id == account_id:
             expense += _net_amount(t, refunds)
-    return account.initial_balance + income - expense - transfer_out + transfer_in
+    is_credit = account.account_type in (AccountType.CREDIT, AccountType.CREDIT.value)
+    initial = -account.initial_balance if is_credit else account.initial_balance
+    return initial + income - expense - transfer_out + transfer_in
 
 
 def combined_balance(accounts: Iterable, transactions: Iterable) -> Decimal:
@@ -133,37 +135,70 @@ class AccountActivity:
     transfer_out: Decimal
 
 
-def account_activity(accounts: Iterable, transactions: Iterable) -> List[AccountActivity]:
-    txns = eligible_transactions(transactions)
-    refunds = _refunds_by_original(txns)
+def account_activity(
+    accounts: Iterable,
+    transactions: Iterable,
+    balance_transactions: Optional[Iterable] = None,
+) -> List[AccountActivity]:
+    period_txns = eligible_transactions(transactions)
+    period_refunds = _refunds_by_original(period_txns)
+    bal_txns = eligible_transactions(balance_transactions) if balance_transactions is not None else period_txns
+    bal_refunds = _refunds_by_original(bal_txns) if balance_transactions is not None else period_refunds
+
     activities = []
     for account in accounts:
-        income = ZERO
-        expense = ZERO
-        transfer_in = ZERO
-        transfer_out = ZERO
-        for t in txns:
+        # 1. Period metrics (restricted strictly to the reporting window)
+        period_income = ZERO
+        period_expense = ZERO
+        period_transfer_in = ZERO
+        period_transfer_out = ZERO
+        for t in period_txns:
             if _is_refund(t):
                 continue
             if _is_transfer(t):
                 if t.account_id == account.id:
-                    transfer_out += t.amount
+                    period_transfer_out += t.amount
                 if t.to_account_id == account.id:
-                    transfer_in += t.amount
+                    period_transfer_in += t.amount
             elif _is_income(t) and t.account_id == account.id:
-                income += _net_amount(t, refunds)
+                period_income += _net_amount(t, period_refunds)
             elif _is_expense(t) and t.account_id == account.id:
-                expense += _net_amount(t, refunds)
+                period_expense += _net_amount(t, period_refunds)
+
+        # 2. Cumulative balance as of end date (includes historical transactions through end date)
+        bal_income = ZERO
+        bal_expense = ZERO
+        bal_transfer_in = ZERO
+        bal_transfer_out = ZERO
+        for t in bal_txns:
+            if _is_refund(t):
+                continue
+            if _is_transfer(t):
+                if t.account_id == account.id:
+                    bal_transfer_out += t.amount
+                if t.to_account_id == account.id:
+                    bal_transfer_in += t.amount
+            elif _is_income(t) and t.account_id == account.id:
+                bal_income += _net_amount(t, bal_refunds)
+            elif _is_expense(t) and t.account_id == account.id:
+                bal_expense += _net_amount(t, bal_refunds)
+
+        is_credit = account.account_type in (AccountType.CREDIT, AccountType.CREDIT.value)
+        initial = -account.initial_balance if is_credit else account.initial_balance
+        current_balance = (
+            initial + bal_income - bal_expense - bal_transfer_out + bal_transfer_in
+        )
+
         activities.append(AccountActivity(
             account_id=account.id,
             account_name=account.name,
             account_type=account.account_type,
             currency=account.currency,
-            current_balance=account.initial_balance + income - expense - transfer_out + transfer_in,
-            period_income=income,
-            period_expenses=expense,
-            transfer_in=transfer_in,
-            transfer_out=transfer_out,
+            current_balance=current_balance,
+            period_income=period_income,
+            period_expenses=period_expense,
+            transfer_in=period_transfer_in,
+            transfer_out=period_transfer_out,
         ))
     return activities
 
@@ -275,18 +310,20 @@ def compute_summary(
     previous_transactions: Optional[Iterable] = None,
     previous_period_start: Optional[datetime] = None,
     previous_period_end: Optional[datetime] = None,
+    balance_transactions: Optional[Iterable] = None,
 ) -> FinancialSummaryResult:
     accounts = list(accounts)
     transactions = list(transactions)
     categories = list(categories)
+    bal_txns = list(balance_transactions) if balance_transactions is not None else transactions
 
     result = FinancialSummaryResult(
         total_income=total_income(transactions),
         total_expenses=total_expenses(transactions),
         net_cash_flow=net_cash_flow(transactions),
-        account_balances=account_activity(accounts, transactions),
+        account_balances=account_activity(accounts, transactions, balance_transactions=bal_txns),
         category_breakdown=category_breakdown(transactions, categories),
-        net_worth=compute_net_worth(accounts, transactions),
+        net_worth=compute_net_worth(accounts, bal_txns),
     )
 
     if previous_transactions is not None:

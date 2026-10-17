@@ -21,6 +21,17 @@ interface StructuredResultsProps {
 export function StructuredResults({ data, currency = 'INR' }: StructuredResultsProps) {
   if (!data || Object.keys(data).length === 0) return null;
 
+  const isSimulated = Boolean(
+    data.is_simulated ||
+    (typeof data.data_freshness === 'string' && (data.data_freshness.toLowerCase().includes('demo') || data.data_freshness.toLowerCase().includes('simulated')))
+  );
+
+  const isVerified = Boolean(
+    !isSimulated &&
+    typeof data.data_freshness === 'string' &&
+    data.data_freshness.toLowerCase().includes('verified')
+  );
+
   // 1. Financial Summary Overview
   if (data.total_income && data.total_expenses && data.liquid_cash_available) {
     return (
@@ -28,9 +39,21 @@ export function StructuredResults({ data, currency = 'INR' }: StructuredResultsP
         <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" />
-            Verified Ledger Overview
+            {isSimulated
+              ? 'Simulated Demo Overview'
+              : isVerified
+              ? 'Verified Ledger Overview'
+              : 'Ledger Summary Overview'}
           </span>
-          <span className="text-[11px] font-mono text-[var(--muted)]">{data.data_freshness || 'Verified'}</span>
+          <span className={`text-[11px] font-mono ${
+            isSimulated
+              ? 'text-amber-700 dark:text-amber-400 font-bold'
+              : isVerified
+              ? 'text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'text-[var(--muted)]'
+          }`}>
+            {data.data_freshness || (isSimulated ? 'Simulated Demo' : 'Summary')}
+          </span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="p-2.5 rounded-xl bg-[var(--soft)] border border-[var(--line)]/50">

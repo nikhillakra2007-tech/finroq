@@ -413,6 +413,53 @@ class TestSummaryAPI:
         assert 'account_balances' in data
         assert 'category_breakdown' in data
 
+    async def test_get_summary_with_historical_balance_and_period_isolation(self, async_client, auth_headers):
+        # Create Account with 2000 initial balance
+        acc_resp = await async_client.post(
+            '/api/v1/accounts',
+            json={'name': 'Savings-Hist', 'account_type': 'savings', 'currency': 'USD', 'initial_balance': '2000.00'},
+            headers=auth_headers
+        )
+        acc_id = acc_resp.json()['id']
+
+        await async_client.post('/api/v1/categories/seed-defaults', headers=auth_headers)
+        cat_resp = await async_client.get('/api/v1/categories', headers=auth_headers)
+        categories = cat_resp.json()
+        cat_income = next(c for c in categories if c['name'] == 'Salary')
+        cat_expense = next(c for c in categories if c['name'] == 'Food')
+
+        # Previous month: 2026-08-15 (+4000 income)
+        await async_client.post(
+            '/api/v1/transactions',
+            json={'account_id': acc_id, 'category_id': cat_income['id'], 'amount': '4000.00', 'currency': 'USD', 'transaction_type': 'income', 'transaction_date': '2026-08-15T12:00:00'},
+            headers=auth_headers
+        )
+        # Current reporting month: 2026-09-10 (-300 expense)
+        await async_client.post(
+            '/api/v1/transactions',
+            json={'account_id': acc_id, 'category_id': cat_expense['id'], 'amount': '300.00', 'currency': 'USD', 'transaction_type': 'expense', 'transaction_date': '2026-09-10T12:00:00'},
+            headers=auth_headers
+        )
+
+        # Query September 2026 summary
+        resp = await async_client.get(
+            '/api/v1/summary?start_date=2026-09-01T00:00:00&end_date=2026-09-30T23:59:59',
+            headers=auth_headers
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+
+        # Period metrics: strictly September
+        assert data['total_income'] == '0.00'
+        assert data['total_expenses'] == '300.00'
+        assert data['net_cash_flow'] == '-300.00'
+
+        # Balance metrics: 2000 initial + 4000 (Aug) - 300 (Sept) = 5700.00
+        acc_balance = next(b for b in data['account_balances'] if b['account_id'] == acc_id)
+        assert acc_balance['period_income'] == '0.00'
+        assert acc_balance['period_expenses'] == '300.00'
+        assert acc_balance['current_balance'] == '5700.00'
+
 
 class TestAuthAPI:
     async def test_register(self, async_client):

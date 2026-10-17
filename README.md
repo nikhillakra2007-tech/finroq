@@ -5,8 +5,8 @@
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.3.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
-![Pytest Suite](https://img.shields.io/badge/Pytest-168%2F168%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-28%2F28%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Pytest Suite](https://img.shields.io/badge/Pytest-190%2F190%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-52%2F52%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -22,7 +22,7 @@
 🌐 **Alternative Production Mirrors**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) • [https://finroq-os.vercel.app](https://finroq-os.vercel.app)
 
 [Live Application Exhibits](#-live-application-exhibits) •
-[Latest Release Updates](#-latest-release-updates-v131) •
+[Latest Release Updates](#-latest-release-updates-v132) •
 [6-Agent Crash-Test Engine](#-autonomous-6-agent-financial-crash-test-engine) •
 [System Architecture](#-system-architecture) •
 [Finroq AI Intelligence Agent](#-finroq-ai--personal-financial-intelligence-agent) •
@@ -65,15 +65,19 @@ High-resolution application captures taken directly from live production on [fin
 
 ---
 
-## 🆕 Latest Release Updates (v1.3.1)
+## 🆕 Latest Release Updates (v1.3.2)
 
-- 🎨 **Light & Dark Mode Crash-Test Banner Harmonization**:
-  - **Light Mode Module Alignment**: Redesigned the Financial Crash-Test & Resilience Engine launcher card on [`/app/home`](https://finroq-app.vercel.app/app/home) to seamlessly conform to the 12-module card design language (clean `#FFFFFF` card surface, soft `#CBD5CB` border, `#173F2B` headings, `#2E4035` descriptions, and soft sage badge).
-  - **Finroq Forest Green Action Button**: Converted the **Launch Stress Test** CTA button into a solid Finroq forest-green action button (`bg-[#173F2B] text-white hover:bg-[#102F21]`) in light mode, giving it prominent visual contrast on the clean ivory canvas.
-  - **Dark Mode Fidelity**: Preserved the dark emerald-to-forest gradient (`dark:bg-gradient-to-r dark:from-emerald-950 dark:via-[#173F2B] dark:to-[#0F291C]`) with glowing accents and white CTA button in dark mode.
-- 🛡️ **Autonomous 6-Agent Financial Crash-Test Engine**: Deep integration across the 6-agent simulation pipeline evaluating compound financial shocks with formal non-negativity mathematical proofs.
-- 🌐 **18-Language Multilingual Adaptation with Model Isolation**: Dynamic in-modal language selection and prompt translation across 18 regional and global locales.
-- ⚡ **Next.js 14 Production Optimization**: All 25/25 static routes verified and pre-rendered with zero errors.
+- ⚖️ **Historical Account Balance & Period Separation Remediation**:
+  - Decoupled reporting window period metrics (period income, period expenses, net cash flow, category breakdowns) from point-in-time cumulative account balances.
+  - Cumulative balance transactions query all eligible transactions up through the requested `end_date`, allowing historical income/expenses to correctly accrue into ending balance and net worth without inflating monthly reporting totals.
+- 🔍 **Database-Level SQL Category Filtering Before Limit**:
+  - AI transaction retrieval queries (`tool_get_transactions`) now join the `categories` table and enforce `Category.name.ilike(...)` directly in SQL `WHERE` clauses prior to `ORDER BY transaction_date DESC` and `LIMIT`.
+  - Prevents recent non-matching transactions from truncating older matching category records.
+- 💳 **Credit-Card Liability Accounting & Net Worth Conservation**:
+  - Enforced correct sign convention for credit card accounts: initial opening debt is recorded as a liability reducing net worth, and credit card balances reflect debt as a negative asset.
+  - Linked internal transfers for credit card payments (e.g. ₹10,000 cash to card) reduce cash while reducing outstanding debt by ₹10,000, creating zero duplicate expenses and strictly conserving aggregate net worth.
+- 🛡️ **AI Fallback & Provenance Guardrails**:
+  - Enforced honest AI fallback metadata: simulated or demo fallback responses explicitly flag `is_live_ai: false`, indicating heuristic/demo provenance to prevent misleading users during backend unavailability.
 
 ---
 

@@ -406,7 +406,19 @@ class FinancialToolRegistry:
         query = (
             select(Transaction)
             .options(selectinload(Transaction.category), selectinload(Transaction.account))
-            .where(and_(*conditions))
+        )
+
+        if category_name:
+            clean_cat = category_name.strip()
+            if clean_cat.lower() == "uncategorized":
+                conditions.append(Transaction.category_id.is_(None))
+            else:
+                query = query.join(Transaction.category).where(
+                    Category.name.ilike(f"%{clean_cat}%")
+                )
+
+        query = (
+            query.where(and_(*conditions))
             .order_by(desc(Transaction.transaction_date))
             .limit(bounded_limit)
         )
@@ -416,8 +428,6 @@ class FinancialToolRegistry:
         results = []
         for t in txns:
             cat_name = t.category.name if t.category else "Uncategorized"
-            if category_name and category_name.lower() not in cat_name.lower():
-                continue
             results.append({
                 "id": t.id,
                 "date": t.transaction_date.strftime("%Y-%m-%d"),

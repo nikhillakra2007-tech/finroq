@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from decimal import Decimal
 from datetime import datetime, date, timedelta
 from app.features.accounts.service import AccountService
@@ -296,3 +296,158 @@ class TestSummaryService:
         balance = summary.account_balances[0]
         assert balance.current_balance == Decimal('1500.00')  # 1000 initial + 500 income
         assert balance.period_income == Decimal('500.00')
+
+    async def test_historical_transaction_affects_balance_without_inflating_period_income(self, db_session, owner_id):
+        account = Account(owner_id=owner_id, name='Checking', account_type=AccountType.CHECKING, currency='USD', initial_balance=Decimal('1000.00'))
+        db_session.add(account)
+        await db_session.flush()
+
+        cat_income = Category(name='Salary', category_type=CategoryType.INCOME, owner_id=owner_id)
+        cat_expense = Category(name='Food', category_type=CategoryType.EXPENSE, owner_id=owner_id)
+        db_session.add_all([cat_income, cat_expense])
+        await db_session.flush()
+
+        # September 2026: Income 5000.00
+        txn_sep = Transaction(
+            owner_id=owner_id, account_id=account.id, category_id=cat_income.id,
+            amount=Decimal('5000.00'), currency='USD', transaction_type=TransactionType.INCOME,
+            transaction_date=datetime(2026, 9, 15, 12, 0, 0)
+        )
+        # October 2026: Expense 200.00
+        txn_oct = Transaction(
+            owner_id=owner_id, account_id=account.id, category_id=cat_expense.id,
+            amount=Decimal('200.00'), currency='USD', transaction_type=TransactionType.EXPENSE,
+            transaction_date=datetime(2026, 10, 15, 12, 0, 0)
+        )
+        db_session.add_all([txn_sep, txn_oct])
+        await db_session.commit()
+
+        service = SummaryService(db_session, owner_id)
+        # Request October summary: 2026-10-01 to 2026-10-31
+        start_oct = datetime(2026, 10, 1, 0, 0, 0)
+        end_oct = datetime(2026, 10, 31, 23, 59, 59)
+        summary = await service.get_summary(start_date=start_oct, end_date=end_oct)
+
+        # Period metrics: strictly October (Sept income must NOT inflate October)
+        assert summary.total_income == Decimal('0.00')
+        assert summary.total_expenses == Decimal('200.00')
+        assert summary.net_cash_flow == Decimal('-200.00')
+
+        # Balance metrics: includes all transactions through October 31
+        # Initial 1000 + 5000 (Sept) - 200 (Oct) = 5800.00
+        assert summary.account_balances[0].period_income == Decimal('0.00')
+        assert summary.account_balances[0].period_expenses == Decimal('200.00')
+        assert summary.account_balances[0].current_balance == Decimal('5800.00')
+        assert summary.net_worth == Decimal('5800.00')
+
+    async def test_date_range_change_produces_correct_balance_as_of_requested_end_date(self, db_session, owner_id):
+        account = Account(owner_id=owner_id, name='Checking', account_type=AccountType.CHECKING, currency='USD', initial_balance=Decimal('1000.00'))
+        db_session.add(account)
+        await db_session.flush()
+
+        cat_income = Category(name='Consulting', category_type=CategoryType.INCOME, owner_id=owner_id)
+        cat_expense = Category(name='Supplies', category_type=CategoryType.EXPENSE, owner_id=owner_id)
+        db_session.add_all([cat_income, cat_expense])
+        await db_session.flush()
+
+        # Month 1 (Jan 2026): +3000
+        t1 = Transaction(
+            owner_id=owner_id, account_id=account.id, category_id=cat_income.id,
+            amount=Decimal('3000.00'), currency='USD', transaction_type=TransactionType.INCOME,
+            transaction_date=datetime(2026, 1, 10)
+        )
+        # Month 2 (Feb 2026): -500
+        t2 = Transaction(
+            owner_id=owner_id, account_id=account.id, category_id=cat_expense.id,
+            amount=Decimal('500.00'), currency='USD', transaction_type=TransactionType.EXPENSE,
+            transaction_date=datetime(2026, 2, 10)
+        )
+        # Month 3 (Mar 2026): +2000
+        t3 = Transaction(
+            owner_id=owner_id, account_id=account.id, category_id=cat_income.id,
+            amount=Decimal('2000.00'), currency='USD', transaction_type=TransactionType.INCOME,
+            transaction_date=datetime(2026, 3, 10)
+        )
+        db_session.add_all([t1, t2, t3])
+        await db_session.commit()
+
+        service = SummaryService(db_session, owner_id)
+
+        # 1. View as of Jan 31: 1000 + 3000 = 4000.00
+        s_jan = await service.get_summary(start_date=datetime(2026, 1, 1), end_date=datetime(2026, 1, 31, 23, 59, 59))
+        assert s_jan.account_balances[0].current_balance == Decimal('4000.00')
+
+        # 2. View as of Feb 28: 1000 + 3000 - 500 = 3500.00 (Mar transaction excluded!)
+        s_feb = await service.get_summary(start_date=datetime(2026, 2, 1), end_date=datetime(2026, 2, 28, 23, 59, 59))
+        assert s_feb.total_income == Decimal('0.00')
+        assert s_feb.total_expenses == Decimal('500.00')
+        assert s_feb.account_balances[0].current_balance == Decimal('3500.00')
+        assert s_feb.net_worth == Decimal('3500.00')
+
+        # 3. View as of Mar 31: 1000 + 3000 - 500 + 2000 = 5500.00
+        s_mar = await service.get_summary(start_date=datetime(2026, 3, 1), end_date=datetime(2026, 3, 31, 23, 59, 59))
+        assert s_mar.account_balances[0].current_balance == Decimal('5500.00')
+        assert s_mar.net_worth == Decimal('5500.00')
+
+    async def test_transfers_preserve_net_worth_across_historical_periods(self, db_session, owner_id):
+        acc1 = Account(owner_id=owner_id, name='Primary Checking', account_type=AccountType.CHECKING, currency='USD', initial_balance=Decimal('10000.00'))
+        acc2 = Account(owner_id=owner_id, name='Emergency Savings', account_type=AccountType.SAVINGS, currency='USD', initial_balance=Decimal('5000.00'))
+        db_session.add_all([acc1, acc2])
+        await db_session.flush()
+
+        # Jan 2026: Transfer 3000 from acc1 to acc2
+        t_transfer = Transaction(
+            owner_id=owner_id, account_id=acc1.id, to_account_id=acc2.id,
+            amount=Decimal('3000.00'), currency='USD', transaction_type=TransactionType.TRANSFER,
+            transaction_date=datetime(2026, 1, 15)
+        )
+        db_session.add(t_transfer)
+        await db_session.commit()
+
+        service = SummaryService(db_session, owner_id)
+        # Query February summary (no transactions in Feb)
+        s_feb = await service.get_summary(start_date=datetime(2026, 2, 1), end_date=datetime(2026, 2, 28, 23, 59, 59))
+        assert s_feb.total_income == Decimal('0.00')
+        assert s_feb.total_expenses == Decimal('0.00')
+        assert s_feb.net_cash_flow == Decimal('0.00')
+
+        balances = {b.account_id: b.current_balance for b in s_feb.account_balances}
+        assert balances[acc1.id] == Decimal('7000.00')   # 10000 - 3000
+        assert balances[acc2.id] == Decimal('8000.00')   # 5000 + 3000
+        assert s_feb.net_worth == Decimal('15000.00')    # 7000 + 8000 = 15000 (conserved!)
+
+    async def test_credit_card_net_worth_and_payment_in_summary_service(self, db_session, owner_id):
+        # Scenario 4 via real DB session in SummaryService:
+        # Cash: 100,000; Credit Card debt: 50,000 -> Net worth: 50,000.
+        checking = Account(owner_id=owner_id, name='Primary Checking', account_type=AccountType.CHECKING, currency='INR', initial_balance=Decimal('100000.00'))
+        credit = Account(owner_id=owner_id, name='Prime Credit', account_type=AccountType.CREDIT, currency='INR', initial_balance=Decimal('50000.00'))
+        db_session.add_all([checking, credit])
+        await db_session.flush()
+
+        service = SummaryService(db_session, owner_id)
+        # Check before payment
+        s_initial = await service.get_summary()
+        assert s_initial.net_worth == Decimal('50000.00')
+        b_init = {b.account_id: b.current_balance for b in s_initial.account_balances}
+        assert b_init[checking.id] == Decimal('100000.00')
+        assert b_init[credit.id] == Decimal('-50000.00')
+
+        # Payment: Transfer of 10,000 from Checking to Credit Card
+        pay_txn = Transaction(
+            owner_id=owner_id, account_id=checking.id, to_account_id=credit.id,
+            amount=Decimal('10000.00'), currency='INR', transaction_type=TransactionType.TRANSFER,
+            transaction_date=datetime.utcnow()
+        )
+        db_session.add(pay_txn)
+        await db_session.commit()
+
+        s_after = await service.get_summary()
+        # Transfers do not create income or expenses
+        assert s_after.total_income == Decimal('0.00')
+        assert s_after.total_expenses == Decimal('0.00')
+        assert s_after.net_cash_flow == Decimal('0.00')
+
+        b_after = {b.account_id: b.current_balance for b in s_after.account_balances}
+        assert b_after[checking.id] == Decimal('90000.00')
+        assert b_after[credit.id] == Decimal('-40000.00')  # Debt reduced by 10,000
+        assert s_after.net_worth == Decimal('50000.00')    # Net worth fully conserved

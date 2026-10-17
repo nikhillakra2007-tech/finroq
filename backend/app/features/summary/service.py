@@ -36,6 +36,17 @@ class SummaryService:
         )
         return list(result.scalars().all())
 
+    async def _get_balance_transactions(self, end_date: datetime) -> list[Transaction]:
+        result = await self.db.execute(
+            select(Transaction).where(
+                and_(
+                    Transaction.owner_id == self.owner_id,
+                    Transaction.transaction_date <= end_date,
+                )
+            )
+        )
+        return list(result.scalars().all())
+
     async def _get_categories(self) -> list[Category]:
         result = await self.db.execute(
             select(Category).where(
@@ -58,6 +69,7 @@ class SummaryService:
 
         accounts = await self._get_accounts()
         transactions = await self._get_transactions(start_date, end_date)
+        balance_transactions = await self._get_balance_transactions(end_date)
         categories = await self._get_categories()
 
         period_length = end_date - start_date
@@ -72,6 +84,7 @@ class SummaryService:
             previous_transactions=previous_transactions,
             previous_period_start=previous_start,
             previous_period_end=previous_end,
+            balance_transactions=balance_transactions,
         )
 
         account_balances = [

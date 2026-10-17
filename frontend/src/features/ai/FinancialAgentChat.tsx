@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem } from '@/lib/api-types';
+import { resolveAIProvenance } from '@/lib/provenance';
 import { StructuredResults } from './StructuredResults';
 import {
   Sparkles,
@@ -244,6 +245,8 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
         role: 'assistant',
         content: data.message,
         structured_data: data.structured_data,
+        is_live_ai: data.is_live_ai,
+        model_used: data.model_used,
         created_at: data.created_at || new Date().toISOString(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
@@ -278,8 +281,12 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
               <span className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100">
                 Finroq AI
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
-                Live Ledger Context
+              <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                apiClient.isDemoSession()
+                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                  : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+              }`}>
+                {apiClient.isDemoSession() ? 'Demo Session' : 'Account Workspace'}
               </span>
             </div>
             <p className="text-[11px] text-[var(--muted)] font-medium">Personal Financial Intelligence Agent</p>
@@ -386,6 +393,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
           /* Message List */
           messages.map((m) => {
             const isUser = m.role === 'user';
+            const prov = !isUser ? resolveAIProvenance(m, apiClient.isDemoSession(), false) : null;
             return (
               <div
                 key={m.id}
@@ -398,10 +406,43 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
                       : 'bg-[#F4F7F3] dark:bg-[#14231B] text-[#173F2B] dark:text-slate-100 border border-[#DCE4DC] dark:border-[#2A3D33] rounded-bl-xs shadow-xs'
                   }`}
                 >
-                  {!isUser && (
-                    <div className="flex items-center gap-1.5 pb-1.5 mb-1.5 border-b border-[var(--line)]/50 text-[10px] font-mono text-[var(--muted)]">
-                      <Sparkles className="w-3 h-3 text-[var(--accent)]" />
-                      <span>Finroq AI</span>
+                  {!isUser && prov && (
+                    <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[var(--line)]/50 text-[10px] font-mono text-[var(--muted)] flex-wrap gap-1">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+                        <span>Finroq AI</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {/* Execution Status Badge */}
+                        {prov.isLiveAI ? (
+                          <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+                            {prov.executionBadgeLabel}
+                          </span>
+                        ) : prov.isDeterministic ? (
+                          <span className="px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800">
+                            {prov.executionBadgeLabel}
+                          </span>
+                        ) : prov.isSimulated ? (
+                          <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold border border-amber-200 dark:border-amber-800">
+                            {prov.executionBadgeLabel}
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
+                            {prov.executionBadgeLabel}
+                          </span>
+                        )}
+
+                        {/* Data Provenance Badge */}
+                        {prov.provenanceBadgeLabel && (
+                          <span className={`px-1.5 py-0.5 rounded-full font-bold border ${
+                            prov.dataProvenance === 'verified_ledger'
+                              ? 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                              : 'bg-amber-50 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                          }`}>
+                            {prov.provenanceBadgeLabel}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -422,7 +463,9 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
           <div className="flex items-start">
             <div className="p-3.5 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-bl-xs flex items-center gap-2.5 text-xs text-[var(--muted)]">
               <div className="w-4 h-4 border-2 border-[var(--accent)]/30 border-t-[var(--accent)] rounded-full animate-spin" />
-              <span className="font-mono text-xs">Analyzing verified ledger data...</span>
+              <span className="font-mono text-xs">
+                {apiClient.isDemoSession() ? 'Preparing demo financial analysis...' : 'Processing financial analysis...'}
+              </span>
             </div>
           </div>
         )}

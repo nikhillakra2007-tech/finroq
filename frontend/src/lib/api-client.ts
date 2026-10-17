@@ -108,14 +108,53 @@ export const DEMO_SUMMARY: FinancialSummary = {
   ],
 };
 
+export const TRUSTED_DEMO_TOKEN = 'finroq-trusted-demo-session-v1';
+
 class ApiClient {
   private client: AxiosInstance;
   private token: string | null = null;
+  private isExplicitDemoSession: boolean = false;
 
   private isOfflineOrDemo(err?: unknown): boolean {
-    if (this.getToken()?.includes('demo')) return true;
+    if (this.isDemoSession()) return true;
     if (axios.isAxiosError(err)) {
       if (err.message === 'Network Error' || !err.response || err.code === 'ERR_NETWORK') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  setDemoSession(active: boolean) {
+    this.isExplicitDemoSession = active;
+    if (active) {
+      this.token = TRUSTED_DEMO_TOKEN;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('finroq_is_demo_session', 'true');
+        localStorage.setItem('finroq_token', TRUSTED_DEMO_TOKEN);
+      }
+    } else {
+      if (this.token === TRUSTED_DEMO_TOKEN) {
+        this.token = null;
+      }
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('finroq_is_demo_session');
+        if (localStorage.getItem('finroq_token') === TRUSTED_DEMO_TOKEN) {
+          localStorage.removeItem('finroq_token');
+        }
+      }
+    }
+  }
+
+  isDemoSession(): boolean {
+    if (this.isExplicitDemoSession && this.token === TRUSTED_DEMO_TOKEN) {
+      return true;
+    }
+    if (typeof window !== 'undefined') {
+      const storedFlag = localStorage.getItem('finroq_is_demo_session') === 'true';
+      const currentToken = this.getToken();
+      if (storedFlag && currentToken === TRUSTED_DEMO_TOKEN) {
+        this.isExplicitDemoSession = true;
         return true;
       }
     }
@@ -133,6 +172,9 @@ class ApiClient {
 
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('finroq_token');
+      if (this.token === TRUSTED_DEMO_TOKEN && localStorage.getItem('finroq_is_demo_session') === 'true') {
+        this.isExplicitDemoSession = true;
+      }
     }
 
     this.client.interceptors.request.use(
@@ -159,8 +201,18 @@ class ApiClient {
 
   setToken(token: string) {
     this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('finroq_token', token);
+    if (token === TRUSTED_DEMO_TOKEN) {
+      this.isExplicitDemoSession = true;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('finroq_is_demo_session', 'true');
+        localStorage.setItem('finroq_token', token);
+      }
+    } else {
+      this.isExplicitDemoSession = false;
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('finroq_is_demo_session');
+        localStorage.setItem('finroq_token', token);
+      }
     }
   }
 
@@ -173,8 +225,10 @@ class ApiClient {
 
   logout() {
     this.token = null;
+    this.isExplicitDemoSession = false;
     if (typeof window !== 'undefined') {
       localStorage.removeItem('finroq_token');
+      localStorage.removeItem('finroq_is_demo_session');
     }
   }
 
@@ -335,7 +389,7 @@ class ApiClient {
 
 
   async getMe() {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_USER } as any;
     }
     try {
@@ -350,7 +404,7 @@ class ApiClient {
 
   // Accounts
   async listAccounts(params?: { page?: number; page_size?: number; is_active?: boolean }) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return {
         data: {
           accounts: DEMO_ACCOUNTS,
@@ -378,7 +432,7 @@ class ApiClient {
   }
 
   async getAccount(id: number) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       const acc = DEMO_ACCOUNTS.find((a) => a.id === id) || DEMO_ACCOUNTS[0];
       return { data: acc } as any;
     }
@@ -394,7 +448,7 @@ class ApiClient {
   }
 
   async createAccount(data: AccountCreate) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       const newAcc: Account = {
         id: Date.now(),
         owner_id: '1',
@@ -456,7 +510,7 @@ class ApiClient {
     start_date?: string;
     end_date?: string;
   }) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       let filtered = [...DEMO_TRANSACTIONS];
       if (params?.account_id) {
         filtered = filtered.filter((t) => t.account_id === params.account_id);
@@ -506,7 +560,7 @@ class ApiClient {
   }
 
   async createTransaction(data: TransactionCreate) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       const newTx: Transaction = {
         id: Date.now(),
         owner_id: '1',
@@ -659,7 +713,7 @@ class ApiClient {
 
   // Categories
   async listCategories(params?: { category_type?: string; include_system?: boolean }) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       let cats = [...DEMO_CATEGORIES];
       if (params?.category_type) {
         cats = cats.filter((c) => c.category_type === params.category_type);
@@ -714,7 +768,7 @@ class ApiClient {
 
   // Summary
   async getSummary(params?: { start_date?: string; end_date?: string }) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_SUMMARY } as any;
     }
     try {
@@ -729,7 +783,7 @@ class ApiClient {
 
   // Budgets
   async listBudgets(year: number, month: number) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_BUDGETS } as any;
     }
     try {
@@ -809,7 +863,7 @@ class ApiClient {
 
   // Recurring Transactions
   async listRecurring(params?: { status?: string; account_id?: number }) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_RECURRING } as any;
     }
     try {
@@ -935,14 +989,14 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').FinancialExplanationResponse>('/ai/explain', data || {});
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
             explanation:
-              'Your cash flow is exceptionally healthy this month with a savings rate exceeding 71.4%. Fixed expenses (housing & utilities) are fully covered, and discretionary spending remains well within liquid buffers.',
-            is_ai_generated: true,
-            model_used: 'finroq-deterministic-summary',
-            provider_status: 'verified_active',
+              '[Simulated Demo] Sample cash flow scenario: Monthly savings rate is approximately 71.4% with essential expenses covered in the sample demo ledger.',
+            is_ai_generated: false,
+            model_used: 'finroq-demo-deterministic',
+            provider_status: 'simulated_demo',
             verified_income: '150000.00',
             verified_expenses: '42800.00',
             verified_net_cash_flow: '107200.00',
@@ -958,16 +1012,16 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').SpendingAssistantResponse>('/ai/assistant', data);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
             answer:
-              'Based on your liquid cash flow of ₹1,07,200 and total savings this month, your discretionary budget comfortably absorbs this planned expenditure without altering your timeline for the emergency reserve.',
-            is_ai_generated: true,
-            model_used: 'finroq-deterministic-assistant',
+              '[Simulated Demo] In this sample demo ledger, available cash flow comfortably absorbs this discretionary expenditure.',
+            is_ai_generated: false,
+            model_used: 'finroq-demo-assistant',
             relevant_data: {
-              net_liquid_buffer: '₹1,07,200.00',
-              confidence_level: 'High (0.95)',
+              net_liquid_buffer: '₹1,07,200.00 (Demo)',
+              confidence_level: 'Simulated (Demo)',
             },
           },
         } as any;
@@ -980,13 +1034,13 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').TransactionClassificationResponse>('/ai/classify', data);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
             suggested_category_id: 6,
             suggested_category_name: 'Dining & Outings',
             confidence: 0.94,
-            is_ai_generated: true,
+            is_ai_generated: false,
           },
         } as any;
       }
@@ -998,7 +1052,7 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').GoalSimulationResponse>('/ai/goals/simulate', data);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         const target = parseFloat(data.target_amount) || 100000;
         const current = parseFloat(data.current_savings) || 20000;
         const monthly = parseFloat(data.monthly_contribution) || 10000;
@@ -1015,8 +1069,8 @@ class ApiClient {
             projected_months_needed: months,
             projected_completion_date: '2027-08-30',
             feasibility_status: months <= 24 ? 'feasible' : 'challenging',
-            explanation: `At your planned rate of ₹${monthly.toLocaleString('en-IN')}/month, you will hit your ${data.goal_name} milestone in approximately ${months} months.`,
-            is_ai_generated: true,
+            explanation: `[Simulated Demo] At a sample rate of ₹${monthly.toLocaleString('en-IN')}/month, this demo goal milestone is projected in ${months} months.`,
+            is_ai_generated: false,
           },
         } as any;
       }
@@ -1028,10 +1082,10 @@ class ApiClient {
     try {
       return await this.client.get<import('./api-types').AIEntitlementsResponse>('/ai/entitlements');
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
-            tier: 'pro',
+            tier: 'demo',
             queries_used: 12,
             queries_allowed: 100,
             queries_remaining: 88,
@@ -1047,45 +1101,59 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').AIChatResponse>('/ai/chat', data);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      // ONLY allow simulated responses when user is explicitly in a demo session.
+      // Offline/network failure for authenticated non-demo users MUST throw so the UI presents an honest error.
+      if (this.isDemoSession()) {
         const q = data.message.toLowerCase();
-        let reply = "I analyzed your ledger data for this month. Your total recorded income is ₹1,50,000.00 and verified expenses are ₹42,800.00, resulting in a strong positive net cash flow of ₹1,07,200.00.";
+        let reply = "I analyzed your demo ledger data. Your simulated income is ₹1,50,000.00 and expenses are ₹42,800.00, resulting in a simulated net cash flow of ₹1,07,200.00.";
         let structured: any = {
           total_income: "150000.00",
           total_expenses: "42800.00",
           net_cash_flow: "107200.00",
+          liquid_cash_available: "75000.00",
+          data_freshness: "Simulated Demo (Sample Ledger)",
+          is_simulated: true,
           currency: "INR",
         };
 
         if (q.includes("afford") || q.includes("buy") || q.includes("purchase")) {
-          reply = "Based on your verified liquid cash of ₹1,07,200.00 and upcoming scheduled commitments of ₹16,500.00, this purchase appears affordable while preserving your liquid emergency buffer.";
+          reply = "Based on your simulated demo balance of ₹1,07,200.00 and upcoming demo bills of ₹16,500.00, this purchase appears affordable in this sample ledger.";
           structured = {
             available_liquid_cash: "107200.00",
             upcoming_known_bills: "16500.00",
+            purchase_amount: "15000.00",
             affordability_rating: "Comfortably Affordable",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
             currency: "INR",
           };
         } else if (q.includes("save") || q.includes("saving")) {
-          reply = "To save an additional ₹5,000 monthly, you can optimize your discretionary expenses. Your top non-essential categories are Dining (₹6,500) and Entertainment (₹4,200). A 25% reduction in these two categories will free up ₹2,675/month.";
+          reply = "In this demo ledger, discretionary spending is concentrated in Dining (₹6,500) and Entertainment (₹4,200). A 25% reduction would free up ₹2,675/month.";
           structured = {
             monthly_target: "5000.00",
             annual_savings_impact: "60000.00",
-            feasibility: "Realistic",
+            feasibility: "Realistic (Simulated Demo)",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
             currency: "INR",
           };
         } else if (q.includes("budget") || q.includes("exceed") || q.includes("overspend")) {
-          reply = "Your overall budget utilization is at 74.2%. However, your 'Groceries & Food' category is currently overspent by ₹1,400.00 above its allocated ₹10,000 cap.";
+          reply = "In this demo dataset, budget utilization is 74.2%, with 'Groceries & Food' overspent by ₹1,400.00 against its ₹10,000 limit.";
           structured = {
             total_allocated: "35000.00",
             total_spent: "26000.00",
             overspent_categories: ["Groceries & Food"],
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
             currency: "INR",
           };
         } else if (q.includes("bill") || q.includes("recurring")) {
-          reply = "You have 3 active upcoming scheduled bills this month totaling ₹16,500.00: House Rent (₹15,000 due 1st), Fiber Broadband (₹999 due 9th), and Cloud Storage (₹500 due 15th).";
+          reply = "Demo upcoming commitments total ₹16,500.00: Rent (₹15,000 due 1st), Broadband (₹999 due 9th), Cloud Storage (₹500 due 15th).";
           structured = {
             total_active_bills_count: 3,
             upcoming_commitment_sum: "16500.00",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
             currency: "INR",
           };
         }
@@ -1093,11 +1161,11 @@ class ApiClient {
         return {
           data: {
             conversation_id: data.conversation_id || 'demo-conv-1',
-            message: reply,
-            is_live_ai: true,
-            model_used: 'finroq-demo-intelligence',
+            message: `[Simulated Demo] ${reply}`,
+            is_live_ai: false,
+            model_used: 'finroq-demo-simulated',
             structured_data: structured,
-            tools_executed: [{ tool: 'get_financial_summary', arguments: {}, result: structured }],
+            tools_executed: [{ tool: 'get_demo_financial_summary', arguments: {}, result: structured }],
             created_at: new Date().toISOString(),
           },
         } as any;
@@ -1306,12 +1374,12 @@ class ApiClient {
     try {
       return await this.client.get<import('./api-types').AIConversationSummary[]>('/ai/conversations');
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: [
             {
               id: 'demo-conv-1',
-              title: 'Monthly Cash Flow & Spending Analysis',
+              title: '[Demo] Monthly Cash Flow & Spending Analysis',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
               message_count: 2,
@@ -1327,11 +1395,11 @@ class ApiClient {
     try {
       return await this.client.post<import('./api-types').AIConversationSummary>('/ai/conversations', { title });
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
             id: 'demo-conv-' + Date.now(),
-            title: title || 'New Financial Analysis',
+            title: title ? `[Demo] ${title}` : '[Demo] Financial Analysis',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             message_count: 0,
@@ -1346,11 +1414,11 @@ class ApiClient {
     try {
       return await this.client.get<import('./api-types').AIConversationDetail>(`/ai/conversations/${id}`);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return {
           data: {
             id,
-            title: 'Monthly Cash Flow & Spending Analysis',
+            title: '[Demo] Monthly Cash Flow & Spending Analysis',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             messages: [
@@ -1363,7 +1431,9 @@ class ApiClient {
               {
                 id: 2,
                 role: 'assistant',
-                content: 'Your verified recorded expenses this month total ₹42,800.00 across 14 transactions. Your top spending categories are Housing & Rent (₹15,000, 35%), Groceries & Food (₹11,400, 26.6%), and Dining & Outings (₹6,500, 15.2%). Discretionary spending accounted for ₹16,400 (38.3% of total outflow).',
+                content: '[Simulated Demo] In this sample demo ledger, recorded expenses total ₹42,800.00 across 14 transactions. Top categories: Housing & Rent (₹15,000, 35%), Groceries & Food (₹11,400, 26.6%), and Dining & Outings (₹6,500, 15.2%). Discretionary spending accounted for ₹16,400 (38.3% of total outflow).',
+                is_live_ai: false,
+                model_used: 'finroq-demo-simulated',
                 created_at: new Date().toISOString(),
               },
             ],
@@ -1378,7 +1448,7 @@ class ApiClient {
     try {
       return await this.client.delete(`/ai/conversations/${id}`);
     } catch (err) {
-      if (this.isOfflineOrDemo(err)) {
+      if (this.isDemoSession()) {
         return { data: { status: 'success' } } as any;
       }
       throw err;
@@ -1388,7 +1458,7 @@ class ApiClient {
 
   // Spend Leaks & Readiness
   async getSpendLeakReadiness() {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_SPEND_LEAK_ANALYSIS.readiness } as any;
     }
     try {
@@ -1402,7 +1472,7 @@ class ApiClient {
   }
 
   async getSpendLeakInsights() {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_SPEND_LEAK_ANALYSIS } as any;
     }
     try {
@@ -1417,7 +1487,7 @@ class ApiClient {
 
   // Crash-Test & Recovery Engine
   async runCrashTest(request?: CrashTestRunRequest) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_CRASH_TEST_RUN } as any;
     }
     try {
@@ -1431,7 +1501,7 @@ class ApiClient {
   }
 
   async getCrashTestRuns(limit = 10) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: [DEMO_CRASH_TEST_RUN] } as any;
     }
     try {
@@ -1445,7 +1515,7 @@ class ApiClient {
   }
 
   async getCrashTestRun(id: string) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_CRASH_TEST_RUN } as any;
     }
     try {
@@ -1459,7 +1529,7 @@ class ApiClient {
   }
 
   async recordRecommendationDecision(runId: string, recId: number, req: RecommendationDecisionRequest) {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: { status: 'success', decision: req.decision, recommendation_id: recId } } as any;
     }
     try {
@@ -1473,7 +1543,7 @@ class ApiClient {
   }
 
   async getCrashTestBenchmarks() {
-    if (this.getToken()?.includes('demo')) {
+    if (this.isDemoSession()) {
       return { data: DEMO_CRASH_TEST_BENCHMARKS } as any;
     }
     try {

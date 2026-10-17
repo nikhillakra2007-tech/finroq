@@ -213,3 +213,138 @@ class TestFinancialTools:
         assert "baseline_projected_cash" in pos["scenarios"]
         assert "frugal_scenario_cash" in pos["scenarios"]
         assert "assumptions_and_transparency" in pos
+
+    async def test_category_filtering_before_sql_limit_older_matching_records(self, db_session: AsyncSession):
+        user_id = "user_cat_test"
+        acc = Account(
+            owner_id=user_id,
+            name="Checking Cat",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("50000.00"),
+        )
+        cat_dining = Category(name="Dining", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        cat_groceries = Category(name="Groceries", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([acc, cat_dining, cat_groceries])
+        await db_session.flush()
+
+        base_date = datetime(2026, 10, 1, 10, 0, 0)
+        txns = []
+        # 5 older Groceries transactions (days 1 to 5)
+        for i in range(5):
+            txns.append(
+                Transaction(
+                    owner_id=user_id,
+                    account_id=acc.id,
+                    category_id=cat_groceries.id,
+                    amount=Decimal("150.00"),
+                    currency="INR",
+                    transaction_type=TransactionType.EXPENSE,
+                    status=TransactionStatus.COMPLETED,
+                    description=f"Groceries #{i+1}",
+                    transaction_date=base_date + timedelta(days=i),
+                )
+            )
+
+        # 20 newer Dining transactions (days 6 to 25)
+        for i in range(20):
+            txns.append(
+                Transaction(
+                    owner_id=user_id,
+                    account_id=acc.id,
+                    category_id=cat_dining.id,
+                    amount=Decimal("50.00"),
+                    currency="INR",
+                    transaction_type=TransactionType.EXPENSE,
+                    status=TransactionStatus.COMPLETED,
+                    description=f"Dining #{i+1}",
+                    transaction_date=base_date + timedelta(days=6 + i),
+                )
+            )
+
+        db_session.add_all(txns)
+        await db_session.commit()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+
+        # Before fix: selecting top 20 by date got 20 Dining txns, then Python filtered out all of them -> 0 Groceries!
+        # After fix: SQL filters for Groceries first, then orders and limits -> all 5 Groceries are returned!
+        res = await registry.tool_get_transactions(category_name="Groceries", limit=20)
+
+        assert res["transaction_count"] == 5
+        assert len(res["transactions"]) == 5
+        for t in res["transactions"]:
+            assert t["category"] == "Groceries"
+
+    async def test_category_filtering_limit_and_ordering(self, db_session: AsyncSession):
+        user_id = "user_limit_test"
+        acc = Account(
+            owner_id=user_id,
+            name="Checking Limit",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("20000.00"),
+        )
+        cat = Category(name="Utilities", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([acc, cat])
+        await db_session.flush()
+
+        base_date = datetime(2026, 1, 1)
+        for i in range(10):
+            db_session.add(
+                Transaction(
+                    owner_id=user_id,
+                    account_id=acc.id,
+                    category_id=cat.id,
+                    amount=Decimal("100.00"),
+                    currency="INR",
+                    transaction_type=TransactionType.EXPENSE,
+                    status=TransactionStatus.COMPLETED,
+                    description=f"Utility bill #{i+1}",
+                    transaction_date=base_date + timedelta(days=i),
+                )
+            )
+        await db_session.commit()
+
+        registry = FinancialToolRegistry(db_session, user_id)
+        # Request limit=4
+        res = await registry.tool_get_transactions(category_name="Utilities", limit=4)
+        assert res["transaction_count"] == 4
+        assert len(res["transactions"]) == 4
+        # Newest first (day 9, day 8, day 7, day 6)
+        assert res["transactions"][0]["description"] == "Utility bill #10"
+        assert res["transactions"][3]["description"] == "Utility bill #7"
+
+    async def test_category_filtering_user_isolation_and_no_match(self, db_session: AsyncSession):
+        user_1 = "user_iso_1"
+        user_2 = "user_iso_2"
+        acc_1 = Account(owner_id=user_1, name="Acc 1", account_type=AccountType.CHECKING, currency="INR", initial_balance=Decimal("10000.00"))
+        acc_2 = Account(owner_id=user_2, name="Acc 2", account_type=AccountType.CHECKING, currency="INR", initial_balance=Decimal("10000.00"))
+        cat_secret = Category(name="SecretTravel", category_type=CategoryType.EXPENSE, owner_id=user_2)
+        db_session.add_all([acc_1, acc_2, cat_secret])
+        await db_session.flush()
+
+        # User 2 has SecretTravel transaction
+        db_session.add(
+            Transaction(
+                owner_id=user_2,
+                account_id=acc_2.id,
+                category_id=cat_secret.id,
+                amount=Decimal("9999.00"),
+                currency="INR",
+                transaction_type=TransactionType.EXPENSE,
+                status=TransactionStatus.COMPLETED,
+                transaction_date=datetime.utcnow(),
+            )
+        )
+        await db_session.commit()
+
+        # User 1 queries for SecretTravel -> must return 0 (owner isolation)
+        registry_1 = FinancialToolRegistry(db_session, user_1)
+        res_iso = await registry_1.tool_get_transactions(category_name="SecretTravel")
+        assert res_iso["transaction_count"] == 0
+        assert len(res_iso["transactions"]) == 0
+
+        # Query for non-existent category
+        res_none = await registry_1.tool_get_transactions(category_name="NonExistentCategory123")
+        assert res_none["transaction_count"] == 0

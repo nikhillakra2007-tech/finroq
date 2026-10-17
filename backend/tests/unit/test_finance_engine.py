@@ -244,3 +244,219 @@ class TestNetWorth:
             FakeAccount(2, "Mystery", AccountType.OTHER, "USD", Decimal("5000.00")),
         ]
         assert engine.compute_net_worth(accounts, []) == Decimal("10000.00")
+
+
+class TestHistoricalBalancesAndPeriodSeparation:
+    def test_previous_month_transaction_affects_balance_not_period_metrics(self):
+        # Account initial balance: 10,000.00
+        account = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("10000.00"))
+        # Jan: Salary 5,000.00
+        jan_txn = FakeTxn(1, 1, Decimal("5000.00"), TransactionType.INCOME, transaction_date=datetime(2026, 1, 15))
+        # Feb: Rent 2,000.00
+        feb_txn = FakeTxn(2, 1, Decimal("2000.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 2, 10))
+
+        # Feb reporting period: period_transactions contains only feb_txn, balance_transactions contains both
+        period_txns = [feb_txn]
+        balance_txns = [jan_txn, feb_txn]
+
+        summary = engine.compute_summary(
+            accounts=[account],
+            transactions=period_txns,
+            categories=[],
+            balance_transactions=balance_txns,
+        )
+
+        # 1. Previous month transaction does not inflate current month income or expenses
+        assert summary.total_income == Decimal("0.00")
+        assert summary.total_expenses == Decimal("2000.00")
+        assert summary.net_cash_flow == Decimal("-2000.00")
+
+        # 2. Account activity correctly separates period activity from cumulative balance
+        activity = summary.account_balances[0]
+        assert activity.period_income == Decimal("0.00")
+        assert activity.period_expenses == Decimal("2000.00")
+        # 10,000 initial + 5,000 (Jan) - 2,000 (Feb) = 13,000.00
+        assert activity.current_balance == Decimal("13000.00")
+        assert summary.net_worth == Decimal("13000.00")
+
+    def test_multiple_months_produce_correct_ending_balance(self):
+        account = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("5000.00"))
+        txns = [
+            # Jan: +3000 income, -500 expense
+            FakeTxn(1, 1, Decimal("3000.00"), TransactionType.INCOME, transaction_date=datetime(2026, 1, 10)),
+            FakeTxn(2, 1, Decimal("500.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 1, 20)),
+            # Feb: +3000 income, -1200 expense
+            FakeTxn(3, 1, Decimal("3000.00"), TransactionType.INCOME, transaction_date=datetime(2026, 2, 10)),
+            FakeTxn(4, 1, Decimal("1200.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 2, 15)),
+            # Mar: -800 expense
+            FakeTxn(5, 1, Decimal("800.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 3, 5)),
+        ]
+        # Reporting period: March
+        mar_period = [txns[4]]
+        mar_balance = txns  # All through March
+
+        summary = engine.compute_summary(
+            accounts=[account],
+            transactions=mar_period,
+            categories=[],
+            balance_transactions=mar_balance,
+        )
+        assert summary.total_income == Decimal("0.00")
+        assert summary.total_expenses == Decimal("800.00")
+        # Expected: 5000 + 3000 - 500 + 3000 - 1200 - 800 = 8500.00
+        assert summary.account_balances[0].current_balance == Decimal("8500.00")
+        assert summary.net_worth == Decimal("8500.00")
+
+    def test_date_range_change_produces_correct_balance_as_of_new_end_date(self):
+        account = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("1000.00"))
+        t1 = FakeTxn(1, 1, Decimal("500.00"), TransactionType.INCOME, transaction_date=datetime(2026, 1, 15))
+        t2 = FakeTxn(2, 1, Decimal("300.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 2, 15))
+        t3 = FakeTxn(3, 1, Decimal("400.00"), TransactionType.INCOME, transaction_date=datetime(2026, 3, 15))
+
+        # View as of end of Jan
+        summary_jan = engine.compute_summary(
+            accounts=[account],
+            transactions=[t1],
+            categories=[],
+            balance_transactions=[t1],
+        )
+        assert summary_jan.account_balances[0].current_balance == Decimal("1500.00")
+
+        # View as of end of Feb
+        summary_feb = engine.compute_summary(
+            accounts=[account],
+            transactions=[t2],
+            categories=[],
+            balance_transactions=[t1, t2],
+        )
+        assert summary_feb.account_balances[0].current_balance == Decimal("1200.00")
+
+        # View as of end of March
+        summary_mar = engine.compute_summary(
+            accounts=[account],
+            transactions=[t3],
+            categories=[],
+            balance_transactions=[t1, t2, t3],
+        )
+        assert summary_mar.account_balances[0].current_balance == Decimal("1600.00")
+
+    def test_transfers_do_not_alter_net_worth_or_count_as_income_expenses(self):
+        acc_a = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("10000.00"))
+        acc_b = FakeAccount(2, "Savings", AccountType.SAVINGS, "USD", Decimal("5000.00"))
+        # Jan transfer from A to B: 4000.00
+        t_transfer = FakeTxn(1, 1, Decimal("4000.00"), TransactionType.TRANSFER, to_account_id=2, transaction_date=datetime(2026, 1, 20))
+        # Feb expense on B: 500.00
+        t_expense = FakeTxn(2, 2, Decimal("500.00"), TransactionType.EXPENSE, transaction_date=datetime(2026, 2, 5))
+
+        summary_feb = engine.compute_summary(
+            accounts=[acc_a, acc_b],
+            transactions=[t_expense],
+            categories=[],
+            balance_transactions=[t_transfer, t_expense],
+        )
+        # Period metrics: only 500 expense
+        assert summary.total_income == Decimal("0.00") if 'summary' in locals() else True
+        assert summary_feb.total_income == Decimal("0.00")
+        assert summary_feb.total_expenses == Decimal("500.00")
+        assert summary_feb.net_cash_flow == Decimal("-500.00")
+
+        balances = {b.account_id: b.current_balance for b in summary_feb.account_balances}
+        # Acc A: 10000 - 4000 = 6000.00
+        assert balances[1] == Decimal("6000.00")
+        # Acc B: 5000 + 4000 - 500 = 8500.00
+        assert balances[2] == Decimal("8500.00")
+        # Net worth: 6000 + 8500 = 14500.00 (Initial 15000 - 500 expense)
+        assert summary_feb.net_worth == Decimal("14500.00")
+
+    def test_opening_balance_preserved_without_transactions(self):
+        account = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("25000.00"))
+        summary = engine.compute_summary(
+            accounts=[account],
+            transactions=[],
+            categories=[],
+            balance_transactions=[],
+        )
+        assert summary.total_income == Decimal("0.00")
+        assert summary.total_expenses == Decimal("0.00")
+        assert summary.account_balances[0].current_balance == Decimal("25000.00")
+        assert summary.net_worth == Decimal("25000.00")
+
+    def test_empty_period_with_historical_transactions(self):
+        account = FakeAccount(1, "Checking", AccountType.CHECKING, "USD", Decimal("1000.00"))
+        hist_txn = FakeTxn(1, 1, Decimal("3000.00"), TransactionType.INCOME, transaction_date=datetime(2026, 1, 15))
+
+        # Month with zero transactions (empty period), but historical transaction exists
+        summary = engine.compute_summary(
+            accounts=[account],
+            transactions=[],
+            categories=[],
+            balance_transactions=[hist_txn],
+        )
+        assert summary.total_income == Decimal("0.00")
+        assert summary.total_expenses == Decimal("0.00")
+        assert summary.net_cash_flow == Decimal("0.00")
+        # Ending balance preserves historical accumulation
+        assert summary.account_balances[0].current_balance == Decimal("4000.00")
+        assert summary.net_worth == Decimal("4000.00")
+
+
+class TestCreditCardLiabilitiesAndNetWorth:
+    def test_credit_card_initial_balance_is_liability_in_net_worth(self):
+        # Scenario 3: Cash 100,000, Credit card debt 50,000 -> Expected net worth 50,000
+        cash = FakeAccount(1, "Cash Account", AccountType.CASH, "INR", Decimal("100000.00"))
+        credit_card = FakeAccount(2, "Credit Card", AccountType.CREDIT, "INR", Decimal("50000.00"))
+
+        assert engine.account_balance(cash, []) == Decimal("100000.00")
+        # Credit card initial balance represents outstanding debt (liability -> -50,000)
+        assert engine.account_balance(credit_card, []) == Decimal("-50000.00")
+
+        net_worth = engine.compute_net_worth([cash, credit_card], [])
+        assert net_worth == Decimal("50000.00")
+
+    def test_credit_card_purchase_increases_debt(self):
+        credit_card = FakeAccount(1, "Credit Card", AccountType.CREDIT, "INR", Decimal("10000.00"))
+        expense_txn = FakeTxn(1, 1, Decimal("2500.00"), TransactionType.EXPENSE)
+
+        # 10,000 initial debt + 2,500 new expense = 12,500 total debt (balance: -12,500.00)
+        bal = engine.account_balance(credit_card, [expense_txn])
+        assert bal == Decimal("-12500.00")
+
+    def test_credit_card_payment_conserves_net_worth_without_duplicate_expense(self):
+        # Scenario 4: Card payment
+        # Initial cash: 100,000; Initial card debt: 50,000.
+        # Make a transfer of 10,000 from cash to card.
+        # Expected: Cash 90,000; Card debt 40,000; Net worth before: 50,000; Net worth after: 50,000.
+        cash = FakeAccount(1, "Cash Account", AccountType.CHECKING, "INR", Decimal("100000.00"))
+        card = FakeAccount(2, "Credit Card", AccountType.CREDIT, "INR", Decimal("50000.00"))
+        accounts = [cash, card]
+
+        # Net worth before payment
+        nw_before = engine.compute_net_worth(accounts, [])
+        assert nw_before == Decimal("50000.00")
+
+        # Payment transaction: transfer from cash to card
+        payment_txn = FakeTxn(1, 1, Decimal("10000.00"), TransactionType.TRANSFER, to_account_id=2)
+        txns = [payment_txn]
+
+        summary = engine.compute_summary(accounts=accounts, transactions=txns, categories=[])
+
+        # Payment is a transfer: NOT counted as income or expense
+        assert summary.total_income == Decimal("0.00")
+        assert summary.total_expenses == Decimal("0.00")
+        assert summary.net_cash_flow == Decimal("0.00")
+
+        balances = {a.account_id: a.current_balance for a in summary.account_balances}
+        assert balances[1] == Decimal("90000.00")   # Cash after payment
+        assert balances[2] == Decimal("-40000.00")  # Card debt reduced to 40,000
+        assert summary.net_worth == Decimal("50000.00")  # Net worth conserved
+
+    def test_credit_card_refund_reduces_debt(self):
+        card = FakeAccount(1, "Credit Card", AccountType.CREDIT, "INR", Decimal("0.00"))
+        # Purchase 500, Refund 200 linked to purchase
+        purchase = FakeTxn(1, 1, Decimal("500.00"), TransactionType.EXPENSE)
+        refund = FakeTxn(2, 1, Decimal("200.00"), TransactionType.INCOME, related_transaction_id=1)
+
+        bal = engine.account_balance(card, [purchase, refund])
+        # Net expense = 300, debt = 300 (balance: -300.00)
+        assert bal == Decimal("-300.00")
+        assert engine.compute_net_worth([card], [purchase, refund]) == Decimal("-300.00")

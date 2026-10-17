@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useI18n, Language, SUPPORTED_LANGUAGES } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem, PublicAIChatResponse } from '@/lib/api-types';
+import { resolveAIProvenance } from '@/lib/provenance';
 import { StructuredResults } from './StructuredResults';
 import {
   Sparkles,
@@ -454,6 +455,8 @@ export function FloatingFinroqAgent() {
           id: Date.now() + 1,
           role: 'assistant',
           content: pubData.message,
+          is_live_ai: false,
+          model_used: 'finroq-static-guide',
           created_at: pubData.created_at || new Date().toISOString(),
         };
         setMessages((prev) => [...prev, assistantMsg]);
@@ -480,6 +483,8 @@ export function FloatingFinroqAgent() {
           role: 'assistant',
           content: data.message,
           structured_data: data.structured_data,
+          is_live_ai: data.is_live_ai,
+          model_used: data.model_used,
           created_at: data.created_at || new Date().toISOString(),
         };
         setMessages((prev) => [...prev, assistantMsg]);
@@ -559,14 +564,20 @@ export function FloatingFinroqAgent() {
                   <span className="font-display font-bold text-sm text-[#173F2B] dark:text-slate-100 truncate">
                     {isGuestMode ? 'Finroq Guide' : 'Finroq AI'}
                   </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full font-bold border flex items-center gap-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 shrink-0">
+                  <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-full font-bold border flex items-center gap-1 ${
+                    !isGuestMode && apiClient.isDemoSession()
+                      ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                      : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                  } shrink-0`}>
                     {isGuestMode ? (
                       <>
                         <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
                         Guide
                       </>
+                    ) : apiClient.isDemoSession() ? (
+                      'Demo'
                     ) : (
-                      'Ledger'
+                      'Account'
                     )}
                   </span>
                 </div>
@@ -711,6 +722,7 @@ export function FloatingFinroqAgent() {
             ) : (
               messages.map((m) => {
                 const isUser = m.role === 'user';
+                const prov = !isUser ? resolveAIProvenance(m, apiClient.isDemoSession(), isGuestMode) : null;
                 return (
                   <div key={m.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                     <div
@@ -720,6 +732,45 @@ export function FloatingFinroqAgent() {
                           : 'bg-[#F8FAF8] dark:bg-[#14231B] border border-[#CBD5CB]/60 dark:border-[#2A3D33] text-[#173F2B] dark:text-slate-100 rounded-tl-xs shadow-2xs'
                       }`}
                     >
+                      {!isUser && prov && (
+                        <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[var(--line)]/50 text-[10px] font-mono text-[var(--muted)] flex-wrap gap-1">
+                          <div className="flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+                            <span>{isGuestMode ? 'Finroq Guide' : 'Finroq AI'}</span>
+                          </div>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {/* Execution Type Badge */}
+                            {prov.isLiveAI ? (
+                              <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+                                {prov.executionBadgeLabel}
+                              </span>
+                            ) : prov.isDeterministic ? (
+                              <span className="px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800">
+                                {prov.executionBadgeLabel}
+                              </span>
+                            ) : prov.isSimulated ? (
+                              <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold border border-amber-200 dark:border-amber-800">
+                                {prov.executionBadgeLabel}
+                              </span>
+                            ) : (
+                              <span className="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
+                                {prov.executionBadgeLabel}
+                              </span>
+                            )}
+
+                            {/* Data Provenance Badge */}
+                            {prov.provenanceBadgeLabel && (
+                              <span className={`px-1.5 py-0.5 rounded-full font-bold border ${
+                                prov.dataProvenance === 'verified_ledger'
+                                  ? 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                                  : 'bg-amber-50 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                              }`}>
+                                {prov.provenanceBadgeLabel}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       <div className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{m.content}</div>
 
                       {/* Render Structured Results Card if Present */}
@@ -740,7 +791,11 @@ export function FloatingFinroqAgent() {
                 <div className="p-3 rounded-2xl bg-[#F4F7F3] dark:bg-[#14231B] border border-[#DCE4DC] dark:border-[#2A3D33] rounded-bl-xs flex items-center gap-2 text-xs text-[var(--muted)]">
                   <div className="w-3.5 h-3.5 border-2 border-[var(--accent)]/30 border-t-[var(--accent)] rounded-full animate-spin" />
                   <span className="font-mono text-[11px]">
-                    {isGuestMode ? `Retrieving guidance in ${currentChatMeta.nativeName}...` : 'Computing verified ledger data...'}
+                    {isGuestMode
+                      ? `Retrieving guidance in ${currentChatMeta.nativeName}...`
+                      : apiClient.isDemoSession()
+                      ? 'Preparing demo financial response...'
+                      : 'Processing financial analysis...'}
                   </span>
                 </div>
               </div>

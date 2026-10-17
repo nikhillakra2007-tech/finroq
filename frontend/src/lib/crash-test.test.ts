@@ -2,11 +2,11 @@ import { apiClient, DEMO_CRASH_TEST_RUN, DEMO_CRASH_TEST_BENCHMARKS } from './ap
 
 describe('Crash-Test & Resilience Engine', () => {
   beforeAll(() => {
-    apiClient.setToken('demo-token-test');
+    apiClient.setDemoSession(true);
   });
 
   afterAll(() => {
-    apiClient.setToken(null);
+    apiClient.logout();
   });
 
   it('returns valid demo crash-test data when offline or in demo mode', async () => {

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User } from './api-types';
-import { apiClient, DEMO_USER, extractErrorMessage } from './api-client';
+import { apiClient, DEMO_USER, extractErrorMessage, TRUSTED_DEMO_TOKEN } from './api-client';
 
 interface AuthContextType {
   user: User | null;
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await apiClient.getMe();
       setUser(res.data);
     } catch {
-      if (currentToken.includes('demo') || currentToken.includes('google')) {
+      if (apiClient.isDemoSession()) {
         setUser(DEMO_USER);
       } else {
         apiClient.logout();
@@ -64,15 +64,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await apiClient.login({ email, password });
       const accessToken = res.data.access_token;
+      apiClient.setDemoSession(false);
+      apiClient.setToken(accessToken);
       setToken(accessToken);
       // Fetch user profile
       const userRes = await apiClient.getMe();
       setUser(userRes.data);
     } catch (err) {
       if (email.toLowerCase() === 'demo@finroq.com') {
-        const demoToken = 'demo-session-token-verified';
-        apiClient.setToken(demoToken);
-        setToken(demoToken);
+        apiClient.setDemoSession(true);
+        setToken(TRUSTED_DEMO_TOKEN);
         setUser(DEMO_USER);
         return;
       }

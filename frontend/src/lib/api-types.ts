@@ -490,6 +490,8 @@ export interface AIMessageItem {
   role: 'user' | 'assistant' | 'system' | 'tool';
   content: string;
   structured_data?: Record<string, any> | null;
+  is_live_ai?: boolean;
+  model_used?: string;
   created_at: string;
 }
 
