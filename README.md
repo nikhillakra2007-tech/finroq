@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.3.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
+![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.3.3--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
-![Pytest Suite](https://img.shields.io/badge/Pytest-190%2F190%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-52%2F52%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Pytest Suite](https://img.shields.io/badge/Pytest-194%2F194%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-58%2F58%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -52,7 +52,22 @@ High-resolution application captures taken directly from live production on [fin
 
 ---
 
-## 🆕 Latest Release Updates (v1.3.2)
+## 🆕 Latest Release Updates (v1.3.3)
+
+- 🤖 **Interactive AI Copilot Decision Showcase on Landing**:
+  - Integrated Section 3.5 immediately following the technical proof strip with 4 real-world decision scenario blueprints (*Pre-Spend Assessment*, *Discretionary Optimization*, *Category Budget Pacing*, *Goal Milestone Projection*).
+  - Features reactive prompt bubbles, verdict badges, deterministic calculation breakdowns, and contextual links into live simulation modules (`#amount-sandbox`, `#budgets`, `#simulator`).
+  - Added honest provenance disclosure explicitly separating sample simulation models from live authenticated user ledgers.
+- 💡 **Hero Copilot Decision Brief**:
+  - Integrated real-time decision capacity insight into the landing hero preview card (`Surplus of ₹1,07,200 safely covers upcoming commitments. Discretionary spending capacity: ₹28,400`), badged with `Sample Model State`.
+- 🧭 **Authenticated Dashboard Interaction Hierarchy**:
+  - Upgraded all 4 authoritative metric cards (*Net Worth*, *Net Cash Flow*, *Accounts Active*, *Upcoming Commitments*) into interactive deep-link launchpads with trend badges, connecting directly to verified existing routes (`/app/net-worth`, `/app/expense-tracking`, and `/app/debt-watchdog`).
+- 🔗 **Structured AI Results Contextual Deep Navigation**:
+  - Added clean contextual navigation action links (`ArrowUpRight`) from all assistant response cards to seamlessly transition from AI recommendations into dedicated calculation engines.
+
+---
+
+## 📜 Previous Release Updates (v1.3.2)
 
 - ⚖️ **Historical Account Balance & Period Separation Remediation**:
   - Decoupled reporting window period metrics (period income, period expenses, net cash flow, category breakdowns) from point-in-time cumulative account balances.
