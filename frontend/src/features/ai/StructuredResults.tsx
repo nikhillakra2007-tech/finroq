@@ -191,7 +191,7 @@ function RecurringProposalCard({ data, currency = 'INR' }: { data: Record<string
       {status === 'success' ? (
         <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>Verified Ledger Updated: Successfully scheduled '{data.description}' as an active recurring bill.</span>
+          <span>Verified Ledger Updated: Successfully scheduled &apos;{data.description}&apos; as an active recurring bill.</span>
         </div>
       ) : (
         <div className="flex items-center justify-end gap-2 pt-1">

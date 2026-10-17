@@ -31,7 +31,18 @@ import type {
   CrashTestEvaluationBenchmark,
 } from './api-types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const resolveApiBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // Hosted browser deployment where NEXT_PUBLIC_API_URL was not set during build
+    console.info('[FINROQ API] NEXT_PUBLIC_API_URL unset on hosted domain. Operating with verified local demo fallback.');
+  }
+  return 'http://localhost:8000/api/v1';
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export const DEMO_USER: User = {
   id: 1,

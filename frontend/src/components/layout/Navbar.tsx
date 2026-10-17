@@ -33,27 +33,24 @@ import {
 } from 'lucide-react';
 
 const PRIMARY_NAV = [
-  { key: 'nav.home', name: '12-Module Home', href: '/app/home', icon: Home },
+  { key: 'nav.ai_copilot', name: 'AI Copilot', href: '/app/ai-assistant', icon: Sparkles },
+  { key: 'nav.overview', name: 'Overview', href: '/app/home', icon: Home },
   { key: 'nav.ledger', name: 'Ledger', href: '/app/expense-tracking', icon: CreditCard },
   { key: 'nav.budgets', name: 'Budgets', href: '/app/budgeting', icon: PieChart },
-  { key: 'nav.crash_test', name: 'Crash-Test', href: '/app/crash-test', icon: ShieldAlert },
-  { key: 'nav.ai_insights', name: 'AI Insights', href: '/app/spend-leak-detector', icon: Sparkles },
 ];
 
-const ALL_12_MODULES = [
-  { key: 'mod.crash_test', name: 'Crash-Test / Agentic Run', href: '/app/crash-test', icon: ShieldAlert, cat: 'Health' },
-  { key: 'mod.expense_tracking', name: 'Expense Tracking', href: '/app/expense-tracking', icon: CreditCard, cat: 'Track' },
-  { key: 'mod.daily_budgeting', name: 'Daily Budgeting', href: '/app/budgeting', icon: PieChart, cat: 'Track' },
-  { key: 'mod.splitter', name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Track' },
-  { key: 'mod.pre_spend_check', name: 'Pre-Spend Check', href: '/app/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
-  { key: 'mod.spend_leak_detector', name: 'Spend Leak Detector', href: '/app/spend-leak-detector', icon: Zap, cat: 'Decide' },
-  { key: 'mod.money_guides', name: 'Money Guides', href: '/app/money-guides', icon: BookOpen, cat: 'Decide' },
-  { key: 'mod.net_worth', name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth' },
-  { key: 'mod.goal_timeline', name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth' },
-  { key: 'mod.emergency_cushion', name: 'Emergency Cushion', href: '/app/emergency-cushion', icon: Umbrella, cat: 'Wealth' },
-  { key: 'mod.debt_watchdog', name: 'EMI / Debt Watchdog', href: '/app/debt-watchdog', icon: ShieldAlert, cat: 'Health' },
-  { key: 'mod.credit_health', name: 'Credit Health', href: '/app/credit-health', icon: ShieldCheck, cat: 'Health' },
-  { key: 'mod.financial_health', name: 'Integrated Financial Health', href: '/app/financial-health', icon: Activity, cat: 'Health' },
+const SECONDARY_TOOLS = [
+  { key: 'mod.net_worth', name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth & Planning' },
+  { key: 'mod.goal_timeline', name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth & Planning' },
+  { key: 'mod.emergency_cushion', name: 'Emergency Cushion', href: '/app/emergency-cushion', icon: Umbrella, cat: 'Wealth & Planning' },
+  { key: 'mod.pre_spend_check', name: 'Pre-Spend Check', href: '/app/pre-spend-check', icon: ShoppingBag, cat: 'Decisions' },
+  { key: 'mod.spend_leak_detector', name: 'Spend Leak Detector', href: '/app/spend-leak-detector', icon: Zap, cat: 'Decisions' },
+  { key: 'mod.splitter', name: 'Expense Splitter', href: '/app/splitter', icon: Users, cat: 'Decisions' },
+  { key: 'mod.money_guides', name: 'Money Guides', href: '/app/money-guides', icon: BookOpen, cat: 'Decisions' },
+  { key: 'mod.debt_watchdog', name: 'EMI / Debt Watchdog', href: '/app/debt-watchdog', icon: ShieldAlert, cat: 'Obligations' },
+  { key: 'mod.credit_health', name: 'Credit Health', href: '/app/credit-health', icon: ShieldCheck, cat: 'Obligations' },
+  { key: 'mod.financial_health', name: 'Integrated Financial Health', href: '/app/financial-health', icon: Activity, cat: 'Obligations' },
+  { key: 'mod.crash_test', name: 'Crash-Test / Stress Test', href: '/app/crash-test', icon: ShieldAlert, cat: 'Obligations' },
 ];
 
 export function Navbar() {
@@ -130,44 +127,60 @@ export function Navbar() {
                 );
               })}
 
-              {/* All 12 Modules Dropdown Menu */}
+              {/* Financial Tools Dropdown Menu */}
               <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
-                  className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200',
-                    modulesDropdownOpen
-                      ? 'bg-finroq-mint text-finroq-forest'
-                      : 'text-[#173F2B] dark:text-slate-200 hover:bg-[#EAF3E7] hover:text-[#102F21]'
-                  )}
-                  aria-expanded={modulesDropdownOpen}
-                >
-                  <Layers className="h-3.5 w-3.5" />
-                  <span>{t('nav.modules', 'Modules')}</span>
-                  <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', modulesDropdownOpen ? 'rotate-180' : '')} />
-                </button>
+                {(() => {
+                  const isToolActive = SECONDARY_TOOLS.some((t) => pathname === t.href || pathname.startsWith(t.href));
+                  return (
+                    <button
+                      onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200',
+                        isToolActive
+                          ? 'bg-finroq-mint text-finroq-forest shadow-xs'
+                          : modulesDropdownOpen
+                          ? 'bg-finroq-mint/70 text-finroq-forest'
+                          : 'text-[#173F2B] dark:text-slate-200 hover:bg-[#EAF3E7] hover:text-[#102F21]'
+                      )}
+                      aria-expanded={modulesDropdownOpen}
+                    >
+                      <Layers className="h-3.5 w-3.5" />
+                      <span>{t('nav.financial_tools', 'Financial Tools')}</span>
+                      <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', modulesDropdownOpen ? 'rotate-180' : '')} />
+                    </button>
+                  );
+                })()}
 
                 {modulesDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#16251E] rounded-2xl shadow-lg border border-[#BAC7BE] dark:border-[#2A3D33] p-2 grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="absolute left-0 mt-2 w-80 bg-white dark:bg-[#16251E] rounded-2xl shadow-xl border border-[#BAC7BE] dark:border-[#2A3D33] p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3 py-1.5 border-b border-slate-100 dark:border-[#2A3D33] flex items-center justify-between text-[11px] font-bold text-[#173F2B] dark:text-slate-300 uppercase tracking-wider">
-                      <span>{language === 'hi' ? 'सभी 13 वित्तीय फीचर्स' : 'All 13 Financial Features'}</span>
+                      <span>{language === 'hi' ? 'विशेषज्ञ वित्तीय टूल्स' : 'Specialized Financial Tools'}</span>
+                      <span className="text-[10px] font-mono text-finroq-muted">{SECONDARY_TOOLS.length} Tools</span>
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 dark:divide-[#2A3D33] space-y-0.5">
-                      {ALL_12_MODULES.map((m) => (
-                        <Link
-                          key={m.key}
-                          href={m.href}
-                          onClick={() => setModulesDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-[#173F2B] dark:text-slate-100 hover:bg-finroq-mint/50 dark:hover:bg-[#1A2C22] transition-colors"
-                        >
-                          <m.icon className="h-4 w-4 text-finroq-forest dark:text-emerald-400 shrink-0" />
-                          <div className="flex-1">
-                            <p className="font-semibold">{t(m.key, m.name)}</p>
-                            <span className="text-[10px] text-[#374A3E] dark:text-slate-400 font-medium">{m.cat}</span>
-                          </div>
-                        </Link>
-                      ))}
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-[#2A3D33]/60 space-y-1 pt-1">
+                      {SECONDARY_TOOLS.map((m) => {
+                        const isCurrent = pathname === m.href || pathname.startsWith(m.href);
+                        return (
+                          <Link
+                            key={m.key}
+                            href={m.href}
+                            onClick={() => setModulesDropdownOpen(false)}
+                            className={cn(
+                              'flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-colors',
+                              isCurrent
+                                ? 'bg-finroq-mint text-finroq-forest font-bold'
+                                : 'text-[#173F2B] dark:text-slate-100 hover:bg-[#EAF3E7] dark:hover:bg-[#1A2C22]'
+                            )}
+                          >
+                            <m.icon className="h-4 w-4 text-finroq-forest dark:text-emerald-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold truncate">{t(m.key, m.name)}</p>
+                              <span className="text-[10px] text-[#374A3E] dark:text-slate-400 font-medium">{m.cat}</span>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -271,17 +284,18 @@ export function Navbar() {
 
             <div className="pt-2 border-t border-slate-100 mt-2">
               <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">
-                {language === 'hi' ? 'सभी 12 वित्तीय मॉड्यूल' : 'All 12 Modules'}
+                {language === 'hi' ? 'विशेषज्ञ वित्तीय टूल्स' : 'Specialized Financial Tools'}
               </span>
               <div className="grid grid-cols-2 gap-1 px-2 pt-1">
-                {ALL_12_MODULES.map((m) => (
+                {SECONDARY_TOOLS.map((m) => (
                   <Link
                     key={m.key}
                     href={m.href}
-                    className="p-2 rounded-lg text-xs font-medium text-finroq-text hover:bg-finroq-mint/40 truncate"
+                    className="p-2 rounded-lg text-xs font-medium text-finroq-text hover:bg-finroq-mint/40 truncate flex items-center gap-1.5"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {t(m.key, m.name)}
+                    <m.icon className="w-3.5 h-3.5 shrink-0 text-finroq-forest" />
+                    <span className="truncate">{t(m.key, m.name)}</span>
                   </Link>
                 ))}
               </div>

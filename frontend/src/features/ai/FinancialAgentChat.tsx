@@ -164,6 +164,13 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
     loadConversations();
   }, []);
 
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim()) {
+      setInputMessage(initialPrompt.trim());
+      textareaRef.current?.focus();
+    }
+  }, [initialPrompt]);
+
   // Handle switching conversations
   const handleSelectConversation = async (convId: string) => {
     try {

@@ -32,11 +32,12 @@ class TestAIProvider:
         mock_response.usage.prompt_tokens = 45
         mock_response.usage.completion_tokens = 25
 
-        with patch("openai.AsyncOpenAI") as mock_openai_cls:
-            mock_client = AsyncMock()
-            mock_client.chat.completions.create.return_value = mock_response
-            mock_openai_cls.return_value = mock_client
+        mock_openai_module = MagicMock()
+        mock_client = AsyncMock()
+        mock_client.chat.completions.create.return_value = mock_response
+        mock_openai_module.AsyncOpenAI.return_value = mock_client
 
+        with patch.dict("sys.modules", {"openai": mock_openai_module}):
             res = await provider.run_chat(
                 messages=[{"role": "user", "content": "What is compound interest?"}],
                 user_id="test-user",
@@ -76,11 +77,12 @@ class TestAIProvider:
         mock_resp_2.usage.prompt_tokens = 150
         mock_resp_2.usage.completion_tokens = 30
 
-        with patch("openai.AsyncOpenAI") as mock_openai_cls:
-            mock_client = AsyncMock()
-            mock_client.chat.completions.create.side_effect = [mock_resp_1, mock_resp_2]
-            mock_openai_cls.return_value = mock_client
+        mock_openai_module = MagicMock()
+        mock_client = AsyncMock()
+        mock_client.chat.completions.create.side_effect = [mock_resp_1, mock_resp_2]
+        mock_openai_module.AsyncOpenAI.return_value = mock_client
 
+        with patch.dict("sys.modules", {"openai": mock_openai_module}):
             res = await provider.run_chat(
                 messages=[{"role": "user", "content": "How is my cash flow?"}],
                 user_id="test-user",
@@ -110,11 +112,12 @@ class TestAIProvider:
         mock_resp.usage.prompt_tokens = 50
         mock_resp.usage.completion_tokens = 10
 
-        with patch("openai.AsyncOpenAI") as mock_openai_cls:
-            mock_client = AsyncMock()
-            mock_client.chat.completions.create.return_value = mock_resp
-            mock_openai_cls.return_value = mock_client
+        mock_openai_module = MagicMock()
+        mock_client = AsyncMock()
+        mock_client.chat.completions.create.return_value = mock_resp
+        mock_openai_module.AsyncOpenAI.return_value = mock_client
 
+        with patch.dict("sys.modules", {"openai": mock_openai_module}):
             res = await provider.run_chat(
                 messages=[{"role": "user", "content": "Keep calling"}],
                 user_id="test-user",

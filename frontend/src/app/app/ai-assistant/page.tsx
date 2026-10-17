@@ -1,9 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { FinancialAgentChat } from '@/features/ai/FinancialAgentChat';
 import { useI18n } from '@/lib/i18n-context';
+
+function AIAssistantChatContainer() {
+  const searchParams = useSearchParams();
+  const initialPrompt = searchParams.get('q') || undefined;
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <FinancialAgentChat isCompact={false} initialPrompt={initialPrompt} />
+    </div>
+  );
+}
 
 export default function AIAssistantPage() {
   const { language } = useI18n();
@@ -18,9 +30,9 @@ export default function AIAssistantPage() {
           : 'Conversational guidance backed by your personal account records, budgets, recurring bills, and deterministic calculations.'
       }
     >
-      <div className="max-w-4xl mx-auto">
-        <FinancialAgentChat isCompact={false} />
-      </div>
+      <Suspense fallback={<div className="p-8 text-center text-sm font-mono text-[var(--muted)]">Loading AI Assistant...</div>}>
+        <AIAssistantChatContainer />
+      </Suspense>
     </ModuleShell>
   );
 }

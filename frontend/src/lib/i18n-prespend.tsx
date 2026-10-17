@@ -601,7 +601,7 @@ export function renderApprovedCushion(
     case 'fr':
       return (
         <>
-          Cet achat prévu s'intègre parfaitement dans votre budget de catégorie, laissant une marge de{' '}
+          Cet achat prévu s&apos;intègre parfaitement dans votre budget de catégorie, laissant une marge de{' '}
           <strong>{formattedRemaining}</strong> pour le cycle.
         </>
       );

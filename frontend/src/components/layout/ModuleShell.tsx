@@ -10,6 +10,7 @@ import { getStoredTheme, applyTheme } from '@/lib/theme';
 import { LanguageSelector } from '@/components/layout/LanguageSelector';
 import {
   ArrowLeft,
+  Home,
   Sun,
   Moon,
   LogOut,
@@ -40,19 +41,21 @@ interface ModuleShellProps {
 }
 
 const MODULES_NAV = [
-  { href: '/app/crash-test', key: 'mod.crash_test', label: 'Crash-Test / Agentic Run', icon: ShieldAlert },
+  { href: '/app/ai-assistant', key: 'mod.ai_assistant', label: 'Finroq AI Intelligence', icon: Sparkles },
+  { href: '/app/home', key: 'nav.overview', label: 'Financial Overview', icon: Home },
   { href: '/app/expense-tracking', key: 'mod.expense_tracking', label: 'Expense Tracking', icon: CreditCard },
   { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Daily Budgeting', icon: PieChart },
-  { href: '/app/splitter', key: 'mod.splitter', label: 'Splitter', icon: Users },
+  { href: '/app/net-worth', key: 'mod.net_worth', label: 'Net Worth', icon: TrendingUp },
   { href: '/app/pre-spend-check', key: 'mod.pre_spend_check', label: 'Pre-Spend Check', icon: ShoppingBag },
   { href: '/app/spend-leak-detector', key: 'mod.spend_leak_detector', label: 'Spend Leak Detector', icon: Zap },
+  { href: '/app/splitter', key: 'mod.splitter', label: 'Splitter', icon: Users },
   { href: '/app/money-guides', key: 'mod.money_guides', label: 'Money Guides', icon: BookOpen },
-  { href: '/app/net-worth', key: 'mod.net_worth', label: 'Net Worth', icon: TrendingUp },
   { href: '/app/goal-timeline', key: 'mod.goal_timeline', label: 'Goal Simulator', icon: Target },
   { href: '/app/emergency-cushion', key: 'mod.emergency_cushion', label: 'Emergency Cushion', icon: Umbrella },
   { href: '/app/debt-watchdog', key: 'mod.debt_watchdog', label: 'Debt Watchdog', icon: ShieldAlert },
   { href: '/app/credit-health', key: 'mod.credit_health', label: 'Credit Health', icon: ShieldCheck },
   { href: '/app/financial-health', key: 'mod.financial_health', label: 'Financial Health', icon: Activity },
+  { href: '/app/crash-test', key: 'mod.crash_test', label: 'Crash-Test / Agentic Run', icon: ShieldAlert },
 ];
 
 export function ModuleShell({ title, category, description, children }: ModuleShellProps) {
@@ -87,7 +90,7 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
     };
   }, []);
 
-  const activeMod = MODULES_NAV.find((mod) => pathname === mod.href || pathname?.startsWith(mod.href)) || MODULES_NAV[0];
+  const activeMod = MODULES_NAV.find((mod) => pathname === mod.href || (mod.href !== '/app/home' && pathname?.startsWith(mod.href))) || MODULES_NAV[0];
   const ActiveIcon = activeMod.icon;
 
   const toggleTheme = () => {
@@ -140,7 +143,17 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {pathname !== '/app/ai-assistant' && (
+              <button
+                onClick={() => navigateWithCurtain('/app/ai-assistant', 'ai-copilot', 'fwd')}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#173F2B] dark:text-emerald-300 bg-[#EAF3E7] dark:bg-emerald-950/60 border border-[#CBD5CB] dark:border-emerald-800/60 hover:bg-[#D5E8D2] transition-colors shadow-2xs"
+                title="Ask Finroq AI about this module or your finances"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#173F2B] dark:text-emerald-400" />
+                <span>{t('nav.ask_ai', 'Ask AI Copilot')}</span>
+              </button>
+            )}
             <LanguageSelector variant="compact" align="right" />
             <button
               onClick={toggleTheme}
