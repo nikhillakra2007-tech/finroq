@@ -78,10 +78,6 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // Handle Cinematic Boot Sequence on First Session Visit
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('noboot') === '1') {
-        return;
-      }
       const hasSeenBoot = sessionStorage.getItem('finroq_boot_seen');
       if (!hasSeenBoot) {
         setBootSequenceActive(true);
@@ -443,7 +439,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           </nav>
 
           {/* Right Action Controls */}
-          <div className="flex items-center gap-3.5 shrink-0">
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={triggerBootSequence}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-600/30 dark:border-emerald-500/40 hover:border-emerald-600 dark:hover:border-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-medium transition-all cursor-pointer shadow-2xs"
+              title="Replay Engine Calibration Boot Sequence"
+            >
+              <Play className="w-3 h-3 fill-current text-emerald-600 dark:text-emerald-400" />
+              <span>Boot Demo</span>
+            </button>
             <LanguageSelector variant="pill" align="right" />
             <button
               onClick={toggleTheme}
@@ -517,7 +521,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
         <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-12 gap-12 lg:gap-14 items-center relative">
           {/* Left Column: Core Positioning Narrative */}
-          <div className="lg:col-span-6 space-y-7 reveal-item-left">
+          <div className="lg:col-span-6 space-y-7">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-[#173F2B] dark:text-slate-200 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
               <span>Autonomous Fixed-Point Decimal Architecture</span>
@@ -547,6 +551,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               >
                 Try live simulator ↓
               </a>
+              <button
+                type="button"
+                onClick={triggerBootSequence}
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-full border border-emerald-600/30 dark:border-emerald-500/40 hover:border-emerald-600 dark:hover:border-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-mono font-semibold transition-all cursor-pointer shadow-xs"
+                title="Replay Cinematic Engine Calibration Boot Sequence"
+              >
+                <Play className="w-3.5 h-3.5 fill-current text-emerald-600 dark:text-emerald-400" />
+                <span>Replay Engine Telemetry</span>
+              </button>
             </div>
 
             {/* Three Pillar Guarantees */}
@@ -567,7 +580,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           </div>
 
           {/* Right Column: Interactive Live Precision Ledger Terminal */}
-          <div className="lg:col-span-6 reveal-item-right delay-150">
+          <div className="lg:col-span-6">
             <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl card-hover-lift">
               {/* Header Titlebar with Linear/macOS Style Dots & Tab Selector */}
               <div className="flex items-center justify-between pb-3 border-b border-[var(--line)] flex-wrap gap-2">

@@ -27,8 +27,15 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 
 <div align="center">
 
+### Cinematic Engine Telemetry Boot Sequence
+*Autonomous hardware-grade system calibration verifying NUMERIC(14,2) registers, purging float drift, and securing Argon2id enclaves upon entry.*
+
+![Cinematic Engine Telemetry Boot Sequence](docs/assets/finroq-landing-boot.png)
+
+<br/>
+
 ### Precision Landing Hero & Live Ledger Engine
-*Arbitrary decimal precision hero showcasing live double-entry postings, zero float drift telemetry, real-time sparkline balance curves, and interactive T-account validator.*
+*Arbitrary decimal precision hero showcasing live double-entry postings, zero float drift telemetry, balance sparklines, and interactive telemetry replay controls.*
 
 ![Precision Landing Hero](docs/assets/finroq-landing-hero.png)
 
@@ -41,22 +48,15 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 
 <br/>
 
-### 13-Module Unified Financial Workspace Hub
-*Unified workspace view displaying all 13 financial engines with instant 18-language selector, Google authentication, autonomous 6-agent crash-test pipeline, and floating AI assistant launcher.*
-
-![FINROQ Live 13-Module Hub](docs/assets/finroq-app-home-live.png)
-
-<br/>
-
-| Pre-Spend Decision Engine | Credit Health Architecture |
+| Autonomous 6-Agent Crash-Test Engine | Evidence-Driven Spend Leak Detector |
 |:---:|:---:|
-| ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) | ![Credit Health](docs/assets/finroq-credit-health.png) |
-| *Real-time pre-purchase simulation on remaining budget caps.* | *Live credit utilization ratios and payment discipline.* |
+| ![Autonomous Crash-Test Engine](docs/assets/finroq-crash-test.png) | ![Spend Leak Detector](docs/assets/finroq-spend-leak.png) |
+| *6-Agent shock traversal simulating career shocks, hospital spikes, and cost-of-living crunches.* | *Evidence-driven audit identifying recurring subscriptions, micro-charges, and irregular surges.* |
 
-| Autonomous Daily Budgeting | Spend Leak Detector |
+| 13-Module Unified Financial Workspace Hub | Pre-Spend Decision Engine |
 |:---:|:---:|
-| ![Daily Budgeting](docs/assets/finroq-budgeting.png) | ![Spend Leak Detector](docs/assets/finroq-spend-leak.png) |
-| *Active category burn-rate monitoring and auto-rebalancing.* | *Audit recurring subscriptions, micro-charges, and irregular surges.* |
+| ![FINROQ Live 13-Module Hub](docs/assets/finroq-app-home-live.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
+| *Unified workspace view displaying all 13 financial engines with instant 18-language selector.* | *Real-time pre-purchase simulation on remaining budget caps.* |
 
 </div>
 
