@@ -136,6 +136,16 @@ class TransactionService:
             if not account or account.owner_id != self.owner_id:
                 raise ValueError("Account not found or access denied")
 
+        if "to_account_id" in update_data and update_data["to_account_id"]:
+            to_account = await self.db.get(Account, update_data["to_account_id"])
+            if not to_account or to_account.owner_id != self.owner_id:
+                raise ValueError("Destination account not found or access denied")
+
+        effective_source = update_data.get("account_id", transaction.account_id)
+        effective_destination = update_data.get("to_account_id", transaction.to_account_id)
+        if effective_destination is not None and effective_destination == effective_source:
+            raise ValueError("Source and destination accounts must be different")
+
         if "category_id" in update_data and update_data["category_id"]:
             category = await self.db.get(Category, update_data["category_id"])
             if not category or (category.owner_id and category.owner_id != self.owner_id):

@@ -382,3 +382,49 @@ describe('AI Fallback & Truthful Live AI Behavior (Milestone 0A)', () => {
     });
   });
 });
+
+describe('Offline authentication fallback is an explicit demo session', () => {
+  const networkError = () =>
+    new axios.AxiosError('Network Error', 'ERR_NETWORK', undefined, undefined, undefined);
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    apiClient.logout();
+  });
+
+  it('labels a login resolved while offline as demo, never as a real session', async () => {
+    jest.spyOn((apiClient as any).client, 'post').mockRejectedValue(networkError());
+
+    const res = await apiClient.login({ email: 'judge@example.com', password: 'password123' });
+
+    expect(res.data.access_token).toBe(TRUSTED_DEMO_TOKEN);
+    expect(apiClient.isDemoSession()).toBe(true);
+  });
+
+  it('labels a registration resolved while offline as demo', async () => {
+    jest.spyOn((apiClient as any).client, 'post').mockRejectedValue(networkError());
+
+    const res = await apiClient.register({
+      email: 'new-user@example.com',
+      password: 'password123',
+      full_name: 'New User',
+    });
+
+    expect(res.data.access_token).toBe(TRUSTED_DEMO_TOKEN);
+    expect(apiClient.isDemoSession()).toBe(true);
+  });
+
+  it('does not mark a genuine backend login as a demo session', async () => {
+    jest.spyOn((apiClient as any).client, 'post').mockResolvedValue({
+      data: {
+        access_token: 'verified-prod-jwt-token',
+        token_type: 'bearer',
+        user: { id: 5, email: 'user@example.com', full_name: 'User', is_active: true, is_superuser: false },
+      },
+    });
+
+    await apiClient.login({ email: 'user@example.com', password: 'password123' });
+
+    expect(apiClient.isDemoSession()).toBe(false);
+  });
+});

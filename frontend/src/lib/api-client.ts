@@ -271,9 +271,11 @@ class ApiClient {
           is_active: true,
           is_superuser: false,
         };
-        const demoToken = 'demo-session-token-verified';
-        this.setToken(demoToken);
-        return { data: { ...simulatedUser, access_token: demoToken } } as any;
+        // Registration could not reach the API, so every subsequent ledger read
+        // returns DEMO_* records. Mark the session as demo so the UI and AI
+        // provenance label it as simulated instead of the user's real data.
+        this.setDemoSession(true);
+        return { data: { ...simulatedUser, access_token: TRUSTED_DEMO_TOKEN } } as any;
       }
       throw err;
     }
@@ -291,15 +293,13 @@ class ApiClient {
       return res;
     } catch (err) {
       if (data.email.toLowerCase() === 'demo@finroq.com' || this.isOfflineOrDemo(err)) {
-        const isDemo = data.email.toLowerCase() === 'demo@finroq.com';
-        const demoToken = isDemo ? TRUSTED_DEMO_TOKEN : 'demo-session-token-verified';
-        if (isDemo) {
-          this.setDemoSession(true);
-        }
-        this.setToken(demoToken);
+        // The demo account, or any login while the API is unreachable, resolves to
+        // DEMO_* ledger data. It must be an explicit demo session so the UI does
+        // not present simulated records as the user's authenticated finances.
+        this.setDemoSession(true);
         return {
           data: {
-            access_token: demoToken,
+            access_token: TRUSTED_DEMO_TOKEN,
             token_type: 'bearer',
             user: DEMO_USER,
           },
@@ -325,8 +325,8 @@ class ApiClient {
       return res;
     } catch (err) {
       if (this.isOfflineOrDemo(err)) {
-        const demoToken = 'demo-google-token-verified';
-        this.setToken(demoToken);
+        this.setDemoSession(true);
+        const demoToken = TRUSTED_DEMO_TOKEN;
         const googleUser: User = {
           id: 77,
           email: cleanEmail,
@@ -381,8 +381,8 @@ class ApiClient {
       return res;
     } catch (err) {
       if (this.isOfflineOrDemo(err)) {
-        const demoToken = 'demo-otp-token-verified';
-        this.setToken(demoToken);
+        this.setDemoSession(true);
+        const demoToken = TRUSTED_DEMO_TOKEN;
         const otpUser: User = {
           id: 88,
           email: identifier.includes('@') ? identifier : `phone_${identifier.replace(/\D/g, '')}@otp.finroq.internal`,

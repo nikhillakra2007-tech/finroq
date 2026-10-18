@@ -1,6 +1,25 @@
 import pytest
+from decimal import Decimal
+from datetime import datetime, date
+from unittest.mock import AsyncMock, patch
 from httpx import AsyncClient
-from app.db.models import User
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import (
+    User,
+    Account,
+    AccountType,
+    Category,
+    CategoryType,
+    Transaction,
+    TransactionType,
+    TransactionStatus,
+    Budget,
+    RecurringTransaction,
+    RecurrenceFrequency,
+    RecurrenceStatus,
+)
+from app.features.ai.provider import AIProviderResult, OpenAIProvider
 
 
 @pytest.mark.asyncio
@@ -102,3 +121,238 @@ class TestAIChatAPI:
         assert detail["messages"][0]["role"] == "user"
         assert detail["messages"][0]["content"] == "Analyze my spending this month"
         assert detail["messages"][1]["role"] == "assistant"
+
+
+@pytest.mark.asyncio
+class TestAIChatAPIEndToEndScenarios:
+    async def _setup_finances(self, db_session: AsyncSession, user_id: str):
+        today = date.today()
+        acc = Account(
+            owner_id=user_id,
+            name="Salary Checking",
+            account_type=AccountType.CHECKING,
+            currency="INR",
+            initial_balance=Decimal("60000.00"),
+        )
+        db_session.add(acc)
+        await db_session.flush()
+
+        cat_dining = Category(name="Dining Out", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        cat_bills = Category(name="Internet & Utilities", category_type=CategoryType.EXPENSE, owner_id=user_id)
+        db_session.add_all([cat_dining, cat_bills])
+        await db_session.flush()
+
+        # Spent 15,000 this month
+        t = Transaction(
+            owner_id=user_id,
+            account_id=acc.id,
+            category_id=cat_dining.id,
+            amount=Decimal("15000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            transaction_date=datetime(today.year, today.month, 10, 14, 0),
+            description="Weekend Dinners",
+        )
+        db_session.add(t)
+
+        # Budget of 25,000
+        b = Budget(
+            owner_id=user_id,
+            category_id=cat_dining.id,
+            allocated_amount=Decimal("25000.00"),
+            budget_year=today.year,
+            budget_month=today.month,
+        )
+        db_session.add(b)
+
+        # Recurring bill 2,000
+        r = RecurringTransaction(
+            owner_id=user_id,
+            account_id=acc.id,
+            category_id=cat_bills.id,
+            description="Fiber Internet 500Mbps",
+            amount=Decimal("2000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            frequency=RecurrenceFrequency.MONTHLY,
+            status=RecurrenceStatus.ACTIVE,
+            start_date=today,
+            next_occurrence=datetime(today.year, today.month, 25, 9, 0),
+        )
+        db_session.add(r)
+        await db_session.flush()
+
+    async def test_scenario_a_spending_question_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        await self._setup_finances(db_session, str(test_user.id))
+
+        mock_result = AIProviderResult(
+            content="Based on your ledger, your total expenses this month are ₹15,000.00.",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+            prompt_tokens=120,
+            completion_tokens=25,
+            total_tokens=145,
+            duration_ms=45,
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "How much did I spend this month?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert data["is_live_ai"] is True
+            assert "₹15,000.00" in data["message"]
+            assert any(t["tool"] == "get_financial_summary" for t in data["tools_executed"])
+            assert data["structured_data"] is not None
+            assert data["structured_data"]["total_expenses"] == "15000.00"
+
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "VERIFIED FINANCIAL CONTEXT" in passed_messages[-1]["content"]
+            assert "Tool: get_financial_summary" in passed_messages[-1]["content"]
+
+    async def test_scenario_b_budget_question_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        await self._setup_finances(db_session, str(test_user.id))
+
+        mock_result = AIProviderResult(
+            content="You have spent ₹15,000.00 of your ₹25,000.00 budget and are within your limit.",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "Am I over budget?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert any(t["tool"] == "get_budget_status" for t in data["tools_executed"])
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "Tool: get_budget_status" in passed_messages[-1]["content"]
+            assert "25000.00" in passed_messages[-1]["content"]
+
+    async def test_scenario_c_upcoming_bills_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        await self._setup_finances(db_session, str(test_user.id))
+
+        mock_result = AIProviderResult(
+            content="Your upcoming bill is Fiber Internet 500Mbps for ₹2,000.00.",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "What bills are coming up?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert any(t["tool"] == "get_upcoming_bills" for t in data["tools_executed"])
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "Tool: get_upcoming_bills" in passed_messages[-1]["content"]
+            assert "Fiber Internet 500Mbps" in passed_messages[-1]["content"]
+
+    async def test_scenario_d_purchase_affordability_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        await self._setup_finances(db_session, str(test_user.id))
+
+        mock_result = AIProviderResult(
+            content="A ₹15,000 purchase is comfortably affordable.",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "Can I afford a ₹15,000 purchase?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert any(t["tool"] == "calculate_purchase_affordability" for t in data["tools_executed"])
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "Tool: calculate_purchase_affordability" in passed_messages[-1]["content"]
+            assert "15000.0" in passed_messages[-1]["content"]
+
+            # Safe skip when unquantified
+            mock_run.reset_mock()
+            res_vague = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "Can I afford a new car?"},
+                headers=auth_headers,
+            )
+            assert res_vague.status_code == 200
+            passed_vague = mock_run.call_args.kwargs["messages"]
+            assert "calculate_purchase_affordability" not in passed_vague[-1]["content"]
+
+    async def test_scenario_e_savings_scenario_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        await self._setup_finances(db_session, str(test_user.id))
+
+        mock_result = AIProviderResult(
+            content="Cutting dining by 20% will save ₹3,000.00 monthly.",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "What if I cut dining by 20%?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert any(t["tool"] == "calculate_savings_scenario" for t in data["tools_executed"])
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "Tool: calculate_savings_scenario" in passed_messages[-1]["content"]
+            assert "20.0" in passed_messages[-1]["content"]
+
+    async def test_scenario_f_unrelated_question_end_to_end(
+        self, async_client: AsyncClient, auth_headers: dict, test_user: User, db_session: AsyncSession
+    ):
+        mock_result = AIProviderResult(
+            content="Hello! I am your Finroq financial assistant. How can I assist you today?",
+            is_live_ai=True,
+            model_used="gpt-4o-mini",
+            tool_calls_executed=[],
+        )
+
+        with patch.object(OpenAIProvider, "run_chat", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = mock_result
+            res = await async_client.post(
+                "/api/v1/ai/chat",
+                json={"message": "Hi, how are you?"},
+                headers=auth_headers,
+            )
+            assert res.status_code == 200
+            data = res.json()
+            assert len(data["tools_executed"]) == 0
+            passed_messages = mock_run.call_args.kwargs["messages"]
+            assert "VERIFIED FINANCIAL CONTEXT" not in passed_messages[-1]["content"]
+

@@ -187,6 +187,40 @@ class TestTransactionService:
         updated = await service.update(created.id, TransactionUpdate(amount=Decimal('200.00')))
         assert updated.amount == Decimal('200.00')
 
+    async def test_update_transfer_destination_rejects_foreign_account(self, db_session, owner_id, setup_data):
+        account, _, _ = setup_data
+        destination = Account(owner_id=owner_id, name='Savings', account_type=AccountType.SAVINGS, currency='USD', initial_balance=Decimal('0.00'))
+        foreign = Account(owner_id='other-user', name='Foreign Savings', account_type=AccountType.SAVINGS, currency='USD', initial_balance=Decimal('0.00'))
+        db_session.add_all([destination, foreign])
+        await db_session.flush()
+
+        service = TransactionService(db_session, owner_id)
+        created = await service.create(TransactionCreate(
+            account_id=account.id, to_account_id=destination.id, amount=Decimal('100.00'),
+            currency='USD', transaction_type=TransactionType.TRANSFER, transaction_date=datetime.now()
+        ))
+
+        with pytest.raises(ValueError, match='Destination account not found'):
+            await service.update(created.id, TransactionUpdate(to_account_id=foreign.id))
+
+        unchanged = await service.get_by_id(created.id)
+        assert unchanged.to_account_id == destination.id
+
+    async def test_update_rejects_self_transfer(self, db_session, owner_id, setup_data):
+        account, _, _ = setup_data
+        destination = Account(owner_id=owner_id, name='Savings 2', account_type=AccountType.SAVINGS, currency='USD', initial_balance=Decimal('0.00'))
+        db_session.add(destination)
+        await db_session.flush()
+
+        service = TransactionService(db_session, owner_id)
+        created = await service.create(TransactionCreate(
+            account_id=account.id, to_account_id=destination.id, amount=Decimal('50.00'),
+            currency='USD', transaction_type=TransactionType.TRANSFER, transaction_date=datetime.now()
+        ))
+
+        with pytest.raises(ValueError, match='must be different'):
+            await service.update(created.id, TransactionUpdate(to_account_id=account.id))
+
     async def test_delete_transaction(self, service, setup_data):
         account, cat_income, _ = setup_data
         created = await service.create(TransactionCreate(

@@ -5,8 +5,8 @@
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.4.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
-![Pytest Suite](https://img.shields.io/badge/Pytest-194%2F194%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-58%2F58%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Pytest Suite](https://img.shields.io/badge/Pytest-214%2F214%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-61%2F61%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -291,8 +291,8 @@ Every test and validation check passes with 100% compliance:
 
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
-| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **194/194 passed (12 AI Tools + Auth + Double Entry)** | ✅ PASS |
-| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **58/58 passed across all suites** | ✅ PASS |
+| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **214/214 passed (Verified Financial Context + 12 AI Tools + Auth + Double Entry)** | ✅ PASS |
+| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **61/61 passed across all suites (Offline Demo Guard + AI Fallback + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
 | **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |
