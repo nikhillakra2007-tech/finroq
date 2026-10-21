@@ -405,6 +405,7 @@ export function TransactionList() {
         onClose={() => setIsImportOpen(false)}
         onSuccess={fetchData}
         accounts={accounts}
+        categories={categories}
       />
     </div>
   );

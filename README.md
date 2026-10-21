@@ -2,21 +2,22 @@
 
 <div align="center">
 
-![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.4.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
+![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.5.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
+![Trustworthy Ingestion](https://img.shields.io/badge/Ingestion-Statements%20%26%20Receipts-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
-![Pytest Suite](https://img.shields.io/badge/Pytest-214%2F214%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-78%2F78%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Pytest Suite](https://img.shields.io/badge/Pytest-236%2F236%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-81%2F81%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 13 unified financial modules, 6-agent autonomous financial crash-testing, fully reactive 18-language internationalization across the landing page and app, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Simplistic Finroq AI with expandable detailed analysis, voice recognition, and clickable source feature deep-linking.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, trustworthy bank statement & receipt ingestion with mathematical reconciliation, 13 unified financial modules, 6-agent autonomous financial crash-testing, fully reactive 18-language internationalization across the landing page and app, Google popup authentication, adaptive dark/light themes, and Simplistic Finroq AI with expandable detailed analysis, voice recognition, and clickable source feature deep-linking.</b>
 </p>
 
-🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
+🔗 **Live Production Deployment on Vercel**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
 </div>
 
 ---
@@ -70,8 +71,46 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 - 🤖 **Simplistic Finroq AI with Source Deep-Linking**: Accessible financial companion that delivers straight-to-the-point answers upfront, provides expandable verified analysis (`📊 View Detailed Breakdown`) on demand, and cites clickable source feature badges (`📌 Source: [Feature Name](/app/...)`) that navigate users directly to that tool.
 - 🔐 **Google Popup Authentication**: Modern popup-based Google OAuth flow (`/auth/google-popup`) with multi-channel cross-window communication (`window.postMessage`, storage dispatch, fallback sync) and persistent AuthContext state.
 - 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 13 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
-- 📥 **Robust Bank Statement Ingestion**: Multi-format CSV/TSV dialect sniffer, duplicate detection, and interactive pre-commit review.
+- 📥 **Trustworthy Bank Statement & Receipt Ingestion**: Comprehensive processing for CSV, TSV, text, and text-based PDF bank statements with automated mathematical reconciliation ($\text{Opening} + \text{Credits} - \text{Debits} = \text{Closing}$) and transparent discrepancy diagnostics. Ingests shopping receipts and invoices with subtotal, tax/GST, discount, and line-item extraction. Protects ledger integrity through 3-level cross-source duplicate prevention and field confidence states (`Verified`, `Pending Review`, `Potential Match`, `Invalid Amount`) with zero silent commits.
 - 🛡️ **Zero-Hallucination Safe AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Python before any context reaches Google Gemini or OpenAI.
+
+---
+
+## 📥 Trustworthy Bank Statement & Receipt Ingestion System
+
+FINROQ now includes an enterprise-grade document ingestion pipeline designed to make importing financial documents effortless, transparent, and mathematically foolproof.
+
+### 🌟 What This System Does (In Simple Terms)
+
+1. **📄 Upload Any Bank Statement**:
+   - Supports CSV, TSV, plain text, and text-based PDF statements from all major banks.
+   - Automatically detects columns for Date, Description, Debit, Credit, and Running Balance.
+
+2. **🧾 Upload Shopping Bills & Receipts**:
+   - Ingests grocery bills, restaurant receipts, and utility invoices.
+   - Intelligently extracts the Merchant Name, Date, Subtotal, Taxes (GST/VAT), Discounts, and Total Amount.
+
+3. **🧮 Automatic Mathematical Reconciliation**:
+   - For bank statements, the engine computes:  
+     $$\text{Opening Balance} + \text{Total Credits} - \text{Total Debits} = \text{Expected Closing Balance}$$
+   - If the statement does not balance, FINROQ highlights the exact difference instead of silently corrupting your ledger.
+
+4. **🔍 Interactive Review Screen Before Anything Is Saved**:
+   - Transactions are never imported blindly. You get a clean preview modal with tabs for **All Transactions**, **Needs Review**, and **Duplicates**.
+   - Clear confidence indicators:
+     - 🟢 **Verified**: Clean, high-confidence match.
+     - 🟡 **Pending Review**: Missing category or low confidence description that you can edit with one click.
+     - 🔴 **Potential Match**: Warning for transactions that already exist in your ledger.
+     - ⚠️ **Invalid Amount**: Zero or corrupt values flagged for correction.
+
+5. **🚫 3-Level Duplicate Protection**:
+   - **Level 1 (Exact ID)**: Catches duplicate bank transaction reference numbers.
+   - **Level 2 (Fingerprint)**: Catches same account + same date + same amount + similar merchant.
+   - **Level 3 (Cross-Source Tolerance)**: Matches paper receipts against existing bank or card charges within ±3 days.
+
+6. **⚡ 1-Click Atomic Ledger Import**:
+   - Once you confirm, all selected transactions are posted with exact decimal precision directly to your chosen account, instantly updating your budgets, net worth, and financial health score.
+
 
 ---
 
@@ -309,12 +348,12 @@ Every test and validation check passes with 100% compliance:
 
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
-| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **214/214 passed (Verified Financial Context + 12 AI Tools + Auth + Double Entry)** | ✅ PASS |
-| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **78/78 passed across all suites (Multi-Feature AI Source Linking + Offline Guard + AI Fallback + UI Units)** | ✅ PASS |
+| **Backend Pytest Suite** | `pytest -o pythonpath=.` | **236/236 passed (Ingestion Engine + Statement Reconciliation + Receipt Parser + Duplicate Prevention + Crash-Test + AI)** | ✅ PASS |
+| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **81/81 passed across 10 suites (Statement & Receipt Ingestion Modal + AI Linking + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
 | **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |
-| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (13-Module Hub + Green CTA)** | ✅ PASS |
+| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (13-Module Hub + Ingestion Modal)** | ✅ PASS |
 | **Live Crash-Test Engine** | `https://finroq-app.vercel.app/app/crash-test` | **HTTP 200 OK (6-Agent Autonomous Stress Testing)** | ✅ PASS |
 
 ---

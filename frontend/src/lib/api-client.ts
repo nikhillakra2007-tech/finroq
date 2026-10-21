@@ -29,6 +29,10 @@ import type {
   CrashTestRunRequest,
   RecommendationDecisionRequest,
   CrashTestEvaluationBenchmark,
+  IngestionSessionResponse,
+  IngestionItemUpdateRequest,
+  IngestionConfirmRequest,
+  IngestionConfirmResponse,
 } from './api-types';
 
 const resolveApiBaseUrl = (): string => {
@@ -725,6 +729,199 @@ class ApiClient {
       throw err;
     }
   }
+
+  // Document & Receipt Ingestion
+  async uploadDocument(accountId: number, file: File, documentType?: string) {
+    try {
+      const formData = new FormData();
+      formData.append('account_id', String(accountId));
+      formData.append('file', file);
+      if (documentType) {
+        formData.append('document_type', documentType);
+      }
+      return await this.client.post<IngestionSessionResponse>('/ingestion/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        const isReceipt = documentType === 'receipt' || file.type.startsWith('image/');
+        return {
+          data: {
+            session_id: 'demo-session-123',
+            owner_id: '1',
+            account_id: accountId,
+            account_name: 'Primary Checking',
+            filename: file.name,
+            file_type: isReceipt ? 'image/jpeg' : 'csv',
+            detected_document_type: isReceipt ? 'receipt' : 'bank_statement',
+            status: 'needs_review',
+            total_items: isReceipt ? 1 : 3,
+            valid_items: isReceipt ? 1 : 2,
+            uncertain_items: 0,
+            duplicate_items: isReceipt ? 0 : 1,
+            reconciliation: isReceipt
+              ? null
+              : {
+                  can_reconcile: true,
+                  opening_balance: '10000.00',
+                  closing_balance: '84150.00',
+                  calculated_closing_balance: '84150.00',
+                  total_credits: '75000.00',
+                  total_debits: '850.00',
+                  is_reconciled: true,
+                  discrepancy_amount: null,
+                  explanation: 'Statement reconciled: Opening (10000.00) + Credits (75000.00) - Debits (850.00) = Closing (84150.00).',
+                },
+            items: isReceipt
+              ? [
+                  {
+                    id: 'item-receipt-1',
+                    row_index: 1,
+                    transaction_date: '2026-10-18',
+                    date_state: 'verified',
+                    description: "Nature's Basket Organic Groceries",
+                    merchant: "Nature's Basket",
+                    amount: '546.00',
+                    amount_state: 'verified',
+                    currency: 'INR',
+                    currency_state: 'verified',
+                    transaction_type: 'expense',
+                    suggested_category_id: 2,
+                    suggested_category_name: 'Groceries & Food',
+                    category_confidence: 0.95,
+                    duplicate_status: 'none',
+                    is_valid: true,
+                    is_selected_for_import: true,
+                    tax_amount: '26.00',
+                    discount_amount: '50.00',
+                    receipt_number: 'NB-2026-9812',
+                    line_items: [
+                      { description: 'Organic Milk', quantity: 2, unit_price: '60.00', total_price: '120.00' },
+                      { description: 'Almond Butter', quantity: 1, unit_price: '450.00', total_price: '450.00' },
+                    ],
+                  },
+                ]
+              : [
+                  {
+                    id: 'item-statement-1',
+                    row_index: 1,
+                    transaction_date: '2026-10-18',
+                    date_state: 'verified',
+                    description: 'Salary Direct Deposit',
+                    amount: '75000.00',
+                    amount_state: 'verified',
+                    currency: 'INR',
+                    currency_state: 'verified',
+                    transaction_type: 'income',
+                    suggested_category_id: 1,
+                    suggested_category_name: 'Salary & Compensation',
+                    category_confidence: 0.95,
+                    duplicate_status: 'none',
+                    is_valid: true,
+                    is_selected_for_import: true,
+                    line_items: [],
+                  },
+                  {
+                    id: 'item-statement-2',
+                    row_index: 2,
+                    transaction_date: '2026-10-19',
+                    date_state: 'verified',
+                    description: 'Zepto Online Groceries',
+                    amount: '850.00',
+                    amount_state: 'verified',
+                    currency: 'INR',
+                    currency_state: 'verified',
+                    transaction_type: 'expense',
+                    suggested_category_id: 2,
+                    suggested_category_name: 'Groceries & Food',
+                    category_confidence: 0.95,
+                    duplicate_status: 'none',
+                    is_valid: true,
+                    is_selected_for_import: true,
+                    line_items: [],
+                  },
+                  {
+                    id: 'item-statement-3',
+                    row_index: 3,
+                    transaction_date: '2026-10-19',
+                    date_state: 'verified',
+                    description: 'UPI/ABC SUPERMARKET',
+                    amount: '850.00',
+                    amount_state: 'verified',
+                    currency: 'INR',
+                    currency_state: 'verified',
+                    transaction_type: 'expense',
+                    suggested_category_id: 2,
+                    suggested_category_name: 'Groceries & Food',
+                    category_confidence: 0.9,
+                    duplicate_status: 'strong_duplicate',
+                    duplicate_reason: 'Identical amount and merchant matching manual ledger entry.',
+                    is_valid: true,
+                    is_selected_for_import: false,
+                    line_items: [],
+                  },
+                ],
+            errors: [],
+            created_at: new Date().toISOString(),
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
+  async getIngestionSession(sessionId: string) {
+    try {
+      return await this.client.get<IngestionSessionResponse>(`/ingestion/sessions/${sessionId}`);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: { session_id: sessionId } } as any;
+      }
+      throw err;
+    }
+  }
+
+  async updateIngestionItem(sessionId: string, itemId: string, data: IngestionItemUpdateRequest) {
+    try {
+      return await this.client.patch<IngestionSessionResponse>(`/ingestion/sessions/${sessionId}/items/${itemId}`, data);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: { session_id: sessionId } } as any;
+      }
+      throw err;
+    }
+  }
+
+  async confirmIngestionSession(sessionId: string, data: IngestionConfirmRequest) {
+    try {
+      return await this.client.post<IngestionConfirmResponse>(`/ingestion/sessions/${sessionId}/confirm`, data);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return {
+          data: {
+            session_id: sessionId,
+            imported_count: (data.selected_item_ids || [1]).length,
+            skipped_duplicate_count: 1,
+            account_id: data.account_id,
+            message: 'Transactions successfully imported into verified financial ledger.',
+          },
+        } as any;
+      }
+      throw err;
+    }
+  }
+
+  async cancelIngestionSession(sessionId: string) {
+    try {
+      return await this.client.post<{ session_id: string; status: string; message: string }>(`/ingestion/sessions/${sessionId}/cancel`);
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: { session_id: sessionId, status: 'cancelled' } } as any;
+      }
+      throw err;
+    }
+  }
+
 
   // Categories
   async listCategories(params?: { category_type?: string; include_system?: boolean }) {

@@ -350,6 +350,108 @@ export interface StatementImportConfirmResponse {
   message: string;
 }
 
+export type DocumentClassification = 'bank_statement' | 'receipt' | 'invoice' | 'unsupported' | 'unreadable';
+export type FieldConfidenceState = 'verified' | 'extracted' | 'uncertain' | 'missing' | 'invalid';
+export type DuplicateStatus = 'none' | 'exact_duplicate' | 'strong_duplicate' | 'possible_match';
+export type IngestionSessionStatus = 'uploaded' | 'processing' | 'needs_review' | 'ready_for_confirmation' | 'confirmed' | 'cancelled' | 'failed';
+
+export interface ReceiptLineItem {
+  description: string;
+  quantity?: string | number | null;
+  unit_price?: string | number | null;
+  total_price?: string | number | null;
+}
+
+export interface StatementReconciliation {
+  can_reconcile: boolean;
+  opening_balance?: string | number | null;
+  closing_balance?: string | number | null;
+  calculated_closing_balance?: string | number | null;
+  total_credits: string | number;
+  total_debits: string | number;
+  is_reconciled: boolean;
+  discrepancy_amount?: string | number | null;
+  explanation?: string | null;
+}
+
+export interface IngestionItem {
+  id: string;
+  row_index: number;
+  transaction_date: string | null;
+  raw_date?: string | null;
+  date_state: FieldConfidenceState;
+  description: string;
+  raw_description?: string | null;
+  amount: string | number;
+  raw_amount?: string | null;
+  amount_state: FieldConfidenceState;
+  currency: string;
+  currency_state: FieldConfidenceState;
+  transaction_type: string;
+  suggested_category_id?: number | null;
+  suggested_category_name?: string | null;
+  category_confidence: number;
+  duplicate_status: DuplicateStatus;
+  duplicate_reason?: string | null;
+  matched_transaction_id?: number | null;
+  is_valid: boolean;
+  validation_error?: string | null;
+  is_selected_for_import: boolean;
+  merchant?: string | null;
+  tax_amount?: string | number | null;
+  discount_amount?: string | number | null;
+  tip_amount?: string | number | null;
+  payment_method?: string | null;
+  receipt_number?: string | null;
+  line_items: ReceiptLineItem[];
+}
+
+export interface IngestionSessionResponse {
+  session_id: string;
+  owner_id: string;
+  account_id: number;
+  account_name: string;
+  filename: string;
+  file_type: string;
+  detected_document_type: DocumentClassification;
+  status: IngestionSessionStatus;
+  masked_account_number?: string | null;
+  statement_start_date?: string | null;
+  statement_end_date?: string | null;
+  reconciliation?: StatementReconciliation | null;
+  total_items: number;
+  valid_items: number;
+  uncertain_items: number;
+  duplicate_items: number;
+  items: IngestionItem[];
+  errors: string[];
+  created_at: string;
+}
+
+export interface IngestionItemUpdateRequest {
+  transaction_date?: string | null;
+  description?: string | null;
+  amount?: string | number | null;
+  transaction_type?: string | null;
+  category_id?: number | null;
+  is_selected_for_import?: boolean | null;
+}
+
+export interface IngestionConfirmRequest {
+  account_id: number;
+  idempotency_key: string;
+  selected_item_ids?: string[] | null;
+  item_overrides?: Record<string, IngestionItemUpdateRequest> | null;
+}
+
+export interface IngestionConfirmResponse {
+  session_id: string;
+  imported_count: number;
+  skipped_duplicate_count: number;
+  account_id: number;
+  message: string;
+}
+
 export type ReadinessTier = 'limited_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';
 export type InsightType = 'recurring_subscription' | 'dormant_recurring' | 'excessive_category_spend' | 'recurring_cost_inflation' | 'duplicate_charge_leakage' | 'annual_subscription_evaluation';
 export type InsightStatus = 'insufficient_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';

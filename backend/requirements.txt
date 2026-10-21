@@ -16,3 +16,5 @@ python-jose[cryptography]==3.5.0
 passlib[argon2]==1.7.4
 bcrypt==5.0.0
 openai>=1.30.0
+pypdf>=5.0.0
+pillow>=10.0.0
