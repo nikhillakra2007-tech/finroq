@@ -6,14 +6,14 @@
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-214%2F214%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-61%2F61%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-78%2F78%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 13 unified financial modules, 6-agent autonomous financial crash-testing, 18-language internationalization, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Floating Finroq AI personal financial intelligence agent with voice recognition.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, 13 unified financial modules, 6-agent autonomous financial crash-testing, fully reactive 18-language internationalization across the landing page and app, Google popup authentication, adaptive dark/light themes, bank statement ingestion, and Simplistic Finroq AI with expandable detailed analysis, voice recognition, and clickable source feature deep-linking.</b>
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
@@ -66,9 +66,9 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 
 - ⚖️ **Arbitrary-Precision Decimal Arithmetic**: Powered by Python `Decimal` and database `NUMERIC(14, 2)`. Completely eliminates IEEE 754 floating-point drift across currency conversions, allocations, and ledger entries.
 - 🎨 **Adaptive Ivory & Forest Theming**: Warm Ivory (`#F7F7F0`) light mode with deep contrast typography and deep forest (`#0D1411`) dark mode with zero-FOUC pre-hydration scripts and system-preference detection.
-- 🌍 **Comprehensive 18-Language Internationalization**: Full prototype coverage for 18 global languages (English, Hindi, Bengali, Gujarati, Marathi, Tamil, Telugu, Kannada, Malayalam, Punjabi, Odia, Assamese, Urdu, Spanish, French, German, Japanese, Chinese) with responsive typography protection that eliminates text overflow.
+- 🌍 **Fully Reactive 18-Language Internationalization**: Complete dynamic translation coverage for 18 global languages across both the public landing page (Hero, Terminal, Bento Grid, Solvency Simulator, Matrix, Trust, FAQs, and Finale CTA) and the in-app workspaces (English, Hindi, Bengali, Gujarati, Marathi, Tamil, Telugu, Kannada, Spanish, French, German, Mandarin, Japanese, Arabic, Russian, Portuguese, Korean, Italian).
+- 🤖 **Simplistic Finroq AI with Source Deep-Linking**: Accessible financial companion that delivers straight-to-the-point answers upfront, provides expandable verified analysis (`📊 View Detailed Breakdown`) on demand, and cites clickable source feature badges (`📌 Source: [Feature Name](/app/...)`) that navigate users directly to that tool.
 - 🔐 **Google Popup Authentication**: Modern popup-based Google OAuth flow (`/auth/google-popup`) with multi-channel cross-window communication (`window.postMessage`, storage dispatch, fallback sync) and persistent AuthContext state.
-- 🤖 **Floating Finroq AI Financial Companion**: Non-intrusive floating launcher on the bottom-right corner of both landing and workspace pages with voice recognition and automatic response language adaptation.
 - 🔄 **Unified Decimal Ledger Model**: Single authoritative source of truth. All 13 modules read completed transactions, live accounts, and net-worth metrics directly from the shared financial core.
 - 📥 **Robust Bank Statement Ingestion**: Multi-format CSV/TSV dialect sniffer, duplicate detection, and interactive pre-commit review.
 - 🛡️ **Zero-Hallucination Safe AI Pipeline**: Strict 3-layer architecture where authoritative numbers are deterministically computed in Python before any context reaches Google Gemini or OpenAI.
@@ -265,6 +265,24 @@ flowchart TD
 
 ---
 
+## 🤖 Simplistic Finroq AI: Direct Answers with Deep Breakdown & Feature Linking
+
+Finroq AI is engineered to eliminate financial overwhelm. Instead of burying users in long walls of generic advice or floating-point approximations, it operates under three fundamental UX rules:
+
+1. **To-The-Point Simplistic Summary**:
+   - Every answer begins with a concise, crystal-clear 1–2 sentence direct verdict or summary.
+   - For budget inquiries, spend diagnostics, or affordability checks, users get their bottom-line figure immediately.
+2. **Expandable Detailed Analysis (`📊 View Detailed Breakdown`)**:
+   - Deeper calculations, category itemizations, math steps, and buffer metrics are neatly tucked behind an interactive toggle.
+   - Users who want everyday simplicity see just the essential verdict, while power users and engineers can expand the full analytical ledger breakdown on demand.
+3. **Interactive Source Feature Deep-Linking**:
+   - Whenever Finroq AI provides guidance, it explicitly attributes the exact engine powering that conclusion (e.g. `📌 Source: Daily Budgeting`).
+   - Citing features as interactive badges lets users jump directly to that engine in the live app (`/app/budgeting`, `/app/expense-tracking`, `/app/crash-test`, `/app/pre-spend-check`, etc.) with a single click.
+4. **Complete 18-Language & Speech Parity**:
+   - Full support for English, Hindi, Bengali, Gujarati, Marathi, Tamil, Telugu, Kannada, Spanish, French, German, Mandarin, Japanese, Arabic, Russian, Portuguese, Korean, and Italian with voice speech recognition in every native locale.
+
+---
+
 ## 🧩 13 Unified Financial Modules
 
 | # | Financial Engine | Route | Core Mathematical & Architectural Function |
@@ -292,7 +310,7 @@ Every test and validation check passes with 100% compliance:
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
 | **Backend Pytest Suite** | `pytest -o pythonpath=.` | **214/214 passed (Verified Financial Context + 12 AI Tools + Auth + Double Entry)** | ✅ PASS |
-| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **61/61 passed across all suites (Offline Demo Guard + AI Fallback + UI Units)** | ✅ PASS |
+| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **78/78 passed across all suites (Multi-Feature AI Source Linking + Offline Guard + AI Fallback + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
 | **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |

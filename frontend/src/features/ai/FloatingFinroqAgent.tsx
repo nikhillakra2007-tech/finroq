@@ -8,6 +8,7 @@ import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem, PublicAIChatResponse } from '@/lib/api-types';
 import { resolveAIProvenance } from '@/lib/provenance';
 import { StructuredResults } from './StructuredResults';
+import { AIMessageRenderer } from './AIMessageRenderer';
 import {
   Sparkles,
   Send,
@@ -774,7 +775,7 @@ export function FloatingFinroqAgent() {
                           </div>
                         </div>
                       )}
-                      <div className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{m.content}</div>
+                      <AIMessageRenderer content={m.content} isUser={isUser} isGuestMode={isGuestMode} />
 
                       {/* Render Structured Results Card if Present */}
                       {m.structured_data && (

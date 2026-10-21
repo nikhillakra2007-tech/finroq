@@ -7,6 +7,7 @@ import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem } from '@/lib/api-types';
 import { resolveAIProvenance } from '@/lib/provenance';
 import { StructuredResults } from './StructuredResults';
+import { AIMessageRenderer } from './AIMessageRenderer';
 import {
   Sparkles,
   Send,
@@ -609,7 +610,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
                     </div>
                   )}
 
-                  <div className="whitespace-pre-wrap">{m.content}</div>
+                  <AIMessageRenderer content={m.content} isUser={isUser} isGuestMode={false} />
 
                   {/* Render Structured Results Card if Present */}
                   {m.structured_data && (

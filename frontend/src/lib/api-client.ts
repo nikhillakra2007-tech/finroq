@@ -1120,7 +1120,7 @@ class ApiClient {
       // Offline/network failure for authenticated non-demo users MUST throw so the UI presents an honest error.
       if (this.isDemoSession()) {
         const q = data.message.toLowerCase();
-        let reply = "I analyzed your demo ledger data. Your simulated income is ₹1,50,000.00 and expenses are ₹42,800.00, resulting in a simulated net cash flow of ₹1,07,200.00.";
+        let reply = "Your simulated net cash flow is ₹1,07,200.00 this month, with ₹1,50,000.00 income and ₹42,800.00 expenses.\n\n### 🔍 Detailed Analysis\n• Monthly Income: ₹1,50,000.00\n• Total Recorded Outflow: ₹42,800.00\n• Net Cash Surplus: ₹1,07,200.00\n• Available Liquid Cash: ₹75,000.00\n• Top Spending Vector: Housing & Rent (35%)\n\n📌 Source: [Expense Tracking](/app/expense-tracking)";
         let structured: any = {
           total_income: "150000.00",
           total_expenses: "42800.00",
@@ -1144,8 +1144,8 @@ class ApiClient {
           const isAffordable = purchaseVal <= netLiquidity;
           const rating = purchaseVal <= netLiquidity * 0.5 ? 'Comfortably Affordable' : isAffordable ? 'Feasible with Caution' : 'Exceeds Free Reserves';
           reply = isAffordable
-            ? `Based on your simulated demo balance of ₹${availableBuffer.toLocaleString('en-IN')}.00 and upcoming demo bills of ₹${bills.toLocaleString('en-IN')}.00, a ₹${purchaseVal.toLocaleString('en-IN')} purchase appears affordable in this sample ledger (leaves ₹${(netLiquidity - purchaseVal).toLocaleString('en-IN')} safe cushion).`
-            : `Based on your simulated demo balance of ₹${availableBuffer.toLocaleString('en-IN')}.00 and upcoming demo bills of ₹${bills.toLocaleString('en-IN')}.00, a ₹${purchaseVal.toLocaleString('en-IN')} purchase exceeds your immediate safe liquidity cushion of ₹${netLiquidity.toLocaleString('en-IN')}.`;
+            ? `Yes, you can afford ₹${purchaseVal.toLocaleString('en-IN')}. It leaves you with ₹${(netLiquidity - purchaseVal).toLocaleString('en-IN')} in safe reserves.\n\n### 🔍 Detailed Analysis\n• Purchase Cost: ₹${purchaseVal.toLocaleString('en-IN')}.00\n• Available Liquid Cash: ₹${availableBuffer.toLocaleString('en-IN')}.00\n• Upcoming Bills Reserved: ₹${bills.toLocaleString('en-IN')}.00\n• Remaining Buffer: ₹${(netLiquidity - purchaseVal).toLocaleString('en-IN')}.00\n• Affordability Rating: ${rating}\n\n📌 Source: [Pre-Spend Check](/app/pre-spend-check)`
+            : `No, a ₹${purchaseVal.toLocaleString('en-IN')} purchase is not recommended right now as it exceeds your free liquidity by ₹${(purchaseVal - netLiquidity).toLocaleString('en-IN')}.\n\n### 🔍 Detailed Analysis\n• Purchase Cost: ₹${purchaseVal.toLocaleString('en-IN')}.00\n• Available Liquid Cash: ₹${availableBuffer.toLocaleString('en-IN')}.00\n• Upcoming Bills Reserved: ₹${bills.toLocaleString('en-IN')}.00\n• Current Free Reserves: ₹${netLiquidity.toLocaleString('en-IN')}.00\n• Shortfall: ₹${(purchaseVal - netLiquidity).toLocaleString('en-IN')}.00\n\n📌 Source: [Pre-Spend Check](/app/pre-spend-check)`;
           structured = {
             available_liquid_cash: String(availableBuffer),
             upcoming_known_bills: String(bills),
@@ -1156,7 +1156,7 @@ class ApiClient {
             currency: "INR",
           };
         } else if (q.includes("save") || q.includes("saving")) {
-          reply = "In this demo ledger, discretionary spending is concentrated in Dining (₹6,500) and Entertainment (₹4,200). A 25% reduction would free up ₹2,675/month.";
+          reply = "You can save ₹2,675/month by cutting 25% from dining and entertainment.\n\n### 🔍 Detailed Analysis\n• Dining & Social Outings: ₹6,500.00\n• Entertainment & Subscriptions: ₹4,200.00\n• Monthly Discretionary Outflow: ₹10,700.00\n• 25% Reduction Target: ₹2,675.00/month\n• 1-Year Projected Savings: ₹32,100.00\n\n📌 Source: [Goal Timeline](/app/goal-timeline)";
           structured = {
             monthly_target: "5000.00",
             annual_savings_impact: "60000.00",
@@ -1166,7 +1166,7 @@ class ApiClient {
             currency: "INR",
           };
         } else if (q.includes("budget") || q.includes("exceed") || q.includes("overspend")) {
-          reply = "In this demo dataset, budget utilization is 74.2%, with 'Groceries & Food' overspent by ₹1,400.00 against its ₹10,000 limit.";
+          reply = "You are currently at 74.2% of your monthly budget. 'Groceries & Food' has overspent by ₹1,400.\n\n### 🔍 Detailed Analysis\n• Total Envelope Limit: ₹35,000.00\n• Total Spent So Far: ₹26,000.00 (74.2%)\n• Remaining Margin: ₹9,000.00\n• Overspent Envelope: Groceries & Food (₹11,400 spent vs ₹10,000 cap)\n• Pacing Verdict: Caution on Food, All Other Envelopes Healthy\n\n📌 Source: [Daily Budgeting](/app/budgeting)";
           structured = {
             total_allocated: "35000.00",
             total_spent: "26000.00",
@@ -1175,11 +1175,89 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("bill") || q.includes("recurring")) {
-          reply = "Demo upcoming commitments total ₹16,500.00: Rent (₹15,000 due 1st), Broadband (₹999 due 9th), Cloud Storage (₹500 due 15th).";
+        } else if (q.includes("bill") || q.includes("recurring") || q.includes("leak") || q.includes("subscription")) {
+          reply = "You have 3 recurring bills due this month totaling ₹16,500.00.\n\n### 🔍 Detailed Analysis\n• Rent & Maintenance: ₹15,000.00 (Due 1st)\n• High-Speed Broadband: ₹999.00 (Due 9th)\n• Cloud Backup VPS: ₹500.00 (Due 15th)\n• Cash Cushion Committed: ₹16,500.00\n\n📌 Source: [Spend Leak Detector](/app/spend-leak-detector)";
           structured = {
             total_active_bills_count: 3,
             upcoming_commitment_sum: "16500.00",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("crash") || q.includes("shock") || q.includes("stress") || q.includes("layoff")) {
+          reply = "Your finances survive 4 out of 6 severe crisis shocks with a 4.2-month reserve buffer.\n\n### 🔍 Detailed Analysis\n• Salary Interruption (90 Days): Passed (Liquid reserves hold)\n• Medical Emergency (₹2.5L Out-of-Pocket): Passed with budget rebalancing\n• Hyper-Inflation (+15% essentials): Passed with discretionary cut\n• Twin Shock (Job Loss + Illness): Deficit of ₹45,000 in Month 3\n• Recommended Fix: Boost emergency cushion by ₹50,000\n\n📌 Source: [Crash-Test Engine](/app/crash-test)";
+          structured = {
+            scenarios_tested: 6,
+            scenarios_passed: 4,
+            survival_buffer_months: 4.2,
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("cushion") || q.includes("emergency") || q.includes("runway")) {
+          reply = "Your emergency cushion holds ₹75,000.00, providing 1.75 months of essential expense runway.\n\n### 🔍 Detailed Analysis\n• Current Emergency Reserves: ₹75,000.00\n• Essential Monthly Burn: ₹42,800.00\n• Baseline Runway: 1.75 Months\n• 3-Month Target Fund: ₹1,28,400.00\n• Remaining Buffer Shortfall: ₹53,400.00\n\n📌 Source: [Emergency Cushion](/app/emergency-cushion)";
+          structured = {
+            current_cushion: "75000.00",
+            monthly_burn: "42800.00",
+            runway_months: 1.75,
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("net worth") || q.includes("asset") || q.includes("wealth") || q.includes("liability")) {
+          reply = "Your verified net worth stands at ₹12,45,000.00 across liquid cash, investments, and assets.\n\n### 🔍 Detailed Analysis\n• Cash & Bank Accounts: ₹1,82,200.00\n• Long-term Investments: ₹10,62,800.00\n• Total Gross Assets: ₹12,45,000.00\n• Total Liabilities & Loans: ₹0.00\n• Debt-to-Asset Ratio: 0.0%\n\n📌 Source: [Net Worth Tracker](/app/net-worth)";
+          structured = {
+            net_worth: "1245000.00",
+            total_assets: "1245000.00",
+            total_liabilities: "0.00",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("debt") || q.includes("loan") || q.includes("emi") || q.includes("interest")) {
+          reply = "You are currently 100% debt-free with zero active loans or credit liabilities.\n\n### 🔍 Detailed Analysis\n• Active Unsecured Loans: 0\n• Active Vehicle / Home Loans: 0\n• Outstanding Credit Card Principal: ₹0.00\n• Total Monthly EMI Obligation: ₹0.00\n• Debt Freedom Status: Pristine\n\n📌 Source: [Debt Watchdog](/app/debt-watchdog)";
+          structured = {
+            total_debt: "0.00",
+            monthly_emi_total: "0.00",
+            active_loans: 0,
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("credit") || q.includes("cibil") || q.includes("score")) {
+          reply = "Your estimated credit score is 782 with an excellent on-time payment track record.\n\n### 🔍 Detailed Analysis\n• Credit Score (Equifax/CIBIL Scale): 782 / 900 (Excellent)\n• Payment Punctuality: 100% on-time\n• Credit Utilization Ratio: 4.8% (Target < 30%)\n• Active Inquiries in last 6 months: 0\n\n📌 Source: [Credit Health](/app/credit-health)";
+          structured = {
+            credit_score: 782,
+            utilization_rate: "4.8%",
+            on_time_ratio: "100%",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("health") || q.includes("score") || q.includes("rating") || q.includes("grade")) {
+          reply = "Your holistic Financial Health Score is 84/100 (Grade: A- Strong Resilience).\n\n### 🔍 Detailed Analysis\n• Cash Flow Stability: 92/100\n• Savings Rate Ratio: 85/100\n• Debt Management: 100/100\n• Emergency Cushion Preparedness: 60/100 (Action area: boost to 3 months)\n• Overall Rating: Grade A- Strong\n\n📌 Source: [Financial Health Score](/app/financial-health)";
+          structured = {
+            health_score: 84,
+            grade: "A-",
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("split") || q.includes("share") || q.includes("roommate") || q.includes("owing")) {
+          reply = "You are currently owed ₹3,200.00 from 2 shared group expenses.\n\n### 🔍 Detailed Analysis\n• Goa Weekend Trip: ₹2,400.00 owed by Sarah\n• Dinner at Taj: ₹800.00 owed by Rahul\n• You Owe Others: ₹0.00\n• Net Receivable: ₹3,200.00\n\n📌 Source: [Expense Splitter](/app/splitter)";
+          structured = {
+            net_owed_to_you: "3200.00",
+            net_you_owe: "0.00",
+            open_splits_count: 2,
+            data_freshness: "Simulated Demo (Sample Ledger)",
+            is_simulated: true,
+            currency: "INR",
+          };
+        } else if (q.includes("guide") || q.includes("learn") || q.includes("education") || q.includes("how to")) {
+          reply = "Finroq provides 8 curated Money Guides covering budgeting, emergency funds, and debt elimination.\n\n### 🔍 Detailed Analysis\n• Recommended Guide 1: The Zero-Based Budgeting Playbook\n• Recommended Guide 2: Building Your 3-Month Emergency Cushion\n• Recommended Guide 3: The Debt Snowball vs Avalanche Method\n• Reading time: ~3 mins per guide\n\n📌 Source: [Money Guides](/app/money-guides)";
+          structured = {
+            guides_available: 8,
+            primary_topic: "Budgeting & Emergency Preparedness",
             data_freshness: "Simulated Demo (Sample Ledger)",
             is_simulated: true,
             currency: "INR",
@@ -1459,7 +1537,7 @@ class ApiClient {
               {
                 id: 2,
                 role: 'assistant',
-                content: '[Simulated Demo] In this sample demo ledger, recorded expenses total ₹42,800.00 across 14 transactions. Top categories: Housing & Rent (₹15,000, 35%), Groceries & Food (₹11,400, 26.6%), and Dining & Outings (₹6,500, 15.2%). Discretionary spending accounted for ₹16,400 (38.3% of total outflow).',
+                content: '[Simulated Demo] In this sample demo ledger, recorded expenses total ₹42,800.00 across 14 transactions.\n\n### 🔍 Detailed Analysis\n• Housing & Rent: ₹15,000.00 (35.0%)\n• Groceries & Food: ₹11,400.00 (26.6%)\n• Dining & Outings: ₹6,500.00 (15.2%)\n• Utilities & Bills: ₹5,700.00 (13.3%)\n• Discretionary Outflow: ₹16,400.00 (38.3% of total outflow)\n\n📌 Source: [Expense Tracking](/app/expense-tracking)',
                 is_live_ai: false,
                 model_used: 'finroq-demo-simulated',
                 created_at: new Date().toISOString(),

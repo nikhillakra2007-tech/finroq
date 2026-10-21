@@ -19,7 +19,7 @@ class GeminiResponse(BaseModel):
 
 class GeminiClient:
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None, timeout: Optional[float] = None):
-        self.api_key = api_key or settings.gemini_api_key
+        self.api_key = api_key if api_key is not None else settings.gemini_api_key
         self.model = model or settings.gemini_model
         self.timeout = timeout or settings.ai_request_timeout_seconds
 

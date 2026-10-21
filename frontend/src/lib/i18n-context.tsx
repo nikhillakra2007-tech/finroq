@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ALL_TRANSLATIONS } from './i18n-dictionary';
 import { SECTION_TRANSLATIONS } from './i18n-sections';
+import { LANDING_TRANSLATIONS } from './i18n-landing';
 
 export type Language =
   | 'en' // English
@@ -1017,6 +1018,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string, fallback?: string): string => {
+    // 0. Check landing page 18-language dictionary
+    const landLang = LANDING_TRANSLATIONS[language];
+    if (landLang && landLang[key]) {
+      return landLang[key];
+    }
     // 1. Check comprehensive 18-language section dictionary
     const secLang = SECTION_TRANSLATIONS[language];
     if (secLang && secLang[key]) {
