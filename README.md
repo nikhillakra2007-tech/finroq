@@ -7,7 +7,7 @@
 ![Trustworthy Ingestion](https://img.shields.io/badge/Ingestion-Statements%20%26%20Receipts-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
 ![Agentic Crash-Test](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
 ![Pytest Suite](https://img.shields.io/badge/Pytest-236%2F236%20Passed-247A50?style=for-the-badge&logo=pytest&logoColor=white)
-![Jest Tests](https://img.shields.io/badge/Jest-81%2F81%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
+![Jest Tests](https://img.shields.io/badge/Jest-87%2F87%20Passed-247A50?style=for-the-badge&logo=jest&logoColor=white)
 ![Finroq AI](https://img.shields.io/badge/Finroq%20AI-Floating%20Launcher%20%26%20Voice-173F2B?style=for-the-badge&logo=openai&logoColor=C7F36B)
 ![Next.js](https://img.shields.io/badge/Next.js%2014-App%20Router-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -349,7 +349,7 @@ Every test and validation check passes with 100% compliance:
 | Target | Command | Result | Status |
 |:---|:---|:---|:---:|
 | **Backend Pytest Suite** | `pytest -o pythonpath=.` | **236/236 passed (Ingestion Engine + Statement Reconciliation + Receipt Parser + Duplicate Prevention + Crash-Test + AI)** | ✅ PASS |
-| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **81/81 passed across 10 suites (Statement & Receipt Ingestion Modal + AI Linking + UI Units)** | ✅ PASS |
+| **Frontend Jest Tests** | `npm test -- --watchAll=false` | **87/87 passed across 12 suites (Tax & Investment Budget Sections + Categorized Manual Transactions + Ingestion Modal + AI Linking + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
 | **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |

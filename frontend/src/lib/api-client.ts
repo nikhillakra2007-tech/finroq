@@ -74,6 +74,10 @@ export const DEMO_CATEGORIES: Category[] = [
   { id: 9, name: 'Investments & Savings', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
   { id: 10, name: 'Account Transfer', category_type: 'both', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
   { id: 11, name: 'Other', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 12, name: 'Income Tax & Advance Tax', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 13, name: 'GST & Professional Tax', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 14, name: 'Mutual Funds & SIPs', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 15, name: 'Stocks & Sovereign Gold', category_type: 'expense', owner_id: null, is_system: true, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
 ];
 
 export const DEMO_TRANSACTIONS: Transaction[] = [
@@ -84,9 +88,9 @@ export const DEMO_TRANSACTIONS: Transaction[] = [
   { id: 5, owner_id: '1', account_id: 1, to_account_id: 2, category_id: 10, related_transaction_id: null, amount: '25000.00', currency: 'INR', transaction_type: 'transfer', status: 'completed', description: 'Transfer to High-Yield Savings', transaction_date: '2026-10-06', created_at: '2026-10-06T00:00:00Z', updated_at: '2026-10-06T00:00:00Z' },
   { id: 6, owner_id: '1', account_id: 1, to_account_id: null, category_id: 5, related_transaction_id: null, amount: '2400.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'State Electricity Board Bill', transaction_date: '2026-10-08', created_at: '2026-10-08T00:00:00Z', updated_at: '2026-10-08T00:00:00Z' },
   { id: 7, owner_id: '1', account_id: 1, to_account_id: null, category_id: 5, related_transaction_id: null, amount: '999.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Fiber Broadband Internet', transaction_date: '2026-10-09', created_at: '2026-10-09T00:00:00Z', updated_at: '2026-10-09T00:00:00Z' },
-  { id: 8, owner_id: '1', account_id: 3, to_account_id: null, category_id: 6, related_transaction_id: null, amount: '3850.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Weekend Dinner & Bistro Outing', transaction_date: '2026-10-10', created_at: '2026-10-10T00:00:00Z', updated_at: '2026-10-10T00:00:00Z' },
-  { id: 9, owner_id: '1', account_id: 3, to_account_id: null, category_id: 7, related_transaction_id: null, amount: '649.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Streaming Video Subscription', transaction_date: '2026-10-11', created_at: '2026-10-11T00:00:00Z', updated_at: '2026-10-11T00:00:00Z' },
-  { id: 10, owner_id: '1', account_id: 1, to_account_id: null, category_id: 2, related_transaction_id: null, amount: '1250.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Weekly Dairy & Farm Produce', transaction_date: '2026-10-12', created_at: '2026-10-12T00:00:00Z', updated_at: '2026-10-12T00:00:00Z' },
+  { id: 8, owner_id: '1', account_id: 3, to_account_id: null, category_id: 6, related_transaction_id: null, amount: '3850.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Weekend Dinner & Bistro Outing', transaction_date: '2026-10-10', created_at: '2026-10-10T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 9, owner_id: '1', account_id: 3, to_account_id: null, category_id: 7, related_transaction_id: null, amount: '649.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Streaming Video Subscription', transaction_date: '2026-10-11', created_at: '2026-10-11T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 10, owner_id: '1', account_id: 1, to_account_id: null, category_id: 2, related_transaction_id: null, amount: '1250.00', currency: 'INR', transaction_type: 'expense', status: 'completed', description: 'Weekly Dairy & Farm Produce', transaction_date: '2026-10-12', created_at: '2026-10-12T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
 ];
 
 export const DEMO_BUDGETS: Budget[] = [
@@ -95,6 +99,10 @@ export const DEMO_BUDGETS: Budget[] = [
   { id: 3, owner_id: '1', category_id: 4, category_name: 'Rent & Housing', budget_year: 2026, budget_month: 10, allocated_amount: '30000.00', actual_spending: '28000.00', remaining_amount: '2000.00', utilization_percent: '93.3', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
   { id: 4, owner_id: '1', category_id: 5, category_name: 'Utilities & Internet', budget_year: 2026, budget_month: 10, allocated_amount: '4000.00', actual_spending: '3399.00', remaining_amount: '601.00', utilization_percent: '85.0', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
   { id: 5, owner_id: '1', category_id: 6, category_name: 'Dining & Outings', budget_year: 2026, budget_month: 10, allocated_amount: '5000.00', actual_spending: '3850.00', remaining_amount: '1150.00', utilization_percent: '77.0', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 6, owner_id: '1', category_id: 12, category_name: 'Income Tax & Advance Tax', budget_year: 2026, budget_month: 10, allocated_amount: '22000.00', actual_spending: '22000.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 7, owner_id: '1', category_id: 13, category_name: 'GST & Professional Tax', budget_year: 2026, budget_month: 10, allocated_amount: '4500.00', actual_spending: '4200.00', remaining_amount: '300.00', utilization_percent: '93.3', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 8, owner_id: '1', category_id: 14, category_name: 'Mutual Funds & SIPs', budget_year: 2026, budget_month: 10, allocated_amount: '30000.00', actual_spending: '30000.00', remaining_amount: '0.00', utilization_percent: '100.0', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
+  { id: 9, owner_id: '1', category_id: 15, category_name: 'Stocks & Sovereign Gold', budget_year: 2026, budget_month: 10, allocated_amount: '15000.00', actual_spending: '12500.00', remaining_amount: '2500.00', utilization_percent: '83.3', is_overspent: false, created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-01T00:00:00Z' },
 ];
 
 export const DEMO_RECURRING: RecurringTransaction[] = [

@@ -3,22 +3,28 @@
 import { SelectHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   label: string;
 }
 
-interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectGroup {
+  label: string;
+  options: SelectOption[];
+}
+
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   helperText?: string;
-  options: SelectOption[];
+  options?: SelectOption[];
+  groups?: SelectGroup[];
   placeholder?: string;
   containerClassName?: string;
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, containerClassName, label, error, helperText, options, placeholder, id, ...props }, ref) => {
+  ({ className, containerClassName, label, error, helperText, options = [], groups, placeholder, id, ...props }, ref) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
     return (
@@ -48,11 +54,31 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 {placeholder}
               </option>
             )}
-            {options.map((option) => (
-              <option key={option.value} value={option.value} className="text-[#173F2B] dark:text-slate-100 bg-white dark:bg-[#16251E]">
-                {option.label}
-              </option>
-            ))}
+            {groups && groups.length > 0 ? (
+              groups.map((group) => (
+                <optgroup
+                  key={group.label}
+                  label={group.label}
+                  className="font-bold text-[#173F2B] dark:text-emerald-400 bg-[#F4F7F3] dark:bg-[#1A2C22]"
+                >
+                  {group.options.map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                      className="text-[#173F2B] dark:text-slate-100 bg-white dark:bg-[#16251E] font-normal"
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))
+            ) : (
+              options.map((option) => (
+                <option key={option.value} value={option.value} className="text-[#173F2B] dark:text-slate-100 bg-white dark:bg-[#16251E]">
+                  {option.label}
+                </option>
+              ))
+            )}
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#173F2B] dark:text-slate-300">
             <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

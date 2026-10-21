@@ -1,6 +1,6 @@
 export { Button } from './Button';
 export { Input } from './Input';
-export { Select } from './Select';
+export { Select, type SelectOption, type SelectGroup } from './Select';
 export { Card, CardHeader, CardTitle, CardContent } from './Card';
 export { Badge } from './Badge';
 export { Loading, LoadingOverlay, LoadingCard } from './Loading';
