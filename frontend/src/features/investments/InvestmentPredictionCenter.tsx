@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
   Compass,
-  ExternalLink,
+  ArrowLeft,
+  Home,
   BookOpen,
+  TrendingUp,
 } from 'lucide-react';
 import { UserPersona, PERSONA_GUIDES, calculateYoungsterAdvantage } from '@/lib/investment-predictions';
 import { IpoRadarSection } from '@/features/predictions/IpoRadarSection';
@@ -20,28 +22,67 @@ interface Props {
 
 export function InvestmentPredictionCenter({ isStandalonePortal = false }: Props) {
   const [activePersona, setActivePersona] = useState<UserPersona>('student');
+  const [marketData, setMarketData] = useState<{
+    nifty: { val: number; chg: number };
+    sensex: { val: number; chg: number };
+  }>({
+    nifty: { val: 24399.4, chg: 0.42 },
+    sensex: { val: 80081.2, chg: 0.38 },
+  });
+
+  useEffect(() => {
+    fetch('/api/market-telemetry')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.marketIndices) {
+          setMarketData({
+            nifty: { val: d.marketIndices.nifty50.value, chg: d.marketIndices.nifty50.changePct },
+            sensex: { val: d.marketIndices.sensex.value, chg: d.marketIndices.sensex.changePct },
+          });
+        }
+      })
+      .catch((e) => console.warn('Using cached telemetry:', e));
+  }, []);
+
   const currentGuide = PERSONA_GUIDES[activePersona];
   const youngsterEdge = calculateYoungsterAdvantage(activePersona === 'student' ? 1500 : 8000);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* Header Card with External Standalone Website Link */}
+      {/* Native In-App Header Card */}
       <div className="bg-white dark:bg-[#16251E] rounded-2xl p-5 border border-[#CAD5CA] dark:border-[#2A3D33] shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1">
-              <Sparkles className="w-3 h-3 text-emerald-500" />
-              <span>Youth Investment Intelligence</span>
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <Sparkles className="w-3 h-3 text-emerald-500" />
+                <span>Youth Investment Intelligence</span>
+              </span>
+
+              {/* Live Indian Markets Telemetry Pill */}
+              <div className="flex items-center gap-2 text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#F7F7F0] dark:bg-[#0D1411] border border-[#CAD5CA]/60 dark:border-[#2A3D33]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-gray-500">NIFTY:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                  {marketData.nifty.val.toLocaleString()} ({marketData.nifty.chg >= 0 ? '+' : ''}{marketData.nifty.chg}%)
+                </span>
+                <span className="text-gray-300 dark:text-gray-700">|</span>
+                <span className="text-gray-500">SENSEX:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                  {marketData.sensex.val.toLocaleString()} ({marketData.sensex.chg >= 0 ? '+' : ''}{marketData.sensex.chg}%)
+                </span>
+              </div>
             </div>
+
             <h1 className="text-xl sm:text-2xl font-bold font-serif text-[#173F2B] dark:text-[#E6EEE9]">
-              Youth Investment & IPO Prediction Center
+              Youth Investment &amp; IPO Prediction Center
             </h1>
             <p className="text-xs text-[#2E4035]/80 dark:text-[#A3B5AC] mt-0.5">
-              Curated for students & young working professionals. Real-time listing gain predictions and compounding proof in ₹ INR.
+              Curated for students &amp; young professionals. Real-time listing gain predictions and compounding proof in ₹ INR.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Persona Switcher */}
             <div className="bg-[#F7F7F0] dark:bg-[#0D1411] p-1 rounded-xl border border-[#CAD5CA] dark:border-[#2A3D33] flex flex-wrap gap-1">
               {(['student', 'first_job', 'wealth_builder'] as UserPersona[]).map((p) => {
@@ -51,7 +92,7 @@ export function InvestmentPredictionCenter({ isStandalonePortal = false }: Props
                   <button
                     key={p}
                     onClick={() => setActivePersona(p)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-[#173F2B] text-white dark:bg-[#5ECB9C] dark:text-[#0B1A13] shadow-xs'
                         : 'text-[#2E4035]/70 dark:text-[#A3B5AC] hover:text-[#173F2B]'
@@ -63,16 +104,13 @@ export function InvestmentPredictionCenter({ isStandalonePortal = false }: Props
               })}
             </div>
 
-            {/* Link to dedicated standalone site */}
+            {/* Direct Home Return Link */}
             <Link
-              href="/predictions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#173F2B] text-white hover:bg-[#102F21] dark:bg-[#5ECB9C] dark:text-[#0B1A13] transition-all shadow-xs shrink-0"
-              title="Launch dedicated prediction website"
+              href="/app/home"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#EAF3E7] hover:bg-[#D5E8D2] text-[#173F2B] dark:bg-[#1A2C22] dark:hover:bg-[#233D2F] dark:text-emerald-300 transition-all border border-[#CAD5CA] dark:border-[#2A3D33]"
             >
-              <span>Launch Site</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <Home className="w-3.5 h-3.5" />
+              <span>Financial Tools</span>
             </Link>
           </div>
         </div>

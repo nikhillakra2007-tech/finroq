@@ -33,6 +33,7 @@ import {
   RefreshCw,
   SlidersHorizontal,
   Play,
+  BookOpen,
 } from 'lucide-react';
 
 /* Utility to format money in Indian Rupees with 2 decimal places */
@@ -364,13 +365,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             : 'bg-[var(--bg)]/75 backdrop-blur-sm border-b border-[var(--line)]/50'
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-20 sm:h-22 flex items-center justify-between gap-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-16 sm:h-18 flex items-center justify-between gap-6">
           {/* Logo & Version Pip */}
           <div className="flex items-center gap-3.5 shrink-0">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl border border-[var(--line)] hover:border-[var(--ink)] text-[var(--ink)] transition-colors cursor-pointer"
+              className="md:hidden p-2 rounded-xl border border-[var(--line)] hover:border-[var(--ink)] text-[var(--ink)] transition-colors cursor-pointer"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -379,63 +380,54 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
             <Link
               href="/"
-              className="flex items-center gap-2.5 font-display font-bold text-2xl tracking-tight text-[var(--ink)] hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 font-display font-bold text-xl sm:text-2xl tracking-tight text-[var(--ink)] hover:opacity-90 transition-opacity"
             >
-              <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shadow-xs shadow-emerald-500/50" />
+              <span className="w-3 h-3 rounded-full bg-emerald-600 dark:bg-emerald-400 shadow-xs shadow-emerald-500/50" />
               <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
             </Link>
           </div>
 
           {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--muted)]">
-            <a href="#engine" className="hover:text-[var(--ink)] transition-colors flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>{t('nav.engine', 'Precision Engine')}</span>
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[var(--muted)]">
+            <a href="#engine" className="hover:text-[var(--ink)] transition-colors">
+              {t('nav.engine', 'Engine')}
             </a>
             <a href="#bento" className="hover:text-[var(--ink)] transition-colors">
-              {t('nav.pillars', 'Autonomous Pillars')}
+              {t('nav.pillars', 'Pillars')}
+            </a>
+            <a href="#flagship-features" className="hover:text-[var(--ink)] transition-colors text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Predictions &amp; Timelines</span>
             </a>
             <a href="#simulator" className="hover:text-[var(--ink)] transition-colors">
-              {t('nav.simulator', 'Health Simulator')}
+              {t('nav.simulator', 'Simulator')}
             </a>
-            <Link href="/predictions" className="hover:text-[var(--ink)] transition-colors text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Predictions</span>
-            </Link>
             <Link href="/app/money-guides" className="hover:text-[var(--ink)] transition-colors">
-              Visual Guides
+              Guides
             </Link>
           </nav>
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={triggerBootSequence}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-600/30 dark:border-emerald-500/40 hover:border-emerald-600 dark:hover:border-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-medium transition-all cursor-pointer shadow-2xs"
-              title={t('nav.boot_demo', 'Boot Demo')}
-            >
-              <Play className="w-3 h-3 fill-current text-emerald-600 dark:text-emerald-400" />
-              <span>{t('nav.boot_demo', 'Boot Demo')}</span>
-            </button>
             <LanguageSelector variant="pill" align="right" />
             <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all cursor-pointer"
+              className="p-2 rounded-full border border-[var(--line)] hover:border-[var(--ink)] text-[var(--muted)] hover:text-[var(--ink)] transition-all cursor-pointer"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-sm font-medium text-[var(--muted)] hover:text-[var(--ink)] px-2.5 py-1.5 transition-colors cursor-pointer"
+              className="text-xs sm:text-sm font-semibold text-[var(--muted)] hover:text-[var(--ink)] px-2.5 py-1.5 transition-colors cursor-pointer"
             >
               {t('nav.signin', 'Sign in')}
             </button>
             <button
-              onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-medium text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-xs cursor-pointer whitespace-nowrap transition-colors"
+              onClick={() => navigateWithCurtain('/app/home', 'welcome', 'fwd')}
+              className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-xs cursor-pointer whitespace-nowrap transition-colors"
             >
-              {t('nav.getstarted', 'Get started →')}
+              Launch App →
             </button>
           </div>
         </div>
@@ -461,6 +453,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <span>{t('nav.pillars', 'Autonomous Pillars')}</span>
               </a>
               <a
+                href="#flagship-features"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-3 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2.5 text-emerald-700 dark:text-emerald-400 font-semibold"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Predictions &amp; Timelines</span>
+              </a>
+              <a
                 href="#simulator"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-3 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2.5"
@@ -468,14 +468,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <SlidersHorizontal className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t('nav.simulator', 'Health Simulator')}</span>
               </a>
-              <a
-                href="#architecture"
+              <Link
+                href="/app/money-guides"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-3 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2.5"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>{t('nav.architecture', 'Trust & Architecture')}</span>
-              </a>
+                <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Visual Money Guides</span>
+              </Link>
             </div>
           </div>
         )}
@@ -1069,6 +1069,156 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                     <div className="bg-emerald-600 dark:bg-emerald-400 h-full rounded-full" style={{ width: '55%' }} />
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 2.5: FLAGSHIP WEALTH SYSTEMS - TIMELINES & PREDICTIONS           */}
+      {/* ========================================================================= */}
+      <section id="flagship-features" className="py-14 md:py-20 border-b border-[var(--line)] scroll-mt-20">
+        <div className="max-w-6xl mx-auto px-5 space-y-10">
+          <div className="max-w-2xl space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-emerald-800 dark:text-emerald-300">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Flagship Financial Systems</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[var(--ink)]">
+              Simulate 30-Year Timelines &amp; Predict Market Moves
+            </h2>
+            <p className="text-sm sm:text-base text-[var(--muted)] leading-relaxed font-normal">
+              Two interactive intelligence engines engineered for students and young working professionals in Indian Rupees (₹).
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Flagship Card 1: What-If Life Timeline Simulator */}
+            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">
+                      <TrendingUp className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="font-display font-bold text-lg text-[var(--ink)] block">
+                        What-If Life Timeline Simulator
+                      </span>
+                      <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">
+                        30-Year Quantum Multiverse Sim
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 font-semibold border border-emerald-500/20">
+                    Live Simulator
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+                  Time-travel across your next 30 years. Compare parallel life branches — Fast FIRE vs Balanced Corporate vs Startup Bet — and test how career jumps, inflation, and market shocks impact your early retirement in ₹ INR.
+                </p>
+
+                {/* Visual Trajectory Preview */}
+                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-[var(--muted)] uppercase">Parallel Life Forks at Year 20</span>
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">₹ INR Calibrated</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                      <span className="font-semibold text-[var(--ink)]">🚀 Fast FIRE Path</span>
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹4.2 Cr (Retire at 38)</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                      <span className="font-semibold text-[var(--ink)]">⚖️ Balanced Life</span>
+                      <span className="font-mono font-bold text-[var(--ink)]">₹2.1 Cr (Retire at 48)</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                      <span className="font-semibold text-[var(--ink)]">🦄 Aggressive Startup</span>
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹5.8 Cr (Retire at 42)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/app/multiverse"
+                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
+                >
+                  <span>Launch 30-Year Timeline Simulator</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Flagship Card 2: Youth Investment & IPO Prediction Center */}
+            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold">
+                      <Flame className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="font-display font-bold text-lg text-[var(--ink)] block">
+                        Youth Investment &amp; IPO Predictor
+                      </span>
+                      <span className="text-[11px] font-mono text-orange-600 dark:text-orange-400">
+                        Live GMP &amp; AMFI Telemetry
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-800 dark:text-orange-300 font-semibold border border-orange-500/20">
+                    Live Telemetry
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+                  Real-time listing gain predictions for upcoming Indian IPOs using Grey Market Premiums (GMP %), paired with student-friendly index funds starting as low as ₹100 per month with zero commissions.
+                </p>
+
+                {/* Visual Radar Preview */}
+                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-[var(--muted)] uppercase">Upcoming IPO Gain Radar</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Live Signals</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                      <div>
+                        <span className="font-bold text-[var(--ink)] block">Swiggy Ltd</span>
+                        <span className="text-[10px] text-gray-500">Price: ₹371 - ₹390</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block">+42.5% Gain</span>
+                        <span className="text-[10px] font-mono text-gray-500">GMP: ₹165</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                      <div>
+                        <span className="font-bold text-[var(--ink)] block">NTPC Green Energy</span>
+                        <span className="text-[10px] text-gray-500">Price: ₹102 - ₹108</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block">+28.0% Gain</span>
+                        <span className="text-[10px] font-mono text-gray-500">GMP: ₹30</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/app/investments"
+                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
+                >
+                  <span>Open Prediction Center</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </div>
