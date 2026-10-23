@@ -37,6 +37,7 @@ import {
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,
+  Compass,
 } from 'lucide-react';
 
 interface ModuleItem {
@@ -52,6 +53,16 @@ interface ModuleItem {
 
 const ALL_TOOLS: ModuleItem[] = [
   // Category 1: Wealth & Planning
+  {
+    id: 'multiverse',
+    name: 'Quantum Multiverse',
+    i18nKey: 'mod.multiverse',
+    desc: 'Simulate parallel life timelines, 30-year wealth trajectories, and lifestyle fork trade-offs.',
+    i18nDescKey: 'mod.multiverse.desc',
+    icon: Compass,
+    category: 'Wealth & Planning',
+    href: '/app/multiverse',
+  },
   {
     id: 'net-worth',
     name: 'Net Worth',

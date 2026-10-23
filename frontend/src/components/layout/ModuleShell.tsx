@@ -31,6 +31,7 @@ import {
   Check,
   Layers,
   Sparkles,
+  Compass,
 } from 'lucide-react';
 
 interface ModuleShellProps {
@@ -43,6 +44,7 @@ interface ModuleShellProps {
 const MODULES_NAV = [
   { href: '/app/ai-assistant', key: 'mod.ai_assistant', label: 'Finroq AI Intelligence', icon: Sparkles },
   { href: '/app/home', key: 'nav.overview', label: 'Financial Overview', icon: Home },
+  { href: '/app/multiverse', key: 'mod.multiverse', label: 'Quantum Multiverse', icon: Compass },
   { href: '/app/expense-tracking', key: 'mod.expense_tracking', label: 'Expense Tracking', icon: CreditCard },
   { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Daily Budgeting', icon: PieChart },
   { href: '/app/net-worth', key: 'mod.net_worth', label: 'Net Worth', icon: TrendingUp },

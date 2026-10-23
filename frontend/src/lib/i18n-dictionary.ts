@@ -151,6 +151,9 @@ export const ALL_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'mod.financial_health.desc': 'Holistic financial score with plain-English insights, actionable diagnostics, and detail expansion.',
     'mod.crash_test': 'Crash-Test / Agentic Run',
     'mod.crash_test.desc': 'Stress-test finances against severe real-world shocks, model compound scenarios, and verify mathematical recovery plans.',
+    'mod.multiverse': 'Quantum Multiverse Simulator',
+    'mod.multiverse.desc': 'Simulate parallel life timelines, time-travel across 30-year wealth trajectories, and compare lifestyle forks.',
+    'cat.wealth_planning': 'Wealth & Planning',
 
     'cat.track_control': 'Track & Control',
     'cat.decide_before': 'Decide Before Spending',
