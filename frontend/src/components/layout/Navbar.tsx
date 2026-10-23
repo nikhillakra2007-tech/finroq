@@ -41,6 +41,7 @@ const PRIMARY_NAV = [
 ];
 
 const SECONDARY_TOOLS = [
+  { key: 'mod.investments', name: 'Youth Investments & IPOs', href: '/app/investments', icon: TrendingUp, cat: 'Wealth & Planning' },
   { key: 'mod.multiverse', name: 'Quantum Multiverse', href: '/app/multiverse', icon: Compass, cat: 'Wealth & Planning' },
   { key: 'mod.net_worth', name: 'Net Worth Architecture', href: '/app/net-worth', icon: TrendingUp, cat: 'Wealth & Planning' },
   { key: 'mod.goal_timeline', name: 'Goal Timeline Simulator', href: '/app/goal-timeline', icon: Target, cat: 'Wealth & Planning' },

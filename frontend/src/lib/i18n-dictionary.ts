@@ -153,6 +153,8 @@ export const ALL_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'mod.crash_test.desc': 'Stress-test finances against severe real-world shocks, model compound scenarios, and verify mathematical recovery plans.',
     'mod.multiverse': 'Quantum Multiverse Simulator',
     'mod.multiverse.desc': 'Simulate parallel life timelines, time-travel across 30-year wealth trajectories, and compare lifestyle forks.',
+    'mod.investments': 'Youth Investments & IPO Predictions',
+    'mod.investments.desc': 'Curated mutual funds, live IPO listing gain predictions, and compounding proof for youth.',
     'cat.wealth_planning': 'Wealth & Planning',
 
     'cat.track_control': 'Track & Control',

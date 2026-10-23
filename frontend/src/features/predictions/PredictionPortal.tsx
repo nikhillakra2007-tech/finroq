@@ -1,0 +1,227 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import {
+  Sparkles,
+  TrendingUp,
+  Flame,
+  ArrowRight,
+  ExternalLink,
+  ShieldCheck,
+  CheckCircle2,
+  Sliders,
+  DollarSign,
+  PieChart,
+  Layers,
+  ArrowUpRight,
+  BarChart3,
+  Calendar,
+  Compass,
+  Home,
+  Sun,
+  Moon,
+} from 'lucide-react';
+import { UserPersona, PERSONA_GUIDES, calculateYoungsterAdvantage } from '@/lib/investment-predictions';
+import { IpoRadarSection } from './IpoRadarSection';
+import { MutualFundSection } from './MutualFundSection';
+import { YouthSipSection } from './YouthSipSection';
+import { formatInrCompact } from '@/lib/multiverse-engine';
+import { formatCurrency } from '@/lib/utils';
+import { getStoredTheme, applyTheme } from '@/lib/theme';
+
+export function PredictionPortal() {
+  const [activePersona, setActivePersona] = useState<UserPersona>('student');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  const currentGuide = PERSONA_GUIDES[activePersona];
+  const youngsterEdge = calculateYoungsterAdvantage(activePersona === 'student' ? 1500 : 8000);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    applyTheme(next);
+  };
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Standalone Platform Navigation Bar */}
+      <header className="bg-white/95 dark:bg-[#16251E]/95 backdrop-blur-md rounded-2xl px-5 py-3.5 border border-[#CAD5CA] dark:border-[#2A3D33] shadow-xs flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="w-8 h-8 rounded-xl bg-[#173F2B] dark:bg-[#5ECB9C] flex items-center justify-center text-white dark:text-[#0B1A13] font-serif font-black text-sm">
+              F
+            </span>
+            <div className="flex flex-col">
+              <span className="font-serif font-black text-base text-[#173F2B] dark:text-[#E6EEE9] tracking-tight">
+                FINROQ
+              </span>
+              <span className="text-[9px] font-mono font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-400 -mt-1">
+                PREDICTIONS ENGINE
+              </span>
+            </div>
+          </Link>
+
+          <span className="hidden sm:inline-block w-px h-5 bg-[#CAD5CA] dark:bg-[#2A3D33]" />
+
+          <nav className="hidden sm:flex items-center gap-2 text-xs font-medium">
+            <Link
+              href="/app/home"
+              className="px-2.5 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-[#173F2B] dark:hover:text-white"
+            >
+              Accounting Ledger
+            </Link>
+            <Link
+              href="/app/multiverse"
+              className="px-2.5 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-[#173F2B] dark:hover:text-white"
+            >
+              What-If Timelines
+            </Link>
+          </nav>
+        </div>
+
+        {/* Live Indian Markets Telemetry Ticker & Actions */}
+        <div className="flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 text-xs font-mono px-3 py-1.5 rounded-xl bg-[#F7F7F0] dark:bg-[#0D1411] border border-[#CAD5CA]/60 dark:border-[#2A3D33]">
+            <span className="text-gray-500">NIFTY 50:</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">24,399 (+0.42%)</span>
+            <span className="text-gray-300 dark:text-gray-700">|</span>
+            <span className="text-gray-500">SENSEX:</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">80,081 (+0.38%)</span>
+          </div>
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl border border-[#CAD5CA] dark:border-[#2A3D33] text-gray-600 dark:text-gray-300 hover:text-[#173F2B]"
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          <Link
+            href="/app/home"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#173F2B] text-white hover:bg-[#102F21] dark:bg-[#5ECB9C] dark:text-[#0B1A13] transition-all"
+          >
+            <Home className="w-3.5 h-3.5" />
+            <span>FINROQ Ledger →</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* Hero Prediction & Persona Bar */}
+      <div className="bg-white dark:bg-[#16251E] rounded-2xl p-6 border border-[#CAD5CA] dark:border-[#2A3D33] shadow-xs space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <Sparkles className="w-3 h-3 text-emerald-500" />
+              <span>Dedicated Prediction Platform</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#173F2B] dark:text-[#E6EEE9] tracking-tight">
+              Indian Market Investment & IPO Predictor
+            </h1>
+            <p className="text-xs sm:text-sm text-[#2E4035]/80 dark:text-[#A3B5AC] max-w-2xl">
+              Engineered for students and young working professionals. Real-time IPO listing gain predictions, low minimum SIP mutual funds, and compounding calculations in ₹ INR.
+            </p>
+          </div>
+
+          {/* Persona Selector */}
+          <div className="bg-[#F7F7F0] dark:bg-[#0D1411] p-1 rounded-xl border border-[#CAD5CA] dark:border-[#2A3D33] flex flex-wrap gap-1">
+            {(['student', 'first_job', 'wealth_builder'] as UserPersona[]).map((p) => {
+              const guide = PERSONA_GUIDES[p];
+              const isSelected = activePersona === p;
+              return (
+                <button
+                  key={p}
+                  onClick={() => setActivePersona(p)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    isSelected
+                      ? 'bg-[#173F2B] text-white dark:bg-[#5ECB9C] dark:text-[#0B1A13] shadow-xs'
+                      : 'text-[#2E4035]/70 dark:text-[#A3B5AC] hover:text-[#173F2B]'
+                  }`}
+                >
+                  {guide.badge.split(' ')[0]} {p === 'student' ? 'Student' : p === 'first_job' ? 'First Job' : 'Pro'}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Selected Persona Strategy Banner */}
+        <div className="pt-3 border-t border-[#CAD5CA]/60 dark:border-[#2A3D33] grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="bg-[#F7F7F0]/80 dark:bg-[#0D1411]/60 p-3 rounded-xl border border-[#CAD5CA]/40 dark:border-[#2A3D33]">
+            <span className="text-gray-500 block text-[11px]">Recommended Budget</span>
+            <span className="text-sm font-bold font-mono text-[#173F2B] dark:text-[#5ECB9C] block mt-0.5">
+              {currentGuide.suggestedBudgetMonthly}
+            </span>
+          </div>
+
+          <div className="bg-[#F7F7F0]/80 dark:bg-[#0D1411]/60 p-3 rounded-xl border border-[#CAD5CA]/40 dark:border-[#2A3D33] col-span-2">
+            <span className="text-gray-500 block text-[11px]">Recommended Asset Allocation</span>
+            <div className="flex items-center gap-2 mt-1">
+              {currentGuide.recommendedSplit.map((split, i) => (
+                <div key={i} className="flex-1 space-y-1">
+                  <div className="flex justify-between text-[10px] font-mono">
+                    <span className="truncate">{split.label}</span>
+                    <span className="font-bold">{split.percentage}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#CAD5CA]/40 dark:bg-[#2A3D33] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-emerald-500"
+                      style={{ width: `${split.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Compounding Edge Callout */}
+      <div className="bg-gradient-to-r from-[#EAF3E7] via-white to-[#EAF3E7] dark:from-[#1A2C22] dark:via-[#16251E] dark:to-[#1A2C22] rounded-2xl p-4 border border-[#CAD5CA] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-base">
+            ⚡
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-[#173F2B] dark:text-[#E6EEE9]">
+              The Youngster Edge: Time is Your Superpower
+            </h3>
+            <p className="text-xs text-[#2E4035]/80 dark:text-[#A3B5AC]">
+              Starting at Age 20 vs Age 30 creates a{' '}
+              <strong className="text-emerald-600 dark:text-emerald-400 font-mono">
+                {youngsterEdge.multiplier}x Wealth Multiplier
+              </strong>{' '}
+              with the exact same monthly investment!
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs font-mono">
+          <div className="text-right">
+            <span className="text-[10px] text-gray-500 block">Start at 20</span>
+            <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+              {formatInrCompact(youngsterEdge.starter20WealthAt50)}
+            </span>
+          </div>
+          <div className="text-gray-400">vs</div>
+          <div>
+            <span className="text-[10px] text-gray-500 block">Start at 30</span>
+            <span className="text-sm font-bold text-gray-500">
+              {formatInrCompact(youngsterEdge.starter30WealthAt50)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid: IPO Radar & Curated Mutual Funds */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <IpoRadarSection />
+        <MutualFundSection />
+      </div>
+
+      {/* Interactive SIP Growth Predictor */}
+      <YouthSipSection initialMonthly={activePersona === 'student' ? 1500 : 8000} />
+    </div>
+  );
+}

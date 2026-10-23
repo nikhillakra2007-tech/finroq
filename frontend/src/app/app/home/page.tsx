@@ -54,6 +54,16 @@ interface ModuleItem {
 const ALL_TOOLS: ModuleItem[] = [
   // Category 1: Wealth & Planning
   {
+    id: 'investments',
+    name: 'Youth Investments & IPOs',
+    i18nKey: 'mod.investments',
+    desc: 'Curated mutual funds, live IPO listing gain predictions, and compounding proof for youth.',
+    i18nDescKey: 'mod.investments.desc',
+    icon: TrendingUp,
+    category: 'Wealth & Planning',
+    href: '/app/investments',
+  },
+  {
     id: 'multiverse',
     name: 'Quantum Multiverse',
     i18nKey: 'mod.multiverse',

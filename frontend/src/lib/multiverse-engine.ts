@@ -1,7 +1,7 @@
 /**
  * FINROQ Quantum Multiverse Engine
  * Pure mathematical simulation core for 30-year parallel life timelines,
- * stochastic macro-shocks, FIRE crossover detection, and wealth divergence telemetry.
+ * calibrated in Indian Rupees (₹), FIRE crossover detection, and wealth divergence.
  */
 
 export type MacroEnvironment = 'historical' | 'bull' | 'stagflation' | 'black_swan';
@@ -11,7 +11,7 @@ export interface TimelineEvent {
   yearOffset: number; // 0 to 30
   label: string;
   type: 'windfall' | 'expense' | 'income_jump' | 'asset_buy' | 'shock';
-  amount: number; // cash impact or delta
+  amount: number; // cash impact in INR
   description: string;
 }
 
@@ -22,12 +22,12 @@ export interface MultiverseBranchConfig {
   tagline: string;
   color: string;
   accentBg: string;
-  startingIncome: number;
-  incomeGrowthRate: number; // e.g. 0.035 for 3.5%
-  livingExpenses: number;
-  lifestyleInflationRate: number; // e.g. 0.025
+  startingIncome: number; // annual INR
+  incomeGrowthRate: number; // e.g. 0.05 for 5%
+  livingExpenses: number; // annual INR
+  lifestyleInflationRate: number; // e.g. 0.04
   savingsRate: number; // percentage of surplus saved / invested (0.1 to 0.95)
-  investmentReturnRate: number; // e.g. 0.08
+  investmentReturnRate: number; // e.g. 0.12 (Indian equity index historical)
   hasRealEstate: boolean;
   realEstateDownPayment?: number;
   realEstateYear?: number;
@@ -81,35 +81,50 @@ export interface GlobalSimInputs {
   startYear: number;
 }
 
+export function formatInrCompact(val: number): string {
+  const abs = Math.abs(val);
+  const sign = val < 0 ? '-' : '';
+  if (abs >= 10000000) {
+    return `${sign}₹${(abs / 10000000).toFixed(2)} Cr`;
+  }
+  if (abs >= 100000) {
+    return `${sign}₹${(abs / 100000).toFixed(2)} L`;
+  }
+  if (abs >= 1000) {
+    return `${sign}₹${Math.round(abs / 1000)}k`;
+  }
+  return `${sign}₹${Math.round(abs)}`;
+}
+
 export const MACRO_PROFILES: Record<
   MacroEnvironment,
   { label: string; description: string; nominalReturn: number; inflation: number; shockYear?: number; shockMagnitude?: number }
 > = {
   historical: {
-    label: 'Historical Normal',
-    description: '7.8% long-term index return, 3.2% persistent inflation based on 50-year median.',
-    nominalReturn: 0.078,
-    inflation: 0.032,
+    label: 'Indian Historical Average',
+    description: '12.5% Nifty 50 long-term CAGR, 5.5% average CPI inflation.',
+    nominalReturn: 0.125,
+    inflation: 0.055,
   },
   bull: {
-    label: 'Golden Secular Bull',
-    description: 'High technological acceleration, 11.4% real yield, low 2.4% inflation.',
-    nominalReturn: 0.114,
-    inflation: 0.024,
+    label: 'India Tech & GDP Boom',
+    description: '15.8% equity surge, steady 4.2% inflation driven by digital expansion.',
+    nominalReturn: 0.158,
+    inflation: 0.042,
   },
   stagflation: {
-    label: 'Stagflation Crisis',
-    description: 'Persistent sticky inflation of 6.5%, sluggish market yields at 3.5%, eroding purchasing power.',
-    nominalReturn: 0.035,
-    inflation: 0.065,
+    label: 'High Inflation Squeeze',
+    description: 'High 8.2% inflation, muted 6.0% equity returns.',
+    nominalReturn: 0.06,
+    inflation: 0.082,
   },
   black_swan: {
-    label: '2008-Style Shock',
-    description: '-36% sudden drawdown in Year 3 with 36-month aggressive recovery (+18%/yr).',
-    nominalReturn: 0.078,
-    inflation: 0.032,
+    label: 'Market Shock & Rebound',
+    description: '-32% sharp market dip in Year 3 with 3-year swift recovery (+22%/yr).',
+    nominalReturn: 0.125,
+    inflation: 0.055,
     shockYear: 3,
-    shockMagnitude: -0.36,
+    shockMagnitude: -0.32,
   },
 };
 
@@ -117,102 +132,100 @@ export const DEFAULT_UNIVERSES: MultiverseBranchConfig[] = [
   {
     id: 'universe-alpha',
     name: 'Timeline Alpha',
-    codeName: 'α Current Reality',
-    tagline: 'Standard corporate track, steady 3.5% increments, balanced index fund DCA.',
+    codeName: 'α Current Track',
+    tagline: 'Standard salaried role, 6% annual hike, disciplined 30% mutual fund SIP.',
     color: '#10B981', // Emerald
     accentBg: 'rgba(16, 185, 129, 0.12)',
-    startingIncome: 75000,
-    incomeGrowthRate: 0.035,
-    livingExpenses: 46000,
-    lifestyleInflationRate: 0.03,
+    startingIncome: 850000, // ₹8.5L/yr
+    incomeGrowthRate: 0.06,
+    livingExpenses: 480000, // ₹40k/mo
+    lifestyleInflationRate: 0.05,
     savingsRate: 0.35,
-    investmentReturnRate: 0.075,
+    investmentReturnRate: 0.12,
     hasRealEstate: false,
     events: [
-      { id: 'e1', yearOffset: 5, label: 'Promotion to Senior', type: 'income_jump', amount: 15000, description: 'Step function income advancement' },
-      { id: 'e2', yearOffset: 12, label: 'Family Major Milestones', type: 'expense', amount: 28000, description: 'Lifestyle & home upgrade' },
+      { id: 'e1', yearOffset: 4, label: 'Promotion to Lead', type: 'income_jump', amount: 350000, description: 'Promotion salary hike' },
+      { id: 'e2', yearOffset: 10, label: 'Family Celebration', type: 'expense', amount: 400000, description: 'Lifestyle milestone' },
     ],
   },
   {
     id: 'universe-beta',
     name: 'Timeline Beta',
-    codeName: 'β Silicon Nomad',
-    tagline: 'Remote high-leverage contracting + Year 5 geographic arbitrage relocation.',
+    codeName: 'β High-Growth Career',
+    tagline: 'Fast job transitions, global remote consulting, moving from ₹14L to ₹35L+.',
     color: '#06B6D4', // Cyan
     accentBg: 'rgba(6, 182, 212, 0.12)',
-    startingIncome: 110000,
-    incomeGrowthRate: 0.06,
-    livingExpenses: 58000,
-    lifestyleInflationRate: 0.025,
+    startingIncome: 1400000, // ₹14L/yr
+    incomeGrowthRate: 0.09,
+    livingExpenses: 650000,
+    lifestyleInflationRate: 0.045,
     savingsRate: 0.52,
-    investmentReturnRate: 0.088,
+    investmentReturnRate: 0.135,
     hasRealEstate: false,
     events: [
-      { id: 'eb1', yearOffset: 2, label: 'Contractor Rate Spike (+30%)', type: 'income_jump', amount: 32000, description: 'International client retainers' },
-      { id: 'eb2', yearOffset: 5, label: 'Geo-Arbitrage Relocation', type: 'windfall', amount: 0, description: 'Cost of living cut by 28%' },
-      { id: 'eb3', yearOffset: 7, label: 'Tech Advisory Equity Liquidation', type: 'windfall', amount: 85000, description: 'Secondary equity cashout' },
+      { id: 'eb1', yearOffset: 2, label: 'Remote Contract Hike (+35%)', type: 'income_jump', amount: 500000, description: 'International clients' },
+      { id: 'eb2', yearOffset: 6, label: 'ESOP / Stock Vesting', type: 'windfall', amount: 1500000, description: '₹15L ESOP liquidation' },
     ],
   },
   {
     id: 'universe-gamma',
     name: 'Timeline Gamma',
     codeName: 'γ Radical F.I.R.E.',
-    tagline: '68% hyper-austere savings rate, low-cost indexing, retirement in under 8 years.',
-    color: '#84CC16', // Lime Green
+    tagline: 'Ruthless 65% savings rate into Nifty index funds. Freedom crossover before Age 35.',
+    color: '#84CC16', // Lime
     accentBg: 'rgba(132, 204, 22, 0.12)',
-    startingIncome: 80000,
-    incomeGrowthRate: 0.04,
-    livingExpenses: 28000,
-    lifestyleInflationRate: 0.018,
-    savingsRate: 0.68,
-    investmentReturnRate: 0.085,
+    startingIncome: 950000,
+    incomeGrowthRate: 0.07,
+    livingExpenses: 330000, // ₹27.5k/mo frugal
+    lifestyleInflationRate: 0.035,
+    savingsRate: 0.65,
+    investmentReturnRate: 0.13,
     hasRealEstate: false,
     events: [
-      { id: 'eg1', yearOffset: 1, label: 'Zero-Waste Vehicle Swap', type: 'windfall', amount: 12000, description: 'Liquidated luxury vehicle for transit' },
-      { id: 'eg2', yearOffset: 8, label: 'FIRE Crossover: Full Freedom Mode', type: 'windfall', amount: 0, description: 'Passive dividends outpace living costs' },
+      { id: 'eg1', yearOffset: 1, label: 'Bike Swap & Zero EMI', type: 'windfall', amount: 120000, description: 'Sold depreciating vehicle' },
+      { id: 'eg2', yearOffset: 8, label: 'FIRE Freedom Day Achieved', type: 'windfall', amount: 0, description: 'Passive dividends exceed living burn' },
     ],
   },
   {
     id: 'universe-delta',
     name: 'Timeline Delta',
-    codeName: 'δ Leveraged Asset Mogul',
-    tagline: 'Dual real estate acquisitions with rental cashflow yield and mortgage paydown.',
+    codeName: 'δ Real Estate Mogul',
+    tagline: 'Flat down payment at Year 3, rental income yield + long-term land appreciation.',
     color: '#F59E0B', // Amber
     accentBg: 'rgba(245, 158, 11, 0.12)',
-    startingIncome: 85000,
-    incomeGrowthRate: 0.04,
-    livingExpenses: 48000,
-    lifestyleInflationRate: 0.03,
+    startingIncome: 1100000,
+    incomeGrowthRate: 0.06,
+    livingExpenses: 540000,
+    lifestyleInflationRate: 0.05,
     savingsRate: 0.40,
-    investmentReturnRate: 0.07,
+    investmentReturnRate: 0.11,
     hasRealEstate: true,
-    realEstateDownPayment: 60000,
+    realEstateDownPayment: 1200000, // ₹12L down
     realEstateYear: 3,
-    realEstateValue: 300000,
-    realEstateAppreciationRate: 0.045,
-    rentalIncomeAnnual: 21600,
+    realEstateValue: 5500000, // ₹55L flat
+    realEstateAppreciationRate: 0.07,
+    rentalIncomeAnnual: 240000, // ₹20k/mo rent
     events: [
-      { id: 'ed1', yearOffset: 3, label: 'Duplex Acquisition & Househack', type: 'asset_buy', amount: 60000, description: '$300k asset with $1,800/mo rental yield' },
-      { id: 'ed2', yearOffset: 9, label: 'Second Multi-Unit Acquisition', type: 'asset_buy', amount: 75000, description: '$380k property expansion' },
+      { id: 'ed1', yearOffset: 3, label: 'Flat Purchase (₹55L)', type: 'asset_buy', amount: 1200000, description: '20% down payment' },
     ],
   },
   {
     id: 'universe-epsilon',
     name: 'Timeline Epsilon',
-    codeName: 'ε Founder Venture Mode',
-    tagline: '18 months $0 salary burn runway, product monetization, then $500k Year 7 exit.',
-    color: '#A855F7', // Purple/Violet
+    codeName: 'ε Founder Journey',
+    tagline: '18 months bootstrapping, product monetization, scaling to high profit distributions.',
+    color: '#A855F7', // Violet
     accentBg: 'rgba(168, 85, 247, 0.12)',
-    startingIncome: 20000, // Bootstrapping stipend
-    incomeGrowthRate: 0.15,
-    livingExpenses: 34000,
-    lifestyleInflationRate: 0.02,
-    savingsRate: 0.60,
-    investmentReturnRate: 0.08,
+    startingIncome: 300000, // ₹25k/mo stipend
+    incomeGrowthRate: 0.18,
+    livingExpenses: 360000,
+    lifestyleInflationRate: 0.04,
+    savingsRate: 0.55,
+    investmentReturnRate: 0.12,
     hasRealEstate: false,
     events: [
-      { id: 'ee1', yearOffset: 2, label: 'Seed Round & Salary Normalization ($120k)', type: 'income_jump', amount: 100000, description: 'Product-market fit attained' },
-      { id: 'ee2', yearOffset: 7, label: 'Strategic Acquisition Secondary Cashout', type: 'windfall', amount: 520000, description: 'Partial exit windfall into index funds' },
+      { id: 'ee1', yearOffset: 2, label: 'Product Breakeven (₹18L Salary)', type: 'income_jump', amount: 1500000, description: 'Profitable SaaS/agency' },
+      { id: 'ee2', yearOffset: 7, label: 'Angel Investment Liquidation', type: 'windfall', amount: 3500000, description: '₹35L secondary buyout' },
     ],
   },
 ];
@@ -224,7 +237,6 @@ export function runMultiverseSimulation(
   const macro = MACRO_PROFILES[inputs.macroEnv];
   const horizonYears = 30;
 
-  // First run Alpha to get baseline for delta calculation
   const results: SimulationResult[] = [];
 
   universes.forEach((cfg) => {
@@ -246,7 +258,6 @@ export function runMultiverseSimulation(
       const age = inputs.startingAge + yr;
       const eventsThisYear: string[] = [];
 
-      // Check configured life events
       cfg.events.forEach((ev) => {
         if (ev.yearOffset === yr) {
           eventsThisYear.push(ev.label);
@@ -260,11 +271,6 @@ export function runMultiverseSimulation(
         }
       });
 
-      // Special handling for Beta geo-arbitrage at year 5
-      if (cfg.id === 'universe-beta' && yr >= 5) {
-        expenses = Math.round(expenses * 0.98); // Cost of living savings
-      }
-
       // Real estate acquisition event
       if (cfg.hasRealEstate && cfg.realEstateYear === yr && cfg.realEstateValue && cfg.realEstateDownPayment) {
         const down = cfg.realEstateDownPayment;
@@ -273,7 +279,7 @@ export function runMultiverseSimulation(
           propertyValue = cfg.realEstateValue;
           realEstateEquity = down;
           realEstateDebt = propertyValue - down;
-          eventsThisYear.push(`Acquired Property worth $${propertyValue.toLocaleString()}`);
+          eventsThisYear.push(`Bought Flat (${formatInrCompact(propertyValue)})`);
         }
       }
 
@@ -281,9 +287,9 @@ export function runMultiverseSimulation(
       let marketRate = macro.nominalReturn;
       if (macro.shockYear === yr && macro.shockMagnitude) {
         marketRate = macro.shockMagnitude;
-        eventsThisYear.push('Macro Shock (-36% Market Drawdown)');
+        eventsThisYear.push('Macro Dip (-32%)');
       } else if (macro.shockYear && yr > macro.shockYear && yr <= macro.shockYear + 3) {
-        marketRate = 0.18; // Post-shock rebound
+        marketRate = 0.22; // Post-shock rebound
       }
 
       // Compound liquid investments
@@ -292,9 +298,9 @@ export function runMultiverseSimulation(
 
       // Real estate appreciation and mortgage paydown
       if (propertyValue > 0) {
-        propertyValue *= 1 + (cfg.realEstateAppreciationRate || 0.04);
-        const mortgagePayment = realEstateDebt * 0.065;
-        const principalPaid = mortgagePayment * 0.45;
+        propertyValue *= 1 + (cfg.realEstateAppreciationRate || 0.06);
+        const mortgagePayment = realEstateDebt * 0.085;
+        const principalPaid = mortgagePayment * 0.4;
         realEstateDebt = Math.max(0, realEstateDebt - principalPaid);
         realEstateEquity = propertyValue - realEstateDebt;
         if (cfg.rentalIncomeAnnual) {
@@ -308,14 +314,12 @@ export function runMultiverseSimulation(
 
       if (annualSavings > 0) {
         currentLiquid += annualSavings;
-        // Pay down baseline debt first if any
         if (currentDebt > 0) {
           const debtPay = Math.min(currentDebt, annualSavings * 0.3);
           currentDebt -= debtPay;
           currentLiquid -= debtPay;
         }
       } else {
-        // Deficit: burn liquid or accumulate debt
         if (currentLiquid >= Math.abs(annualSavings)) {
           currentLiquid -= Math.abs(annualSavings);
         } else {
@@ -325,20 +329,20 @@ export function runMultiverseSimulation(
       }
 
       const netWorth = Math.round(currentLiquid + realEstateEquity - currentDebt);
-      const passiveIncome = Math.round(currentLiquid * 0.04); // 4% SWR
+      const passiveIncome = Math.round(currentLiquid * 0.05); // 5% Safe Withdrawal Rate for India
       const isFire = passiveIncome >= expenses && netWorth > 0;
 
       if (isFire && fireCrossoverYear === null) {
         fireCrossoverYear = calendarYear;
         fireCrossoverAge = age;
-        eventsThisYear.push('🔥 FIRE Crossover: Passive Income > Living Burn');
+        eventsThisYear.push('🔥 FIRE Achieved');
       }
 
       points.push({
         yearIndex: yr,
         calendarYear,
         age,
-        netWorth: Math.max(-50000, netWorth),
+        netWorth: Math.max(-500000, netWorth),
         liquidAssets: Math.round(currentLiquid),
         realEstateEquity: Math.round(realEstateEquity),
         debt: Math.round(currentDebt),
@@ -350,7 +354,6 @@ export function runMultiverseSimulation(
         eventsTriggered: eventsThisYear,
       });
 
-      // Inflate income & expenses for next year
       income = Math.round(income * (1 + cfg.incomeGrowthRate));
       expenses = Math.round(expenses * (1 + (macro.inflation || cfg.lifestyleInflationRate)));
     }
@@ -358,44 +361,33 @@ export function runMultiverseSimulation(
     const terminalNetWorth = points[points.length - 1].netWorth;
     const terminalLiquid = points[points.length - 1].liquidAssets;
 
-    // Resilience & Regret Risk Scoring
     const burnRunwayMonths = points[0].annualExpenses > 0 ? (points[0].liquidAssets / (points[0].annualExpenses / 12)) : 0;
     const debtRatio = points[points.length - 1].debt / Math.max(1, terminalNetWorth);
     const resilienceScore = Math.min(99, Math.max(25, Math.round(
       Math.min(30, burnRunwayMonths * 2.5) + (1 - Math.min(1, debtRatio)) * 40 + (fireCrossoverYear ? 30 : 15)
     )));
     const regretRiskIndex = Math.min(95, Math.max(10, Math.round(
-      100 - resilienceScore + (cfg.savingsRate > 0.65 ? 20 : 0) // Over-frugality regret penalty
+      100 - resilienceScore + (cfg.savingsRate > 0.65 ? 15 : 0)
     )));
 
-    // Radar scoring (0 to 100)
     const freedomSpeed = fireCrossoverAge
       ? Math.min(100, Math.max(20, Math.round(100 - (fireCrossoverAge - inputs.startingAge) * 3)))
       : 30;
     const downsideSafety = Math.min(100, Math.max(25, resilienceScore));
-    const lifestyleLuxury = Math.min(100, Math.max(20, Math.round((cfg.livingExpenses / 60000) * 80)));
-    const generationalWealth = Math.min(100, Math.max(20, Math.round((terminalNetWorth / 3000000) * 100)));
+    const lifestyleLuxury = Math.min(100, Math.max(20, Math.round((cfg.livingExpenses / 600000) * 80)));
+    const generationalWealth = Math.min(100, Math.max(20, Math.round((terminalNetWorth / 50000000) * 100)));
     const liquidityFlexibility = Math.min(100, Math.max(15, Math.round((terminalLiquid / Math.max(1, terminalNetWorth)) * 100)));
 
-    // Action steps to materialize this universe
+    // Short, punchy action steps
     const keyActionSteps: string[] = [];
-    if (cfg.savingsRate > 0.45) {
-      keyActionSteps.push(`Allocate minimum ${Math.round(cfg.savingsRate * 100)}% of monthly surplus directly into automated broad-market equity SIPs.`);
-    }
-    if (cfg.livingExpenses < 35000) {
-      keyActionSteps.push(`Strictly ceiling discretionary lifestyle burn to $${Math.round(cfg.livingExpenses / 12).toLocaleString()}/month.`);
+    if (cfg.savingsRate > 0.5) {
+      keyActionSteps.push(`Automate SIP of ${Math.round(cfg.savingsRate * 100)}% monthly surplus on salary day.`);
     } else {
-      keyActionSteps.push(`Maintain core lifestyle budget near $${Math.round(cfg.livingExpenses / 12).toLocaleString()}/month without unvetted micro-leaks.`);
+      keyActionSteps.push(`Maintain regular ₹${Math.round((cfg.startingIncome * cfg.savingsRate) / 12).toLocaleString()}/mo index SIP.`);
     }
+    keyActionSteps.push(`Cap living expenses at ₹${Math.round(cfg.livingExpenses / 12).toLocaleString()}/month.`);
     if (cfg.hasRealEstate) {
-      keyActionSteps.push(`Accumulate $${cfg.realEstateDownPayment?.toLocaleString()} in a liquid arbitrage fund before Year ${cfg.realEstateYear} property closing.`);
-    }
-    if (cfg.id === 'universe-beta') {
-      keyActionSteps.push('Pivot skills toward cross-border high-ticket client retainers to force early +30% income velocity.');
-    } else if (cfg.id === 'universe-epsilon') {
-      keyActionSteps.push('Maintain 14 months of absolute living runway in high-yield reserves before terminating corporate salary.');
-    } else {
-      keyActionSteps.push('Reinvest all dividends deterministically with zero cash drag.');
+      keyActionSteps.push(`Build ${formatInrCompact(cfg.realEstateDownPayment || 1200000)} liquid capital before Year ${cfg.realEstateYear} property closing.`);
     }
 
     results.push({
@@ -405,7 +397,7 @@ export function runMultiverseSimulation(
       terminalLiquidAssets: terminalLiquid,
       fireCrossoverYear,
       fireCrossoverAge,
-      wealthDeltaVsBaseline: 0, // calculated in second pass
+      wealthDeltaVsBaseline: 0,
       resilienceScore,
       regretRiskIndex,
       radar: {
@@ -419,7 +411,6 @@ export function runMultiverseSimulation(
     });
   });
 
-  // Second pass: Calculate delta vs Baseline (Alpha)
   const alphaTerminal = results[0]?.terminalNetWorth || 1;
   results.forEach((res) => {
     res.wealthDeltaVsBaseline = res.terminalNetWorth - alphaTerminal;
