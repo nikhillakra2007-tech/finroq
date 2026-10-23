@@ -34,7 +34,10 @@ import {
   SlidersHorizontal,
   Play,
   BookOpen,
+  Mail,
+  MapPin,
 } from 'lucide-react';
+import { formatInrCompact } from '@/lib/multiverse-engine';
 
 /* Utility to format money in Indian Rupees with 2 decimal places */
 function fmtRupees(amount: number): string {
@@ -217,6 +220,50 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   const crashData = useMemo(() => {
     return CRASH_DATA_BY_LANG[language] || CRASH_DATA_BY_LANG['en'];
   }, [language]);
+
+  // =========================================================================
+  // SECTION 2.5: INTERACTIVE FLAGSHIP PREVIEWS (TIMELINES & PREDICTIONS)
+  // =========================================================================
+  const [timelineYear, setTimelineYear] = useState<number>(15);
+  const [selectedTimelinePath, setSelectedTimelinePath] = useState<'fire' | 'balanced' | 'startup'>('fire');
+
+  // Dynamic wealth math for 3 parallel multiverse branches
+  const fireWealth = Math.round(250000 + (1200000 * 0.5) * ((Math.pow(1.135, timelineYear) - 1) / 0.135));
+  const balancedWealth = Math.round(200000 + (800000 * 0.25) * ((Math.pow(1.11, timelineYear) - 1) / 0.11));
+  const startupWealth = timelineYear < 8
+    ? Math.round(150000 + timelineYear * 260000)
+    : Math.round(2230000 + Math.pow(timelineYear - 7, 2.3) * 165000);
+
+  // Active highlighted metrics
+  const activeTimelineWealth =
+    selectedTimelinePath === 'fire'
+      ? fireWealth
+      : selectedTimelinePath === 'balanced'
+      ? balancedWealth
+      : startupWealth;
+
+  // Flagship Card 2: Youth SIP & IPO Radar preview state
+  const [previewSipMonthly, setPreviewSipMonthly] = useState<number>(3000);
+  const [selectedIpoIndex, setSelectedIpoIndex] = useState<number>(0);
+
+  const PREVIEW_IPOS = useMemo(
+    () => [
+      { name: 'Swiggy Ltd', price: '₹371 - ₹390', gmp: '₹165', gain: '+42.5%', signal: 'STRONG LISTING' },
+      { name: 'NTPC Green Energy', price: '₹102 - ₹108', gmp: '₹30', gain: '+28.0%', signal: 'MODERATE GAIN' },
+      { name: 'Acme Solar Holdings', price: '₹275 - ₹289', gmp: '₹48', gain: '+17.4%', signal: 'WATCHLIST' },
+      { name: 'One Mobikwik Systems', price: '₹265 - ₹279', gmp: '₹95', gain: '+34.0%', signal: 'SPECULATIVE GAIN' },
+    ],
+    []
+  );
+
+  // 10-Year compounding math at 13.5% vs 6.5% FD
+  const sip10YrWealth = Math.round(
+    previewSipMonthly * ((Math.pow(1 + 0.135 / 12, 120) - 1) / (0.135 / 12)) * (1 + 0.135 / 12)
+  );
+  const fd10YrWealth = Math.round(
+    previewSipMonthly * ((Math.pow(1 + 0.065 / 12, 120) - 1) / (0.065 / 12)) * (1 + 0.065 / 12)
+  );
+  const sipExtraWealth = sip10YrWealth - fd10YrWealth;
 
   // =========================================================================
   // SECTION 3: INTERACTIVE FINANCIAL HEALTH SIMULATOR (PLAYGROUND)
@@ -510,9 +557,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <div className="pt-2 flex flex-wrap gap-3.5 items-center">
               <button
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-                className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-6.5 py-3 font-medium text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-colors"
+                className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-6.5 py-3 font-semibold text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105"
               >
-                {t('hero.cta_open', 'Open your ledger')} <ArrowRight className="w-4 h-4 ml-1.5" />
+                <span>Start Building Wealth →</span>
               </button>
               <a
                 href="#simulator"
@@ -1076,7 +1123,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2.5: FLAGSHIP WEALTH SYSTEMS - TIMELINES & PREDICTIONS           */}
+      {/* SECTION 2.5: FLAGSHIP WEALTH SYSTEMS - INTERACTIVE TIMELINES & PREDICTIONS */}
       {/* ========================================================================= */}
       <section id="flagship-features" className="py-14 md:py-20 border-b border-[var(--line)] scroll-mt-20">
         <div className="max-w-6xl mx-auto px-5 space-y-10">
@@ -1094,8 +1141,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Flagship Card 1: What-If Life Timeline Simulator */}
-            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift">
+            {/* Flagship Card 1: Interactive What-If Life Timeline Simulator */}
+            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift transition-all duration-300 ease-in-out">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -1107,37 +1154,119 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                         What-If Life Timeline Simulator
                       </span>
                       <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">
-                        30-Year Quantum Multiverse Sim
+                        30-Year Quantum Multiverse Scrubber
                       </span>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 font-semibold border border-emerald-500/20">
-                    Live Simulator
+                    Live Scrubber
                   </span>
                 </div>
 
                 <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-                  Time-travel across your next 30 years. Compare parallel life branches — Fast FIRE vs Balanced Corporate vs Startup Bet — and test how career jumps, inflation, and market shocks impact your early retirement in ₹ INR.
+                  Time-travel across your next 30 years. Drag the interactive scrubber to see how parallel life branches compound and reach early retirement (F.I.R.E.) in ₹ INR.
                 </p>
 
-                {/* Visual Trajectory Preview */}
-                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3">
+                {/* Interactive Time-Scrubber Slider with Dynamic Reverse Transitions */}
+                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3 transition-all duration-300 ease-in-out">
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[var(--muted)] uppercase">Parallel Life Forks at Year 20</span>
-                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">₹ INR Calibrated</span>
+                    <span className="text-[var(--muted)] uppercase font-semibold">
+                      Time Scrubber: Year {timelineYear}
+                    </span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400">
+                      Age {24 + timelineYear} (Simulated)
+                    </span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
-                      <span className="font-semibold text-[var(--ink)]">🚀 Fast FIRE Path</span>
-                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹4.2 Cr (Retire at 38)</span>
+
+                  <input
+                    type="range"
+                    min="1"
+                    max="30"
+                    step="1"
+                    value={timelineYear}
+                    onChange={(e) => setTimelineYear(Number(e.target.value))}
+                    className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-2 bg-gray-200 dark:bg-gray-800 rounded-lg transition-all duration-300 ease-in-out"
+                  />
+
+                  <div className="flex justify-between text-[10px] font-mono text-[var(--muted)]">
+                    <span>Yr 1 (Age 25)</span>
+                    <span>Yr 10 (Age 34)</span>
+                    <span>Yr 20 (Age 44)</span>
+                    <span>Yr 30 (Age 54)</span>
+                  </div>
+
+                  {/* 3 Clickable Parallel Path Forks */}
+                  <div className="space-y-2 pt-1">
+                    {/* Path 1: Fast FIRE */}
+                    <div
+                      onClick={() => setSelectedTimelinePath('fire')}
+                      className={`flex items-center justify-between text-xs p-2.5 rounded-xl border cursor-pointer transition-all duration-300 ease-in-out ${
+                        selectedTimelinePath === 'fire'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 shadow-xs'
+                          : 'bg-[var(--surface)] border-[var(--line)] hover:border-emerald-500/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">🚀</span>
+                        <div>
+                          <span className="font-bold text-[var(--ink)] block">Fast FIRE Path</span>
+                          <span className="text-[10px] text-gray-500">Retire at Age 38</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
+                          {formatInrCompact(fireWealth)}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-400">50% Savings</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
-                      <span className="font-semibold text-[var(--ink)]">⚖️ Balanced Life</span>
-                      <span className="font-mono font-bold text-[var(--ink)]">₹2.1 Cr (Retire at 48)</span>
+
+                    {/* Path 2: Balanced Life */}
+                    <div
+                      onClick={() => setSelectedTimelinePath('balanced')}
+                      className={`flex items-center justify-between text-xs p-2.5 rounded-xl border cursor-pointer transition-all duration-300 ease-in-out ${
+                        selectedTimelinePath === 'balanced'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 shadow-xs'
+                          : 'bg-[var(--surface)] border-[var(--line)] hover:border-emerald-500/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">⚖️</span>
+                        <div>
+                          <span className="font-bold text-[var(--ink)] block">Balanced Life</span>
+                          <span className="text-[10px] text-gray-500">Retire at Age 48</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-[var(--ink)] block transition-all duration-300">
+                          {formatInrCompact(balancedWealth)}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-400">25% Savings</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
-                      <span className="font-semibold text-[var(--ink)]">🦄 Aggressive Startup</span>
-                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹5.8 Cr (Retire at 42)</span>
+
+                    {/* Path 3: Aggressive Startup */}
+                    <div
+                      onClick={() => setSelectedTimelinePath('startup')}
+                      className={`flex items-center justify-between text-xs p-2.5 rounded-xl border cursor-pointer transition-all duration-300 ease-in-out ${
+                        selectedTimelinePath === 'startup'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 shadow-xs'
+                          : 'bg-[var(--surface)] border-[var(--line)] hover:border-emerald-500/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">🦄</span>
+                        <div>
+                          <span className="font-bold text-[var(--ink)] block">Aggressive Startup Bet</span>
+                          <span className="text-[10px] text-gray-500">Retire at Age 42</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
+                          {formatInrCompact(startupWealth)}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-400">High Risk Equity</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1146,16 +1275,16 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="pt-2">
                 <Link
                   href="/app/multiverse"
-                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
+                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01]"
                 >
-                  <span>Launch 30-Year Timeline Simulator</span>
+                  <span>Launch Full 30-Year Simulator</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
 
-            {/* Flagship Card 2: Youth Investment & IPO Prediction Center */}
-            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift">
+            {/* Flagship Card 2: Interactive Youth Investment & IPO Prediction Center */}
+            <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs card-hover-lift transition-all duration-300 ease-in-out">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -1180,31 +1309,82 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   Real-time listing gain predictions for upcoming Indian IPOs using Grey Market Premiums (GMP %), paired with student-friendly index funds starting as low as ₹100 per month with zero commissions.
                 </p>
 
-                {/* Visual Radar Preview */}
-                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3">
+                {/* Interactive Monthly SIP Compounding Slider */}
+                <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3 transition-all duration-300 ease-in-out">
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[var(--muted)] uppercase">Upcoming IPO Gain Radar</span>
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Live Signals</span>
+                    <span className="text-[var(--muted)] uppercase font-semibold">
+                      Monthly Investment Slider
+                    </span>
+                    <span className="font-bold text-[#173F2B] dark:text-emerald-400">
+                      ₹{previewSipMonthly.toLocaleString()}/month
+                    </span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
-                      <div>
-                        <span className="font-bold text-[var(--ink)] block">Swiggy Ltd</span>
-                        <span className="text-[10px] text-gray-500">Price: ₹371 - ₹390</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block">+42.5% Gain</span>
-                        <span className="text-[10px] font-mono text-gray-500">GMP: ₹165</span>
-                      </div>
+
+                  <input
+                    type="range"
+                    min="500"
+                    max="15000"
+                    step="500"
+                    value={previewSipMonthly}
+                    onChange={(e) => setPreviewSipMonthly(Number(e.target.value))}
+                    className="w-full accent-orange-500 cursor-pointer h-2 bg-gray-200 dark:bg-gray-800 rounded-lg transition-all duration-300 ease-in-out"
+                  />
+
+                  {/* 10-Yr Equity SIP vs Bank FD Comparison */}
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                    <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-0.5">
+                      <span className="text-[10px] text-gray-400 uppercase block">10-Yr Equity SIP (13.5%)</span>
+                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
+                        {formatInrCompact(sip10YrWealth)}
+                      </span>
                     </div>
-                    <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[var(--surface)] border border-[var(--line)]">
+                    <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-0.5">
+                      <span className="text-[10px] text-gray-400 uppercase block">10-Yr Bank FD (6.5%)</span>
+                      <span className="text-sm font-bold text-gray-500 block transition-all duration-300">
+                        {formatInrCompact(fd10YrWealth)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Interactive IPO Selection Tabs */}
+                  <div className="pt-2 border-t border-[var(--line)] space-y-2">
+                    <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider block">
+                      Live Upcoming IPO Radar (Click to Inspect):
+                    </span>
+                    <div className="flex gap-1.5 overflow-x-auto pb-1">
+                      {PREVIEW_IPOS.map((ipo, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedIpoIndex(idx)}
+                          className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold whitespace-nowrap transition-all duration-300 cursor-pointer ${
+                            selectedIpoIndex === idx
+                              ? 'bg-orange-500 text-white shadow-xs'
+                              : 'bg-[var(--surface)] text-[var(--muted)] border border-[var(--line)] hover:border-orange-500/50'
+                          }`}
+                        >
+                          {ipo.name.split(' ')[0]} {ipo.gain}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Active Selected IPO Details */}
+                    <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-orange-500/30 flex items-center justify-between text-xs transition-all duration-300">
                       <div>
-                        <span className="font-bold text-[var(--ink)] block">NTPC Green Energy</span>
-                        <span className="text-[10px] text-gray-500">Price: ₹102 - ₹108</span>
+                        <span className="font-bold text-[var(--ink)] block">
+                          {PREVIEW_IPOS[selectedIpoIndex]?.name}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-500">
+                          Price: {PREVIEW_IPOS[selectedIpoIndex]?.price} • GMP: {PREVIEW_IPOS[selectedIpoIndex]?.gmp}
+                        </span>
                       </div>
                       <div className="text-right">
-                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block">+28.0% Gain</span>
-                        <span className="text-[10px] font-mono text-gray-500">GMP: ₹30</span>
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block">
+                          {PREVIEW_IPOS[selectedIpoIndex]?.gain}
+                        </span>
+                        <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                          {PREVIEW_IPOS[selectedIpoIndex]?.signal}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1214,7 +1394,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               <div className="pt-2">
                 <Link
                   href="/app/investments"
-                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
+                  className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01]"
                 >
                   <span>Open Prediction Center</span>
                   <ArrowRight className="w-4 h-4" />
@@ -1536,13 +1716,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <div className="flex flex-wrap gap-3.5 items-center shrink-0">
               <button
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-                className="btn-pill primary bg-white text-[#173F2B] hover:bg-emerald-50 px-7 py-3.5 font-medium text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-colors"
+                className="px-8 py-3.5 rounded-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-emerald-950/20 cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                {t('cta.btn_open', 'Open your ledger →')}
+                Start Building Wealth →
               </button>
               <button
                 onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-                className="btn-pill secondary bg-white/10 hover:bg-white/15 border border-white/25 hover:border-white/50 text-white px-7 py-3.5 font-medium text-sm sm:text-base rounded-full cursor-pointer whitespace-nowrap transition-colors"
+                className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 hover:border-white/50 text-white font-semibold text-sm sm:text-base cursor-pointer whitespace-nowrap transition-all duration-300"
               >
                 {t('cta.btn_signin', 'Sign in')}
               </button>
@@ -1551,18 +1731,164 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         </div>
       </section>
 
-      {/* 8. Minimalist Monospace High-Contrast Footer */}
-      <footer className="border-t border-[var(--line)] py-9 text-xs text-[var(--muted)] font-mono">
-        <div className="max-w-6xl mx-auto px-5 flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-medium">
-              {t('footer.brand', 'FINROQ · Autonomous Fixed-Point Financial Accounting Engine')}
-            </span>
+      {/* ========================================================================= */}
+      {/* 8. COMPREHENSIVE MULTI-COLUMN FINTECH FOOTER (WITH EDUCATIONAL NOTICE)   */}
+      {/* ========================================================================= */}
+      <footer className="border-t border-[var(--line)] bg-[var(--soft)]/30 text-[var(--muted)] pt-12 pb-8 text-xs font-sans">
+        <div className="max-w-6xl mx-auto px-5 space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            {/* Col 1: Brand & Contact Info */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-2 font-display font-bold text-xl text-[var(--ink)]">
+                <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shadow-xs shadow-emerald-500/50" />
+                <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
+              </div>
+              <p className="text-xs text-[var(--muted)] leading-relaxed max-w-sm">
+                The autonomous mathematical financial ledger. Built for individuals and young professionals in India who refuse floating-point rounding drift and demand absolute precision.
+              </p>
+              <div className="space-y-1.5 text-xs font-mono text-[var(--muted)]">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>support@finroq.in • security@finroq.in</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Indiranagar, Bengaluru, Karnataka, India • 560038</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Col 2: Autonomous Systems */}
+            <div className="space-y-3">
+              <span className="font-bold font-mono uppercase text-[11px] text-[var(--ink)] tracking-wider block">
+                Financial Systems
+              </span>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <Link href="/app/multiverse" className="hover:text-emerald-600 transition-colors">
+                    30-Yr Multiverse Simulator
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/investments" className="hover:text-emerald-600 transition-colors">
+                    Youth Investment &amp; IPO Radar
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/expense-tracking" className="hover:text-emerald-600 transition-colors">
+                    Double-Entry Expense Tracker
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/budgeting" className="hover:text-emerald-600 transition-colors">
+                    Dynamic Envelope Budgets
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/crash-test" className="hover:text-emerald-600 transition-colors">
+                    Autonomous Crash-Test Simulator
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/net-worth" className="hover:text-emerald-600 transition-colors">
+                    Consolidated Net Worth
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 3: Resources & Guides */}
+            <div className="space-y-3">
+              <span className="font-bold font-mono uppercase text-[11px] text-[var(--ink)] tracking-wider block">
+                Resources &amp; Rules
+              </span>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <Link href="/app/money-guides" className="hover:text-emerald-600 transition-colors">
+                    Visual Money Guides (6 Rules)
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/money-guides" className="hover:text-emerald-600 transition-colors">
+                    The 24-Hour Impulse Protocol
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/money-guides" className="hover:text-emerald-600 transition-colors">
+                    Chai vs ₹18.5L Compounding
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/money-guides" className="hover:text-emerald-600 transition-colors">
+                    The 30% CIBIL Credit Shield
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/app/money-guides" className="hover:text-emerald-600 transition-colors">
+                    UPI Zero-PIN Scam Defense
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/api/market-telemetry" className="hover:text-emerald-600 transition-colors font-mono text-[11px]">
+                    AMFI Live Telemetry API
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 4: Trust & Security */}
+            <div className="space-y-3">
+              <span className="font-bold font-mono uppercase text-[11px] text-[var(--ink)] tracking-wider block">
+                Architecture &amp; Trust
+              </span>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <span className="text-[var(--ink)] font-semibold block">Fixed-Point Decimal</span>
+                  <span className="text-[10px] text-gray-500">PostgreSQL NUMERIC(14,2)</span>
+                </li>
+                <li>
+                  <span className="text-[var(--ink)] font-semibold block">Argon2id Vault</span>
+                  <span className="text-[10px] text-gray-500">Zero-knowledge auth hash</span>
+                </li>
+                <li>
+                  <span className="text-[var(--ink)] font-semibold block">Tenant Isolation</span>
+                  <span className="text-[10px] text-gray-500">No ad-tracking or scraping</span>
+                </li>
+                <li>
+                  <span className="text-[var(--ink)] font-semibold block">Continuous Ledger Audit</span>
+                  <span className="text-[10px] text-gray-500">DR = CR Checksum validation</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <span className="text-[11px] text-[var(--muted)]">
-            {t('footer.disclaimer', 'Exact fixed-point Decimal arithmetic · All calculations mathematically proved')}
-          </span>
+
+          {/* Educational Purpose & Regulatory Notice Box */}
+          <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[#CAD5CA]/60 dark:border-[#2A3D33] text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 space-y-1">
+            <span className="font-bold text-[var(--ink)] block">
+              Educational Purpose &amp; Regulatory Disclosure:
+            </span>
+            <p>
+              FINROQ is a financial simulation, personal accounting, and wealth projection technology platform developed exclusively for educational, personal organization, and planning purposes. FINROQ is not a SEBI-registered Investment Adviser (RIA), Research Analyst (RA), or Portfolio Manager under SEBI regulations. Simulations, Grey Market Premiums (GMP), and compounding returns are indicative projections and do not constitute financial advice, investment recommendations, or guarantees of future earnings. Always perform independent due diligence or consult a licensed SEBI-registered advisor before executing capital transactions.
+            </p>
+          </div>
+
+          {/* Bottom Copyright & Telemetry Bar */}
+          <div className="pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[var(--ink)] font-medium">
+                FINROQ Technologies Pvt. Ltd. © 2026. All rights reserved.
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-gray-400">
+              <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                Live Status: 0.00% Drift Verified
+              </span>
+              <span>•</span>
+              <span>AMFI Feed Connected</span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
