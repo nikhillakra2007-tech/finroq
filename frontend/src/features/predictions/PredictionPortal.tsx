@@ -33,6 +33,27 @@ import { getStoredTheme, applyTheme } from '@/lib/theme';
 export function PredictionPortal() {
   const [activePersona, setActivePersona] = useState<UserPersona>('student');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [marketData, setMarketData] = useState<{
+    nifty: { val: number; chg: number };
+    sensex: { val: number; chg: number };
+  }>({
+    nifty: { val: 24399.4, chg: 0.42 },
+    sensex: { val: 80081.2, chg: 0.38 },
+  });
+
+  React.useEffect(() => {
+    fetch('/api/market-telemetry')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.marketIndices) {
+          setMarketData({
+            nifty: { val: d.marketIndices.nifty50.value, chg: d.marketIndices.nifty50.changePct },
+            sensex: { val: d.marketIndices.sensex.value, chg: d.marketIndices.sensex.changePct },
+          });
+        }
+      })
+      .catch((e) => console.warn('Using cached market data:', e));
+  }, []);
 
   const currentGuide = PERSONA_GUIDES[activePersona];
   const youngsterEdge = calculateYoungsterAdvantage(activePersona === 'student' ? 1500 : 8000);
@@ -83,11 +104,16 @@ export function PredictionPortal() {
         {/* Live Indian Markets Telemetry Ticker & Actions */}
         <div className="flex items-center gap-3">
           <div className="hidden lg:flex items-center gap-3 text-xs font-mono px-3 py-1.5 rounded-xl bg-[#F7F7F0] dark:bg-[#0D1411] border border-[#CAD5CA]/60 dark:border-[#2A3D33]">
-            <span className="text-gray-500">NIFTY 50:</span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400">24,399 (+0.42%)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-gray-500">NIFTY:</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              {marketData.nifty.val.toLocaleString()} ({marketData.nifty.chg >= 0 ? '+' : ''}{marketData.nifty.chg}%)
+            </span>
             <span className="text-gray-300 dark:text-gray-700">|</span>
             <span className="text-gray-500">SENSEX:</span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400">80,081 (+0.38%)</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              {marketData.sensex.val.toLocaleString()} ({marketData.sensex.chg >= 0 ? '+' : ''}{marketData.sensex.chg}%)
+            </span>
           </div>
 
           <button
