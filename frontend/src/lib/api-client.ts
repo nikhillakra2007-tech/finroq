@@ -1371,7 +1371,7 @@ class ApiClient {
             currency: "INR",
           };
         } else if (q.includes("budget") || q.includes("exceed") || q.includes("overspend")) {
-          reply = "You are currently at 74.2% of your monthly budget. 'Groceries & Food' has overspent by ₹1,400.\n\n### 🔍 Detailed Analysis\n• Total Envelope Limit: ₹35,000.00\n• Total Spent So Far: ₹26,000.00 (74.2%)\n• Remaining Margin: ₹9,000.00\n• Overspent Envelope: Groceries & Food (₹11,400 spent vs ₹10,000 cap)\n• Pacing Verdict: Caution on Food, All Other Envelopes Healthy\n\n📌 Source: [Daily Budgeting](/app/budgeting)";
+          reply = "You are currently at 74.2% of your monthly budget. 'Groceries & Food' has overspent by ₹1,400.\n\n### 🔍 Detailed Analysis\n• Total Envelope Limit: ₹35,000.00\n• Total Spent So Far: ₹26,000.00 (74.2%)\n• Remaining Margin: ₹9,000.00\n• Overspent Envelope: Groceries & Food (₹11,400 spent vs ₹10,000 cap)\n• Pacing Verdict: Caution on Food, All Other Envelopes Healthy\n\n📌 Source: [Budgeting](/app/budgeting)";
           structured = {
             total_allocated: "35000.00",
             total_spent: "26000.00",
@@ -1521,7 +1521,7 @@ class ApiClient {
         const DICT: Record<string, { general: string; modules: string; crash: string; security: string; switchAck: string }> = {
           en: {
             general: "Welcome to Finroq! We help you track verified accounts, smart category budgets, and financial resilience across 13 unified engines. Sign in or test the 1-click demo to get started!",
-            modules: "Finroq includes 13 unified financial engines: Expense Tracking, Daily Budgeting, Splitter, Pre-Spend Check, Net Worth, Debt Watchdog, Spend Leak Detector, Goal Timeline, Emergency Cushion, Money Guides, Credit Health, Health Score, and our Autonomous 6-Agent Crash-Test Engine (/app/crash-test).",
+            modules: "Finroq includes 15 unified financial engines: Expense Tracking, Budgeting, Youth Investments & IPO Predictions, Quantum Multiverse, Splitter, Pre-Spend Check, Net Worth, Debt Watchdog, Spend Leak Detector, Goal Timeline, Emergency Cushion, Money Guides, Credit Health, Health Score, and our Autonomous 6-Agent Crash-Test Engine (/app/crash-test).",
             crash: "Finroq's Autonomous Crash-Test Engine (/app/crash-test) tests your finances against 6 severe real-world shocks (salary pauses, medical emergencies, inflation). 6 coordinated agents design mathematically proven recovery plans without debt.",
             security: "Finroq enforces strict zero-trust tenant isolation with Argon2id password hashing and cryptographic JWT tokens. Your financial records are 100% private and protected.",
             switchAck: "Certainly! I have switched my response language to English. How can I assist your financial journey today?",

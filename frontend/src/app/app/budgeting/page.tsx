@@ -10,7 +10,7 @@ export default function DailyBudgetingPage() {
 
   return (
     <ModuleShell
-      title={language === 'hi' ? 'दैनिक बजट' : 'Daily Budgeting'}
+      title={language === 'hi' ? 'बजट प्रबंधन' : 'Budgeting'}
       category={language === 'hi' ? 'ट्रैक और नियंत्रण' : 'Track & Control'}
       description={
         language === 'hi'

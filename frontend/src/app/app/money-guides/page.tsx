@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ModuleShell } from '@/components/layout/ModuleShell';
 import { Modal } from '@/components/ui/Modal';
 import { BookOpen, CheckCircle2, ShieldCheck, ArrowRight, ShieldAlert, Zap, HelpCircle } from 'lucide-react';
+import { VisualTipsSection } from '@/features/guides/VisualTipsSection';
 
 interface Guide {
   id: string;
@@ -658,6 +659,9 @@ export default function AppMoneyGuidesPage() {
       }
     >
       <div className="space-y-8">
+        {/* Interactive Visual Tips & Techniques for Youth & Students */}
+        <VisualTipsSection />
+
         {/* Crash-Test & Resilience Technical Terms Demystified Section */}
         <section id="crash-test-guide" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xs">

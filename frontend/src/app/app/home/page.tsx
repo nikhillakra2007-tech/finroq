@@ -47,11 +47,33 @@ interface ModuleItem {
   desc: string;
   i18nDescKey: string;
   icon: React.ComponentType<{ className?: string }>;
-  category: 'Wealth & Planning' | 'Decisions Before Spending' | 'Obligations & Health';
+  category: 'Track & Control' | 'Wealth & Planning' | 'Decisions Before Spending' | 'Obligations & Health';
   href: string;
 }
 
 const ALL_TOOLS: ModuleItem[] = [
+  // Category 0: Track & Control
+  {
+    id: 'expense-tracking',
+    name: 'Expense Tracking',
+    i18nKey: 'mod.expense_tracking',
+    desc: 'Record and categorize transactions, monitor statuses, and review completed cash flow.',
+    i18nDescKey: 'mod.expense_tracking.desc',
+    icon: CreditCard,
+    category: 'Track & Control',
+    href: '/app/expense-tracking',
+  },
+  {
+    id: 'budgeting',
+    name: 'Budgeting',
+    i18nKey: 'mod.daily_budgeting',
+    desc: 'Set category spending caps, compare plans with actual expenses, and monitor cushions.',
+    i18nDescKey: 'mod.daily_budgeting.desc',
+    icon: PieChart,
+    category: 'Track & Control',
+    href: '/app/budgeting',
+  },
+
   // Category 1: Wealth & Planning
   {
     id: 'investments',
@@ -599,7 +621,7 @@ export default function AuthenticatedHomeHub() {
           </div>
 
           <div className="space-y-6">
-            {(['Wealth & Planning', 'Decisions Before Spending', 'Obligations & Health'] as const).map(
+            {(['Track & Control', 'Wealth & Planning', 'Decisions Before Spending', 'Obligations & Health'] as const).map(
               (category) => {
                 const toolsInCategory = ALL_TOOLS.filter((t) => t.category === category);
                 return (

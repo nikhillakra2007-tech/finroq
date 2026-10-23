@@ -398,9 +398,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             <a href="#simulator" className="hover:text-[var(--ink)] transition-colors">
               {t('nav.simulator', 'Health Simulator')}
             </a>
-            <a href="#architecture" className="hover:text-[var(--ink)] transition-colors">
-              {t('nav.architecture', 'Trust & Architecture')}
-            </a>
+            <Link href="/predictions" className="hover:text-[var(--ink)] transition-colors text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Predictions</span>
+            </Link>
+            <Link href="/app/money-guides" className="hover:text-[var(--ink)] transition-colors">
+              Visual Guides
+            </Link>
           </nav>
 
           {/* Right Action Controls */}
@@ -541,6 +545,50 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t('hero.pill_argon', 'Argon2id Vault')}</span>
               </span>
+            </div>
+
+            {/* Direct Module Access Badges */}
+            <div className="pt-4 border-t border-[var(--line)] space-y-2">
+              <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider block">
+                Direct Financial Systems:
+              </span>
+              <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                <Link
+                  href="/predictions"
+                  className="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Youth IPO &amp; Mutual Fund Predictor ⚡</span>
+                </Link>
+                <Link
+                  href="/app/multiverse"
+                  className="px-3 py-1.5 rounded-full bg-[var(--soft)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--ink)] transition-all flex items-center gap-1.5"
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>30-Yr What-If Timeline</span>
+                </Link>
+                <Link
+                  href="/app/money-guides"
+                  className="px-3 py-1.5 rounded-full bg-[var(--soft)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--ink)] transition-all flex items-center gap-1.5"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Visual Tips &amp; Rules</span>
+                </Link>
+                <Link
+                  href="/app/expense-tracking"
+                  className="px-3 py-1.5 rounded-full bg-[var(--soft)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--ink)] transition-all flex items-center gap-1.5"
+                >
+                  <CreditCard className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Expense Tracking</span>
+                </Link>
+                <Link
+                  href="/app/budgeting"
+                  className="px-3 py-1.5 rounded-full bg-[var(--soft)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--ink)] transition-all flex items-center gap-1.5"
+                >
+                  <PieChart className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Budgeting</span>
+                </Link>
+              </div>
             </div>
           </div>
 

@@ -35,7 +35,7 @@ import {
 
 const ALL_MODULES = [
   { name: 'Expense Tracking', href: '/transactions', icon: CreditCard, cat: 'Track' },
-  { name: 'Daily Budgeting', href: '/budgets', icon: PieChart, cat: 'Track' },
+  { name: 'Budgeting', href: '/budgets', icon: PieChart, cat: 'Track' },
   { name: 'Expense Splitter', href: '/splitter', icon: Users, cat: 'Track' },
   { name: 'Pre-Spend Check', href: '/pre-spend-check', icon: ShoppingBag, cat: 'Decide' },
   { name: 'Spend Leak Detector', href: '/spend-leaks', icon: Zap, cat: 'Decide' },

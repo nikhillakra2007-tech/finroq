@@ -47,7 +47,7 @@ const MODULES_NAV = [
   { href: '/app/investments', key: 'mod.investments', label: 'Youth Investments & IPOs', icon: TrendingUp },
   { href: '/app/multiverse', key: 'mod.multiverse', label: 'Quantum Multiverse', icon: Compass },
   { href: '/app/expense-tracking', key: 'mod.expense_tracking', label: 'Expense Tracking', icon: CreditCard },
-  { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Daily Budgeting', icon: PieChart },
+  { href: '/app/budgeting', key: 'mod.daily_budgeting', label: 'Budgeting', icon: PieChart },
   { href: '/app/net-worth', key: 'mod.net_worth', label: 'Net Worth', icon: TrendingUp },
   { href: '/app/pre-spend-check', key: 'mod.pre_spend_check', label: 'Pre-Spend Check', icon: ShoppingBag },
   { href: '/app/spend-leak-detector', key: 'mod.spend_leak_detector', label: 'Spend Leak Detector', icon: Zap },

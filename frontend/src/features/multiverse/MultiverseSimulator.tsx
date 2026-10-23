@@ -18,6 +18,7 @@ import {
   Eye,
   EyeOff,
   Compass,
+  BookOpen,
 } from 'lucide-react';
 import {
   MultiverseBranchConfig,
@@ -427,16 +428,26 @@ export function MultiverseSimulator() {
             </div>
           </div>
 
-          {/* Quick link to Investment Prediction Center */}
-          <div className="pt-3 border-t border-[#CAD5CA]/60 dark:border-[#2A3D33] flex items-center justify-between">
-            <span className="text-xs text-gray-500">Want to invest to reach this faster?</span>
-            <Link
-              href="/app/investments"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#173F2B] dark:text-[#5ECB9C] hover:underline"
-            >
-              <span>Explore Youth Mutual Funds & IPO Predictions</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
+          {/* Quick links to Investment Prediction Center and Visual Money Guides */}
+          <div className="pt-3 border-t border-[#CAD5CA]/60 dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span className="text-xs text-gray-500">Accelerate your timeline with proven playbooks:</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/app/money-guides"
+                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:underline"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Visual Tips &amp; Rules</span>
+              </Link>
+              <span className="text-gray-300 dark:text-gray-700">•</span>
+              <Link
+                href="/app/investments"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#173F2B] dark:text-[#5ECB9C] hover:underline"
+              >
+                <span>Youth Investments &amp; IPOs</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       )}

@@ -6,6 +6,7 @@ import {
   Sparkles,
   Compass,
   ExternalLink,
+  BookOpen,
 } from 'lucide-react';
 import { UserPersona, PERSONA_GUIDES, calculateYoungsterAdvantage } from '@/lib/investment-predictions';
 import { IpoRadarSection } from '@/features/predictions/IpoRadarSection';
@@ -152,6 +153,31 @@ export function InvestmentPredictionCenter({ isStandalonePortal = false }: Props
 
       {/* Interactive Youth SIP Growth Calculator */}
       <YouthSipSection initialMonthly={activePersona === 'student' ? 1500 : 8000} />
+
+      {/* Guidance Callout to Money Guides Visual Tips */}
+      <div className="p-4 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 dark:from-[#1A2C22] dark:via-[#16251E] dark:to-[#1A2C22] rounded-2xl border border-emerald-300 dark:border-emerald-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-base shrink-0">
+            💡
+          </div>
+          <div>
+            <span className="font-bold text-[#173F2B] dark:text-[#E6EEE9] block">
+              New to Personal Finance? Master the 6 Golden Visual Rules First
+            </span>
+            <span className="text-gray-500 dark:text-slate-300">
+              Interactive visual playbooks: The 24-Hour Impulse Rule, Chai vs Compounding, 30% CIBIL Shield &amp; UPI Zero-PIN Scam Defense.
+            </span>
+          </div>
+        </div>
+
+        <Link
+          href="/app/money-guides"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:text-[#0B1A13] font-semibold shrink-0 shadow-xs"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Explore Visual Money Guides →</span>
+        </Link>
+      </div>
 
       {/* Cross-Link to What-If Life Timeline */}
       <div className="p-4 bg-white dark:bg-[#16251E] rounded-2xl border border-[#CAD5CA] dark:border-[#2A3D33] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">

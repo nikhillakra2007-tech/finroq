@@ -21,6 +21,7 @@ import {
   Home,
   Sun,
   Moon,
+  BookOpen,
 } from 'lucide-react';
 import { UserPersona, PERSONA_GUIDES, calculateYoungsterAdvantage } from '@/lib/investment-predictions';
 import { IpoRadarSection } from './IpoRadarSection';
@@ -97,6 +98,13 @@ export function PredictionPortal() {
               className="px-2.5 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-[#173F2B] dark:hover:text-white"
             >
               What-If Timelines
+            </Link>
+            <Link
+              href="/app/money-guides"
+              className="px-2.5 py-1 rounded-lg text-emerald-700 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Visual Money Guides</span>
             </Link>
           </nav>
         </div>
@@ -248,6 +256,31 @@ export function PredictionPortal() {
 
       {/* Interactive SIP Growth Predictor */}
       <YouthSipSection initialMonthly={activePersona === 'student' ? 1500 : 8000} />
+
+      {/* Visual Tips & Techniques Guidance Callout */}
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-emerald-50 dark:from-[#1A2C22] dark:via-[#16251E] dark:to-[#1A2C22] border border-emerald-300 dark:border-emerald-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg shrink-0">
+            📚
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-[#173F2B] dark:text-[#E6EEE9]">
+              Need foundational rules before putting money into markets?
+            </h4>
+            <p className="text-xs text-[#2E4035]/80 dark:text-[#A3B5AC] mt-0.5">
+              Explore interactive visual playbooks on the 24-Hour Impulse Rule, Chai Micro-Compounding, 30% CIBIL Shield, and UPI Zero-PIN Scam Defense.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          href="/app/money-guides"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#173F2B] text-white hover:bg-[#102F21] dark:bg-[#5ECB9C] dark:text-[#0B1A13] text-xs font-semibold shrink-0 shadow-xs transition-transform hover:scale-105"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Launch Visual Money Guides →</span>
+        </Link>
+      </div>
     </div>
   );
 }

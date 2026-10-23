@@ -82,7 +82,7 @@ const translations: Record<Language, Record<string, string>> = {
     'mod.ai_assistant': 'Finroq AI',
     'mod.expense_tracking': 'Expense Tracking',
     'mod.expense_tracking.desc': 'Record and categorize transactions, monitor statuses, and review completed cash flow.',
-    'mod.daily_budgeting': 'Daily Budgeting',
+    'mod.daily_budgeting': 'Budgeting',
     'mod.daily_budgeting.desc': 'Set category spending caps, compare plans with actual expenses, and monitor cushions.',
     'mod.splitter': 'Splitter',
     'mod.splitter.desc': 'Divide shared expenses, calculate exact equal or custom shares, and track settlements.',

@@ -59,9 +59,9 @@ describe('AIMessageRenderer & Multi-Feature Source Deep Linking', () => {
       expect(res[0].url).toBe('/app/expense-tracking');
     });
 
-    it('infers Daily Budgeting from budget and envelope queries', () => {
+    it('infers Budgeting from budget and envelope queries', () => {
       const res = inferSourceFeatures('You are at 74% of your monthly budget envelope with ₹9,000 remaining allowance.');
-      expect(res[0].title).toBe('Daily Budgeting');
+      expect(res[0].title).toBe('Budgeting');
       expect(res[0].url).toBe('/app/budgeting');
     });
 
@@ -150,7 +150,7 @@ describe('AIMessageRenderer & Multi-Feature Source Deep Linking', () => {
 • Category 1: On target
 • Category 2: Within 10%
 
-📌 Source: [Daily Budgeting](/app/budgeting)`;
+📌 Source: [Budgeting](/app/budgeting)`;
 
       render(<AIMessageRenderer content={content} isUser={false} />);
 

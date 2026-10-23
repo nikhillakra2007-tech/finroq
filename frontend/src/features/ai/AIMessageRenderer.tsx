@@ -17,7 +17,7 @@ export const ALL_FINROQ_FEATURES: FinroqFeatureDef[] = [
     keywords: ['expense', 'spent', 'spend', 'spending', 'transaction', 'outflow', 'paid', 'purchase', 'cash flow', 'payment', 'ledger', 'discretionary', 'groceries', 'dining', 'housing', 'rent'],
   },
   {
-    title: 'Daily Budgeting',
+    title: 'Budgeting',
     url: '/app/budgeting',
     keywords: ['budget', 'envelope', 'cap', 'limit', 'allocated', 'overspent', 'allowance', 'pacing', 'category limit', 'daily budget'],
   },
