@@ -15,7 +15,13 @@ from app.db.models import (
     CategoryType,
 )
 from app.features.readiness.service import ReadinessService
-from app.features.readiness.schemas import ReadinessTier, InsightStatus, InsightType
+from app.features.readiness.schemas import ReadinessTier, InsightStatus, InsightType, FindingLifecycleStatus
+from app.features.readiness.adapters import (
+    NormalizedTransactionRecord,
+    SubscriptionEvidenceRecord,
+    AppUsageObservationRecord,
+    AndroidUsageCompanionBoundary,
+)
 
 
 @pytest.fixture
@@ -612,3 +618,325 @@ class TestSpendLeakReadinessAndConfidence:
         assert report2.total_eligible_transactions == 0
         assert len(res2.insights) == 0
         assert report2.accounts_included[0].account_name == "User2 Checking"
+
+    # 17. Unexpected price increase (inflation) detection
+    async def test_17_unexpected_price_increase_inflation(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # Monthly Netflix charges: 499, 499, and then increased to 649
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("499.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Netflix Standard Plan",
+            transaction_date=now - timedelta(days=62),
+            source="statement_import",
+        ))
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("499.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Netflix Standard Plan",
+            transaction_date=now - timedelta(days=31),
+            source="statement_import",
+        ))
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("649.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Netflix Standard Plan",
+            transaction_date=now - timedelta(days=1),
+            source="statement_import",
+        ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res = await service.detect_leaks()
+
+        inflation_insights = [i for i in res.insights if i.insight_type == InsightType.RECURRING_COST_INFLATION]
+        assert len(inflation_insights) == 1
+        inf = inflation_insights[0]
+        assert inf.previous_amount == Decimal("499.00")
+        assert inf.current_amount == Decimal("649.00")
+        assert inf.price_increase_amount == Decimal("150.00")
+        assert inf.price_increase_percentage == Decimal("30.1")
+        assert inf.potential_monthly_savings == Decimal("150.00")
+        assert inf.currency == "INR"
+
+    # 18. Unexpectedly missing recurring payment anomaly
+    async def test_18_missing_recurring_payment_anomaly(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # Regular gym membership: 3 payments 115d, 85d, and 55d ago (now overdue by ~25d)
+        for d in [115, 85, 55]:
+            db_session.add(Transaction(
+                owner_id=u1_id,
+                account_id=ctx["acc1"].id,
+                amount=Decimal("1500.00"),
+                currency="INR",
+                transaction_type=TransactionType.EXPENSE,
+                status=TransactionStatus.COMPLETED,
+                description="Gold Gym Membership",
+                transaction_date=now - timedelta(days=d),
+                source="statement_import",
+            ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res = await service.detect_leaks()
+
+        missing_insights = [i for i in res.insights if i.insight_type == InsightType.MISSING_RECURRING_PAYMENT]
+        assert len(missing_insights) == 1
+        mis = missing_insights[0]
+        assert "Missing Recurring Charge" in mis.title
+        # Anomaly flagged for review, NOT claimed as realized savings
+        assert mis.potential_monthly_savings == Decimal("0.00")
+        assert mis.is_savings_projected is False
+
+    # 19. Duplicate charges within 48-hour nearby window
+    async def test_19_duplicate_charges_within_48_hours(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # 2 identical charges 24 hours apart
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("899.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Urban Company Home Cleaning",
+            transaction_date=now - timedelta(days=3),
+            source="manual",
+        ))
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("899.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Urban Company Home Cleaning",
+            transaction_date=now - timedelta(days=2),
+            source="manual",
+        ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res = await service.detect_leaks()
+
+        dup_insights = [i for i in res.insights if i.insight_type == InsightType.DUPLICATE_CHARGE_LEAKAGE]
+        assert len(dup_insights) >= 1
+        matched = [d for d in dup_insights if "Urban Company" in d.title]
+        assert len(matched) == 1
+        assert matched[0].potential_monthly_savings == Decimal("899.00")
+
+    # 20. Finding review lifecycle and idempotency
+    async def test_20_finding_review_lifecycle_and_idempotency(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # Add 3 recurring transactions for Notion
+        for d in [60, 30, 1]:
+            db_session.add(Transaction(
+                owner_id=u1_id,
+                account_id=ctx["acc1"].id,
+                amount=Decimal("800.00"),
+                currency="INR",
+                transaction_type=TransactionType.EXPENSE,
+                status=TransactionStatus.COMPLETED,
+                description="Notion Plus Workspace",
+                transaction_date=now - timedelta(days=d),
+                source="statement_import",
+            ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res1 = await service.detect_leaks()
+        notion_finding = [i for i in res1.insights if "notion" in i.title.lower()][0]
+        assert notion_finding.lifecycle_status == FindingLifecycleStatus.NEW
+
+        # User marks Notion as useful ('keep')
+        await service.update_finding_status(
+            finding_key=notion_finding.id,
+            status=FindingLifecycleStatus.KEEP,
+            user_notes="Essential work tool for team documentation",
+        )
+
+        # Re-run detection (idempotent test)
+        res2 = await service.detect_leaks()
+        notion_finding_after = [i for i in res2.insights if "notion" in i.title.lower()][0]
+        assert notion_finding_after.lifecycle_status == FindingLifecycleStatus.KEEP
+        assert notion_finding_after.user_notes == "Essential work tool for team documentation"
+
+        # User dismisses finding
+        await service.update_finding_status(
+            finding_key=notion_finding.id,
+            status=FindingLifecycleStatus.DISMISSED,
+        )
+
+        # After dismissal, savings should be excluded from total recoverable leak
+        res3 = await service.detect_leaks()
+        notion_dismissed = [i for i in res3.insights if "notion" in i.title.lower()][0]
+        assert notion_dismissed.lifecycle_status == FindingLifecycleStatus.DISMISSED
+
+    # 21. Potential savings deduplication (no double counting)
+    async def test_21_savings_deduplication_no_double_counting(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # Cloudflare plan increased from 1600 to 2000
+        # Recurring subscription finding = 2000/mo
+        # Inflation finding = 400/mo
+        # Total potential savings MUST be 2000, NOT 2400 (no double-counting!)
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("1600.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Cloudflare Business",
+            transaction_date=now - timedelta(days=60),
+            source="statement_import",
+        ))
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("1600.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Cloudflare Business",
+            transaction_date=now - timedelta(days=30),
+            source="statement_import",
+        ))
+        db_session.add(Transaction(
+            owner_id=u1_id,
+            account_id=ctx["acc1"].id,
+            amount=Decimal("2000.00"),
+            currency="INR",
+            transaction_type=TransactionType.EXPENSE,
+            status=TransactionStatus.COMPLETED,
+            description="Cloudflare Business",
+            transaction_date=now - timedelta(days=1),
+            source="statement_import",
+        ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res = await service.detect_leaks()
+
+        cf_sub = [i for i in res.insights if "cloudflare" in i.title.lower() and i.insight_type == InsightType.RECURRING_SUBSCRIPTION]
+        cf_inf = [i for i in res.insights if "cloudflare" in i.title.lower() and i.insight_type == InsightType.RECURRING_COST_INFLATION]
+        assert len(cf_sub) == 1
+        assert len(cf_inf) == 1
+        assert cf_sub[0].potential_monthly_savings == Decimal("2000.00")
+        assert cf_inf[0].potential_monthly_savings == Decimal("400.00")
+
+        # Total monthly leak for Cloudflare must be capped to subscription (2000), not (2000 + 400 = 2400)
+        assert res.total_monthly_leak == Decimal("2000.00")
+
+    # 22. Multi-currency isolation
+    async def test_22_multi_currency_isolation(self, db_session: AsyncSession, setup_users_and_accounts):
+        ctx = setup_users_and_accounts
+        u1_id = str(ctx["user1"].id)
+        now = datetime.utcnow()
+
+        # INR subscription
+        for d in [60, 30, 2]:
+            db_session.add(Transaction(
+                owner_id=u1_id,
+                account_id=ctx["acc1"].id,
+                amount=Decimal("299.00"),
+                currency="INR",
+                transaction_type=TransactionType.EXPENSE,
+                status=TransactionStatus.COMPLETED,
+                description="Hotstar VIP",
+                transaction_date=now - timedelta(days=d),
+                source="statement_import",
+            ))
+        # USD subscription
+        for d in [60, 30, 2]:
+            db_session.add(Transaction(
+                owner_id=u1_id,
+                account_id=ctx["acc1"].id,
+                amount=Decimal("12.00"),
+                currency="USD",
+                transaction_type=TransactionType.EXPENSE,
+                status=TransactionStatus.COMPLETED,
+                description="GitHub Copilot",
+                transaction_date=now - timedelta(days=d),
+                source="statement_import",
+            ))
+        await db_session.commit()
+
+        service = ReadinessService(db_session, u1_id)
+        res = await service.detect_leaks()
+
+        hotstar = [i for i in res.insights if "hotstar" in i.title.lower()][0]
+        github = [i for i in res.insights if "github" in i.title.lower()][0]
+        assert hotstar.currency == "INR"
+        assert github.currency == "USD"
+
+    # 23. Future integration adapters verification
+    async def test_23_future_integration_adapters(self):
+        now = datetime.utcnow()
+        norm_tx = NormalizedTransactionRecord(
+            external_id="ext-1234",
+            account_id="acc-5678",
+            amount=Decimal("499.00"),
+            currency="INR",
+            transaction_date=now,
+            description="Netflix Subscription",
+            normalized_merchant="Netflix",
+            transaction_type="expense",
+        )
+        assert norm_tx.amount == Decimal("499.00")
+        assert norm_tx.currency == "INR"
+
+        sub_record = SubscriptionEvidenceRecord(
+            subscription_id="sub-001",
+            merchant_name="Spotify",
+            plan_name="Premium Individual",
+            billing_cadence="monthly",
+            expected_amount=Decimal("119.00"),
+            currency="INR",
+            next_billing_date=now + timedelta(days=30),
+            last_billing_date=now,
+            is_active=True,
+            provider_source="mock_provider",
+        )
+        assert sub_record.billing_cadence == "monthly"
+
+        # Android boundary: missing observation must be labeled "unknown", never "unused"
+        status_none = AndroidUsageCompanionBoundary.map_usage_to_evidence_strength(None)
+        assert status_none == "unknown_no_companion_data"
+
+        app_obs = AppUsageObservationRecord(
+            package_name="com.netflix.mediaclient",
+            app_label="Netflix",
+            last_time_used=now - timedelta(days=2),
+            total_time_in_foreground_ms=7200000,
+            observation_start=now - timedelta(days=7),
+            observation_end=now,
+        )
+        status_active = AndroidUsageCompanionBoundary.map_usage_to_evidence_strength(app_obs)
+        assert status_active == "active_usage_verified"

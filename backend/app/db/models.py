@@ -345,3 +345,22 @@ class UserPlanDecision(Base):
     decision = Column(String(32), nullable=False)
     modification_notes = Column(Text, nullable=True)
     applied_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class SpendLeakFindingRecord(Base):
+    __tablename__ = "spend_leak_findings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_id = Column(String(64), nullable=False, index=True)
+    finding_key = Column(String(128), nullable=False, index=True)
+    finding_type = Column(String(64), nullable=False)
+    status = Column(String(32), nullable=False, default="new")  # "new", "reviewed", "keep", "dismissed", "resolved"
+    user_notes = Column(Text, nullable=True)
+    first_detected_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    last_detected_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("owner_id", "finding_key", name="uq_spend_leak_finding_owner_key"),
+        Index("ix_spend_leak_findings_owner_status", "owner_id", "status"),
+    )

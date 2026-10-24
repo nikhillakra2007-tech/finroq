@@ -1796,6 +1796,38 @@ class ApiClient {
     }
   }
 
+  async refreshSpendLeakInsights() {
+    if (this.isDemoSession()) {
+      return { data: DEMO_SPEND_LEAK_ANALYSIS } as any;
+    }
+    try {
+      return await this.client.post<SpendLeakAnalysisResponse>('/spend-leaks/refresh');
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: DEMO_SPEND_LEAK_ANALYSIS } as any;
+      }
+      throw err;
+    }
+  }
+
+  async updateFindingStatus(findingId: string, status: string, userNotes?: string) {
+    if (this.isDemoSession()) {
+      return { data: { finding_key: findingId, status, user_notes: userNotes } } as any;
+    }
+    try {
+      return await this.client.post(`/spend-leaks/findings/${findingId}/status`, {
+        status,
+        user_notes: userNotes,
+      });
+    } catch (err) {
+      if (this.isOfflineOrDemo(err)) {
+        return { data: { finding_key: findingId, status, user_notes: userNotes } } as any;
+      }
+      throw err;
+    }
+  }
+
+
   // Crash-Test & Recovery Engine
   async runCrashTest(request?: CrashTestRunRequest) {
     if (this.isDemoSession()) {
@@ -1968,14 +2000,106 @@ export const DEMO_SPEND_LEAK_ANALYSIS: SpendLeakAnalysisResponse = {
       projected_annual_savings: '3600.00',
       is_savings_projected: true,
       disclaimer: 'Savings projections represent uncommitted estimates and are not guaranteed money recovered.',
+    },
+    {
+      id: 'demo-insight-4',
+      insight_type: 'recurring_cost_inflation',
+      status: 'sufficiently_supported',
+      lifecycle_status: 'new',
+      title: 'Price Increase Detected: Cloudflare Pro Tier',
+      description: 'Monthly charge increased from ₹1,600.00 to ₹2,000.00 (+₹400.00, +25.0%) on Oct 01, 2026.',
+      severity: 'high',
+      currency: 'INR',
+      analysis_start_date: '2026-09-01T00:00:00Z',
+      analysis_end_date: '2026-10-01T00:00:00Z',
+      relevant_transaction_count: 2,
+      previous_amount: '1600.00',
+      current_amount: '2000.00',
+      price_increase_amount: '400.00',
+      price_increase_percentage: 25.0,
+      price_increase_date: '2026-10-01T00:00:00Z',
+      supporting_transactions: [
+        { id: 21, transaction_date: '2026-09-01T00:00:00Z', amount: '1600.00', currency: 'INR', description: 'Cloudflare Pro Tier', source: 'statement_import' },
+        { id: 22, transaction_date: '2026-10-01T00:00:00Z', amount: '2000.00', currency: 'INR', description: 'Cloudflare Pro Tier', source: 'statement_import' }
+      ],
+      evidence_summary: 'Previous charge was ₹1,600.00 on 2026-09-01; new charge is ₹2,000.00 on 2026-10-01.',
+      calculation_method: 'Exact Decimal delta between sequential recurring occurrences.',
+      assumptions: 'Assumes change is an ongoing price revision rather than a one-time fee.',
+      limitations: 'Cannot automatically verify if plan tier was upgraded.',
+      recommended_action: 'Audit cloud resource usage or consider annual upfront plan for volume discount.',
+      potential_monthly_savings: '400.00',
+      projected_annual_savings: '4800.00',
+      is_savings_projected: true,
+      disclaimer: 'Savings projections represent uncommitted estimates and are not guaranteed money recovered.',
+    },
+    {
+      id: 'demo-insight-5',
+      insight_type: 'duplicate_charge_leakage',
+      status: 'sufficiently_supported',
+      lifecycle_status: 'new',
+      title: 'Potential Duplicate Billing: Swiggy Instamart',
+      description: '2 identical charges of ₹429.00 recorded within 24 hours on Oct 11, 2026.',
+      severity: 'high',
+      currency: 'INR',
+      analysis_start_date: '2026-10-11T00:00:00Z',
+      analysis_end_date: '2026-10-11T00:00:00Z',
+      relevant_transaction_count: 2,
+      supporting_transactions: [
+        { id: 31, transaction_date: '2026-10-11T12:15:00Z', amount: '429.00', currency: 'INR', description: 'Swiggy Instamart Order', source: 'statement_import' },
+        { id: 32, transaction_date: '2026-10-11T12:16:00Z', amount: '429.00', currency: 'INR', description: 'Swiggy Instamart Order', source: 'statement_import' }
+      ],
+      evidence_summary: '2 identical transactions of ₹429.00 within 1 minute on same card.',
+      calculation_method: 'Exact match on account, amount, and merchant descriptor within 24h.',
+      assumptions: 'Assumes second swipe was an unintentional terminal duplicate.',
+      limitations: 'User may have legitimately placed two separate grocery orders.',
+      recommended_action: 'Check Swiggy order history or dispute accidental double debit.',
+      potential_monthly_savings: '429.00',
+      projected_annual_savings: '429.00',
+      is_savings_projected: false,
+      disclaimer: 'One-time dispute recovery candidate; not an ongoing recurring leak.',
+    },
+    {
+      id: 'demo-insight-6',
+      insight_type: 'missing_recurring_payment',
+      status: 'provisional',
+      lifecycle_status: 'new',
+      title: 'Missing Recurring Charge: Cult.fit Gym Pass',
+      description: 'Expected monthly charge of ~₹1,800.00 has not appeared for 48 days (last seen Aug 24, 2026).',
+      severity: 'low',
+      currency: 'INR',
+      analysis_start_date: '2026-06-24T00:00:00Z',
+      analysis_end_date: '2026-10-14T00:00:00Z',
+      relevant_transaction_count: 3,
+      supporting_transactions: [
+        { id: 41, transaction_date: '2026-06-24T00:00:00Z', amount: '1800.00', currency: 'INR', description: 'Cult.fit Gym Pass', source: 'statement_import' },
+        { id: 42, transaction_date: '2026-07-24T00:00:00Z', amount: '1800.00', currency: 'INR', description: 'Cult.fit Gym Pass', source: 'statement_import' },
+        { id: 43, transaction_date: '2026-08-24T00:00:00Z', amount: '1800.00', currency: 'INR', description: 'Cult.fit Gym Pass', source: 'statement_import' }
+      ],
+      evidence_summary: 'Series of 3 monthly payments paused since 2026-08-24.',
+      calculation_method: 'Cadence projection vs elapsed days since latest transaction.',
+      assumptions: 'Expected cadence is monthly.',
+      limitations: 'Does not confirm intentional cancellation; may reflect an un-imported statement.',
+      recommended_action: 'Confirm if membership was cancelled or if billing method expired.',
+      potential_monthly_savings: '0.00',
+      projected_annual_savings: '0.00',
+      is_savings_projected: false,
+      disclaimer: 'Anomaly requiring review; does not represent realized savings.',
     }
   ],
-  total_monthly_leak: '1648.00',
-  total_annual_leak: '19776.00',
-  recoverable_monthly_estimate: '949.00',
-  recoverable_annual_estimate: '11388.00',
+  total_monthly_leak: '2048.00',
+  total_annual_leak: '24576.00',
+  recoverable_monthly_estimate: '1349.00',
+  recoverable_annual_estimate: '16188.00',
+  summary_stats: {
+    total_potential_recurring_count: 2,
+    findings_awaiting_review_count: 5,
+    potential_monthly_savings: '1349.00',
+    potential_annual_savings: '16188.00',
+    recently_detected_changes_count: 2,
+  },
   disclaimer: 'All savings figures are uncommitted mathematical projections based on recurring plan interception. Actual realized savings depend on confirmed merchant cancellation and avoidance of replacement expenditures.',
 };
+
 
 export const DEMO_CRASH_TEST_RUN: CrashTestRunResponse = {
   id: 'demo-crash-test-run-1',

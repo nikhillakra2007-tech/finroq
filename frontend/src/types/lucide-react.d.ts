@@ -88,4 +88,6 @@ declare module 'lucide-react' {
   export const Clock: LucideIcon;
   export const Coffee: LucideIcon;
   export const Sliders: LucideIcon;
+  export const Copy: LucideIcon;
+  export const ExternalLink: LucideIcon;
 }

@@ -453,8 +453,16 @@ export interface IngestionConfirmResponse {
 }
 
 export type ReadinessTier = 'limited_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';
-export type InsightType = 'recurring_subscription' | 'dormant_recurring' | 'excessive_category_spend' | 'recurring_cost_inflation' | 'duplicate_charge_leakage' | 'annual_subscription_evaluation';
+export type InsightType =
+  | 'recurring_subscription'
+  | 'dormant_recurring'
+  | 'excessive_category_spend'
+  | 'recurring_cost_inflation'
+  | 'duplicate_charge_leakage'
+  | 'annual_subscription_evaluation'
+  | 'missing_recurring_payment';
 export type InsightStatus = 'insufficient_evidence' | 'preliminary' | 'provisional' | 'sufficiently_supported';
+export type FindingLifecycleStatus = 'new' | 'reviewed' | 'keep' | 'dismissed' | 'resolved';
 
 export interface AccountCoverageItem {
   account_id: number;
@@ -478,6 +486,7 @@ export interface SupportingTransaction {
   id: number;
   transaction_date: string;
   amount: string;
+  currency?: string;
   description?: string | null;
   source: string;
 }
@@ -515,13 +524,23 @@ export interface SpendLeakInsight {
   id: string;
   insight_type: InsightType;
   status: InsightStatus;
+  lifecycle_status?: FindingLifecycleStatus;
+  user_notes?: string | null;
   title: string;
   description: string;
   severity: 'high' | 'medium' | 'low';
+  currency?: string;
   analysis_start_date?: string | null;
   analysis_end_date?: string | null;
+  first_observed_date?: string | null;
+  last_observed_date?: string | null;
   relevant_transaction_count: number;
   supporting_transactions: SupportingTransaction[];
+  previous_amount?: string | null;
+  current_amount?: string | null;
+  price_increase_amount?: string | null;
+  price_increase_percentage?: string | number | null;
+  price_increase_date?: string | null;
   evidence_summary: string;
   calculation_method: string;
   assumptions: string;
@@ -533,6 +552,14 @@ export interface SpendLeakInsight {
   disclaimer: string;
 }
 
+export interface SpendLeakSummaryStats {
+  total_potential_recurring_count: number;
+  findings_awaiting_review_count: number;
+  potential_monthly_savings: string;
+  potential_annual_savings: string;
+  recently_detected_changes_count: number;
+}
+
 export interface SpendLeakAnalysisResponse {
   readiness: DataReadinessReport;
   insights: SpendLeakInsight[];
@@ -540,8 +567,10 @@ export interface SpendLeakAnalysisResponse {
   total_annual_leak: string;
   recoverable_monthly_estimate: string;
   recoverable_annual_estimate: string;
+  summary_stats?: SpendLeakSummaryStats;
   disclaimer: string;
 }
+
 
 export interface AIChatRequest {
   message: string;
