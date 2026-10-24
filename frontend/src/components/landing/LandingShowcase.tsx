@@ -7,6 +7,7 @@ import { useI18n } from '@/lib/i18n-context';
 import { COPILOT_QUERIES_BY_LANG, CRASH_DATA_BY_LANG } from '@/lib/i18n-landing';
 import { getStoredTheme, applyTheme } from '@/lib/theme';
 import { LanguageSelector } from '@/components/layout/LanguageSelector';
+import { CinematicDemoIntro } from './CinematicDemoIntro';
 import {
   ArrowRight,
   Sun,
@@ -62,10 +63,8 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // Navigation & Drawer
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Cinematic Boot Sequence State
-  const [bootSequenceActive, setBootSequenceActive] = useState(false);
-  const [bootStep, setBootStep] = useState(0);
-  const [bootProgress, setBootProgress] = useState(0);
+  // Cinematic Demo Video Intro State (Plays on entering/opening the site)
+  const [demoIntroActive, setDemoIntroActive] = useState(true);
 
   // Scroll Progress & Dynamic Header Elevation
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -77,62 +76,6 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     setTheme(stored);
     applyTheme(stored);
   }, []);
-
-  // Handle Cinematic Boot Sequence on First Session Visit
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hasSeenBoot = sessionStorage.getItem('finroq_boot_seen');
-      if (!hasSeenBoot) {
-        setBootSequenceActive(true);
-        sessionStorage.setItem('finroq_boot_seen', 'true');
-      }
-    }
-  }, []);
-
-  const triggerBootSequence = useCallback(() => {
-    setBootStep(0);
-    setBootProgress(0);
-    setBootSequenceActive(true);
-  }, []);
-
-  const closeBootSequence = useCallback(() => {
-    setBootSequenceActive(false);
-  }, []);
-
-  // Keyboard shortcut (Escape to skip boot sequence)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && bootSequenceActive) {
-        closeBootSequence();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [bootSequenceActive, closeBootSequence]);
-
-  // Boot sequence telemetry progression timer
-  useEffect(() => {
-    if (!bootSequenceActive) return;
-
-    const interval = setInterval(() => {
-      setBootProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setBootSequenceActive(false);
-          }, 450);
-          return 100;
-        }
-        const next = prev + 4;
-        if (next > 25 && next < 55) setBootStep(1);
-        else if (next >= 55 && next < 85) setBootStep(2);
-        else if (next >= 85) setBootStep(3);
-        return next;
-      });
-    }, 45);
-
-    return () => clearInterval(interval);
-  }, [bootSequenceActive]);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -325,78 +268,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[#173F2B] selection:text-white relative font-sans overflow-x-hidden">
-      {/* 0. CINEMATIC BOOT SEQUENCE / MOTION INTRO OVERLAY */}
-      {bootSequenceActive && (
-        <div className="fixed inset-0 z-[200] bg-[#070F0B] text-slate-100 flex flex-col items-center justify-center p-6 select-none animate-in fade-in duration-300">
-          {/* Ambient Radial Grid & Glow Backdrop */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(16,185,129,0.18),rgba(7,15,11,0.98))] pointer-events-none" />
-          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
-
-          {/* Skip Control Button */}
-          <button
-            onClick={closeBootSequence}
-            className="absolute top-6 right-6 px-4 py-2 rounded-full border border-emerald-500/30 hover:border-emerald-400 bg-white/5 hover:bg-white/10 text-xs font-mono text-emerald-300 transition-all cursor-pointer z-10 flex items-center gap-2"
-          >
-            <span>Skip Boot</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] text-slate-400">ESC</span>
-          </button>
-
-          <div className="relative max-w-lg w-full space-y-8 text-center z-10">
-            {/* Pulsing Concentric Hexagon / Radar Core */}
-            <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping" />
-              <div className="absolute inset-2 rounded-full border border-emerald-500/40 animate-pulse-ring" />
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-400/50 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <ShieldCheck className="w-7 h-7 text-emerald-400 animate-pulse" />
-              </div>
-            </div>
-
-            {/* Header Telemetry */}
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-[11px] font-mono text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                <span>FINROQ KERNEL v1.3 // BOOT SEQUENCE</span>
-              </div>
-              <h2 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-                Initializing Mathematical Engine
-              </h2>
-            </div>
-
-            {/* Telemetry Log Step Cards */}
-            <div className="p-4.5 rounded-2xl bg-black/40 border border-emerald-500/20 text-left font-mono text-xs space-y-2.5 backdrop-blur-sm">
-              <div className={`flex items-center justify-between transition-opacity duration-200 ${bootStep >= 0 ? 'opacity-100 text-emerald-300' : 'opacity-30 text-slate-500'}`}>
-                <span>01 // NUMERIC(14,2) FIXED-POINT REGISTERS</span>
-                <span className="text-[10px] font-bold">{bootStep >= 1 ? 'OK' : 'MOUNTING...'}</span>
-              </div>
-              <div className={`flex items-center justify-between transition-opacity duration-200 ${bootStep >= 1 ? 'opacity-100 text-emerald-300' : 'opacity-30 text-slate-500'}`}>
-                <span>02 // IEEE 754 FLOAT DRIFT PURGE (0.3000...4)</span>
-                <span className="text-[10px] font-bold">{bootStep >= 2 ? 'REJECTED' : 'CHECKING...'}</span>
-              </div>
-              <div className={`flex items-center justify-between transition-opacity duration-200 ${bootStep >= 2 ? 'opacity-100 text-emerald-300' : 'opacity-30 text-slate-500'}`}>
-                <span>03 // ARGON2ID TENANT ENCLAVE ENCRYPT</span>
-                <span className="text-[10px] font-bold">{bootStep >= 3 ? 'LOCKED' : 'SECURING...'}</span>
-              </div>
-              <div className={`flex items-center justify-between transition-opacity duration-200 ${bootStep >= 3 ? 'opacity-100 text-emerald-300 font-bold' : 'opacity-30 text-slate-500'}`}>
-                <span>04 // DOUBLE-ENTRY INTEGRITY CHECK</span>
-                <span className="text-[10px] font-bold">{bootProgress >= 100 ? '0.00% DRIFT' : 'BALANCING...'}</span>
-              </div>
-            </div>
-
-            {/* Progress Bar & Percentage */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-mono text-emerald-400/80">
-                <span>SYSTEM CALIBRATION</span>
-                <span>{bootProgress}%</span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-slate-900 border border-emerald-500/30 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 transition-all duration-75 rounded-full"
-                  style={{ width: `${bootProgress}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* 0. CINEMATIC HIGH-OCTANE FINANCIAL DEMO VIDEO INTRO */}
+      {demoIntroActive && (
+        <CinematicDemoIntro onComplete={() => setDemoIntroActive(false)} />
       )}
 
       {/* 1. Dynamic Top Scroll Progress Indicator */}

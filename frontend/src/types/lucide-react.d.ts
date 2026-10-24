@@ -90,4 +90,6 @@ declare module 'lucide-react' {
   export const Sliders: LucideIcon;
   export const Copy: LucideIcon;
   export const ExternalLink: LucideIcon;
+  export const Volume2: LucideIcon;
+  export const VolumeX: LucideIcon;
 }
