@@ -92,4 +92,5 @@ declare module 'lucide-react' {
   export const ExternalLink: LucideIcon;
   export const Volume2: LucideIcon;
   export const VolumeX: LucideIcon;
+  export const Unlock: LucideIcon;
 }
