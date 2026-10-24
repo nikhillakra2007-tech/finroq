@@ -63,8 +63,18 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // Navigation & Drawer
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Cinematic Demo Video Intro State (Plays on entering/opening the site)
-  const [demoIntroActive, setDemoIntroActive] = useState(true);
+  // Cinematic Demo Video Intro State (Plays strictly once on first-ever site visit)
+  const [demoIntroActive, setDemoIntroActive] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hasSeenIntro = localStorage.getItem('finroq_intro_seen');
+      if (!hasSeenIntro) {
+        setDemoIntroActive(true);
+        localStorage.setItem('finroq_intro_seen', 'true');
+      }
+    }
+  }, []);
 
   // Scroll Progress & Dynamic Header Elevation
   const [scrollProgress, setScrollProgress] = useState(0);
