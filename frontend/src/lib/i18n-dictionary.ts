@@ -164,8 +164,9 @@ export const ALL_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'cat.stress_resilience': 'Stress Testing & Resilience',
     'cat.financial_resilience': 'Financial Resilience',
     'cat.autonomous_intelligence': 'Autonomous Intelligence',
-    'common.all_features': 'All 13 Features',
-    'common.all_13_features': 'All 13 Features',
+    'common.all_features': 'All 17 Financial Engines',
+    'common.all_13_features': 'All 17 Financial Engines',
+    'common.all_17_features': 'All 17 Financial Engines',
     'footer.authoritative': 'Authoritative Financial Engine',
 
     'auth.welcome_back': 'Welcome back.',

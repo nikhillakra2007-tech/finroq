@@ -14,7 +14,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, trustworthy bank statement & receipt ingestion with mathematical reconciliation, 13 unified financial modules, 6-agent autonomous financial crash-testing, fully reactive 18-language internationalization across the landing page and app, Google popup authentication, adaptive dark/light themes, and Simplistic Finroq AI with expandable detailed analysis, voice recognition, and clickable source feature deep-linking.</b>
+  <b>Enterprise-grade double-entry personal finance engine with arbitrary-precision decimal arithmetic, trustworthy bank statement & receipt ingestion with mathematical reconciliation, 17 unified financial engines, 6-agent autonomous financial crash-testing, fully reactive 18-language internationalization across the landing page and app, Google popup authentication, adaptive dark/light themes, and Simplistic Finroq AI with expandable detailed analysis, voice recognition, and clickable source feature deep-linking.</b>
 </p>
 
 🔗 **Live Production Deployment on Vercel**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
@@ -54,10 +54,10 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 | ![Autonomous Crash-Test Engine](docs/assets/finroq-crash-test.png) | ![Spend Leak Detector](docs/assets/finroq-spend-leak.png) |
 | *6-Agent shock traversal simulating career shocks, hospital spikes, and cost-of-living crunches.* | *Evidence-driven audit identifying recurring subscriptions, micro-charges, and irregular surges.* |
 
-| 13-Module Unified Financial Workspace Hub | Pre-Spend Decision Engine |
+| 17-Engine Unified Financial Workspace Hub | Pre-Spend Decision Engine |
 |:---:|:---:|
-| ![FINROQ Live 13-Module Hub](docs/assets/finroq-app-home-live.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
-| *Unified workspace view displaying all 13 financial engines with instant 18-language selector.* | *Real-time pre-purchase simulation on remaining budget caps.* |
+| ![FINROQ Live 17-Engine Hub](docs/assets/finroq-app-home-live.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
+| *Unified workspace view displaying all 17 financial engines with instant 18-language selector.* | *Real-time pre-purchase simulation on remaining budget caps.* |
 
 </div>
 

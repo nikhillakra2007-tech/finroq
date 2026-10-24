@@ -36,6 +36,7 @@ import {
   BookOpen,
   Mail,
   MapPin,
+  HelpCircle,
 } from 'lucide-react';
 import { formatInrCompact } from '@/lib/multiverse-engine';
 
@@ -444,14 +445,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </a>
             <a href="#flagship-features" className="hover:text-[var(--ink)] transition-colors text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Predictions &amp; Timelines</span>
+              <span>{t('nav.predictions', 'Predictions & Timelines')}</span>
             </a>
             <a href="#simulator" className="hover:text-[var(--ink)] transition-colors">
               {t('nav.simulator', 'Simulator')}
             </a>
-            <Link href="/app/money-guides" className="hover:text-[var(--ink)] transition-colors">
-              Guides
-            </Link>
+            <a href="#faq" className="hover:text-[var(--ink)] transition-colors">
+              {t('nav.faq', 'FAQ')}
+            </a>
           </nav>
 
           {/* Right Action Controls */}
@@ -466,15 +467,9 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
             </button>
             <button
               onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-              className="text-xs sm:text-sm font-semibold text-[var(--muted)] hover:text-[var(--ink)] px-2.5 py-1.5 transition-colors cursor-pointer"
-            >
-              {t('nav.signin', 'Sign in')}
-            </button>
-            <button
-              onClick={() => navigateWithCurtain('/app/home', 'welcome', 'fwd')}
               className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-xs cursor-pointer whitespace-nowrap transition-colors"
             >
-              Launch App →
+              {t('nav.signin', 'Sign in')}
             </button>
           </div>
         </div>
@@ -505,7 +500,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 className="p-3 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2.5 text-emerald-700 dark:text-emerald-400 font-semibold"
               >
                 <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Predictions &amp; Timelines</span>
+                <span>{t('nav.predictions', 'Predictions & Timelines')}</span>
               </a>
               <a
                 href="#simulator"
@@ -515,14 +510,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 <SlidersHorizontal className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t('nav.simulator', 'Health Simulator')}</span>
               </a>
-              <Link
-                href="/app/money-guides"
+              <a
+                href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-3 rounded-xl hover:bg-[var(--soft)] transition-colors flex items-center gap-2.5"
               >
-                <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Visual Money Guides</span>
-              </Link>
+                <HelpCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>{t('nav.faq', 'Frequently Asked Questions')}</span>
+              </a>
             </div>
           </div>
         )}
@@ -559,7 +554,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
                 className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-6.5 py-3 font-semibold text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105"
               >
-                <span>Start Building Wealth →</span>
+                <span>{t('hero.cta_open', 'Start Building Wealth →')}</span>
               </button>
               <a
                 href="#simulator"
@@ -567,15 +562,6 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
               >
                 {t('hero.cta_simulator', 'Try live simulator ↓')}
               </a>
-              <button
-                type="button"
-                onClick={triggerBootSequence}
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-full border border-emerald-600/30 dark:border-emerald-500/40 hover:border-emerald-600 dark:hover:border-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-mono font-semibold transition-all cursor-pointer shadow-xs"
-                title={t('hero.cta_replay', 'Replay Engine Telemetry')}
-              >
-                <Play className="w-3.5 h-3.5 fill-current text-emerald-600 dark:text-emerald-400" />
-                <span>{t('hero.cta_replay', 'Replay Engine Telemetry')}</span>
-              </button>
             </div>
 
             {/* Three Pillar Guarantees */}
@@ -1130,13 +1116,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           <div className="max-w-2xl space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-emerald-800 dark:text-emerald-300">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Flagship Financial Systems</span>
+              <span>{t('flagship.badge', 'Flagship Financial Systems')}</span>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[var(--ink)]">
-              Simulate 30-Year Timelines &amp; Predict Market Moves
+              {t('flagship.title', 'Simulate 30-Year Timelines & Predict Market Moves')}
             </h2>
             <p className="text-sm sm:text-base text-[var(--muted)] leading-relaxed font-normal">
-              Two interactive intelligence engines engineered for students and young working professionals in Indian Rupees (₹).
+              {t('flagship.desc', 'Two interactive intelligence engines engineered for students and young working professionals in Indian Rupees (₹).')}
             </p>
           </div>
 
@@ -1151,30 +1137,30 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                     </div>
                     <div>
                       <span className="font-display font-bold text-lg text-[var(--ink)] block">
-                        What-If Life Timeline Simulator
+                        {t('flagship.card1_title', 'What-If Life Timeline Simulator')}
                       </span>
                       <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">
-                        30-Year Quantum Multiverse Scrubber
+                        {t('flagship.card1_sub', '30-Year Quantum Multiverse Scrubber')}
                       </span>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 font-semibold border border-emerald-500/20">
-                    Live Scrubber
+                    {t('flagship.live_scrubber', 'Live Scrubber')}
                   </span>
                 </div>
 
                 <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-                  Time-travel across your next 30 years. Drag the interactive scrubber to see how parallel life branches compound and reach early retirement (F.I.R.E.) in ₹ INR.
+                  {t('flagship.card1_desc', 'Time-travel across your next 30 years. Drag the interactive scrubber to see how parallel life branches compound and reach early retirement (F.I.R.E.) in ₹ INR.')}
                 </p>
 
                 {/* Interactive Time-Scrubber Slider with Dynamic Reverse Transitions */}
                 <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3 transition-all duration-300 ease-in-out">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-[var(--muted)] uppercase font-semibold">
-                      Time Scrubber: Year {timelineYear}
+                      {t('flagship.time_scrubber', 'Time Scrubber: Year')} {timelineYear}
                     </span>
                     <span className="font-bold text-emerald-700 dark:text-emerald-400">
-                      Age {24 + timelineYear} (Simulated)
+                      {t('flagship.age_simulated', 'Age')} {24 + timelineYear} ({t('flagship.simulated_label', 'Simulated')})
                     </span>
                   </div>
 
@@ -1189,10 +1175,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   />
 
                   <div className="flex justify-between text-[10px] font-mono text-[var(--muted)]">
-                    <span>Yr 1 (Age 25)</span>
-                    <span>Yr 10 (Age 34)</span>
-                    <span>Yr 20 (Age 44)</span>
-                    <span>Yr 30 (Age 54)</span>
+                    <span>{t('flagship.yr1', 'Yr 1 (Age 25)')}</span>
+                    <span>{t('flagship.yr10', 'Yr 10 (Age 34)')}</span>
+                    <span>{t('flagship.yr20', 'Yr 20 (Age 44)')}</span>
+                    <span>{t('flagship.yr30', 'Yr 30 (Age 54)')}</span>
                   </div>
 
                   {/* 3 Clickable Parallel Path Forks */}
@@ -1209,15 +1195,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">🚀</span>
                         <div>
-                          <span className="font-bold text-[var(--ink)] block">Fast FIRE Path</span>
-                          <span className="text-[10px] text-gray-500">Retire at Age 38</span>
+                          <span className="font-bold text-[var(--ink)] block">{t('flagship.fire_title', 'Fast FIRE Path')}</span>
+                          <span className="text-[10px] text-gray-500">{t('flagship.fire_sub', 'Retire at Age 38')}</span>
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
                           {formatInrCompact(fireWealth)}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-400">50% Savings</span>
+                        <span className="text-[10px] font-mono text-gray-400">{t('flagship.fire_savings', '50% Savings')}</span>
                       </div>
                     </div>
 
@@ -1233,15 +1219,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">⚖️</span>
                         <div>
-                          <span className="font-bold text-[var(--ink)] block">Balanced Life</span>
-                          <span className="text-[10px] text-gray-500">Retire at Age 48</span>
+                          <span className="font-bold text-[var(--ink)] block">{t('flagship.balanced_title', 'Balanced Life')}</span>
+                          <span className="text-[10px] text-gray-500">{t('flagship.balanced_sub', 'Retire at Age 48')}</span>
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="font-mono font-bold text-[var(--ink)] block transition-all duration-300">
                           {formatInrCompact(balancedWealth)}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-400">25% Savings</span>
+                        <span className="text-[10px] font-mono text-gray-400">{t('flagship.balanced_savings', '25% Savings')}</span>
                       </div>
                     </div>
 
@@ -1257,15 +1243,15 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">🦄</span>
                         <div>
-                          <span className="font-bold text-[var(--ink)] block">Aggressive Startup Bet</span>
-                          <span className="text-[10px] text-gray-500">Retire at Age 42</span>
+                          <span className="font-bold text-[var(--ink)] block">{t('flagship.startup_title', 'Aggressive Startup Bet')}</span>
+                          <span className="text-[10px] text-gray-500">{t('flagship.startup_sub', 'Retire at Age 42')}</span>
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
                           {formatInrCompact(startupWealth)}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-400">High Risk Equity</span>
+                        <span className="text-[10px] font-mono text-gray-400">{t('flagship.startup_savings', 'High Risk Equity')}</span>
                       </div>
                     </div>
                   </div>
@@ -1277,7 +1263,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   href="/app/multiverse"
                   className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01]"
                 >
-                  <span>Launch Full 30-Year Simulator</span>
+                  <span>{t('flagship.card1_btn', 'Launch Full 30-Year Simulator')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -1293,30 +1279,30 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                     </div>
                     <div>
                       <span className="font-display font-bold text-lg text-[var(--ink)] block">
-                        Youth Investment &amp; IPO Predictor
+                        {t('flagship.card2_title', 'Youth Investment & IPO Predictor')}
                       </span>
                       <span className="text-[11px] font-mono text-orange-600 dark:text-orange-400">
-                        Live GMP &amp; AMFI Telemetry
+                        {t('flagship.card2_sub', 'Live GMP & AMFI Telemetry')}
                       </span>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-800 dark:text-orange-300 font-semibold border border-orange-500/20">
-                    Live Telemetry
+                    {t('flagship.live_telemetry', 'Live Telemetry')}
                   </span>
                 </div>
 
                 <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-                  Real-time listing gain predictions for upcoming Indian IPOs using Grey Market Premiums (GMP %), paired with student-friendly index funds starting as low as ₹100 per month with zero commissions.
+                  {t('flagship.card2_desc', 'Real-time listing gain predictions for upcoming Indian IPOs using Grey Market Premiums (GMP %), paired with student-friendly index funds starting as low as ₹100 per month with zero commissions.')}
                 </p>
 
                 {/* Interactive Monthly SIP Compounding Slider */}
                 <div className="p-4 rounded-2xl bg-[var(--soft)]/50 border border-[var(--line)] space-y-3 transition-all duration-300 ease-in-out">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-[var(--muted)] uppercase font-semibold">
-                      Monthly Investment Slider
+                      {t('flagship.sip_slider', 'Monthly Investment Slider')}
                     </span>
                     <span className="font-bold text-[#173F2B] dark:text-emerald-400">
-                      ₹{previewSipMonthly.toLocaleString()}/month
+                      ₹{previewSipMonthly.toLocaleString()}{t('flagship.per_month', '/month')}
                     </span>
                   </div>
 
@@ -1333,13 +1319,13 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   {/* 10-Yr Equity SIP vs Bank FD Comparison */}
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                     <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-0.5">
-                      <span className="text-[10px] text-gray-400 uppercase block">10-Yr Equity SIP (13.5%)</span>
+                      <span className="text-[10px] text-gray-400 uppercase block">{t('flagship.equity_sip_label', '10-Yr Equity SIP (13.5%)')}</span>
                       <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 block transition-all duration-300">
                         {formatInrCompact(sip10YrWealth)}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-0.5">
-                      <span className="text-[10px] text-gray-400 uppercase block">10-Yr Bank FD (6.5%)</span>
+                      <span className="text-[10px] text-gray-400 uppercase block">{t('flagship.bank_fd_label', '10-Yr Bank FD (6.5%)')}</span>
                       <span className="text-sm font-bold text-gray-500 block transition-all duration-300">
                         {formatInrCompact(fd10YrWealth)}
                       </span>
@@ -1349,7 +1335,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   {/* Interactive IPO Selection Tabs */}
                   <div className="pt-2 border-t border-[var(--line)] space-y-2">
                     <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider block">
-                      Live Upcoming IPO Radar (Click to Inspect):
+                      {t('flagship.ipo_radar', 'Live Upcoming IPO Radar (Click to Inspect):')}
                     </span>
                     <div className="flex gap-1.5 overflow-x-auto pb-1">
                       {PREVIEW_IPOS.map((ipo, idx) => (
@@ -1375,7 +1361,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                           {PREVIEW_IPOS[selectedIpoIndex]?.name}
                         </span>
                         <span className="text-[10px] font-mono text-gray-500">
-                          Price: {PREVIEW_IPOS[selectedIpoIndex]?.price} • GMP: {PREVIEW_IPOS[selectedIpoIndex]?.gmp}
+                          {t('flagship.price_label', 'Price:')} {PREVIEW_IPOS[selectedIpoIndex]?.price} • {t('flagship.gmp_label', 'GMP:')} {PREVIEW_IPOS[selectedIpoIndex]?.gmp}
                         </span>
                       </div>
                       <div className="text-right">
@@ -1396,7 +1382,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                   href="/app/investments"
                   className="w-full btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 font-bold text-xs sm:text-sm py-3 rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01]"
                 >
-                  <span>Open Prediction Center</span>
+                  <span>{t('flagship.card2_btn', 'Open Prediction Center')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

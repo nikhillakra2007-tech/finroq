@@ -49,7 +49,7 @@ function MicOffIcon({ className = 'w-4 h-4' }: { className?: string }) {
 // 18-Language Curated Questions
 const PUBLIC_SUGGESTED_QUESTIONS: Record<Language, string[]> = {
   en: [
-    'What 13 features does Finroq offer?',
+    'What 17 financial engines does Finroq offer?',
     'How does the 6-agent Crash-Test work?',
     'How does Finroq protect my financial privacy?',
     'What languages are supported on this site?',
@@ -508,8 +508,8 @@ export function FloatingFinroqAgent() {
     }
   };
 
-  // Hide widget if on the dedicated full-page AI screen
-  if (pathname === '/app/ai-assistant') {
+  // Hide widget on the landing page or on the dedicated full-page AI screen
+  if (pathname === '/' || pathname === '' || pathname === '/app/ai-assistant') {
     return null;
   }
 
@@ -700,7 +700,7 @@ export function FloatingFinroqAgent() {
                   </h4>
                   <p className="text-[11px] text-[#4D5D51] dark:text-slate-300 max-w-xs leading-relaxed">
                     {isGuestMode
-                      ? `Ask me anything about our 13 features, bank statement imports, and zero-trust privacy in ${currentChatMeta.nativeName}.`
+                      ? `Ask me anything about our 17 financial engines, bank statement imports, and zero-trust privacy in ${currentChatMeta.nativeName}.`
                       : `Type or tap the microphone to speak in ${currentChatMeta.nativeName}. I answer simply and to the point using your ledger.`}
                   </p>
                 </div>

@@ -211,7 +211,7 @@ export function ModuleShell({ title, category, description, children }: ModuleSh
                   className="absolute left-0 top-full mt-1.5 w-full sm:w-[320px] max-h-[290px] overflow-y-auto dropdown-menu-scroller overscroll-contain rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xl z-50 p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-150"
                 >
                   <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--muted)] opacity-75 border-b border-[var(--line)]/60 mb-1">
-                    {t('common.all_13_features', `All ${MODULES_NAV.length} Features`)}
+                    {t('common.all_features', `All ${MODULES_NAV.length} Financial Engines`)}
                   </div>
                   {MODULES_NAV.map((mod) => {
                     const Icon = mod.icon;

@@ -1520,15 +1520,15 @@ class ApiClient {
 
         const DICT: Record<string, { general: string; modules: string; crash: string; security: string; switchAck: string }> = {
           en: {
-            general: "Welcome to Finroq! We help you track verified accounts, smart category budgets, and financial resilience across 13 unified engines. Sign in or test the 1-click demo to get started!",
-            modules: "Finroq includes 15 unified financial engines: Expense Tracking, Budgeting, Youth Investments & IPO Predictions, Quantum Multiverse, Splitter, Pre-Spend Check, Net Worth, Debt Watchdog, Spend Leak Detector, Goal Timeline, Emergency Cushion, Money Guides, Credit Health, Health Score, and our Autonomous 6-Agent Crash-Test Engine (/app/crash-test).",
+            general: "Welcome to Finroq! We help you track verified accounts, smart category budgets, and financial resilience across 17 unified engines. Sign in or test the 1-click demo to get started!",
+            modules: "Finroq includes 17 unified financial engines: Finroq AI Intelligence, Financial Overview, Youth Investments & IPO Predictions, Quantum Multiverse Simulator, Expense Tracking, Budgeting, Splitter, Pre-Spend Check, Net Worth, Debt Watchdog, Spend Leak Detector, Goal Timeline, Emergency Cushion, Money Guides, Credit Health, Health Score, and our Autonomous 6-Agent Crash-Test Engine (/app/crash-test).",
             crash: "Finroq's Autonomous Crash-Test Engine (/app/crash-test) tests your finances against 6 severe real-world shocks (salary pauses, medical emergencies, inflation). 6 coordinated agents design mathematically proven recovery plans without debt.",
             security: "Finroq enforces strict zero-trust tenant isolation with Argon2id password hashing and cryptographic JWT tokens. Your financial records are 100% private and protected.",
             switchAck: "Certainly! I have switched my response language to English. How can I assist your financial journey today?",
           },
           hi: {
-            general: "फिनरॉक में आपका स्वागत है! हम 13 एकीकृत इंजनों के माध्यम से आपके सत्यापित खातों, बजट और वित्तीय सुरक्षा को ट्रैक करने में मदद करते हैं। शुरू करने के लिए 1-क्लिक डेमो देखें या साइन इन करें!",
-            modules: "फिनरॉक में 13 एकीकृत वित्तीय इंजन हैं: व्यय ट्रैकिंग, दैनिक बजट, खर्चा विभाजक, खर्च पूर्व जांच, कुल संपत्ति, कर्ज पहारेकरी, अवांछित खर्च डिटेक्टर, लक्ष्य सिम्युलेटर, आपातकालीन फंड, वित्तीय मार्गदर्शिका, क्रेडिट स्वास्थ्य, वित्तीय स्कोर और स्वायत्त 6-एजेंट क्रैश-टेस्ट इंजन (/app/crash-test)।",
+            general: "फिनरॉक में आपका स्वागत है! हम 17 एकीकृत इंजनों के माध्यम से आपके सत्यापित खातों, बजट और वित्तीय सुरक्षा को ट्रैक करने में मदद करते हैं। शुरू करने के लिए 1-क्लिक डेमो देखें या साइन इन करें!",
+            modules: "फिनरॉक में 17 एकीकृत वित्तीय इंजन हैं: फिनरॉक एआई, वित्तीय अवलोकन, युवा निवेश व आईपीओ, क्वांटम मल्टीवर्स, व्यय ट्रैकिंग, बजट, खर्चा विभाजक, खर्च पूर्व जांच, कुल संपत्ति, कर्ज पहारेकरी, अवांछित खर्च डिटेक्टर, लक्ष्य सिम्युलेटर, आपातकालीन फंड, वित्तीय मार्गदर्शिका, क्रेडिट स्वास्थ्य, वित्तीय स्कोर और स्वायत्त 6-एजेंट क्रैश-टेस्ट इंजन (/app/crash-test)।",
             crash: "फिनरॉक का स्वायत्त क्रैश-टेस्ट इंजन (/app/crash-test) 6 वास्तविक वित्तीय संकटों (वेतन रुकावट, चिकित्सा खर्च, मुद्रास्फीति) के विरुद्ध आपकी सहनशक्ति की जांच करता है और बिना कर्ज लिए गणितीय रूप से सिद्ध रिकवरी प्लान बनाता है।",
             security: "फिनरॉक Argon2id सुरक्षा और हस्ताक्षरित JWT टोकन के साथ ज़ीरो-ट्रस्ट सुरक्षा लागू करता है। आपका वित्तीय डेटा पूरी तरह निजी और सुरक्षित है।",
             switchAck: "ज़रूर! मैंने अपनी भाषा बदलकर हिन्दी कर ली है। मैं आपके वित्तीय प्रश्नों में कैसे सहायता कर सकता हूँ?",

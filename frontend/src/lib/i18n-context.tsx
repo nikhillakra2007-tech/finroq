@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ALL_TRANSLATIONS } from './i18n-dictionary';
 import { SECTION_TRANSLATIONS } from './i18n-sections';
 import { LANDING_TRANSLATIONS } from './i18n-landing';
+import { FLAGSHIP_TRANSLATIONS, applyAutomaticLanguageRule } from './i18n-flagship';
 
 export type Language =
   | 'en' // English
@@ -119,8 +120,9 @@ const translations: Record<Language, Record<string, string>> = {
     'cat.stress_resilience': 'Stress Testing & Resilience',
     'cat.financial_resilience': 'Financial Resilience',
     'cat.autonomous_intelligence': 'Autonomous Intelligence',
-    'common.all_features': 'All 13 Features',
-    'common.all_13_features': 'All 13 Features',
+    'common.all_features': 'All 17 Financial Engines',
+    'common.all_13_features': 'All 17 Financial Engines',
+    'common.all_17_features': 'All 17 Financial Engines',
     'footer.authoritative': 'Authoritative Financial Engine',
 
     'action.import_statement': 'Import Statement',
@@ -231,8 +233,9 @@ const translations: Record<Language, Record<string, string>> = {
     'cat.stress_resilience': 'तनाव परीक्षण व लचीलापन',
     'cat.financial_resilience': 'वित्तीय लचीलापन',
     'cat.autonomous_intelligence': 'स्वायत्त विश्लेषण',
-    'common.all_features': 'सभी 13 फीचर्स',
-    'common.all_13_features': 'सभी 13 फीचर्स',
+    'common.all_features': 'सभी 17 वित्तीय इंजन',
+    'common.all_13_features': 'सभी 17 वित्तीय इंजन',
+    'common.all_17_features': 'सभी 17 वित्तीय इंजन',
     'footer.authoritative': 'प्रामाणिक वित्तीय इंजन',
 
     'action.import_statement': 'स्टेटमेंट आयात करें',
@@ -1023,37 +1026,54 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string, fallback?: string): string => {
-    // 0. Check landing page 18-language dictionary
+    // 0. Check flagship & feature translations for active language
+    const flagLang = FLAGSHIP_TRANSLATIONS[language];
+    if (flagLang && flagLang[key]) {
+      return flagLang[key];
+    }
+    // 1. Check landing page 18-language dictionary
     const landLang = LANDING_TRANSLATIONS[language];
     if (landLang && landLang[key]) {
       return landLang[key];
     }
-    // 1. Check comprehensive 18-language section dictionary
+    // 2. Check comprehensive 18-language section dictionary
     const secLang = SECTION_TRANSLATIONS[language];
     if (secLang && secLang[key]) {
       return secLang[key];
     }
-    // 2. Check comprehensive 18-language dictionary
+    // 3. Check comprehensive 18-language dictionary
     const fullLang = ALL_TRANSLATIONS[language];
     if (fullLang && fullLang[key]) {
       return fullLang[key];
     }
-    // 3. Check local context dictionary
+    // 4. Check local context dictionary
     const langDict = translations[language];
     if (langDict && langDict[key]) {
       return langDict[key];
     }
-    // 4. Fallback to English sections dictionary
+    // 5. Automatic phrase and dynamic rule for non-English languages
+    if (language !== 'en') {
+      const autoTranslated = applyAutomaticLanguageRule(language, key, fallback);
+      if (autoTranslated) {
+        return autoTranslated;
+      }
+    }
+    // 6. Fallback to English flagship dictionary
+    const flagEn = FLAGSHIP_TRANSLATIONS['en'];
+    if (flagEn && flagEn[key]) {
+      return flagEn[key];
+    }
+    // 7. Fallback to English sections dictionary
     const secEn = SECTION_TRANSLATIONS['en'];
     if (secEn && secEn[key]) {
       return secEn[key];
     }
-    // 5. Fallback to English comprehensive dictionary
+    // 8. Fallback to English comprehensive dictionary
     const fullEn = ALL_TRANSLATIONS['en'];
     if (fullEn && fullEn[key]) {
       return fullEn[key];
     }
-    // 6. Fallback to English local dictionary
+    // 9. Fallback to English local dictionary
     const enDict = translations['en'];
     if (enDict && enDict[key]) {
       return enDict[key];
