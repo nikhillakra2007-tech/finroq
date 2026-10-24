@@ -322,12 +322,12 @@ Finroq AI is engineered to eliminate financial overwhelm. Instead of burying use
 
 ---
 
-## 🧩 13 Unified Financial Modules
+## 🧩 15 Unified Financial Modules
 
 | # | Financial Engine | Route | Core Mathematical & Architectural Function |
 |:---:|---|---|---|
 | 1 | **Expense Tracking** | `/app/expense-tracking` | Real-time double-entry ledger with status cycle (Completed / Pending / Cancelled), account filters, and atomic statement ingestion. |
-| 2 | **Daily Budgeting** | `/app/budgeting` | Category spend limits compared against actual verified transactions; neutral transfers excluded automatically. |
+| 2 | **Budgeting** | `/app/budgeting` | Category spend limits compared against actual verified transactions; neutral transfers excluded automatically. |
 | 3 | **Expense Splitter** | `/app/splitter` | Multi-party split engine supporting exact equal shares and custom weights with one-click ledger settlement. |
 | 4 | **Pre-Spend Check** | `/app/pre-spend-check` | Pre-transaction diagnostic testing the impact of a planned purchase on remaining category cushion before swiping. |
 | 5 | **Net Worth** | `/app/net-worth` | Authoritative calculation of liquid assets minus liabilities across checking, savings, investment, and debt accounts. |
@@ -335,10 +335,12 @@ Finroq AI is engineered to eliminate financial overwhelm. Instead of burying use
 | 7 | **Spend Leak Detector** | `/app/spend-leak-detector` | Evidence-driven audit identifying recurring subscriptions, phantom micro-charges, and irregular spend surges. |
 | 8 | **Goal Timeline Simulator** | `/app/goal-timeline` | Mathematical milestone projector using formula `ceil((Target - Saved) / MonthlySavings)`. |
 | 9 | **Emergency Cushion** | `/app/emergency-cushion` | Computes liquid burn runway in months based on essential vs discretionary historical spending. |
-| 10 | **Money Guides** | `/app/money-guides` | Curated editorial frameworks (50/30/20 rule, debt avalanche/snowball, liquidity buffers, crash-test terminologies) with visual models. |
+| 10 | **Money Guides & Visual Rules** | `/app/money-guides` | Curated editorial frameworks (50/30/20 rule, debt avalanche/snowball, 24-Hour Impulse Rule, Chai vs Compounding, UPI Zero-PIN Shield) with interactive visual models. |
 | 11 | **Credit Health** | `/app/credit-health` | Monitors credit card utilization against aggregate limits to protect credit scores. |
 | 12 | **Financial Health Score** | `/app/financial-health` | Composite vitality diagnostic (0–100) aggregating savings rate, debt ratio, runway, and budget discipline. |
 | 13 | **Crash-Test & Resilience** | `/app/crash-test` | Autonomous 6-agent shock traversal, multi-scenario compound crisis simulation, and mathematical invariant recovery proof. |
+| 14 | **What-If Life Timeline** | `/app/multiverse` | 30-Year Quantum Multiverse Simulator comparing parallel branches (Fast FIRE vs Balanced Corporate vs Startup Bet) in ₹ INR with macro-climate shocks. |
+| 15 | **Youth Investment & IPO Predictor** | `/app/predictions` | Live Grey Market Premium (GMP %) telemetry, student-friendly micro-SIP compounding calculator, and verified AMFI mutual fund analytics. |
 
 ---
 
@@ -351,9 +353,10 @@ Every test and validation check passes with 100% compliance:
 | **Backend Pytest Suite** | `pytest -o pythonpath=.` | **236/236 passed (Ingestion Engine + Statement Reconciliation + Receipt Parser + Duplicate Prevention + Crash-Test + AI)** | ✅ PASS |
 | **Frontend Jest Tests** | `npm test -- --watchAll=false` | **87/87 passed across 12 suites (Tax & Investment Budget Sections + Categorized Manual Transactions + Ingestion Modal + AI Linking + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
-| **Next.js Production Build** | `npm run build` | **25/25 static routes prerendered cleanly** | ✅ PASS |
-| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google Popup Auth + Voice Speech + 18 Locales)** | ✅ PASS |
-| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (13-Module Hub + Ingestion Modal)** | ✅ PASS |
+| **Next.js Production Build** | `npm run build` | **29/29 static routes prerendered cleanly (Zero type/lint warnings)** | ✅ PASS |
+| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google OAuth Flow + Live Telemetry + 18 Locales)** | ✅ PASS |
+| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (15-Module Hub + Ingestion Modal)** | ✅ PASS |
+| **Live Prediction Center** | `https://finroq-app.vercel.app/predictions` | **HTTP 200 OK (Live AMFI Telemetry + IPO Radar)** | ✅ PASS |
 | **Live Crash-Test Engine** | `https://finroq-app.vercel.app/app/crash-test` | **HTTP 200 OK (6-Agent Autonomous Stress Testing)** | ✅ PASS |
 
 ---
