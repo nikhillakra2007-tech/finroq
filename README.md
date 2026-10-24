@@ -68,47 +68,6 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 
 ---
 
-## ⚡ Key Features & Workflows (To-The-Point)
-
-### 1. 🔍 Evidence-Driven Spend Leak Detection Engine (`/app/spend-leak-detector`)
-- **Cadence Interval Detection**: Automatically identifies recurring debits across 4 calendar frequencies (weekly 7d, bi-weekly 14d, monthly 30d, annual 365d) with adaptive date-jitter tolerance.
-- **Price Hike & Surge Diagnostics**: Compares consecutive charges from the same merchant to flag stealth price increases (e.g. streaming service or SaaS tier jumps).
-- **48-Hour Duplicate Charge Interception**: Pinpoints identical amounts debited by the same merchant within 48 hours, highlighting accidental double payments.
-- **Persistent Finding Review Lifecycle**:
-  - Findings are persisted in the database (`spend_leak_findings`) with states: `new` (Needs Review), `keep` (Legitimate/Wanted), and `dismissed` (Identified Leak to Eliminate).
-  - Review actions are **strictly non-destructive**: dismissing or keeping a leak never mutates or deletes historical ledger transactions.
-- **Deduplicated Savings Calculation**: Computes true potential monthly and annual savings by deduplicating distinct recurring patterns—ensuring duplicate transaction alerts do not artificially inflate projected savings.
-
-### 2. 🌌 30-Year Quantum Multiverse Simulator (`/app/multiverse`)
-- **Parallel Life Forks**: Models and graphs distinct financial journeys side-by-side in exact INR (`₹`):
-  - *Fast FIRE*: 65% aggressive savings rate, high index allocation, financial independence at age 42.
-  - *Balanced Corporate*: Steady career progression, moderate savings rate, comfortable retirement at age 60.
-  - *Startup Bet*: High-risk equity upside with early cash flow sacrifice.
-  - *Real Estate Heavy*: High asset tangibility with mortgage amortizations.
-- **Macro Climate Stress Overlays**: Test any life fork against macroeconomic regimes: *Normal Growth* (12.5% Nifty CAGR), *High Inflation* (8.5% CPI), *Market Boom*, or *Tech Freeze / Recession*.
-- **Interactive Scrubber**: Real-time slider scrubbing across age 20 to 50 with exact net worth and compound interest calculations.
-
-### 3. 📈 Youth Investment Intelligence & Live IPO GMP Radar (`/app/predictions`)
-- **Live IPO GMP Telemetry**: Real-time Grey Market Premium (`GMP %`) tracking, issue price bands, expected listing pop, and estimated subscription demand for upcoming Indian IPOs.
-- **The Youngster Compounding Proof**: Demonstrates the mathematical advantage of starting early—investing from age 20 vs age 30 yields a **4.2x higher terminal wealth multiplier** for the exact same monthly contribution.
-- **Micro-SIP Compounding Calculator**: Designed for college students and first-job professionals starting with as little as ₹100 to ₹500/month.
-- **Curated AMFI Mutual Fund Feeds**: Direct telemetry of top low-minimum-SIP index and mid-cap mutual funds with live NAVs, 3-year/5-year CAGR, and risk profiles.
-
-### 4. 🎬 5-Second Cyber Vault Hacker Decrypt Intro
-- **First-Time Immersion**: Matrix-style cryptographic decrypt sequence greeting first-time visitors with 3D perspective cyber grids, audio telemetry, and leak-interception metrics.
-- **Strict Single-Play Session**: Automatically records completion in `localStorage ('finroq_intro_seen')`. It plays strictly once on first visit and **never re-triggers** upon sign out, page navigation, or returning to the home page.
-- **Instant Skip & Mute Controls**: Includes instantaneous ESC / Skip button and ambient audio mute toggle.
-
-### 5. 📥 Trustworthy Bank Statement & Receipt Ingestion (`/app/expense-tracking`)
-- **Bank Statement Processing**: Ingests CSV, TSV, text, and text-based PDF statements from all major banks.
-- **Automatic Mathematical Reconciliation**:
-  $$\text{Opening Balance} + \text{Total Credits} - \text{Total Debits} = \text{Expected Closing Balance}$$
-  Discrepancies are highlighted with exact rupee variance rather than silently corrupting account balances.
-- **Receipt & Bill Parsing**: Automatically extracts Merchant, Date, Subtotal, GST/Taxes, Discounts, and Total Amount from shopping bills and restaurant invoices.
-- **3-Level Duplicate Shield**: Exact ID hash matching, same-day fingerprinting, and ±3-day cross-source tolerance between paper receipts and digital card debits.
-
----
-
 ## 🏛 System Architecture
 
 The FINROQ platform follows a clean, decoupled 4-tier architecture designed for high throughput, cryptographic tenant isolation, and mathematical certainty:
@@ -182,158 +141,80 @@ flowchart TB
 
 ---
 
-## 🔄 Spend Leak Detection & Review Lifecycle Pipeline
+## 🔄 Core System Working & Transaction Lifecycle
 
-The diagram below illustrates how raw ledger transactions are audited for leaks and managed through the non-destructive review lifecycle:
-
-```mermaid
-flowchart TD
-    TXN_DATA["Shared PostgreSQL Ledger<br/>Completed Outflow Transactions"] --> INGEST["Spend Leak Detection Engine"]
-    
-    subgraph AUDIT["Deterministic Detection Algorithms"]
-        INGEST --> CADENCE["Cadence Interval Sniffer<br/>Detects Weekly (7d), Bi-Weekly (14d),<br/>Monthly (30d), and Annual (365d) Patterns"]
-        INGEST --> HIKE["Price Hike & Inflation Detector<br/>Flags Unannounced Cost Increases (Δ > 0)"]
-        INGEST --> DUP["Duplicate Debit Detector<br/>Flags Identical Debits within 48 Hours"]
-    end
-
-    CADENCE --> COMPILE["Compile Candidates & Match Against Persistent State"]
-    HIKE --> COMPILE
-    DUP --> COMPILE
-
-    COMPILE --> DB_FINDINGS[("spend_leak_findings Table<br/>Status: new | keep | dismissed")]
-    
-    DB_FINDINGS --> CLIENT_VIEW["Frontend Review Ledger (/app/spend-leak-detector)"]
-    
-    subgraph REVIEW["Interactive User Triage"]
-        CLIENT_VIEW --> F1["Filter: Needs Review (new)"]
-        CLIENT_VIEW --> F2["Filter: Kept (keep)"]
-        CLIENT_VIEW --> F3["Filter: Dismissed Leaks (dismissed)"]
-        
-        CLIENT_VIEW -- "User clicks Keep" --> ACT_KEEP["Mark as Legitimate Mandate<br/>Status: keep"]
-        CLIENT_VIEW -- "User clicks Dismiss" --> ACT_DISMISS["Mark as Unwanted Leak<br/>Status: dismissed"]
-    end
-
-    ACT_KEEP --> UPDATE_DB["Persist State to Database (Non-Destructive)"]
-    ACT_DISMISS --> UPDATE_DB
-    UPDATE_DB --> RECALC["Real-time Summary Metrics Recalculation"]
-
-    subgraph METRICS["Authoritative Top-Level Metrics"]
-        RECALC --> M_OUTFLOW["Estimated Recurring Outflow (Monthly)"]
-        RECALC --> M_ANNUAL["Estimated Annual Outflow (12x)"]
-        RECALC --> M_SAVINGS["Potential Monthly Savings<br/>(Deduplicated Distinct Leaks Dismissed)"]
-        RECALC --> M_HIKES["Active Price Hikes & Anomalies"]
-    end
-
-    style TXN_DATA fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
-    style AUDIT fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
-    style DB_FINDINGS fill:#DCE7D9,stroke:#173F2B,stroke-width:2px;
-    style REVIEW fill:#F7F7F0,stroke:#247A50,stroke-width:2px;
-    style METRICS fill:#DCFCE7,stroke:#166534,stroke-width:2px;
-```
-
----
-
-## 🛡️ Autonomous 6-Agent Financial Crash-Test Engine
-
-The **Crash-Test Engine** (`/app/crash-test`) evaluates personal financial baselines against severe real-world shocks, identifies fragility, and formulates mathematically proven recovery plans without taking on high-cost debt:
+Every financial event in FINROQ—from statement uploads to manual transactions—flows through a unified, strictly verified pipeline before reactively propagating across all 17 engines:
 
 ```mermaid
 flowchart TD
-    subgraph LEDGER["Authoritative PostgreSQL Core (₹ INR)"]
-        DATA["Verified Accounts & Transactions<br/>Checking: ₹1.85L • Emergency Cushion: ₹4.75L<br/>Monthly Inflow: ₹1.50L • Fixed Burn: ₹28K/mo Rent + ₹8.5K EMI"]
-    end
-
-    subgraph AGENT1["Agent 1: Context Ingestion Agent"]
-        A1["Financial Context Profiler<br/>• Reconciles liquid reserves & essential living burn<br/>• Derives net cash flow & savings rate (63.0%)<br/>• Calculates liquid runway in months"]
-    end
-
-    subgraph AGENT2["Agent 2: Risk Investigation Agent"]
-        A2["Autonomous Fragility Hunter<br/>• Formulates 5 proactive vulnerability hypotheses<br/>• Tests rigidity index & discretionary cushion (₹14.8K/mo)<br/>• Uncovers compound sensitivity (96% confidence)"]
-    end
-
-    subgraph AGENT3["Agent 3: Adaptive Crash-Test Engine"]
-        A3["Multi-Shock Traversal Simulator<br/>• Evaluates 6 severe stress scenarios over 6-month horizon<br/>• Career pause, salary reduction, inflation surge, hospital bills<br/>• Models compound dual crises and pinpoints cash gap month"]
-    end
-
-    subgraph AGENT4["Agent 4: Recovery Planner Agent"]
-        A4["Mathematical Budget Optimizer<br/>• Linear expenditure reallocation<br/>• Throttles flexible leisure spending to preserve liquidity<br/>• Conserves up to ₹1,08,000 cash across 6 months"]
-    end
-
-    subgraph AGENT5["Agent 5: Constraint Verifier Agent"]
-        A5["Formal Invariant Proof Engine<br/>• Proves: ∀ t ∈ [1, H]: Reserves(t) ≥ 0<br/>• Verifies solvency margins & credit covenant limits<br/>• Mathematical guarantee: 100% feasibility, zero hallucinations"]
-    end
-
-    subgraph AGENT6["Agent 6: Action & Audit Orchestrator"]
-        A6["Plain-English Delivery & Execution<br/>• Ranks actionable shields with confidence metrics<br/>• 1-Click user approval & score boost (+26 pts)<br/>• Telemetry audit trail & performance benchmarks"]
-    end
-
-    DATA -- "Verified Ledger History" --> A1
-    A1 -- "Net Cash Flow & Liquid Runway" --> A2
-    A2 -- "Stress Hypotheses & Rigid Commitments" --> A3
-    A3 -- "6-Month Cash Gap Trajectories" --> A4
-    A4 -- "Candidate Recovery Shields" --> A5
-    A5 -- "Mathematically Proven Plans" --> A6
-
-    style LEDGER fill:#DCFCE7,stroke:#15803D,stroke-width:2px;
-    style AGENT1 fill:#EAF3E7,stroke:#173F2B,stroke-width:2px;
-    style AGENT2 fill:#F4F8F3,stroke:#247A50,stroke-width:2px;
-    style AGENT3 fill:#FEF3C7,stroke:#B45309,stroke-width:2px;
-    style AGENT4 fill:#E0E7FF,stroke:#3730A3,stroke-width:2px;
-    style AGENT5 fill:#DCFCE7,stroke:#166534,stroke-width:2px;
-    style AGENT6 fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
-```
-
----
-
-## 🔄 Financial Accounting Lifecycle & Reactive Propagation
-
-Every transaction—whether manually entered, imported from a bank statement, or settled via Expense Splitter—traverses a deterministic processing pipeline:
-
-```mermaid
-flowchart TD
-    START["Transaction Ingestion Trigger"] --> SRC{"Source Type"}
+    START["Financial Event Trigger"] --> SRC{"Ingestion Source"}
     
-    SRC -- "Bank Statement / Receipt" --> CSV["Statement / Receipt Ingestion"]
-    SRC -- "Manual Form" --> MANUAL["Double-Entry Form"]
-    SRC -- "Pre-Spend Sandbox" --> SIM["Pre-Spend Simulation"]
-    SRC -- "Auto-Recurrence" --> REC["Calendar Clamped Rule"]
+    SRC -- "Bank Statement / Receipt" --> INGEST_FLOW["Document Ingestion Engine<br/>• Auto-detects columns (Date, Merchant, Debit, Credit)<br/>• Mathematical check: Opening + Credits - Debits = Closing<br/>• 3-level duplicate fingerprinting (Exact ID, Same Day, ±3d tolerance)"]
+    SRC -- "Manual Transaction" --> MANUAL_FLOW["Direct Double-Entry Form<br/>• Account, category, and date validation"]
+    SRC -- "Pre-Spend Check" --> SIM_FLOW["Pre-Spend Sandbox<br/>• Non-committing budget impact dry run"]
+    SRC -- "Recurring Schedule" --> REC_FLOW["Recurrence Engine<br/>• Calendar clamped (28-31 days) recurring rule"]
     
-    CSV --> SNIFF["Dialect Sniffer & Math Reconciliation Check"]
-    SNIFF --> DEDUP["3-Level Duplicate Hash Matcher"]
-    DEDUP --> PREVIEW["Interactive Review Modal (Verified / Flagged)"]
-    PREVIEW --> BATCH["Atomic Batch Preparation"]
+    INGEST_FLOW --> PREVIEW["Interactive Review Modal<br/>• Flags: Verified / Needs Review / Duplicates / Invalid"]
+    PREVIEW --> VALID["Schema & Precision Validation"]
+    MANUAL_FLOW --> VALID
+    SIM_FLOW --> VALID
+    REC_FLOW --> VALID
     
-    MANUAL --> VALID["Payload Validation & Schema Check"]
-    SIM --> VALID
-    REC --> VALID
-    BATCH --> VALID
-    
-    VALID --> CAST["Strict Decimal Numeric Cast (Paise / Cents)"]
+    VALID --> CAST["Strict Decimal Numeric Cast<br/>Python Decimal + PostgreSQL NUMERIC(14,2) — Zero Float Drift"]
     CAST --> IS_TFR{"Is Inter-Account Transfer?"}
     
-    IS_TFR -- "Yes" --> TFR_LOGIC["Credit Source Account (-)<br/>Debit Destination Account (+)<br/>Net Cash Flow: Neutral (₹0.00)"]
-    IS_TFR -- "No" --> DIR_LOGIC["Single Account Balance Update<br/>Update Category Spend Accumulator"]
+    IS_TFR -- "Yes" --> TFR_LOGIC["Atomic Double-Entry Balancing<br/>• Credit Source Account (-)<br/>• Debit Destination Account (+)<br/>• Net Cash Flow: Neutral (₹0.00)"]
+    IS_TFR -- "No" --> DIR_LOGIC["Single Account Balance Update<br/>• Update Category Spend Accumulator"]
     
-    TFR_LOGIC --> COMMIT["Atomic ACID Transaction Commit (PostgreSQL)"]
+    TFR_LOGIC --> COMMIT["Atomic ACID Commit (PostgreSQL 16)"]
     DIR_LOGIC --> COMMIT
     
-    COMMIT --> RECALC["Real-time Metric Propagation across 17 Engines"]
+    COMMIT --> RECALC["Real-time Reactive Propagation across 17 Engines"]
     
-    subgraph MODULES["Reactive Cross-Module Metric Refresh"]
-        RECALC --> M1["Expense Tracking Ledger"]
-        RECALC --> M2["Category Budgets & Cushion"]
-        RECALC --> M3["Net Worth Architecture"]
-        RECALC --> M4["Credit Utilization Ratio"]
-        RECALC --> M5["Emergency Runway Projection"]
-        RECALC --> M6["Spend Leak Detector & Review Ledger"]
-        RECALC --> M7["Debt Watchdog & DTI Ratio"]
-        RECALC --> M8["Crash-Test Baseline Profiler"]
+    subgraph MODULES["Live Cross-Engine Synchronization"]
+        RECALC --> M1["Expense Tracking & Double-Entry Ledger"]
+        RECALC --> M2["Category Budgets & Pacing Alerts"]
+        RECALC --> M3["Net Worth & Asset/Liability Architecture"]
+        RECALC --> M4["Spend Leak Detector & Review Findings"]
+        RECALC --> M5["Emergency Cushion & Liquid Runway Calculation"]
+        RECALC --> M6["Debt Watchdog & Debt-to-Income (DTI) Ratios"]
+        RECALC --> M7["Credit Health & Card Utilization"]
+        RECALC --> M8["6-Agent Crash-Test Baseline Profiler"]
     end
 
     style START fill:#173F2B,stroke:#C7F36B,color:#FFFFFF,stroke-width:2px;
     style COMMIT fill:#247A50,stroke:#C7F36B,color:#FFFFFF,stroke-width:2px;
     style MODULES fill:#F7F7F0,stroke:#173F2B,stroke-width:2px;
 ```
+
+---
+
+## ⚡ Core Highlights & Feature Breakdown (To-The-Point)
+
+### 1. 🔍 Spend Leak Detector & Review Lifecycle (`/app/spend-leak-detector`)
+- **4-Cadence Interval Detection**: Automatically audits transaction history across weekly (7d), bi-weekly (14d), monthly (30d), and annual (365d) intervals with adaptive calendar jitter tolerance.
+- **Price Hike & Duplicate Trapping**: Flags stealth subscription inflation ($\Delta > 0$) between consecutive debits and catches accidental duplicate charges within 48 hours.
+- **Persistent Review Lifecycle**: Findings are saved in `spend_leak_findings` with statuses: `new` (Needs Review), `keep` (Legitimate), or `dismissed` (Unwanted Leak). Non-destructive—actions never modify underlying transactions.
+- **Deduplicated Savings**: Accurately computes true monthly and annual savings by grouping distinct merchant patterns, preventing duplicate alerts from artificially skewing totals.
+
+### 2. 🌌 30-Year Quantum Multiverse Simulator (`/app/multiverse`)
+- **Parallel Life Forks**: Graphs competing life trajectories in exact INR (`₹`): *Fast FIRE* (age 42 freedom), *Balanced Corporate*, *Startup Founder*, and *Real Estate Heavy*.
+- **Macro Climate Regimes**: Tests portfolios against *Normal Growth* (12.5% CAGR), *High Inflation* (8.5% CPI), *Market Boom*, and *Tech Freeze / Recession*.
+- **Interactive Scrubber**: Real-time slider from age 20 to 50 calculating compound growth trajectories.
+
+### 3. 📈 Youth Investment Intelligence & Live IPO GMP Radar (`/app/predictions`)
+- **Live IPO GMP Telemetry**: Real-time Grey Market Premium (`GMP %`) tracking, issue price bands, expected listing pop, and estimated subscription demand.
+- **Compounding Multiplier Proof**: Demonstrates the mathematical edge of starting at age 20 vs 30 (**4.2x higher terminal wealth multiplier** for the exact same monthly contribution).
+- **Curated AMFI Mutual Funds**: Direct telemetry of top low-minimum-SIP index and mid-cap mutual funds with live NAVs, returns, and risk profiles.
+
+### 4. 🛡️ Autonomous 6-Agent Financial Crash-Test Engine (`/app/crash-test`)
+- **6-Agent Architecture**: Context Ingestion Agent, Risk Investigation Agent, Adaptive Crash-Test Engine, Recovery Planner Agent, Constraint Verifier Agent, and Action & Audit Orchestrator.
+- **Multi-Shock Traversal**: Stress-tests finances against career pauses, salary reductions, inflation surges, and hospital bills across a 6-month horizon.
+- **Mathematical Invariant Proof**: Formally verifies solvency ($\forall t \in [1, 6]: \text{Reserves}(t) \ge 0$) to generate self-funded recovery plans without borrowing.
+
+### 5. 🎬 5-Second Cyber Vault Hacker Decrypt Intro
+- **First-Time Immersion**: 4.8-second hardware-grade biometric decrypt animation with Matrix text scrambling, leak interception metrics, and audio telemetry.
+- **Strict Single-Play Session**: Automatically recorded in `localStorage ('finroq_intro_seen')` so it strictly plays once on first visit and **never re-triggers** upon sign out, navigation, or returning to the home page.
 
 ---
 
