@@ -36,17 +36,17 @@ export function LandingHero() {
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] font-semibold tracking-tight leading-[1.12] text-[#173F2B] dark:text-slate-50">
-            {t('hero.title_line1', 'The ledger that refuses')}
+            {t('hero.title_line1', 'Personal finance that')}
             <br />
             <span className="text-emerald-700 dark:text-emerald-400">
-              {t('hero.title_line2', 'to be wrong.')}
+              {t('hero.title_line2', 'does the maths properly.')}
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#3D5245] dark:text-slate-300 max-w-xl leading-relaxed font-normal">
             {t(
               'hero.description',
-              'Most personal finance apps rely on loose spreadsheets and hallucinated advice. Finroq unites double-entry accounting, dynamic budgets, and autonomous stress simulations with zero decimal drift.'
+              'Double-entry bookkeeping, envelope budgets, and agents that stress-test your finances against a bad year. No rounding errors, and no advice invented by a model.'
             )}
           </p>
 

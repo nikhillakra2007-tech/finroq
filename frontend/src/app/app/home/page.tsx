@@ -87,9 +87,9 @@ const ALL_TOOLS: ModuleItem[] = [
   },
   {
     id: 'multiverse',
-    name: 'Quantum Multiverse',
+    name: '30-Year Forecast',
     i18nKey: 'mod.multiverse',
-    desc: 'Simulate parallel life timelines, 30-year wealth trajectories, and lifestyle fork trade-offs.',
+    desc: 'Simulate parallel life timelines, 30-year wealth trajectories, and financial choices.',
     i18nDescKey: 'mod.multiverse.desc',
     icon: Compass,
     category: 'Wealth & Planning',

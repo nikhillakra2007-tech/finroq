@@ -30,7 +30,7 @@ export function LandingFeatures() {
       id: 'multiverse',
       icon: TrendingUp,
       badge: '30-Year Horizon',
-      title: 'Wealth & Multiverse Timeline',
+      title: '30-Year Wealth Forecast',
       desc: 'Simulates parallel wealth trajectories across career paths, SIP escalators, and FIRE milestones with inflation-adjusted compounding.',
       metric: '4.2x Terminal Edge',
       linkText: 'Sign in to Simulate Wealth',

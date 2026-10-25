@@ -14,7 +14,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <p align="center">
-  <b>Enterprise-grade double-entry personal finance engine built with arbitrary-precision decimal arithmetic (zero float drift), 17 unified financial engines, persistent evidence-driven spend leak detection, 30-year quantum multiverse simulation, live IPO & youth investment radar, 6-agent autonomous stress testing, trustworthy bank statement & receipt reconciliation, 18-language internationalization, adaptive dark/light themes, and deterministic Finroq AI with source deep-linking.</b>
+  <b>Enterprise-grade double-entry personal finance engine built with arbitrary-precision decimal arithmetic (zero float drift), 17 unified financial engines, persistent evidence-driven spend leak detection, 30-year wealth forecast simulation, live IPO & youth investment radar, 6-agent autonomous stress testing, trustworthy bank statement & receipt reconciliation, 18-language internationalization, adaptive dark/light themes, and deterministic Finroq AI with source deep-linking.</b>
 </p>
 
 🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)
@@ -59,9 +59,9 @@ Captured directly from production on [finroq-app.vercel.app](https://finroq-app.
 | ![Autonomous Crash-Test Engine](docs/assets/finroq-crash-test.png) | ![Pre-Spend Check](docs/assets/finroq-prespend-check.png) |
 | *6-Agent shock traversal simulating career shocks, hospital spikes, inflation waves, and mathematically proven recovery plans.* | *Real-time pre-purchase simulation testing affordability and remaining category cushion before swiping.* |
 
-| 30-Year Quantum Multiverse Simulator | Youth Investment & Live IPO GMP Radar |
+| 30-Year Wealth Forecast Simulator | Youth Investment & Live IPO GMP Radar |
 |:---:|:---:|
-| ![Quantum Multiverse Simulator](docs/assets/finroq-multiverse.png) | ![Youth Investment & IPO Radar](docs/assets/finroq-predictions.png) |
+| ![30-Year Wealth Forecast Simulator](docs/assets/finroq-multiverse.png) | ![Youth Investment & IPO Radar](docs/assets/finroq-predictions.png) |
 | *Interactive 30-year wealth time-scrubber comparing parallel life forks (Fast FIRE vs Balanced vs Startup) under macro climate shocks.* | *Live Grey Market Premium (GMP %) telemetry, ₹100 micro-SIP compounding calculator, and verified AMFI mutual fund feeds.* |
 
 </div>
@@ -197,7 +197,7 @@ flowchart TD
 - **Persistent Review Lifecycle**: Findings are saved in `spend_leak_findings` with statuses: `new` (Needs Review), `keep` (Legitimate), or `dismissed` (Unwanted Leak). Non-destructive—actions never modify underlying transactions.
 - **Deduplicated Savings**: Accurately computes true monthly and annual savings by grouping distinct merchant patterns, preventing duplicate alerts from artificially skewing totals.
 
-### 2. 🌌 30-Year Quantum Multiverse Simulator (`/app/multiverse`)
+### 2. 📈 30-Year Wealth Forecast Simulator (`/app/multiverse`)
 - **Parallel Life Forks**: Graphs competing life trajectories in exact INR (`₹`): *Fast FIRE* (age 42 freedom), *Balanced Corporate*, *Startup Founder*, and *Real Estate Heavy*.
 - **Macro Climate Regimes**: Tests portfolios against *Normal Growth* (12.5% CAGR), *High Inflation* (8.5% CPI), *Market Boom*, and *Tech Freeze / Recession*.
 - **Interactive Scrubber**: Real-time slider from age 20 to 50 calculating compound growth trajectories.
@@ -226,7 +226,7 @@ flowchart TD
 | 2 | **Budgeting** | `/app/budgeting` | Category spend limits compared against actual verified transactions; neutral transfers excluded automatically. |
 | 3 | **Spend Leak Detector** | `/app/spend-leak-detector` | Evidence-driven audit identifying recurring subscriptions, phantom micro-charges, price hikes, and duplicate debits with review lifecycle. |
 | 4 | **Pre-Spend Check** | `/app/pre-spend-check` | Pre-transaction diagnostic testing the impact of a planned purchase on remaining category cushion before swiping. |
-| 5 | **What-If Life Timeline** | `/app/multiverse` | 30-Year Quantum Multiverse Simulator comparing parallel branches (Fast FIRE vs Balanced vs Startup) in ₹ INR under macro-climate shocks. |
+| 5 | **What-If Life Timeline** | `/app/multiverse` | 30-Year Wealth Forecast Simulator comparing parallel branches (Fast FIRE vs Balanced vs Startup) in ₹ INR under macro-climate shocks. |
 | 6 | **Youth Investment & IPO Radar** | `/app/predictions` | Live Grey Market Premium (GMP %) telemetry, student-friendly micro-SIP compounding calculator, and verified AMFI mutual fund analytics. |
 | 7 | **Crash-Test & Resilience** | `/app/crash-test` | Autonomous 6-agent shock traversal, multi-scenario compound crisis simulation, and mathematical invariant recovery proof. |
 | 8 | **Financial Health Score** | `/app/financial-health` | Composite vitality diagnostic (0–100) aggregating savings rate, debt ratio, runway, and budget discipline. |

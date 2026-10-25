@@ -12,7 +12,7 @@ export function LandingCta() {
         <div className="p-8 sm:p-14 rounded-3xl bg-[#173F2B] text-white dark:bg-[#0E261A] border border-[#23583D] dark:border-[#1E4D35] flex flex-col md:flex-row md:items-center justify-between gap-8 shadow-xl card-hover-lift">
           <div className="space-y-3 max-w-xl">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-white">
-              Take sovereign command of your financial ledger.
+              Take complete control of your financial ledger.
             </h2>
             <p className="text-sm sm:text-base text-emerald-100/90 font-normal leading-relaxed">
               Experience the accounting engine built for individuals who refuse floating-point drift and demand mathematical certainty.

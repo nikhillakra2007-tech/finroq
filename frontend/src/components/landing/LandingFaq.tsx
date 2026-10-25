@@ -22,7 +22,7 @@ export function LandingFaq() {
     },
     {
       q: 'Can I use Finroq without connecting my real bank credentials?',
-      a: 'Yes. Finroq never demands your banking passwords or intrusive scraping logins. You maintain complete sovereign control: enter ledger records, import CSV statements, and explore all simulation engines with full privacy.',
+      a: 'Yes. Finroq never demands your banking passwords or intrusive scraping logins. You maintain complete control: enter ledger records, import CSV statements, and explore all simulation engines with full privacy.',
     },
   ];
 

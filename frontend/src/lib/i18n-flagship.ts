@@ -9,7 +9,7 @@ export const FLAGSHIP_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'flagship.title': 'Simulate 30-Year Timelines & Predict Market Moves',
     'flagship.desc': 'Two interactive intelligence engines engineered for students and young working professionals in Indian Rupees (₹).',
     'flagship.card1_title': 'What-If Life Timeline Simulator',
-    'flagship.card1_sub': '30-Year Quantum Multiverse Scrubber',
+    'flagship.card1_sub': '30-Year Forecast Scrubber',
     'flagship.live_scrubber': 'Live Scrubber',
     'flagship.card1_desc': 'Time-travel across your next 30 years. Drag the interactive scrubber to see how parallel life branches compound and reach early retirement (F.I.R.E.) in ₹ INR.',
     'flagship.time_scrubber': 'Time Scrubber: Year',

@@ -15,7 +15,7 @@ export function CinematicDemoIntro({ onComplete, standalone = false }: Cinematic
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [sceneIndex, setSceneIndex] = useState(0); // 0: Decrypt, 1: Intercept Leaks, 2: Wealth Rocket, 3: Unlocked
-  const [scrambleText, setScrambleText] = useState('ACCESSING SOVEREIGN ENCLAVE');
+  const [scrambleText, setScrambleText] = useState('ACCESSING SECURE LEDGER');
   const [wealthCounter, setWealthCounter] = useState('₹0');
   const [iteration, setIteration] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
@@ -246,10 +246,10 @@ export function CinematicDemoIntro({ onComplete, standalone = false }: Cinematic
       }, 35);
     }, 2400);
 
-    // 3.7s: Phase 3 - Vault Unlocked / Sovereign Freedom
+    // 3.7s: Phase 3 - Vault Unlocked / Financial Freedom
     const t3 = setTimeout(() => {
       setSceneIndex(3);
-      scrambleTo('FINROQ // SOVEREIGN WEALTH UNLOCKED', 500);
+      scrambleTo('FINROQ // FINANCIAL CLARITY UNLOCKED', 500);
       playCyberSound(1046.5, 'sine', 0.3, 0.1);
     }, 3700);
 
@@ -369,7 +369,7 @@ export function CinematicDemoIntro({ onComplete, standalone = false }: Cinematic
         {sceneIndex === 3 && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <div className="p-3 px-6 rounded-2xl bg-emerald-950/80 border border-emerald-400/60 backdrop-blur-md text-emerald-200 font-mono text-base font-bold">
-              SOVEREIGN FINANCIAL CONTROL IS YOURS
+              COMPLETE FINANCIAL CONTROL IS YOURS
             </div>
 
             {standalone && isFinished && (

@@ -10,11 +10,11 @@ export default function MultiversePage() {
 
   return (
     <ModuleShell
-      title={t('mod.multiverse', 'Quantum Multiverse Simulator')}
+      title={t('mod.multiverse', '30-Year Wealth Forecast')}
       category={t('cat.wealth_planning', 'Wealth & Planning')}
       description={t(
         'mod.multiverse.desc',
-        'Simulate parallel life timelines, time-travel across 30-year wealth trajectories, and compare lifestyle forks.'
+        'Simulate parallel life timelines, project 30-year wealth trajectories, and compare financial options.'
       )}
     >
       <MultiverseSimulator />

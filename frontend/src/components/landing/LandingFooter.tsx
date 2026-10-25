@@ -13,7 +13,7 @@ export function LandingFooter() {
               <span className="tracking-tight font-extrabold text-[#173F2B] dark:text-slate-100">finroq</span>
             </div>
             <p className="text-xs text-[var(--muted)] max-w-md">
-              Autonomous mathematical financial accounting engine with zero float drift and sovereign tenant privacy.
+              Mathematical financial accounting engine with zero float drift and complete data privacy.
             </p>
           </div>
 
@@ -35,7 +35,7 @@ export function LandingFooter() {
             <span className="text-[var(--ink)] font-medium">FINROQ Technologies © 2026. All rights reserved.</span>
           </div>
           <div className="text-[var(--muted)]">
-            <span>Sovereign Enclave Security</span>
+            <span>Private Enclave Security</span>
           </div>
         </div>
       </div>
