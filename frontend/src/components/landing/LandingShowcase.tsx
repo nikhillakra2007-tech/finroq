@@ -63,15 +63,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   // Navigation & Drawer
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Cinematic Demo Video Intro State (Plays strictly once on first-ever site visit)
+  // Cinematic Demo Video Intro State (Plays on site visit & always re-triggerable)
   const [demoIntroActive, setDemoIntroActive] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hasSeenIntro = localStorage.getItem('finroq_intro_seen');
-      if (!hasSeenIntro) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('skipIntro') !== '1') {
         setDemoIntroActive(true);
-        localStorage.setItem('finroq_intro_seen', 'true');
       }
     }
   }, []);
@@ -340,7 +339,16 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
           </nav>
 
           {/* Right Action Controls */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setDemoIntroActive(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-emerald-600/30 dark:border-emerald-400/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-bold text-xs transition-all cursor-pointer hover:scale-105 shadow-2xs"
+              title="Watch Cinematic Demo Video"
+            >
+              <Play className="w-3.5 h-3.5 fill-emerald-600 dark:fill-emerald-400 text-emerald-600 dark:text-emerald-400" />
+              <span>Demo</span>
+            </button>
             <LanguageSelector variant="pill" align="right" />
             <button
               onClick={toggleTheme}
@@ -362,6 +370,17 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         {mobileMenuOpen && (
           <div className="md:hidden bg-[var(--surface)] border-b border-[var(--line)] px-5 py-4 shadow-xl animate-in slide-in-from-top-2 duration-150">
             <div className="flex flex-col gap-2.5 text-sm font-medium text-[var(--ink)]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setDemoIntroActive(true);
+                }}
+                className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-500/20 transition-colors flex items-center gap-2.5 font-bold cursor-pointer text-left w-full"
+              >
+                <Play className="w-4 h-4 fill-emerald-600 dark:fill-emerald-400 text-emerald-600 dark:text-emerald-400" />
+                <span>Watch Demo Video</span>
+              </button>
               <a
                 href="#engine"
                 onClick={() => setMobileMenuOpen(false)}
@@ -439,6 +458,14 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
                 className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-6.5 py-3 font-semibold text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105"
               >
                 <span>{t('hero.cta_open', 'Start Building Wealth →')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDemoIntroActive(true)}
+                className="btn-pill secondary border border-emerald-600/40 hover:border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 px-5.5 py-3 font-semibold text-sm sm:text-base rounded-full cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-xs"
+              >
+                <Play className="w-4 h-4 fill-emerald-600 dark:fill-emerald-400 text-emerald-600 dark:text-emerald-400" />
+                <span>Watch Demo Video</span>
               </button>
               <a
                 href="#simulator"

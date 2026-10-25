@@ -1,22 +1,33 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Volume2, VolumeX, ShieldCheck, Zap, Lock, Unlock, ArrowRight } from 'lucide-react';
+import { Volume2, VolumeX, ShieldCheck, Zap, Lock, Unlock, ArrowRight, RotateCcw, Play } from 'lucide-react';
 
 interface CinematicDemoIntroProps {
   onComplete: () => void;
+  standalone?: boolean;
 }
 
 // Scrambled cyber glyphs for the hacker decrypt effect
 const GLYPHS = '0123456789ABCDEF$#@%&<>~!?/\\{}[]';
 
-export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
+export function CinematicDemoIntro({ onComplete, standalone = false }: CinematicDemoIntroProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [sceneIndex, setSceneIndex] = useState(0); // 0: Decrypt, 1: Intercept Leaks, 2: Wealth Rocket, 3: Unlocked
   const [scrambleText, setScrambleText] = useState('ACCESSING SOVEREIGN ENCLAVE');
   const [wealthCounter, setWealthCounter] = useState('₹0');
+  const [iteration, setIteration] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  // Restart storyboard sequence
+  const restartDemo = useCallback(() => {
+    setIsFinished(false);
+    setSceneIndex(0);
+    setWealthCounter('₹0');
+    setIteration((prev) => prev + 1);
+  }, []);
 
   // Synthesize crisp cyber hacker clicks and vault unlock sound
   const playCyberSound = useCallback((freq = 440, type: OscillatorType = 'sine', duration = 0.06, vol = 0.05) => {
@@ -242,9 +253,13 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
       playCyberSound(1046.5, 'sine', 0.3, 0.1);
     }, 3700);
 
-    // 4.8s: Complete and seamless dissolve to landing page
+    // 4.8s: Complete sequence
     const t4 = setTimeout(() => {
-      onComplete();
+      if (standalone) {
+        setIsFinished(true);
+      } else {
+        onComplete();
+      }
     }, 4850);
 
     return () => {
@@ -253,7 +268,7 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
       clearTimeout(t3);
       clearTimeout(t4);
     };
-  }, [onComplete, playCyberSound, scrambleTo]);
+  }, [iteration, onComplete, playCyberSound, scrambleTo, standalone]);
 
   // Escape to skip
   useEffect(() => {
@@ -278,12 +293,22 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
         <div className="flex items-center gap-2.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
           <span className="font-mono text-xs font-bold tracking-widest text-emerald-400">
-            FINROQ // ENCLAVE v2.0
+            FINROQ // DEMO VIDEO
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            onClick={restartDemo}
+            className="p-1.5 px-3 rounded-full border border-emerald-500/40 bg-black/60 hover:bg-black/90 text-emerald-300 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-mono"
+            title="Replay Demo Video"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Replay</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setIsMuted(!isMuted)}
             className="p-1.5 rounded-full border border-emerald-500/40 bg-black/60 hover:bg-black/90 text-emerald-300 transition-colors cursor-pointer"
             title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
@@ -291,11 +316,12 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
             {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
           </button>
           <button
+            type="button"
             onClick={onComplete}
             className="px-3 py-1 rounded-full border border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-mono font-semibold text-emerald-300 transition-all cursor-pointer flex items-center gap-1.5 backdrop-blur-md"
           >
-            <span>Skip</span>
-            <span className="px-1.5 py-0.2 rounded bg-white/10 text-[10px] text-slate-400">ESC</span>
+            <span>{standalone ? 'Exit to Site' : 'Skip'}</span>
+            {!standalone && <span className="px-1.5 py-0.2 rounded bg-white/10 text-[10px] text-slate-400">ESC</span>}
           </button>
         </div>
       </div>
@@ -341,8 +367,31 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
         )}
 
         {sceneIndex === 3 && (
-          <div className="p-3 px-6 rounded-2xl bg-emerald-950/80 border border-emerald-400/60 backdrop-blur-md text-emerald-200 font-mono text-base font-bold animate-in fade-in duration-200">
-            SOVEREIGN FINANCIAL CONTROL IS YOURS
+          <div className="space-y-4 animate-in fade-in duration-200">
+            <div className="p-3 px-6 rounded-2xl bg-emerald-950/80 border border-emerald-400/60 backdrop-blur-md text-emerald-200 font-mono text-base font-bold">
+              SOVEREIGN FINANCIAL CONTROL IS YOURS
+            </div>
+
+            {standalone && isFinished && (
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-3 animate-in zoom-in-95 duration-200">
+                <button
+                  type="button"
+                  onClick={restartDemo}
+                  className="px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-mono font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/30 transition-all hover:scale-105"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Replay Demo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onComplete}
+                  className="px-5 py-2.5 rounded-full border border-emerald-400/60 hover:border-emerald-300 bg-black/70 hover:bg-black text-white font-mono font-medium text-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                >
+                  <span>Explore Finroq Platform</span>
+                  <ArrowRight className="w-4 h-4 text-emerald-400" />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -350,11 +399,12 @@ export function CinematicDemoIntro({ onComplete }: CinematicDemoIntroProps) {
       {/* BOTTOM 5-SECOND HIGH-SPEED TIMER HUD */}
       <div className="relative z-10 w-full max-w-md mx-auto px-6 py-6 text-center space-y-2">
         <div className="flex items-center justify-between text-[11px] font-mono text-emerald-400/70">
-          <span>INITIALIZING</span>
-          <span className="font-bold text-white">5.0s INTRO</span>
+          <span>{isFinished ? 'COMPLETED' : 'PLAYING DEMO'}</span>
+          <span className="font-bold text-white">{isFinished ? 'FINROQ PROOF' : '5.0s WALKTHROUGH'}</span>
         </div>
         <div className="w-full h-1.5 rounded-full bg-slate-900 border border-emerald-500/30 overflow-hidden">
           <div
+            key={iteration}
             className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 transition-all duration-75 rounded-full animate-pulse"
             style={{
               animation: 'linear fillTimer 4.8s forwards',

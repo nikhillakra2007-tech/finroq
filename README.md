@@ -17,7 +17,8 @@
   <b>Enterprise-grade double-entry personal finance engine built with arbitrary-precision decimal arithmetic (zero float drift), 17 unified financial engines, persistent evidence-driven spend leak detection, 30-year quantum multiverse simulation, live IPO & youth investment radar, 6-agent autonomous stress testing, trustworthy bank statement & receipt reconciliation, 18-language internationalization, adaptive dark/light themes, and deterministic Finroq AI with source deep-linking.</b>
 </p>
 
-🔗 **Live Production Deployment on Vercel**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)  
+🔗 **Live Production Deployment on Vercel**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app) *(Plays Cinematic Demo Video on load)*  
+🎬 **Dedicated Standalone Demo Video Player**: [https://finroq-app.vercel.app/demo](https://finroq-app.vercel.app/demo)  
 </div>
 
 ---
@@ -313,7 +314,8 @@ npm run dev
 
 ## 🌐 Production Deployment
 
-- **Primary Production URL**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)**
+- **Primary Production URL**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)** *(Auto-runs Cinematic Demo Video)*
+- **Direct Standalone Demo Video**: **[https://finroq-app.vercel.app/demo](https://finroq-app.vercel.app/demo)** *(Dedicated Fullscreen Player & Walkthrough)*
 - **Direct Workspace Hub**: **[https://finroq-app.vercel.app/app/home](https://finroq-app.vercel.app/app/home)**
 - **Autonomous Crash-Test Engine**: **[https://finroq-app.vercel.app/app/crash-test](https://finroq-app.vercel.app/app/crash-test)**
 - **GitHub Repository**: **[https://github.com/nikhillakra2007-tech/finroq](https://github.com/nikhillakra2007-tech/finroq)**
