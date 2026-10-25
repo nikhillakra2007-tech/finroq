@@ -32,7 +32,7 @@ export function LandingHero() {
         <div className="lg:col-span-6 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-[#173F2B] dark:text-slate-200 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
-            <span>{t('hero.badge_tech', 'Fixed-Point NUMERIC(14,2) Architecture')}</span>
+            <span>{t('hero.badge_tech', 'Built on double-entry accounting')}</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] font-semibold tracking-tight leading-[1.12] text-[#173F2B] dark:text-slate-50">

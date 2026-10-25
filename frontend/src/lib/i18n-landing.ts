@@ -25,7 +25,7 @@ export const LANDING_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'nav.signin': 'Sign in',
     'nav.getstarted': 'Get started →',
 
-    'hero.badge_tech': 'Fixed-Point NUMERIC(14,2) Architecture',
+    'hero.badge_tech': 'Built on double-entry accounting',
     'hero.title_line1': 'Personal finance that',
     'hero.title_line2': 'does the maths properly.',
     'hero.description': 'Double-entry bookkeeping, envelope budgets, and agents that stress-test your finances against a bad year. No rounding errors, and no advice invented by a model.',
@@ -59,7 +59,7 @@ export const LANDING_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'terminal.drift_finroq_note': 'Exact fixed-point math',
 
     'bento.badge': 'Core Architecture',
-    'bento.title': 'Four autonomous systems. Complete financial command.',
+    'bento.title': 'What it does.',
     'bento.desc': 'Every engine inside FINROQ is interlocked. Your checking balance immediately informs budgets, budgets inform AI Copilot pre-spend assessments, and multi-agent stress simulators verify total solvency.',
 
     'p1.title': 'Deterministic AI Copilot',

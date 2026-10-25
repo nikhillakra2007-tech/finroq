@@ -3,9 +3,11 @@
 import React from 'react';
 import { Database, ShieldAlert, TrendingUp, Activity, ArrowRight } from 'lucide-react';
 import { useCurtain } from '@/components/layout/CurtainTransition';
+import { useI18n } from '@/lib/i18n-context';
 
 export function LandingFeatures() {
   const { navigateWithCurtain } = useCurtain();
+  const { t } = useI18n();
 
   const features = [
     {
@@ -52,10 +54,10 @@ export function LandingFeatures() {
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--soft)] border border-[var(--line)] text-xs font-medium text-emerald-800 dark:text-emerald-300">
-            <span>Core Capabilities</span>
+            <span>{t('bento.badge', 'Core Capabilities')}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--ink)]">
-            Four autonomous systems. Complete financial clarity.
+            {t('bento.title', 'What it does.')}
           </h2>
           <p className="text-base text-[var(--muted)] leading-relaxed font-normal">
             Every feature connects directly into your central accounting ledger. Zero floating-point drift, zero generic advice, and full verifiable audit trails.
