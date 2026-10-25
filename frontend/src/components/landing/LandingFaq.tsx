@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 export function LandingFaq() {
-  // Start with none open by default so FAQ 1 isn't permanently expanded
+  // Initial state is null so no FAQ question is open by default
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
@@ -44,7 +44,7 @@ export function LandingFaq() {
             return (
               <div
                 key={idx}
-                className={`bg-[var(--surface)] border rounded-2xl transition-all duration-300 ease-out overflow-hidden ${
+                className={`bg-[var(--surface)] border rounded-2xl overflow-hidden transition-all duration-300 ease-out ${
                   isOpen
                     ? 'border-[#173F2B] dark:border-emerald-500 shadow-md ring-1 ring-emerald-500/20'
                     : 'border-[#CBD5CB] dark:border-[#243B2E] hover:border-[#173F2B]/40 hover:shadow-xs'
@@ -81,18 +81,19 @@ export function LandingFaq() {
                   </div>
                 </button>
 
-                {/* Smooth Expand & Reverse Collapse Transition */}
+                {/* Guaranteed Hardware-Accelerated Smooth Expand & Reverse Collapse Transition */}
                 <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                  }`}
+                  style={{
+                    maxHeight: isOpen ? '240px' : '0px',
+                    opacity: isOpen ? 1 : 0,
+                    transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-in-out',
+                    overflow: 'hidden',
+                  }}
                 >
-                  <div className="overflow-hidden">
-                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--line)]">
-                      <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed pt-3 font-normal">
-                        {faq.a}
-                      </p>
-                    </div>
+                  <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--line)]">
+                    <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed pt-3 font-normal">
+                      {faq.a}
+                    </p>
                   </div>
                 </div>
               </div>

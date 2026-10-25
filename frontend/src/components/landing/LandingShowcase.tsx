@@ -15,20 +15,17 @@ import { LandingFooter } from './LandingFooter';
 
 export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [demoIntroActive, setDemoIntroActive] = useState(false);
+  // Starts true so the demo video ALWAYS plays when user enters the site
+  const [demoIntroActive, setDemoIntroActive] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Plays once when user enters the site before the landing page
+  // Check if user explicitly asked to skip intro via query param
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('skipIntro') === '1') return;
-
-      const hasPlayed = sessionStorage.getItem('finroq_intro_played');
-      if (!hasPlayed) {
-        setDemoIntroActive(true);
-        sessionStorage.setItem('finroq_intro_played', 'true');
+      if (params.get('skipIntro') === '1') {
+        setDemoIntroActive(false);
       }
     }
   }, []);
@@ -48,41 +45,55 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
 
   // Lenis smooth scrolling setup & progress tracking
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1.5,
-    });
-
-    const updateScrollMetrics = () => {
-      const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 20);
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight > 0) {
-        setScrollProgress(Math.min(1, Math.max(0, scrollY / docHeight)));
-      }
-    };
-
-    lenis.on('scroll', updateScrollMetrics);
-
+    let lenis: Lenis | null = null;
     let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
+
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
+      });
+
+      const updateScrollMetrics = () => {
+        const scrollY = window.scrollY;
+        setIsScrolled(scrollY > 20);
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+          setScrollProgress(Math.min(1, Math.max(0, scrollY / docHeight)));
+        }
+      };
+
+      lenis.on('scroll', updateScrollMetrics);
+
+      const raf = (time: number) => {
+        lenis?.raf(time);
+        rafId = requestAnimationFrame(raf);
+      };
       rafId = requestAnimationFrame(raf);
+    } catch {
+      const onScroll = () => {
+        const scrollY = window.scrollY;
+        setIsScrolled(scrollY > 20);
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+          setScrollProgress(Math.min(1, Math.max(0, scrollY / docHeight)));
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
     }
-    rafId = requestAnimationFrame(raf);
 
     return () => {
       cancelAnimationFrame(rafId);
-      lenis.destroy();
+      lenis?.destroy();
     };
   }, []);
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[#173F2B] selection:text-white relative font-sans overflow-x-hidden">
-      {/* 0. Cinematic Demo Video Intro (Plays once on site entry before landing page) */}
+      {/* 0. Cinematic Demo Video Intro (Plays automatically when user enters the site) */}
       {demoIntroActive && (
         <CinematicDemoIntro onComplete={() => setDemoIntroActive(false)} />
       )}
