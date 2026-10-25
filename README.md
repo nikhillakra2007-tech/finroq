@@ -3,7 +3,7 @@
 <div align="center">
 
 ![FINROQ Banner](https://img.shields.io/badge/FINROQ-v1.5.0--PROD-173F2B?style=for-the-badge&logo=cashapp&logoColor=C7F36B)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://pocketcircle.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://finroq-app.vercel.app)
 ![Financial Engines](https://img.shields.io/badge/Engines-17%20Unified%20Modules-173F2B?style=for-the-badge&logo=buffer&logoColor=C7F36B)
 ![Spend Leak Detector](https://img.shields.io/badge/Spend%20Leak-Evidence--Driven%20Audit-173F2B?style=for-the-badge&logo=radar&logoColor=C7F36B)
 ![Crash-Test Engine](https://img.shields.io/badge/Crash--Test-6--Agent%20Pipeline-173F2B?style=for-the-badge&logo=shield&logoColor=C7F36B)
@@ -17,8 +17,7 @@
   <b>Enterprise-grade double-entry personal finance engine built with arbitrary-precision decimal arithmetic (zero float drift), 17 unified financial engines, persistent evidence-driven spend leak detection, 30-year quantum multiverse simulation, live IPO & youth investment radar, 6-agent autonomous stress testing, trustworthy bank statement & receipt reconciliation, 18-language internationalization, adaptive dark/light themes, and deterministic Finroq AI with source deep-linking.</b>
 </p>
 
-🔗 **Live Production Deployment on Vercel**: [https://pocketcircle.vercel.app](https://pocketcircle.vercel.app) *(Plays Cinematic Demo Video once on site entry before landing page)*  
-🎬 **Dedicated Standalone Demo Video Player**: [https://pocketcircle.vercel.app/demo](https://pocketcircle.vercel.app/demo)  
+🔗 **Live Production Deployment**: [https://finroq-app.vercel.app](https://finroq-app.vercel.app)
 </div>
 
 ---
@@ -253,10 +252,10 @@ Every test and validation check passes with 100% compliance across backend and f
 | **Frontend Jest Tests** | `npm test -- --watchAll=false` | **87/87 passed across 12 suites (Tax & Investment Budget Sections + Categorized Manual Transactions + Ingestion Modal + AI Linking + UI Units)** | ✅ PASS |
 | **TypeScript Typecheck** | `npx tsc --noEmit` | **0 errors (Strict mode clean)** | ✅ PASS |
 | **Next.js Production Build** | `npm run build` | **29/29 static routes prerendered cleanly (Zero type/lint warnings)** | ✅ PASS |
-| **Live Vercel Production** | `https://pocketcircle.vercel.app` | **HTTP 200 OK (Google OAuth Flow + Live Telemetry + 18 Locales + Demo Video)** | ✅ PASS |
-| **Live App Hub** | `https://pocketcircle.vercel.app/app/home` | **HTTP 200 OK (17-Module Hub + Ingestion Modal)** | ✅ PASS |
-| **Live Prediction Center** | `https://pocketcircle.vercel.app/predictions` | **HTTP 200 OK (Live AMFI Telemetry + IPO Radar)** | ✅ PASS |
-| **Live Crash-Test Engine** | `https://pocketcircle.vercel.app/app/crash-test` | **HTTP 200 OK (6-Agent Autonomous Stress Testing)** | ✅ PASS |
+| **Live Vercel Production** | `https://finroq-app.vercel.app` | **HTTP 200 OK (Google OAuth Flow + Live Telemetry + 18 Locales + Demo Video)** | ✅ PASS |
+| **Live App Hub** | `https://finroq-app.vercel.app/app/home` | **HTTP 200 OK (17-Module Hub + Ingestion Modal)** | ✅ PASS |
+| **Live Prediction Center** | `https://finroq-app.vercel.app/predictions` | **HTTP 200 OK (Live AMFI Telemetry + IPO Radar)** | ✅ PASS |
+| **Live Crash-Test Engine** | `https://finroq-app.vercel.app/app/crash-test` | **HTTP 200 OK (6-Agent Autonomous Stress Testing)** | ✅ PASS |
 
 ---
 
@@ -314,11 +313,7 @@ npm run dev
 
 ## 🌐 Production Deployment
 
-- **Primary Production URL**: **[https://pocketcircle.vercel.app](https://pocketcircle.vercel.app)** *(Auto-runs Cinematic Demo Video once on entry before landing page)*
-- **Direct Standalone Demo Video**: **[https://pocketcircle.vercel.app/demo](https://pocketcircle.vercel.app/demo)** *(Dedicated Fullscreen Player & Walkthrough)*
-- **Direct Workspace Hub**: **[https://pocketcircle.vercel.app/app/home](https://pocketcircle.vercel.app/app/home)**
-- **Autonomous Crash-Test Engine**: **[https://pocketcircle.vercel.app/app/crash-test](https://pocketcircle.vercel.app/app/crash-test)**
-- **Alternative Mirror**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)**
+- **Live Production URL**: **[https://finroq-app.vercel.app](https://finroq-app.vercel.app)**
 - **GitHub Repository**: **[https://github.com/nikhillakra2007-tech/finroq](https://github.com/nikhillakra2007-tech/finroq)**
 
 ---
