@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 import { getStoredTheme, applyTheme } from '@/lib/theme';
 import { CinematicDemoIntro } from './CinematicDemoIntro';
 import { LandingHeader } from './LandingHeader';
@@ -44,9 +46,17 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
     applyTheme(next);
   };
 
-  // Scroll listener for top progress bar & header elevation
+  // Lenis smooth scrolling setup & progress tracking
   useEffect(() => {
-    const onScroll = () => {
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.5,
+    });
+
+    const updateScrollMetrics = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 20);
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -54,8 +64,20 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         setScrollProgress(Math.min(1, Math.max(0, scrollY / docHeight)));
       }
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    lenis.on('scroll', updateScrollMetrics);
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
   }, []);
 
   return (
@@ -85,7 +107,7 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
       {/* 4. Core Features Grid (4 Flagship Systems) */}
       <LandingFeatures />
 
-      {/* 5. Interactive Solvency Simulator */}
+      {/* 5. Interactive Solvency, Goal & Crash-Test Simulators */}
       <LandingSimulator />
 
       {/* 6. Frequently Asked Questions */}

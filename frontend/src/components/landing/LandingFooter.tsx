@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 
 export function LandingFooter() {
   return (
     <footer className="border-t border-[var(--line)] bg-[var(--soft)]/30 text-[var(--muted)] pt-12 pb-8 text-xs font-sans">
       <div className="max-w-6xl mx-auto px-5 space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[var(--line)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-[var(--line)]">
           <div className="space-y-1">
             <div className="flex items-center gap-2 font-display font-bold text-lg text-[var(--ink)]">
               <span className="w-3 h-3 rounded-full bg-emerald-600 dark:bg-emerald-400 shadow-xs shadow-emerald-500/50" />
@@ -18,19 +17,10 @@ export function LandingFooter() {
             </p>
           </div>
 
-          <div className="flex items-center gap-6 font-medium text-xs">
-            <Link href="/app/home" className="hover:text-[var(--ink)] transition-colors">
-              Ledger
-            </Link>
-            <Link href="/app/spend-leak-detector" className="hover:text-[var(--ink)] transition-colors">
-              Spend Leaks
-            </Link>
-            <Link href="/app/multiverse" className="hover:text-[var(--ink)] transition-colors">
-              Multiverse
-            </Link>
-            <Link href="/app/crash-test" className="hover:text-[var(--ink)] transition-colors">
-              Crash Test
-            </Link>
+          <div className="flex items-center gap-6 font-mono text-[11px] text-[var(--muted)]">
+            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">0.00% Drift Verified</span>
+            <span>•</span>
+            <span>NUMERIC(14,2) Exact Arithmetic</span>
           </div>
         </div>
 
@@ -44,10 +34,8 @@ export function LandingFooter() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[var(--ink)] font-medium">FINROQ Technologies © 2026. All rights reserved.</span>
           </div>
-          <div className="flex items-center gap-3 text-[var(--muted)]">
-            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">0.00% Drift Verified</span>
-            <span>•</span>
-            <span>NUMERIC(14,2) Exact Arithmetic</span>
+          <div className="text-[var(--muted)]">
+            <span>Sovereign Enclave Security</span>
           </div>
         </div>
       </div>

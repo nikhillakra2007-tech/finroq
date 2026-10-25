@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Database, ShieldAlert, TrendingUp, Activity, ArrowRight } from 'lucide-react';
-import { useI18n } from '@/lib/i18n-context';
+import { useCurtain } from '@/components/layout/CurtainTransition';
 
 export function LandingFeatures() {
-  const { t } = useI18n();
+  const { navigateWithCurtain } = useCurtain();
 
   const features = [
     {
@@ -16,8 +15,7 @@ export function LandingFeatures() {
       title: 'Mathematical Precision Ledger',
       desc: 'Enforces strict double-entry bookkeeping with NUMERIC(14,2) decimal registers. Debit always equals Credit with zero roundoff errors.',
       metric: 'DR = CR Checksum',
-      route: '/app/home',
-      linkText: 'Explore Ledger',
+      linkText: 'Sign in to Explore Ledger',
     },
     {
       id: 'leaks',
@@ -26,8 +24,7 @@ export function LandingFeatures() {
       title: 'Spend Leak & Duplicate Detector',
       desc: 'Proactively identifies creeping recurring mandates, dormant subscriptions, and double-charges with evidence-driven verification.',
       metric: '₹48,600 / yr Saved',
-      route: '/app/spend-leak-detector',
-      linkText: 'Inspect Leaks',
+      linkText: 'Sign in to Inspect Leaks',
     },
     {
       id: 'multiverse',
@@ -36,8 +33,7 @@ export function LandingFeatures() {
       title: 'Wealth & Multiverse Timeline',
       desc: 'Simulates parallel wealth trajectories across career paths, SIP escalators, and FIRE milestones with inflation-adjusted compounding.',
       metric: '4.2x Terminal Edge',
-      route: '/app/multiverse',
-      linkText: 'Simulate Wealth',
+      linkText: 'Sign in to Simulate Wealth',
     },
     {
       id: 'crashtest',
@@ -46,8 +42,7 @@ export function LandingFeatures() {
       title: 'Autonomous Solvency Crash-Testing',
       desc: 'Stress-tests your personal runway against realistic economic shocks: sudden medical spikes, job transitions, and market downturns.',
       metric: '100% Deterministic',
-      route: '/app/crash-test',
-      linkText: 'Run Crash Test',
+      linkText: 'Sign in for Crash Testing',
     },
   ];
 
@@ -99,13 +94,14 @@ export function LandingFeatures() {
                   <span className="font-bold text-emerald-700 dark:text-emerald-400">
                     {feat.metric}
                   </span>
-                  <Link
-                    href={feat.route}
-                    className="text-[var(--ink)] hover:text-emerald-600 font-semibold flex items-center gap-1 transition-colors"
+                  <button
+                    type="button"
+                    onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
+                    className="text-[var(--ink)] hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <span>{feat.linkText}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  </button>
                 </div>
               </div>
             );

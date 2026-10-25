@@ -157,12 +157,13 @@ export function LandingHero({ onOpenDemo }: LandingHeroProps) {
 
             <div className="pt-2 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-mono text-[var(--muted)]">
               <span>Checksum Verified</span>
-              <Link
-                href="/app/home"
-                className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
+              <button
+                type="button"
+                onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
+                className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>Open Workspace Hub →</span>
-              </Link>
+                <span>Sign In to Access Workspace →</span>
+              </button>
             </div>
           </div>
         </div>
