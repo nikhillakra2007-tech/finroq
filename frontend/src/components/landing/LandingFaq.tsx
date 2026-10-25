@@ -2,11 +2,10 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useI18n } from '@/lib/i18n-context';
 
 export function LandingFaq() {
-  const { t } = useI18n();
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  // Start with none open by default so FAQ 1 isn't permanently expanded
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
@@ -28,7 +27,7 @@ export function LandingFaq() {
   ];
 
   return (
-    <section id="faq" className="py-16 md:py-24 border-b border-[var(--line)]">
+    <section id="faq" className="py-16 md:py-24 border-b border-[var(--line)] scroll-mt-20">
       <div className="max-w-4xl mx-auto px-5 space-y-10">
         <div className="space-y-3 text-center max-w-xl mx-auto">
           <span className="text-xs font-mono font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
@@ -45,20 +44,26 @@ export function LandingFaq() {
             return (
               <div
                 key={idx}
-                className={`bg-[var(--surface)] border rounded-2xl transition-all duration-200 overflow-hidden cursor-pointer ${
+                className={`bg-[var(--surface)] border rounded-2xl transition-all duration-300 ease-out overflow-hidden ${
                   isOpen
-                    ? 'border-[#173F2B] dark:border-emerald-500 shadow-xs'
-                    : 'border-[#CBD5CB] dark:border-[#243B2E] hover:border-[#173F2B]/40'
+                    ? 'border-[#173F2B] dark:border-emerald-500 shadow-md ring-1 ring-emerald-500/20'
+                    : 'border-[#CBD5CB] dark:border-[#243B2E] hover:border-[#173F2B]/40 hover:shadow-xs'
                 }`}
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
               >
                 <button
                   type="button"
-                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 focus:outline-none cursor-pointer select-none transition-colors duration-200"
                   aria-expanded={isOpen}
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[var(--soft)] text-emerald-800 dark:text-emerald-300 shrink-0">
+                    <span
+                      className={`font-mono text-xs font-bold px-2 py-0.5 rounded shrink-0 transition-colors duration-200 ${
+                        isOpen
+                          ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950'
+                          : 'bg-[var(--soft)] text-emerald-800 dark:text-emerald-300'
+                      }`}
+                    >
                       0{idx + 1}
                     </span>
                     <h4 className="font-display font-medium text-sm sm:text-base text-[var(--ink)] pr-4">
@@ -66,9 +71,9 @@ export function LandingFaq() {
                     </h4>
                   </div>
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ease-in-out ${
                       isOpen
-                        ? 'rotate-180 bg-[#173F2B] text-white dark:bg-emerald-600'
+                        ? 'rotate-180 bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950'
                         : 'bg-[var(--soft)] text-[var(--ink)]'
                     }`}
                   >
@@ -76,13 +81,20 @@ export function LandingFaq() {
                   </div>
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--line)]">
-                    <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed pt-3 font-normal">
-                      {faq.a}
-                    </p>
+                {/* Smooth Expand & Reverse Collapse Transition */}
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--line)]">
+                      <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed pt-3 font-normal">
+                        {faq.a}
+                      </p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}

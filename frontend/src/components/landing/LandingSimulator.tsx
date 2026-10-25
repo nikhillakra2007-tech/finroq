@@ -27,15 +27,15 @@ export function LandingSimulator() {
             </p>
           </div>
 
-          {/* Clean Segmented Tab Switcher */}
+          {/* Clean Segmented Tab Switcher with Smooth Reverse Hover */}
           <div className="flex items-center p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-xs shrink-0 self-start md:self-auto">
             <button
               type="button"
               onClick={() => setActiveTab('solvency')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'solvency'
-                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs'
-                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs scale-100'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)] hover:scale-[1.03] active:scale-[0.98]'
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -44,10 +44,10 @@ export function LandingSimulator() {
             <button
               type="button"
               onClick={() => setActiveTab('goal')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'goal'
-                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs'
-                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs scale-100'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)] hover:scale-[1.03] active:scale-[0.98]'
               }`}
             >
               <Target className="w-3.5 h-3.5" />
@@ -56,10 +56,10 @@ export function LandingSimulator() {
             <button
               type="button"
               onClick={() => setActiveTab('crashtest')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'crashtest'
-                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs'
-                  : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                  ? 'bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs scale-100'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)] hover:scale-[1.03] active:scale-[0.98]'
               }`}
             >
               <AlertTriangle className="w-3.5 h-3.5" />
@@ -68,10 +68,12 @@ export function LandingSimulator() {
           </div>
         </div>
 
-        {/* Tab Content Display */}
-        {activeTab === 'solvency' && <SimulatorSolvency />}
-        {activeTab === 'goal' && <SimulatorGoal />}
-        {activeTab === 'crashtest' && <SimulatorCrashTest />}
+        {/* Tab Content Display with Smooth Transitions */}
+        <div key={activeTab} className="transition-all duration-300 ease-out animate-in fade-in-50 zoom-in-[0.99]">
+          {activeTab === 'solvency' && <SimulatorSolvency />}
+          {activeTab === 'goal' && <SimulatorGoal />}
+          {activeTab === 'crashtest' && <SimulatorCrashTest />}
+        </div>
       </div>
     </section>
   );

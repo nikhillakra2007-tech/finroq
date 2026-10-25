@@ -1,16 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { Play, CheckCircle2, Sparkles, TrendingUp, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Sparkles, ShieldCheck } from 'lucide-react';
 import { useCurtain } from '@/components/layout/CurtainTransition';
 import { useI18n } from '@/lib/i18n-context';
 
-interface LandingHeroProps {
-  onOpenDemo: () => void;
-}
-
-export function LandingHero({ onOpenDemo }: LandingHeroProps) {
+export function LandingHero() {
   const { navigateWithCurtain } = useCurtain();
   const { t } = useI18n();
 
@@ -59,23 +54,14 @@ export function LandingHero({ onOpenDemo }: LandingHeroProps) {
           <div className="pt-2 flex flex-wrap gap-3.5 items-center">
             <button
               onClick={() => navigateWithCurtain('/register', 'welcome', 'fwd')}
-              className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-6.5 py-3 font-semibold text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105"
+              className="btn-pill primary bg-[#173F2B] text-white dark:bg-emerald-500 dark:text-slate-950 hover:bg-[#102F21] dark:hover:bg-emerald-400 px-7 py-3.5 font-semibold text-sm sm:text-base rounded-full shadow-sm cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105 active:scale-95"
             >
               <span>{t('hero.cta_open', 'Start Building Wealth →')}</span>
             </button>
 
-            <button
-              type="button"
-              onClick={onOpenDemo}
-              className="btn-pill secondary border border-emerald-600/40 hover:border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 px-5.5 py-3 font-semibold text-sm sm:text-base rounded-full cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-xs"
-            >
-              <Play className="w-4 h-4 fill-emerald-600 dark:fill-emerald-400 text-emerald-600 dark:text-emerald-400" />
-              <span>Watch Demo Video</span>
-            </button>
-
             <a
               href="#simulator"
-              className="btn-pill secondary border border-[var(--line)] hover:border-[var(--ink)] bg-[var(--surface)] text-[var(--ink)] px-6 py-3 font-medium text-sm sm:text-base rounded-full cursor-pointer whitespace-nowrap transition-colors"
+              className="btn-pill secondary border border-[var(--line)] hover:border-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--soft)] text-[var(--ink)] px-6 py-3.5 font-medium text-sm sm:text-base rounded-full cursor-pointer whitespace-nowrap transition-all duration-300 hover:scale-105 active:scale-95"
             >
               {t('hero.cta_simulator', 'Try live simulator ↓')}
             </a>
@@ -100,7 +86,7 @@ export function LandingHero({ onOpenDemo }: LandingHeroProps) {
 
         {/* Right Column: Clean Live Precision Ledger Card */}
         <div className="lg:col-span-6">
-          <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl card-hover-lift">
+          <div className="bg-[var(--surface)] border border-[#CBD5CB] dark:border-[#243B2E] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 mr-1">
@@ -134,7 +120,7 @@ export function LandingHero({ onOpenDemo }: LandingHeroProps) {
                 {transactions.map((tx) => (
                   <div
                     key={tx.id}
-                    className="p-3 rounded-xl bg-[var(--soft)]/50 border border-[var(--line)] flex items-center justify-between text-xs"
+                    className="p-3 rounded-xl bg-[var(--soft)]/50 border border-[var(--line)] flex items-center justify-between text-xs transition-colors duration-200 hover:bg-[var(--soft)]"
                   >
                     <div className="space-y-0.5 min-w-0 pr-2">
                       <span className="font-medium text-[var(--ink)] block truncate">{tx.desc}</span>
@@ -160,7 +146,7 @@ export function LandingHero({ onOpenDemo }: LandingHeroProps) {
               <button
                 type="button"
                 onClick={() => navigateWithCurtain('/login', 'welcome', 'fwd')}
-                className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer transition-colors duration-200"
               >
                 <span>Sign In to Access Workspace →</span>
               </button>

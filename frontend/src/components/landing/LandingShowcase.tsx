@@ -98,11 +98,10 @@ export function LandingShowcase({ onEnterApp }: { onEnterApp?: () => void }) {
         isScrolled={isScrolled}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onOpenDemo={() => setDemoIntroActive(true)}
       />
 
       {/* 3. Hero Section */}
-      <LandingHero onOpenDemo={() => setDemoIntroActive(true)} />
+      <LandingHero />
 
       {/* 4. Core Features Grid (4 Flagship Systems) */}
       <LandingFeatures />
