@@ -1205,15 +1205,17 @@ class ApiClient {
   }
 
   // AI & Financial Intelligence
-  async explainFinances(data?: { start_date?: string; end_date?: string }) {
+  async explainFinances(data?: import('./api-types').FinancialExplanationRequest) {
     try {
       return await this.client.post<import('./api-types').FinancialExplanationResponse>('/ai/explain', data || {});
     } catch (err) {
       if (this.isDemoSession()) {
+        const lang = (data?.language || 'en').toLowerCase();
+        const demoPrefix = lang === 'hi' ? 'सिम्युलेटेड डेमो' : lang === 'bn' ? 'সিমুলেটেড ডেমো' : 'Simulated Demo';
         return {
           data: {
             explanation:
-              '[Simulated Demo] Sample cash flow scenario: Monthly savings rate is approximately 71.4% with essential expenses covered in the sample demo ledger.',
+              `[${demoPrefix}] Sample cash flow scenario: Monthly savings rate is approximately 71.4% with essential expenses covered in the sample demo ledger.`,
             is_ai_generated: false,
             model_used: 'finroq-demo-deterministic',
             provider_status: 'simulated_demo',
@@ -1228,15 +1230,17 @@ class ApiClient {
     }
   }
 
-  async askSpendingAssistant(data: { question: string }) {
+  async askSpendingAssistant(data: import('./api-types').SpendingAssistantRequest) {
     try {
       return await this.client.post<import('./api-types').SpendingAssistantResponse>('/ai/assistant', data);
     } catch (err) {
       if (this.isDemoSession()) {
+        const lang = (data?.language || 'en').toLowerCase();
+        const demoPrefix = lang === 'hi' ? 'सिम्युलेटेड डेमो' : lang === 'bn' ? 'সিমুলেটেড ডেমো' : 'Simulated Demo';
         return {
           data: {
             answer:
-              '[Simulated Demo] In this sample demo ledger, available cash flow comfortably absorbs this discretionary expenditure.',
+              `[${demoPrefix}] In this sample demo ledger, available cash flow comfortably absorbs this discretionary expenditure.`,
             is_ai_generated: false,
             model_used: 'finroq-demo-assistant',
             relevant_data: {

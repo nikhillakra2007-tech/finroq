@@ -246,6 +246,7 @@ export interface ApiError {
 export interface FinancialExplanationRequest {
   start_date?: string;
   end_date?: string;
+  language?: string;
 }
 
 export interface FinancialExplanationResponse {
@@ -261,6 +262,7 @@ export interface FinancialExplanationResponse {
 
 export interface SpendingAssistantRequest {
   question: string;
+  language?: string;
 }
 
 export interface SpendingAssistantResponse {
