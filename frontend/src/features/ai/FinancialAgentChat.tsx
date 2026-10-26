@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useI18n } from '@/lib/i18n-context';
+import { useI18n, Language, SUPPORTED_LANGUAGES } from '@/lib/i18n-context';
 import { apiClient, extractErrorMessage } from '@/lib/api-client';
 import { AIChatResponse, AIConversationSummary, AIMessageItem } from '@/lib/api-types';
 import { resolveAIProvenance } from '@/lib/provenance';
 import { StructuredResults } from './StructuredResults';
 import { AIMessageRenderer } from './AIMessageRenderer';
+import { APP_SUGGESTED_QUESTIONS } from './FloatingFinroqAgent';
 import {
   Sparkles,
   Send,
@@ -21,6 +22,7 @@ import {
   ShieldCheck,
   Check,
   X,
+  Globe,
 } from 'lucide-react';
 
 function MicIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -61,6 +63,15 @@ const SUGGESTED_QUESTIONS = [
 
 export function FinancialAgentChat({ initialPrompt, isCompact = false }: FinancialAgentChatProps) {
   const { language, activeLanguageMeta } = useI18n();
+  const [activeChatLang, setActiveChatLang] = useState<Language>(language);
+  const [showLangMenu, setShowLangMenu] = useState(false);
+
+  useEffect(() => {
+    setActiveChatLang(language);
+  }, [language]);
+
+  const currentChatMeta = SUPPORTED_LANGUAGES.find((l) => l.code === activeChatLang) || activeLanguageMeta;
+
   const [conversations, setConversations] = useState<AIConversationSummary[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<AIMessageItem[]>([]);
@@ -98,7 +109,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = activeLanguageMeta.speechLocale || 'en-US';
+      recognition.lang = currentChatMeta.speechLocale || 'en-US';
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -392,7 +403,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
       const res = await apiClient.chatAI({
         message: text,
         conversation_id: currentConversationId,
-        language,
+        language: activeChatLang,
       });
 
       const data: AIChatResponse = res.data;
@@ -459,6 +470,47 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          {/* Language Selector Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangMenu((prev) => !prev)}
+              className="px-2.5 py-1.5 rounded-xl border border-[var(--line)] bg-white dark:bg-[#1A2C22] text-xs font-semibold text-[#173F2B] dark:text-slate-200 hover:border-[var(--ink)] flex items-center gap-1.5 transition-colors"
+              title="Change Response Language"
+            >
+              <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <span className="text-[11px] font-mono">{currentChatMeta.badge}</span>
+              <ChevronDown className={`w-3 h-3 text-[var(--muted)] transition-transform ${showLangMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showLangMenu && (
+              <div className="absolute right-0 top-full mt-1.5 w-52 max-h-60 overflow-y-auto rounded-2xl bg-white dark:bg-[#16251E] border border-[#CBD5CB] dark:border-[#2A3D33] shadow-xl z-50 p-2 space-y-1">
+                <div className="px-2 py-1 text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--muted)]">
+                  Response Language (18)
+                </div>
+                {SUPPORTED_LANGUAGES.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      setActiveChatLang(l.code);
+                      setShowLangMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors ${
+                      activeChatLang === l.code
+                        ? 'bg-[#173F2B] text-white font-bold'
+                        : 'hover:bg-[var(--soft)] text-[#173F2B] dark:text-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[10px] px-1 py-0.5 rounded bg-black/10 dark:bg-white/10">{l.badge}</span>
+                      <span>{l.nativeName}</span>
+                    </div>
+                    {activeChatLang === l.code && <Check className="w-3.5 h-3.5" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {conversations.length > 0 && (
             <div className="relative">
               <button
@@ -540,7 +592,7 @@ export function FinancialAgentChat({ initialPrompt, isCompact = false }: Financi
                 Suggested Financial Questions
               </span>
               <div className="flex flex-col gap-2">
-                {SUGGESTED_QUESTIONS.map((q, idx) => (
+                {(APP_SUGGESTED_QUESTIONS[activeChatLang] || APP_SUGGESTED_QUESTIONS['en']).map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(q)}

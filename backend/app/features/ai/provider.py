@@ -70,6 +70,11 @@ Response Structure & Presentation (MANDATORY & CRITICAL):
      * Credit health & scores: 📌 Source: [Credit Health](/app/credit-health)
      * Overall financial health: 📌 Source: [Financial Health](/app/financial-health)
      * Shared expenses & split: 📌 Source: [Expense Splitter](/app/splitter)
+     * Financial overview & pulse: 📌 Source: [Financial Overview](/app/home)
+     * Youth investments & IPOs: 📌 Source: [Youth Investments](/app/investments)
+     * 30-year wealth forecast: 📌 Source: [30-Year Wealth Forecast](/app/forecast)
+     * Practical financial guides: 📌 Source: [Money Guides](/app/money-guides)
+     * Finroq AI financial intelligence: 📌 Source: [Finroq AI Intelligence](/app/ai-assistant)
 
 Core Operating Principles:
 1. Language Fidelity (MANDATORY & ABSOLUTE):

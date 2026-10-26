@@ -1324,7 +1324,114 @@ class ApiClient {
       // ONLY allow simulated responses when user is explicitly in a demo session.
       // Offline/network failure for authenticated non-demo users MUST throw so the UI presents an honest error.
       if (this.isDemoSession()) {
-        const q = data.message.toLowerCase();
+        const msg = data.message || '';
+        const q = msg.toLowerCase();
+        let lang = (data.language || 'en').toLowerCase();
+
+        // Detect language from text/script if default is en
+        if (lang === 'en') {
+          if (/[\u0980-\u09FF]/.test(msg)) lang = 'bn';
+          else if (/[\u0A80-\u0AFF]/.test(msg)) lang = 'gu';
+          else if (/[\u0B80-\u0BFF]/.test(msg)) lang = 'ta';
+          else if (/[\u0C00-\u0C7F]/.test(msg)) lang = 'te';
+          else if (/(आहे|नाही|सांगा|मला|कसा|काय)/.test(msg)) lang = 'mr';
+          else if (/[\u0C80-\u0CFF]/.test(msg)) lang = 'kn';
+          else if (/[\u0900-\u097F]/.test(msg)) lang = 'hi';
+          else if (/[\u4E00-\u9FFF]/.test(msg)) lang = 'zh';
+          else if (/[\u3040-\u309F\u30A0-\u30FF]/.test(msg)) lang = 'ja';
+          else if (/[\u0600-\u06FF]/.test(msg)) lang = 'ar';
+          else if (/[\u0400-\u04FF]/.test(msg)) lang = 'ru';
+          else if (/[\uAC00-\uD7AF]/.test(msg)) lang = 'ko';
+        }
+
+        const DEMO_TAGS: Record<string, string> = {
+          en: "Simulated Demo",
+          hi: "सिम्युलेटेड डेमो",
+          bn: "সিমুলেটেড ডেমো",
+          gu: "સિમ્યુલેટેડ ડેમો",
+          ta: "மாதிரி செயல்முறை",
+          te: "సిమ్యులేటెడ్ డెమో",
+          mr: "सिम्युलेटेड डेमो",
+          kn: "ಸಿಮ್ಯುಲೇಟೆಡ್ ಡೆಮೊ",
+          es: "Demostración Simulada",
+          fr: "Démo Simulée",
+          de: "Simulierte Demo",
+          zh: "模拟演示",
+          ja: "シミュレーション デモ",
+          ar: "عرض تجريبي محاكى",
+          pt: "Demonstração Simulada",
+          ru: "Симулированное демо",
+          it: "Demo Simulata",
+          ko: "시뮬레이션 데모",
+        };
+
+        const isAfford = q.includes("afford") || q.includes("buy") || q.includes("purchase") ||
+          q.includes("खरीद") || q.includes("কেনাকাটা") || q.includes("ખરીદી") || q.includes("வாங்க") ||
+          q.includes("కొనుగోలు") || q.includes("खरेदी") || q.includes("ಖರೀದಿ") || q.includes("compra") ||
+          q.includes("achat") || q.includes("acheter") || q.includes("kaufen") || q.includes("购买") ||
+          q.includes("購入") || q.includes("شراء") || q.includes("купить") || q.includes("구매");
+
+        const isSave = q.includes("save") || q.includes("saving") || q.includes("बचत") ||
+          q.includes("সঞ্চয়") || q.includes("சேமிக்க") || q.includes("పొదుపు") || q.includes("ಉಳಿತಾಯ") ||
+          q.includes("ahorro") || q.includes("économ") || q.includes("sparen") || q.includes("储蓄") ||
+          q.includes("节约") || q.includes("節約") || q.includes("ادخار") || q.includes("эконом") || q.includes("저축");
+
+        const isBudget = q.includes("budget") || q.includes("exceed") || q.includes("overspend") ||
+          q.includes("बजट") || q.includes("বাজেট") || q.includes("બજેટ") || q.includes("பட்ஜெட்") ||
+          q.includes("బడ్జెట్") || q.includes("ಬಜೆಟ್") || q.includes("presupuesto") || q.includes("预算") ||
+          q.includes("予算") || q.includes("ميزانية") || q.includes("бюджет") || q.includes("bilancio") || q.includes("예산");
+
+        const isBill = q.includes("bill") || q.includes("recurring") || q.includes("leak") || q.includes("subscription") ||
+          q.includes("बिल") || q.includes("বিল") || q.includes("બીલ") || q.includes("பில்") ||
+          q.includes("బిల్") || q.includes("ಬಿಲ್") || q.includes("factura") || q.includes("abonnement") ||
+          q.includes("rechnung") || q.includes("账单") || q.includes("订阅") || q.includes("請求書") ||
+          q.includes("فاتورة") || q.includes("счет") || q.includes("bolletta") || q.includes("청구서");
+
+        const isCrash = q.includes("crash") || q.includes("shock") || q.includes("stress") || q.includes("layoff") ||
+          q.includes("क्रैश") || q.includes("ঝটকা") || q.includes("அதிர்ச்சி") || q.includes("షాక్") ||
+          q.includes("ಆಘಾತ") || q.includes("choque") || q.includes("choc") || q.includes("冲击") ||
+          q.includes("ショック") || q.includes("صدمة") || q.includes("стресс") || q.includes("충격");
+
+        const isCushion = q.includes("cushion") || q.includes("emergency") || q.includes("runway") ||
+          q.includes("आपातकालीन") || q.includes("জরুরি") || q.includes("ઇમરજન્સી") || q.includes("அவசர") ||
+          q.includes("అత్యవసర") || q.includes("ತುರ್ತು") || q.includes("emergencia") || q.includes("urgence") ||
+          q.includes("notfall") || q.includes("应急") || q.includes("紧急") || q.includes("緊急") ||
+          q.includes("طوارئ") || q.includes("подушка") || q.includes("emergenza") || q.includes("비상");
+
+        const isNetWorth = q.includes("net worth") || q.includes("asset") || q.includes("wealth") || q.includes("liability") ||
+          q.includes("संपत्ति") || q.includes("সম্পদ") || q.includes("નેટવર્થ") || q.includes("சொத்து") ||
+          q.includes("ఆస్తి") || q.includes("ಆಸ್ತಿ") || q.includes("patrimonio") || q.includes("riqueza") ||
+          q.includes("fortune") || q.includes("vermögen") || q.includes("净资产") || q.includes("純資産") ||
+          q.includes("ثروة") || q.includes("актив") || q.includes("자산");
+
+        const isDebt = q.includes("debt") || q.includes("loan") || q.includes("emi") || q.includes("interest") ||
+          q.includes("कर्ज") || q.includes("ऋण") || q.includes("ঋণ") || q.includes("દેવું") ||
+          q.includes("கடன்") || q.includes("అప్పు") || q.includes("ಸಾಲ") || q.includes("deuda") ||
+          q.includes("dette") || q.includes("schulden") || q.includes("债务") || q.includes("贷款") ||
+          q.includes("負債") || q.includes("дион") || q.includes("долг") || q.includes("debito") ||
+          q.includes("부채") || q.includes("대출");
+
+        const isCredit = q.includes("credit") || q.includes("cibil") || q.includes("क्रेडिट") ||
+          q.includes("ক্রেডিট") || q.includes("கடன் மதிப்பீடு") || q.includes("క్రెడిట్") ||
+          q.includes("ಕ್ರೆಡಿಟ್") || q.includes("crédito") || q.includes("crédit") || q.includes("信用") ||
+          q.includes("ائتمان") || q.includes("кредит") || q.includes("신용");
+
+        const isHealth = q.includes("health") || q.includes("score") || q.includes("rating") || q.includes("grade") ||
+          q.includes("स्वास्थ्य") || q.includes("স্বাস্থ্য") || q.includes("ஆரோக்கியம்") ||
+          q.includes("ఆరోగ్యం") || q.includes("ಆರೋಗ್ಯ") || q.includes("salud") || q.includes("santé") ||
+          q.includes("gesundheit") || q.includes("健康") || q.includes("صحة") || q.includes("здоровье") || q.includes("salute");
+
+        const isSplit = q.includes("split") || q.includes("share") || q.includes("roommate") || q.includes("owing") ||
+          q.includes("विभाजन") || q.includes("ভাগ") || q.includes("பகிர்") || q.includes("పంచుకో") ||
+          q.includes("विभाजित") || q.includes("ಹಂಚಿಕೊಳ್ಳಿ") || q.includes("dividir") || q.includes("partager") ||
+          q.includes("teilen") || q.includes("分摊") || q.includes("割り勘") || q.includes("تقسيم") || q.includes("정산");
+
+        const isGuide = q.includes("guide") || q.includes("learn") || q.includes("education") || q.includes("how to") ||
+          q.includes("मार्गदर्शन") || q.includes("নির্দেশিকা") || q.includes("માર્ગદર્શિકા") || q.includes("வழிகாட்டி") ||
+          q.includes("గైడ్") || q.includes("ಮಾರ್ಗದರ್ಶಿ") || q.includes("guía") || q.includes("guide") ||
+          q.includes("leitfaden") || q.includes("指南") || q.includes("ガイド") || q.includes("دليل") ||
+          q.includes("руководство") || q.includes("가이드");
+
         let reply = "Your simulated net cash flow is ₹1,07,200.00 this month, with ₹1,50,000.00 income and ₹42,800.00 expenses.\n\n### 🔍 Detailed Analysis\n• Monthly Income: ₹1,50,000.00\n• Total Recorded Outflow: ₹42,800.00\n• Net Cash Surplus: ₹1,07,200.00\n• Available Liquid Cash: ₹75,000.00\n• Top Spending Vector: Housing & Rent (35%)\n\n📌 Source: [Expense Tracking](/app/expense-tracking)";
         let structured: any = {
           total_income: "150000.00",
@@ -1336,7 +1443,7 @@ class ApiClient {
           currency: "INR",
         };
 
-        if (q.includes("afford") || q.includes("buy") || q.includes("purchase")) {
+        if (isAfford) {
           const match = q.match(/(?:₹|rs\.?|inr)?\s*([0-9,]+)/i);
           let purchaseVal = 15000;
           if (match && match[1]) {
@@ -1360,7 +1467,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("save") || q.includes("saving")) {
+        } else if (isSave) {
           reply = "You can save ₹2,675/month by cutting 25% from dining and entertainment.\n\n### 🔍 Detailed Analysis\n• Dining & Social Outings: ₹6,500.00\n• Entertainment & Subscriptions: ₹4,200.00\n• Monthly Discretionary Outflow: ₹10,700.00\n• 25% Reduction Target: ₹2,675.00/month\n• 1-Year Projected Savings: ₹32,100.00\n\n📌 Source: [Goal Timeline](/app/goal-timeline)";
           structured = {
             monthly_target: "5000.00",
@@ -1370,7 +1477,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("budget") || q.includes("exceed") || q.includes("overspend")) {
+        } else if (isBudget) {
           reply = "You are currently at 74.2% of your monthly budget. 'Groceries & Food' has overspent by ₹1,400.\n\n### 🔍 Detailed Analysis\n• Total Envelope Limit: ₹35,000.00\n• Total Spent So Far: ₹26,000.00 (74.2%)\n• Remaining Margin: ₹9,000.00\n• Overspent Envelope: Groceries & Food (₹11,400 spent vs ₹10,000 cap)\n• Pacing Verdict: Caution on Food, All Other Envelopes Healthy\n\n📌 Source: [Budgeting](/app/budgeting)";
           structured = {
             total_allocated: "35000.00",
@@ -1380,7 +1487,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("bill") || q.includes("recurring") || q.includes("leak") || q.includes("subscription")) {
+        } else if (isBill) {
           reply = "You have 3 recurring bills due this month totaling ₹16,500.00.\n\n### 🔍 Detailed Analysis\n• Rent & Maintenance: ₹15,000.00 (Due 1st)\n• High-Speed Broadband: ₹999.00 (Due 9th)\n• Cloud Backup VPS: ₹500.00 (Due 15th)\n• Cash Cushion Committed: ₹16,500.00\n\n📌 Source: [Spend Leak Detector](/app/spend-leak-detector)";
           structured = {
             total_active_bills_count: 3,
@@ -1389,7 +1496,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("crash") || q.includes("shock") || q.includes("stress") || q.includes("layoff")) {
+        } else if (isCrash) {
           reply = "Your finances survive 4 out of 6 severe crisis shocks with a 4.2-month reserve buffer.\n\n### 🔍 Detailed Analysis\n• Salary Interruption (90 Days): Passed (Liquid reserves hold)\n• Medical Emergency (₹2.5L Out-of-Pocket): Passed with budget rebalancing\n• Hyper-Inflation (+15% essentials): Passed with discretionary cut\n• Twin Shock (Job Loss + Illness): Deficit of ₹45,000 in Month 3\n• Recommended Fix: Boost emergency cushion by ₹50,000\n\n📌 Source: [Crash-Test Engine](/app/crash-test)";
           structured = {
             scenarios_tested: 6,
@@ -1399,7 +1506,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("cushion") || q.includes("emergency") || q.includes("runway")) {
+        } else if (isCushion) {
           reply = "Your emergency cushion holds ₹75,000.00, providing 1.75 months of essential expense runway.\n\n### 🔍 Detailed Analysis\n• Current Emergency Reserves: ₹75,000.00\n• Essential Monthly Burn: ₹42,800.00\n• Baseline Runway: 1.75 Months\n• 3-Month Target Fund: ₹1,28,400.00\n• Remaining Buffer Shortfall: ₹53,400.00\n\n📌 Source: [Emergency Cushion](/app/emergency-cushion)";
           structured = {
             current_cushion: "75000.00",
@@ -1409,7 +1516,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("net worth") || q.includes("asset") || q.includes("wealth") || q.includes("liability")) {
+        } else if (isNetWorth) {
           reply = "Your verified net worth stands at ₹12,45,000.00 across liquid cash, investments, and assets.\n\n### 🔍 Detailed Analysis\n• Cash & Bank Accounts: ₹1,82,200.00\n• Long-term Investments: ₹10,62,800.00\n• Total Gross Assets: ₹12,45,000.00\n• Total Liabilities & Loans: ₹0.00\n• Debt-to-Asset Ratio: 0.0%\n\n📌 Source: [Net Worth Tracker](/app/net-worth)";
           structured = {
             net_worth: "1245000.00",
@@ -1419,7 +1526,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("debt") || q.includes("loan") || q.includes("emi") || q.includes("interest")) {
+        } else if (isDebt) {
           reply = "You are currently 100% debt-free with zero active loans or credit liabilities.\n\n### 🔍 Detailed Analysis\n• Active Unsecured Loans: 0\n• Active Vehicle / Home Loans: 0\n• Outstanding Credit Card Principal: ₹0.00\n• Total Monthly EMI Obligation: ₹0.00\n• Debt Freedom Status: Pristine\n\n📌 Source: [Debt Watchdog](/app/debt-watchdog)";
           structured = {
             total_debt: "0.00",
@@ -1429,7 +1536,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("credit") || q.includes("cibil") || q.includes("score")) {
+        } else if (isCredit) {
           reply = "Your estimated credit score is 782 with an excellent on-time payment track record.\n\n### 🔍 Detailed Analysis\n• Credit Score (Equifax/CIBIL Scale): 782 / 900 (Excellent)\n• Payment Punctuality: 100% on-time\n• Credit Utilization Ratio: 4.8% (Target < 30%)\n• Active Inquiries in last 6 months: 0\n\n📌 Source: [Credit Health](/app/credit-health)";
           structured = {
             credit_score: 782,
@@ -1439,7 +1546,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("health") || q.includes("score") || q.includes("rating") || q.includes("grade")) {
+        } else if (isHealth) {
           reply = "Your holistic Financial Health Score is 84/100 (Grade: A- Strong Resilience).\n\n### 🔍 Detailed Analysis\n• Cash Flow Stability: 92/100\n• Savings Rate Ratio: 85/100\n• Debt Management: 100/100\n• Emergency Cushion Preparedness: 60/100 (Action area: boost to 3 months)\n• Overall Rating: Grade A- Strong\n\n📌 Source: [Financial Health Score](/app/financial-health)";
           structured = {
             health_score: 84,
@@ -1448,7 +1555,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("split") || q.includes("share") || q.includes("roommate") || q.includes("owing")) {
+        } else if (isSplit) {
           reply = "You are currently owed ₹3,200.00 from 2 shared group expenses.\n\n### 🔍 Detailed Analysis\n• Goa Weekend Trip: ₹2,400.00 owed by Sarah\n• Dinner at Taj: ₹800.00 owed by Rahul\n• You Owe Others: ₹0.00\n• Net Receivable: ₹3,200.00\n\n📌 Source: [Expense Splitter](/app/splitter)";
           structured = {
             net_owed_to_you: "3200.00",
@@ -1458,7 +1565,7 @@ class ApiClient {
             is_simulated: true,
             currency: "INR",
           };
-        } else if (q.includes("guide") || q.includes("learn") || q.includes("education") || q.includes("how to")) {
+        } else if (isGuide) {
           reply = "Finroq provides 8 curated Money Guides covering budgeting, emergency funds, and debt elimination.\n\n### 🔍 Detailed Analysis\n• Recommended Guide 1: The Zero-Based Budgeting Playbook\n• Recommended Guide 2: Building Your 3-Month Emergency Cushion\n• Recommended Guide 3: The Debt Snowball vs Avalanche Method\n• Reading time: ~3 mins per guide\n\n📌 Source: [Money Guides](/app/money-guides)";
           structured = {
             guides_available: 8,
@@ -1469,10 +1576,12 @@ class ApiClient {
           };
         }
 
+        const demoPrefix = DEMO_TAGS[lang] || "Simulated Demo";
+
         return {
           data: {
             conversation_id: data.conversation_id || 'demo-conv-1',
-            message: `[Simulated Demo] ${reply}`,
+            message: `[${demoPrefix}] ${reply}`,
             is_live_ai: false,
             model_used: 'finroq-demo-simulated',
             structured_data: structured,
@@ -1534,113 +1643,113 @@ class ApiClient {
             switchAck: "ज़रूर! मैंने अपनी भाषा बदलकर हिन्दी कर ली है। मैं आपके वित्तीय प्रश्नों में कैसे सहायता कर सकता हूँ?",
           },
           bn: {
-            general: "ফিনরকে আপনাকে স্বাগতম! আমরা ১৩টি সমন্বিত আর্থিক ইঞ্জিনের মাধ্যমে আপনার যাচাইকৃত অ্যাকাউন্ট, বাজেট ও আর্থিক সুরক্ষা পরিচালনা করতে সহায়তা করি। শুরু করতে ১-ক্লিক ডেমো দেখুন বা সাইন ইন করুন!",
-            modules: "ফিনরকে ১৩টি সমন্বিত আর্থিক ইঞ্জিন রয়েছে: ব্যয় ট্র্যাকিং, দৈনিক বাজেট, খরচ বিভাজক, প্রাক-ব্যয় পরীক্ষা, নিট সম্পদ, ঋণ নজরদারি, লিক ডিটেক্টর, লক্ষ্য সিমুলেটর, জরুরি তহবিল, মানি গাইড, ক্রেডিট স্বাস্থ্য, আর্থিক স্কোর এবং স্বায়ত্তশাসিত ৬-এজেন্ট ক্র্যাশ-টেস্ট ইঞ্জিন (/app/crash-test)।",
+            general: "ফিনরকে আপনাকে স্বাগতম! আমরা ১৭টি সমন্বিত আর্থিক ইঞ্জিনের মাধ্যমে আপনার যাচাইকৃত অ্যাকাউন্ট, বাজেট ও আর্থিক সুরক্ষা পরিচালনা করতে সহায়তা করি। শুরু করতে ১-ক্লিক ডেমো দেখুন বা সাইন ইন করুন!",
+            modules: "ফিনরকে ১৭টি সমন্বিত আর্থিক ইঞ্জিন রয়েছে: ফিনরক এআই, আর্থিক ওভারভিউ, বিনিয়োগ ও আইপিও, সম্পদ পূর্বাভাস সিমুলেটর, ব্যয় ট্র্যাকিং, দৈনিক বাজেট, খরচ বিভাজক, প্রাক-ব্যয় পরীক্ষা, নিট সম্পদ, ঋণ নজরদারি, লিক ডিটেক্টর, লক্ষ্য সিমুলেটর, জরুরি তহবিল, মানি গাইড, ক্রেডিট স্বাস্থ্য, আর্থিক স্কোর এবং স্বায়ত্তশাসিত ৬-এজেন্ট ক্র্যাশ-টেস্ট ইঞ্জিন (/app/crash-test)।",
             crash: "ফিনরকের স্বায়ত্তশাসিত ক্র্যাশ-টেস্ট ইঞ্জিন (/app/crash-test) ৬টি বাস্তব আর্থিক সংকটের বিরুদ্ধে আপনার আর্থিক স্থায়িত্ব পরীক্ষা করে এবং ঋণ ছাড়াই গাণিতিকভাবে প্রমাণিত সুরক্ষা পরিকল্পনা তৈরি করে।",
             security: "ফিনরক Argon2id ক্রিপ্টোগ্রাফিক সুরক্ষা এবং জিরো-ট্রাস্ট ডেটা আইসোলেশন নিশ্চিত করে। আপনার তথ্য সম্পূর্ণ ব্যক্তিগত ও নিরাপদ।",
             switchAck: "নিশ্চয়ই! আমি আমার ভাষা পরিবর্তন করে বাংলায় নির্ধারণ করেছি। আমি আজ আপনাকে কীভাবে সাহায্য করতে পারি?",
           },
           gu: {
-            general: "ફિનરોકમાં આપનું સ્વાગત છે! અમે 13 એકીકૃત એન્જિન દ્વારા તમારા ચકાસાયેલ ખાતાઓ, દૈનિક બજેટ અને નાણાકીય સ્થિરતા ટ્રેક કરવામાં મદદ કરીએ છીએ. 1-ક્લિક ડેમો દ્વારા શરૂઆત કરો!",
-            modules: "ફિનરોકમાં 13 એકીકૃત નાણાકીય એન્જિન છે: ખર્ચ ટ્રેકિંગ, દૈનિક બજેટિંગ, ખર્ચ વિભાજક, ખર્ચ પૂર્વે તપાસ, નેટવર્થ, દેવું વોચડોગ, બિનજરૂરી ખર્ચ શોધક, લક્ષ્ય સિમ્યુલેટર, ઇમરજન્સી ફંડ, મની ગાઇડ્સ, ક્રેડિટ હેલ્થ, નાણાકીય સ્કોર અને સ્વાયત્ત 6-એજન્ટ ક્રેશ-ટેસ્ટ એન્જિન (/app/crash-test).",
+            general: "ફિનરોકમાં આપનું સ્વાગત છે! અમે 17 એકીકૃત એન્જિન દ્વારા તમારા ચકાસાયેલ ખાતાઓ, દૈનિક બજેટ અને નાણાકીય સ્થિરતા ટ્રેક કરવામાં મદદ કરીએ છીએ. 1-ક્લિક ડેમો દ્વારા શરૂઆત કરો!",
+            modules: "ફિનરોકમાં 17 એકીકૃત નાણાકીય એન્જિન છે: ફિનરોક એઆઈ, નાણાકીય ઓવરવ્યૂ, રોકાણ અને આઈપીઓ, વેલ્થ ફોરકાસ્ટ, ખર્ચ ટ્રેકિંગ, દૈનિક બજેટિંગ, ખર્ચ વિભાજક, ખર્ચ પૂર્વે તપાસ, નેટવર્થ, દેવું વોચડોગ, બિનજરૂરી ખર્ચ શોધક, લક્ષ્ય સિમ્યુલેટર, ઇમરજન્સી ફંડ, મની ગાઇડ્સ, ક્રેડિટ હેલ્થ, નાણાકીય સ્કોર અને સ્વાયત્ત 6-એજન્ટ ક્રેશ-ટેસ્ટ એન્જિન (/app/crash-test).",
             crash: "ફિનરોકનું સ્વાયત્ત ક્રેશ-ટેસ્ટ એન્જિન (/app/crash-test) 6 ગંભીર નાણાકીય આંચકાઓ સામે તમારી સ્થિરતા ચકાસે છે અને નવું દેવું લીધા વિના પુનઃપ્રાપ્તિ યોજનાઓ ગાણિતિક રીતે સાબિત કરે છે.",
             security: "ફિનરોક Argon2id એન્ક્રિપ્શન સાથે શૂન્ય-વિશ્વાસ સુરક્ષા પ્રદાન કરે છે. તમારો નાણાકીય ડેટા 100% સુરક્ષિત અને ખાનગી છે.",
             switchAck: "ચોક્કસ! મેં મારી ભાષા ગુજરાતીમાં બદલી છે. હું તમને કેવી રીતે મદદ કરી શકું?",
           },
           ta: {
-            general: "ஃபின்ராக்கிற்கு வரவேற்கிறோம்! 13 ஒருங்கிணைந்த அமைப்புகள் மூலம் உங்கள் சரிபார்க்கப்பட்ட கணக்குகள், பட்ஜெட் மற்றும் நிதி பாதுகாப்பை கண்காணிக்க நாங்கள் உதவுகிறோம்.",
-            modules: "ஃபின்ராக்கில் 13 அமைப்புகள் உள்ளன: செலவு கண்காணிப்பு, பட்ஜெட், செலவு பிரிப்பான், முந்தைய சோதனை, நிகர மதிப்பு, கடன் கண்காணிப்பு, கசிவு கண்டறிதல், இலக்குகள், அவசரகால நிதி, நிதி வழிகாட்டி, கடன் ஆரோக்கியம், நிதி மதிப்பெண் மற்றும் தன்னாட்சி 6-ஏஜென்ட் கிராஷ்-டெஸ்ட் (/app/crash-test).",
+            general: "ஃபின்ராக்கிற்கு வரவேற்கிறோம்! 17 ஒருங்கிணைந்த அமைப்புகள் மூலம் உங்கள் சரிபார்க்கப்பட்ட கணக்குகள், பட்ஜெட் மற்றும் நிதி பாதுகாப்பை கண்காணிக்க நாங்கள் உதவுகிறோம்.",
+            modules: "ஃபின்ராக்கில் 17 அமைப்புகள் உள்ளன: ஃபின்ராக் AI, நிதி கண்ணோட்டம், முதலீடுகள், 30 ஆண்டு செல்வ முன்கணிப்பு, செலவு கண்காணிப்பு, பட்ஜெட், செலவு பிரிப்பான், முந்தைய சோதனை, நிகர மதிப்பு, கடன் கண்காணிப்பு, கசிவு கண்டறிதல், இலக்குகள், அவசரகால நிதி, நிதி வழிகாட்டி, கடன் ஆரோக்கியம், நிதி மதிப்பெண் மற்றும் தன்னாட்சி 6-ஏஜென்ட் கிராஷ்-டெஸ்ட் (/app/crash-test).",
             crash: "ஃபின்ராக்கின் கிராஷ்-டெஸ்ட் எஞ்சின் (/app/crash-test) 6 கடுமையான நிதி அதிர்ச்சிகளுக்கு எதிராக உங்கள் நிதியை சோதித்து, கடன் இல்லாமல் கணித ரீதியாக நிரூபிக்கப்பட்ட மீட்பு திட்டங்களை உருவாக்குகிறது.",
             security: "ஃபின்ராக் Argon2id குறியாக்கத்துடன் முழுமையான தரவு பாதுகாப்பை உறுதி செய்கிறது. உங்கள் நிதி பதிவுகள் முற்றிலும் தனிப்பட்டவை.",
             switchAck: "நிச்சயமாக! எனது மொழியை தமிழுக்கு மாற்றிவிட்டேன். நான் உங்களுக்கு எவ்வாறு உதவ முடியும்?",
           },
           te: {
-            general: "ఫిన్‌రాక్‌కు స్వాగతం! 13 ఏకీకృత ఇంజిన్‌ల ద్వారా మీ ఖాతాలు, బడ్జెట్ మరియు ఆర్థిక రక్షణను నిర్వహించడంలో మేము సహాయం చేస్తాము.",
-            modules: "ఫిన్‌రాక్‌లో 13 ఆర్థిక ఇంజిన్‌లు ఉన్నాయి: ఖర్చుల ట్రాకింగ్, బడ్జెట్, విభజన, ముందస్తు తనిఖీ, నికర విలువ, రుణ పర్యవేక్షణ, లీక్ డిటెక్టర్, లక్ష్యాలు, అత్యవసర నిధి, మనీ గైడ్‌లు, క్రెడిట్ ఆరోగ్యం, స్కోరు మరియు స్వయంప్రతిపత్తి 6-ఏజెంట్ క్రాష్-టెస్ట్ (/app/crash-test).",
+            general: "ఫిన్‌రాక్‌కు స్వాగతం! 17 ఏకీకృత ఇంజిన్‌ల ద్వారా మీ ఖాతాలు, బడ్జెట్ మరియు ఆర్థిక రక్షణను నిర్వహించడంలో మేము సహాయం చేస్తాము.",
+            modules: "ఫిన్‌రాక్‌లో 17 ఆర్థిక ఇంజిన్‌లు ఉన్నాయి: ఫిన్‌రాక్ AI, ఆర్థిక అవలోకనం, పెట్టుబడులు, సంపద అంచనా, ఖర్చుల ట్రాకింగ్, బడ్జెట్, విభజన, ముందస్తు తనిఖీ, నికర విలువ, రుణ పర్యవేక్షణ, లీక్ డిటెక్టర్, లక్ష్యాలు, అత్యవసర నిధి, మనీ గైడ్‌లు, క్రెడిట్ ఆరోగ్యం, స్కోరు మరియు స్వయంప్రతిపత్తి 6-ఏజెంట్ క్రాష్-టెస్ట్ (/app/crash-test).",
             crash: "ఫిన్‌రాక్ క్రాష్-టెస్ట్ ఇంజిన్ (/app/crash-test) 6 తీవ్ర ఆర్థిక షాక్‌లను తట్టుకునే మీ సామర్థ్యాన్ని పరీక్షిస్తుంది మరియు అప్పులు లేకుండా నిరూపితమైన ప్రణాళికను అందిస్తుంది.",
             security: "ఫిన్‌రాక్ Argon2id భద్రతతో జీరో-ట్రస్ట్ రక్షణను అందిస్తుంది. మీ రికార్డులు పూర్తిగా సురక్షితం.",
             switchAck: "తప్పకుండా! నేను తెలుగులోకి మారాను. మీకు ఏ విధంగా సహాయపడగలను?",
           },
           mr: {
-            general: "फिनरॉक मध्ये आपले स्वागत आहे! आम्ही 13 एकत्रित इंजिनद्वारे आपले खाते, दैनंदिन बजेट आणि आर्थिक लवचिकता ट्रॅक करण्यात मदत करतो.",
-            modules: "फिनरॉकमध्ये 13 वित्तीय इंजिन आहेत: खर्च ट्रॅकिंग, दैनिक बजेट, खर्च विभाजक, खर्चापूर्वी तपासणी, एकूण संपत्ती, कर्ज पहारेकरी, अनावश्यक खर्च शोधक, उद्दिष्ट सिम्युलेटर, आपत्कालीन निधी, मार्गदर्शक, क्रेडिट आरोग्य, वित्तीय स्कोअर आणि स्वायत्त 6-एजंट क्रॅश-टेस्ट इंजिन (/app/crash-test).",
+            general: "फिनरॉक मध्ये आपले स्वागत आहे! आम्ही 17 एकत्रित इंजिनद्वारे आपले खाते, दैनंदिन बजेट आणि आर्थिक लवचिकता ट्रॅक करण्यात मदत करतो.",
+            modules: "फिनरॉकमध्ये 17 वित्तीय इंजिन आहेत: फिनरॉक एआय, विहंगावलोकन, गुंतवणूक व आयपीओ, संपत्ती अंदाज, खर्च ट्रॅकिंग, दैनिक बजेट, खर्च विभाजक, खर्चापूर्वी तपासणी, एकूण संपत्ती, कर्ज पहारेकरी, अनावश्यक खर्च शोधक, उद्दिष्ट सिम्युलेटर, आपत्कालीन निधी, मार्गदर्शक, क्रेडिट आरोग्य, वित्तीय स्कोअर आणि स्वायत्त 6-एजंट क्रॅश-टेस्ट इंजिन (/app/crash-test).",
             crash: "फिनरॉकचे क्रॅश-टेस्ट इंजिन (/app/crash-test) 6 गंभीर संकटांविरुद्ध आपल्या वित्ताची चाचणी घेते आणि कर्जाशिवाय गणिताच्या दृष्टीने सिद्ध केलेल्या योजना तयार करते.",
             security: "फिनरॉक Argon2id सह संपूर्ण झिरो-ट्रस्ट डेटा सुरक्षा सुनिश्चित करतो. आपला डेटा 100% खाजगी आहे.",
             switchAck: "नक्कीच! मी मराठीमध्ये उत्तर देण्यास तयार आहे. मी आज आपल्याला कशी मदत करू?",
           },
           kn: {
-            general: "ಫಿನ್‌ರಾಕ್‌ಗೆ ಸುಸ್ವಾಗತ! 13 ಸಂಯೋಜಿತ ಎಂಜಿನ್‌ಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಖಾತೆಗಳು, ಬಜೆಟ್ ಮತ್ತು ಹಣಕಾಸಿನ ಸುರಕ್ಷತೆಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ನಾವು ನಿಮಗೆ ಸಹಾಯ ಮಾಡುತ್ತೇವೆ.",
-            modules: "ಫಿನ್‌ರಾಕ್‌ನಲ್ಲಿ 13 ಹಣಕಾಸು ಎಂಜಿನ್‌ಗಳಿವೆ: ಖರ್ಚು ಟ್ರ್ಯಾಕಿಂಗ್, ಬಜೆಟ್, ವಿಭಜಕ, ಪೂರ್ವ ತಪಾಸಣೆ, ನಿವ್ವಳ ಮೌಲ್ಯ, ಸಾಲ ಕಾವಲುಗಾರ, ಸೋರಿಕೆ ಡಿಟೆಕ್ಟರ್, ಗುರಿಗಳು, ತುರ್ತು ನಿಧಿ, ಮಾರ್ಗದರ್ಶಿ, ಕ್ರೆಡಿಟ್ ಆರೋಗ್ಯ, ಹಣಕಾಸು ಸ್ಕೋರ್ ಮತ್ತು ಸ್ವಾಯತ್ತ 6-ಏಜೆಂಟ್ ಕ್ರ್ಯಾಶ್-ಟೆಸ್ಟ್ ಎಂಜಿನ್ (/app/crash-test).",
+            general: "ಫಿನ್‌ರಾಕ್‌ಗೆ ಸುಸ್ವಾಗತ! 17 ಸಂಯೋಜಿತ ಎಂಜಿನ್‌ಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಖಾತೆಗಳು, ಬಜೆಟ್ ಮತ್ತು ಹಣಕಾಸಿನ ಸುರಕ್ಷತೆಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ನಾವು ನಿಮಗೆ ಸಹಾಯ ಮಾಡುತ್ತೇವೆ.",
+            modules: "ಫಿನ್‌ರಾಕ್‌ನಲ್ಲಿ 17 ಹಣಕಾಸು ಎಂಜಿನ್‌ಗಳಿವೆ: ಫಿನ್‌ರಾಕ್ AI, ಅವಲೋಕನ, ಹೂಡಿಕೆಗಳು, ಸಂಪತ್ತು ಮುನ್ಸೂಚನೆ, ಖರ್ಚು ಟ್ರ್ಯಾಕಿಂಗ್, ಬಜೆಟ್, ವಿಭಜಕ, ಪೂರ್ವ ತಪಾಸಣೆ, ನಿವ್ವಳ ಮೌಲ್ಯ, ಸಾಲ ಕಾವಲುಗಾರ, ಸೋರಿಕೆ ಡಿಟೆಕ್ಟರ್, ಗುರಿಗಳು, ತುರ್ತು ನಿಧಿ, ಮಾರ್ಗದರ್ಶಿ, ಕ್ರೆಡಿಟ್ ಆರೋಗ್ಯ, ಹಣಕಾಸು ಸ್ಕೋರ್ ಮತ್ತು ಸ್ವಾಯತ್ತ 6-ಏಜೆಂಟ್ ಕ್ರ್ಯಾಶ್-ಟೆಸ್ಟ್ ಎಂಜಿನ್ (/app/crash-test).",
             crash: "ಫಿನ್‌ರಾಕ್‌ನ ಕ್ರ್ಯಾಶ್-ಟೆಸ್ಟ್ ಎಂಜಿನ್ (/app/crash-test) 6 ನೈಜ ಆಘಾತಗಳ ವಿರುದ್ಧ ನಿಮ್ಮ ಹಣಕಾಸನ್ನು ಪರೀಕ್ಷಿಸುತ್ತದೆ ಮತ್ತು ಸಾಲವಿಲ್ಲದೆ ಪರಿಶೀಲಿಸಿದ ಚೇತರಿಕೆ ಯೋಜನೆಯನ್ನು ನೀಡುತ್ತದೆ.",
             security: "ಫಿನ್‌ರಾಕ್ Argon2id ಭದ್ರತೆಯೊಂದಿಗೆ ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ.",
             switchAck: "ಖಂಡಿತವಾಗಿಯೂ! ನಾನು ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿದ್ದೇನೆ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
           },
           es: {
-            general: "¡Bienvenido a Finroq! Le ayudamos a controlar sus cuentas, presupuestos y resiliencia financiera a través de 13 motores unificados.",
-            modules: "Finroq incluye 13 motores: Control de Gastos, Presupuesto Diario, División, Verificación Pre-Gasto, Patrimonio Neto, Control de Deuda, Detector de Fugas, Metas, Fondo de Emergencia, Guías, Salud Crediticia, Puntuación y el Motor de Crash-Test con 6 agentes (/app/crash-test).",
+            general: "¡Bienvenido a Finroq! Le ayudamos a controlar sus cuentas, presupuestos y resiliencia financiera a través de 17 motores unificados.",
+            modules: "Finroq incluye 17 motores: Inteligencia Finroq AI, Resumen Financiero, Inversiones e IPOs, Simulador de Riqueza a 30 Años, Control de Gastos, Presupuesto Diario, División, Verificación Pre-Gasto, Patrimonio Neto, Control de Deuda, Detector de Fugas, Metas, Fondo de Emergencia, Guías, Salud Crediticia, Puntuación y el Motor de Crash-Test con 6 agentes (/app/crash-test).",
             crash: "El motor de Crash-Test de Finroq (/app/crash-test) somete sus finanzas a 6 shocks reales severos y diseña planes de recuperación autofinanciados sin deudas.",
             security: "Finroq aplica aislamiento de confianza cero con cifrado Argon2id y tokens JWT. Sus registros son estrictamente privados.",
             switchAck: "¡Por supuesto! He cambiado mi idioma a español. ¿En qué le puedo orientar hoy?",
           },
           fr: {
-            general: "Bienvenue sur Finroq ! Nous vous aidons à suivre vos comptes, budgets et résilience financière grâce à 13 moteurs unifiés.",
-            modules: "Finroq comprend 13 moteurs unifiés, notamment le suivi des dépenses, les budgets, la détection de fuites, le patrimoine et le moteur autonome de Crash-Test à 6 agents (/app/crash-test).",
+            general: "Bienvenue sur Finroq ! Nous vous aidons à suivre vos comptes, budgets et résilience financière grâce à 17 moteurs unifiés.",
+            modules: "Finroq comprend 17 moteurs unifiés, notamment l'IA Finroq, la vue d'ensemble, les investissements et IPO, le simulateur de patrimoine à 30 ans, le suivi des dépenses, les budgets, la détection de fuites, le patrimoine et le moteur autonome de Crash-Test à 6 agents (/app/crash-test).",
             crash: "Le Crash-Test de Finroq (/app/crash-test) teste votre résistance face à 6 chocs sévères et calcule des plans de redressement mathématiquement vérifiés sans endettement.",
             security: "Finroq garantit une sécurité zéro confiance avec hachage Argon2id. Vos finances sont entièrement isolées.",
             switchAck: "Certainement ! J'ai basculé en français. Comment puis-je vous aider aujourd'hui ?",
           },
           de: {
-            general: "Willkommen bei Finroq! Wir helfen Ihnen, verifizierte Konten, Budgets und finanzielle Resilienz über 13 einheitliche Module zu steuern.",
-            modules: "Finroq umfasst 13 Finanzmodule inklusive Ausgaben-Ledger, Budgets, Ausgabenleck-Detektor und der autonomen 6-Agenten Crash-Test-Engine (/app/crash-test).",
+            general: "Willkommen bei Finroq! Wir helfen Ihnen, verifizierte Konten, Budgets und finanzielle Resilienz über 17 einheitliche Module zu steuern.",
+            modules: "Finroq umfasst 17 Finanzmodule inklusive Finroq AI, Finanzübersicht, Investitionen & IPOs, 30-Jahre Vermögensprognose, Ausgaben-Ledger, Budgets, Ausgabenleck-Detektor und der autonomen 6-Agenten Crash-Test-Engine (/app/crash-test).",
             crash: "Die autonome Crash-Test-Engine von Finroq (/app/crash-test) stresstet Ihre Finanzen gegen 6 Realschocks und liefert mathematisch verifizierte, schuldenfreie Pläne.",
             security: "Finroq erzwingt Zero-Trust-Sicherheit mit Argon2id und JWT. Ihre Daten sind absolut privat.",
             switchAck: "Sehr gerne! Ich habe auf Deutsch umgestellt. Womit kann ich Ihnen helfen?",
           },
           zh: {
-            general: "欢迎使用 Finroq！我们通过13个统一引擎帮助您管理经验证的账户、日常预算与财务弹性。",
-            modules: "Finroq 包含13个金融引擎：支出追踪、每日预算、分摊、支出前检查、净资产、债务监控、漏洞检测、目标、应急金、指南、信用健康、财务评分和自主6智能体压力测试引擎（/app/crash-test）。",
+            general: "欢迎使用 Finroq！我们通过17个统一引擎帮助您管理经验证的账户、日常预算与财务弹性。",
+            modules: "Finroq 包含17个金融引擎：Finroq AI 智能助手、财务总览、投资与IPO预测、30年财富预测、支出追踪、每日预算、分摊、支出前检查、净资产、债务监控、漏洞检测、目标、应急金、指南、信用健康、财务评分和自主6智能体压力测试引擎（/app/crash-test）。",
             crash: "Finroq 自主压力测试引擎（/app/crash-test）模拟6种现实严峻冲击，并生成经数学验证的无借贷恢复方案。",
             security: "Finroq 采用 Argon2id 加密与零信任租户隔离，全面守护您的个人账本隐私。",
             switchAck: "没问题！我已经切换为中文。今天有什么我可以帮您的？",
           },
           ja: {
-            general: "Finroqへようこそ！13の統合エンジンにより、確定済み口座、予算、資産耐性を確実に管理します。",
-            modules: "Finroqには13の金融エンジンが含まれます：支出追跡、日次予算、支出前チェック、純資産、債務管理、支出漏れ検出、目標、緊急クッション、および自律型6エージェント・クラッシュテスト（/app/crash-test）。",
+            general: "Finroqへようこそ！17の統合エンジンにより、確定済み口座、予算、資産耐性を確実に管理します。",
+            modules: "Finroqには17の金融エンジンが含まれます：Finroq AI、財務概要、投資＆IPO予測、30年資産予測、支出追跡、日次予算、支出前チェック、純資産、債務管理、支出漏れ検出、目標、緊急クッション、マネーガイド、信用力、財務スコア、および自律型6エージェント・クラッシュテスト（/app/crash-test）。",
             crash: "Finroqの自律型クラッシュテスト（/app/crash-test）は、給与停止や医療費急増など6大ショックへの耐性を検証し、無借金の健全回復プランを証明します。",
             security: "Argon2id暗号化とゼロトラスト分離により、お客様の財務記録は厳格に保護されます。",
             switchAck: "かしこまりました！日本語に切り替えました。本日はどのようなご質問でしょうか？",
           },
           ar: {
-            general: "مرحباً بك في فينروك! نساعدك في إدارة حساباتك وميزانياتك وصمودك المالي عبر 13 محركاً متكاملاً.",
-            modules: "يتضمن فينروك 13 محركاً مالياً: تتبع النفقات، الميزانيات، صافي الثروة، كاشف التسربات، ومحرك اختبار الصدمات الذكي المكون من 6 عملاء (/app/crash-test).",
+            general: "مرحباً بك في فينروك! نساعدك في إدارة حساباتك وميزانياتك وصمودك المالي عبر 17 محركاً متكاملاً.",
+            modules: "يتضمن فينروك 17 محركاً مالياً: ذكاء فينروك المالي، النظرة العامة، الاستثمارات والاكتتاب، توقعات الثروة لـ 30 عاماً، تتبع النفقات، الميزانيات، صافي الثروة، كاشف التسربات، ومحرك اختبار الصدمات الذكي المكون من 6 عملاء (/app/crash-test).",
             crash: "يختبر محرك اختبار الصدمات المالي (/app/crash-test) قدرتك المالية ضد 6 صدمات حقيقية دون الحاجة إلى ديون.",
             security: "يطبق فينروك عزل الأمان المتقدم مع تشفير Argon2id لضمان خصوصية تامة لسجلاتك.",
             switchAck: "بالتأكيد! لقد تحولت إلى اللغة العربية. كيف يمكنني مساعدتك اليوم؟",
           },
           pt: {
-            general: "Bem-vindo ao Finroq! Ajudamos você a controlar contas, orçamentos e proteção financeira através de 13 motores unificados.",
-            modules: "O Finroq inclui 13 motores financeiros, incluindo controle de despesas, orçamentos diários, detector de fugas e o Motor Autônomo de Crash-Test (/app/crash-test).",
+            general: "Bem-vindo ao Finroq! Ajudamos você a controlar contas, orçamentos e proteção financeira através de 17 motores unificados.",
+            modules: "O Finroq inclui 17 motores financeiros, incluindo Finroq AI, Visão Geral, Investimentos & IPOs, Simulador de 30 Anos, controle de despesas, orçamentos diários, detector de fugas e o Motor Autônomo de Crash-Test (/app/crash-test).",
             crash: "O motor de Crash-Test do Finroq (/app/crash-test) testa suas finanças contra 6 choques severos com planos matematicamente comprovados sem dívidas.",
             security: "O Finroq aplica isolamento Zero-Trust com criptografia Argon2id. Seus dados são 100% confidenciais.",
             switchAck: "Com certeza! Mudei o idioma para português. Como posso orientar você hoje?",
           },
           ru: {
-            general: "Добро пожаловать в Finroq! Мы помогаем контролировать ваши счета, бюджеты и финансовую устойчивость с помощью 13 модулей.",
-            modules: "Finroq включает 13 финансовых движков: учет расходов, бюджетирование, чистые активы, детектор утечек и автономный стресс-тест из 6 агентов (/app/crash-test).",
+            general: "Добро пожаловать в Finroq! Мы помогаем контролировать ваши счета, бюджеты и финансовую устойчивость с помощью 17 модулей.",
+            modules: "Finroq включает 17 финансовых движков: Finroq AI, финансовый обзор, инвестиции и IPO, 30-летний прогноз, учет расходов, бюджетирование, чистые активы, детектор утечек и автономный стресс-тест из 6 агентов (/app/crash-test).",
             crash: "Движок стресс-тестирования Finroq (/app/crash-test) проверяет финансы на устойчивость к 6 реальным шокам без привлечения кредитов.",
             security: "Finroq гарантирует нулевое доверие и шифрование Argon2id. Все ваши финансовые данные строго конфиденциальны.",
             switchAck: "Конечно! Я переключился на русский язык. Чем я могу помочь вам сегодня?",
           },
           it: {
-            general: "Benvenuto in Finroq! Ti aiutiamo a gestire conti, budget e sicurezza finanziaria con 13 motori unificati.",
-            modules: "Finroq include 13 motori finanziari, tra cui gestione spese, budget giornaliero, rilevatore perdite e il Motore Crash-Test a 6 agenti (/app/crash-test).",
+            general: "Benvenuto in Finroq! Ti aiutiamo a gestire conti, budget e sicurezza finanziaria con 17 motori unificati.",
+            modules: "Finroq include 17 motori finanziari, tra cui Finroq AI, panoramica, investimenti e IPO, previsione ricchezza 30 anni, gestione spese, budget giornaliero, rilevatore perdite e il Motore Crash-Test a 6 agenti (/app/crash-test).",
             crash: "Il Crash-Test di Finroq (/app/crash-test) valuta la tua tenuta di fronte a 6 shock reali con piani matematicamente verificati senza debiti.",
             security: "Finroq garantisce isolamento zero-trust e crittografia Argon2id per la massima riservatezza.",
             switchAck: "Certamente! Ho impostato la lingua su italiano. Come posso aiutarti oggi?",
           },
           ko: {
-            general: "Finroq에 오신 것을 환영합니다! 13가지 통합 엔진을 통해 검증된 계좌, 일일 예산 및 재정 회복력을 지원합니다.",
-            modules: "Finroq에는 지출 추적, 일일 예산, 순자산 관리, 누수 감지 및 6개 에이전트 자율 크래시 테스트 엔진(/app/crash-test)을 포함한 13가지 엔진이 포함되어 있습니다.",
+            general: "Finroq에 오신 것을 환영합니다! 17가지 통합 엔진을 통해 검증된 계좌, 일일 예산 및 재정 회복력을 지원합니다.",
+            modules: "Finroq에는 Finroq AI, 재정 개요, 투자 및 IPO 예측, 30년 자산 시뮬레이터, 지출 추적, 일일 예산, 순자산 관리, 누수 감지 및 6개 에이전트 자율 크래시 테스트 엔진(/app/crash-test)을 포함한 17가지 엔진이 포함되어 있습니다.",
             crash: "Finroq 크래시 테스트 엔진(/app/crash-test)은 6가지 심각한 충격에 대한 재정 회복력을 검증하고 대출 없는 수학적 회복 플랜을 입증합니다.",
             security: "Finroq은 Argon2id 암호화와 제로 트러스트 격리를 통해 금융 데이터를 안전하게 보호합니다.",
             switchAck: "물론입니다! 한국어로 응답 언어를 변경했습니다. 오늘 어떤 도움이 필요하신가요?",
