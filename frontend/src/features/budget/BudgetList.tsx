@@ -133,7 +133,7 @@ const SEED_MONTHLY_BUDGETS: Record<string, Budget[]> = {
 };
 
 export function BudgetList() {
-  const { language } = useI18n();
+  const { language, t, activeLanguageMeta } = useI18n();
   const [year, setYear] = useState(2026);
   const [month, setMonth] = useState(10);
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -151,7 +151,16 @@ export function BudgetList() {
     'जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून',
     'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर',
   ];
-  const monthNames = language === 'hi' ? monthNamesHi : monthNamesEn;
+
+  const getMonthName = (mIndex: number) => {
+    try {
+      return new Date(2026, mIndex, 1).toLocaleDateString(activeLanguageMeta?.speechLocale || language, { month: 'long' });
+    } catch {
+      return language === 'hi' ? monthNamesHi[mIndex] : monthNamesEn[mIndex];
+    }
+  };
+
+  const monthNames = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((m) => getMonthName(m));
 
   const fetchBudgets = useCallback(async () => {
     try {
@@ -295,15 +304,15 @@ export function BudgetList() {
             {isOver ? (
               <Badge variant="danger" className="flex items-center gap-1 font-bold">
                 <AlertTriangle className="h-3 w-3" />
-                {language === 'hi' ? 'अधिक व्यय' : 'Overspent'}
+                {t('budget.overspent', 'Overspent')}
               </Badge>
             ) : util >= 80 ? (
               <Badge variant="warning" className="font-bold">
-                {util.toFixed(0)}% {language === 'hi' ? 'प्रयुक्त' : 'Used'}
+                {util.toFixed(0)}% {t('budget.used', 'Used')}
               </Badge>
             ) : (
               <Badge variant="success" className="font-bold">
-                {util.toFixed(0)}% {language === 'hi' ? 'प्रयुक्त' : 'Used'}
+                {util.toFixed(0)}% {t('budget.used', 'Used')}
               </Badge>
             )}
           </div>
@@ -311,7 +320,7 @@ export function BudgetList() {
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium text-[#4D5D51] dark:text-slate-400">
-                {language === 'hi' ? 'खर्च / भुगतान:' : 'Spent / Paid:'}
+                {t('budget.spent_paid', 'Spent / Paid:')}
               </span>
               <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
                 {formatCurrency(spent)}
@@ -319,7 +328,7 @@ export function BudgetList() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="font-medium text-[#4D5D51] dark:text-slate-400">
-                {language === 'hi' ? 'आवंटित सीमा:' : 'Allocated:'}
+                {t('budget.allocated', 'Allocated:')}
               </span>
               <span className="font-mono font-bold text-[#173F2B] dark:text-slate-100">
                 {formatCurrency(allocated)}
@@ -328,8 +337,8 @@ export function BudgetList() {
             <div className="flex justify-between text-sm border-t border-[#DCE4DC] dark:border-[var(--line)] pt-2 font-semibold">
               <span className={isOver ? 'text-[#B43838]' : 'text-[#173F2B] dark:text-slate-200'}>
                 {isOver
-                  ? (language === 'hi' ? 'बजट से अधिक:' : 'Over budget by:')
-                  : (language === 'hi' ? 'शेष क्षमता:' : 'Remaining capacity:')}
+                  ? t('budget.over_budget_by', 'Over budget by:')
+                  : t('budget.remaining_capacity', 'Remaining capacity:')}
               </span>
               <span className={isOver ? 'text-[#B43838] font-bold font-mono' : 'text-[#157A42] font-bold font-mono'}>
                 {formatCurrency(Math.abs(remaining))}
@@ -357,7 +366,7 @@ export function BudgetList() {
             className="h-8 px-2 text-[#173F2B] dark:text-slate-300 hover:text-[#102F21]"
           >
             <Edit2 className="h-3.5 w-3.5 mr-1" />
-            {language === 'hi' ? 'संपादित करें' : 'Edit'}
+            {t('action.edit', 'Edit')}
           </Button>
           <Button
             size="sm"
@@ -366,7 +375,7 @@ export function BudgetList() {
             className="h-8 px-2 text-danger-500 hover:text-danger-700 hover:bg-red-50"
           >
             <Trash2 className="h-3.5 w-3.5 mr-1" />
-            {language === 'hi' ? 'हटाएं' : 'Delete'}
+            {t('action.delete', 'Delete')}
           </Button>
         </div>
       </Card>
@@ -379,12 +388,10 @@ export function BudgetList() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-[#173F2B] dark:text-slate-100">
-            {language === 'hi' ? 'मासिक बजट एवं आवंटन' : 'Monthly Budgets & Allocations'}
+            {t('budget.monthly_budgets', 'Monthly Budgets & Allocations')}
           </h1>
           <p className="text-sm font-medium text-[#4D5D51] dark:text-slate-400">
-            {language === 'hi'
-              ? 'दैनिक जीवन व्यय, कर नियोजन, और निवेश उद्देश्यों के लिए सीमाएं निर्धारित करें'
-              : 'Set spending caps, plan statutory tax provisions, and track wealth investments in INR (₹)'}
+            {t('budget.monthly_budgets_subtitle', 'Set spending caps, plan statutory tax provisions, and track wealth investments in INR (₹)')}
           </p>
         </div>
 
@@ -393,7 +400,7 @@ export function BudgetList() {
             <button
               onClick={handlePrevMonth}
               className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors cursor-pointer"
-              title={language === 'hi' ? 'पिछला महीना' : 'Previous Month'}
+              title={t('action.previous_month', 'Previous Month')}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -403,7 +410,7 @@ export function BudgetList() {
             <button
               onClick={handleNextMonth}
               className="p-1.5 text-[#173F2B] hover:bg-finroq-mint rounded-lg transition-colors cursor-pointer"
-              title={language === 'hi' ? 'अगला महीना' : 'Next Month'}
+              title={t('action.next_month', 'Next Month')}
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -411,7 +418,7 @@ export function BudgetList() {
 
           <Button onClick={() => setCreateFormOpen(true)} className="flex items-center gap-2 bg-[#173F2B] text-white hover:bg-finroq-forest-deep shadow-xs font-medium cursor-pointer">
             <Plus className="h-4 w-4" />
-            {language === 'hi' ? 'बजट जोड़ें' : 'Add Budget'}
+            {t('budget.add_budget', 'Add Budget')}
           </Button>
         </div>
       </div>
@@ -423,17 +430,15 @@ export function BudgetList() {
             <Calendar className="w-3.5 h-3.5" />
           </span>
           <span className="font-semibold text-[#173F2B] dark:text-slate-200">
-            {language === 'hi' ? 'व्यय व संचय रुझान (पिछले 6 महीने):' : 'Outflow & Contribution Trend (Last 6 Months):'}
+            {t('budget.outflow_trend', 'Outflow & Contribution Trend (Last 6 Months):')}
           </span>
           <span className="text-[#3F4F43] dark:text-slate-400 font-medium">
-            {language === 'hi'
-              ? 'मई (₹1,00,750) → जून (₹1,02,350) → जुलाई (₹1,18,550) → अगस्त (₹1,23,020) → सितं (₹1,27,239) → अक्टू (₹1,27,089)'
-              : 'May (₹1,00,750) → Jun (₹1,02,350) → Jul (₹1,18,550) → Aug (₹1,23,020) → Sep (₹1,27,239) → Oct (₹1,27,089)'}
+            May (₹1,00,750) → Jun (₹1,02,350) → Jul (₹1,18,550) → Aug (₹1,23,020) → Sep (₹1,27,239) → Oct (₹1,27,089)
           </span>
         </div>
         <div className="flex items-center gap-2 self-start md:self-auto">
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#173F2B] font-semibold text-[11px]">
-            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> {language === 'hi' ? '-0.1% इस महीने' : '-0.1% This Month'}
+            <ArrowDownRight className="w-3 h-3 text-[#157A42]" /> {t('budget.this_month_diff', '-0.1% This Month')}
           </span>
         </div>
       </div>
@@ -442,41 +447,41 @@ export function BudgetList() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
           <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">
-            {language === 'hi' ? 'कुल आवंटित बजट' : 'Total Allocated'}
+            {t('budget.total_allocated', 'Total Allocated')}
           </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-emerald-300">{formatCurrency(totalAllocated)}</div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-            {language === 'hi' ? `${budgets.length} सक्रिय श्रेणियों में` : `Across ${budgets.length} active categories`}
+            {budgets.length} {t('budget.active_categories', 'active categories')}
           </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
           <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-amber-400">
-            {language === 'hi' ? 'वास्तविक व्यय व निवेश' : 'Actual Deployed'}
+            {t('budget.actual_deployed', 'Actual Deployed')}
           </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#B77925] dark:text-amber-400">{formatCurrency(totalSpent)}</div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
-            {language === 'hi' ? 'जीवन खर्च, कर व निवेश योग' : 'Expenses, taxes, and SIPs'}
+            {t('budget.expenses_taxes_sips', 'Expenses, taxes, and SIPs')}
           </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
           <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-emerald-400">
-            {language === 'hi' ? 'शेष बची राशि' : 'Remaining Pool'}
+            {t('budget.remaining_pool', 'Remaining Pool')}
           </div>
           <div className={cn('mt-2 text-2xl font-bold font-mono', totalRemaining >= 0 ? 'text-[#157A42] dark:text-emerald-400' : 'text-[#B43838] dark:text-rose-400')}>
             {formatCurrency(totalRemaining)}
           </div>
           <p className="mt-1 text-xs font-medium text-[#4D5D51] dark:text-slate-400">
             {totalRemaining >= 0
-              ? (language === 'hi' ? 'मासिक योजना के भीतर' : 'Within monthly budget plan')
-              : (language === 'hi' ? 'आवंटन से अधिक' : 'Over allocation')}
+              ? t('budget.within_budget', 'Within monthly budget plan')
+              : t('budget.over_allocation', 'Over allocation')}
           </p>
         </Card>
 
         <Card className="p-5 bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33] shadow-xs">
           <div className="text-xs font-mono uppercase tracking-wider font-bold text-[#4D5D51] dark:text-slate-300">
-            {language === 'hi' ? 'समग्र उपयोग दर' : 'Overall Utilization'}
+            {t('budget.overall_utilization', 'Overall Utilization')}
           </div>
           <div className="mt-2 text-2xl font-bold font-mono text-[#173F2B] dark:text-slate-100">
             {overallUtilization.toFixed(1)}%
@@ -505,7 +510,7 @@ export function BudgetList() {
           )}
         >
           <Layers className="w-3.5 h-3.5" />
-          {language === 'hi' ? 'सभी अनुभाग' : 'All Sections'} ({budgets.length})
+          {t('action.all_sections', 'All Sections')} ({budgets.length})
         </button>
         <button
           onClick={() => setActiveSection('living')}
@@ -517,7 +522,7 @@ export function BudgetList() {
           )}
         >
           <Home className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          {language === 'hi' ? 'दैनिक जीवन व्यय' : 'Living Expenses'} ({livingBudgets.length})
+          {t('cat.living', 'Living Expenses')} ({livingBudgets.length})
         </button>
         <button
           onClick={() => setActiveSection('tax')}
@@ -529,7 +534,7 @@ export function BudgetList() {
           )}
         >
           <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-          {language === 'hi' ? 'कर और वैधानिक भंडार' : 'Tax & Statutory'} ({taxBudgets.length})
+          {t('cat.tax', 'Tax & Statutory')} ({taxBudgets.length})
         </button>
         <button
           onClick={() => setActiveSection('investment')}
@@ -541,7 +546,7 @@ export function BudgetList() {
           )}
         >
           <TrendingUp className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-          {language === 'hi' ? 'निवेश और धन संचय' : 'Investments & Wealth'} ({investmentBudgets.length})
+          {t('cat.investments', 'Investments & Wealth')} ({investmentBudgets.length})
         </button>
       </div>
 
@@ -555,12 +560,12 @@ export function BudgetList() {
       ) : budgets.length === 0 ? (
         <Card className="bg-[#FCFDFC] dark:bg-[#16251E] border border-[#DCE4DC] dark:border-[#2A3D33]">
           <EmptyState
-            title={language === 'hi' ? `${monthNames[month - 1]} ${year} के लिए कोई बजट नहीं` : `No budgets for ${monthNames[month - 1]} ${year}`}
-            description={language === 'hi' ? 'इस महीने अपने खर्च, कर, और निवेश को नियंत्रण में रखने के लिए श्रेणी बजट बनाएं।' : 'Create category budgets for living expenses, taxes, and investments.'}
+            title={`${monthNames[month - 1]} ${year}: ${t('budget.no_budgets', 'No budgets allocated')}`}
+            description={t('budget.no_budgets_desc', 'Create category budgets for living expenses, taxes, and investments.')}
             action={
               <Button onClick={() => setCreateFormOpen(true)} className="bg-[#173F2B] text-white">
                 <Plus className="h-4 w-4 mr-2" />
-                {language === 'hi' ? 'बजट बनाएं' : 'Create Budget'}
+                {t('budget.create_budget', 'Create Budget')}
               </Button>
             }
           />
@@ -577,22 +582,20 @@ export function BudgetList() {
                   </div>
                   <div>
                     <h2 className="text-base font-display font-bold text-[#173F2B] dark:text-emerald-300 flex items-center gap-2">
-                      {language === 'hi' ? 'दैनिक व मासिक जीवन व्यय' : 'Monthly Living & Operational Expenses'}
+                      {t('cat.living_expenses', 'Monthly Living & Operational Expenses')}
                       <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-emerald-100/70 text-[#173F2B] dark:bg-emerald-950 dark:text-emerald-400">
-                        {livingBudgets.length} {language === 'hi' ? 'श्रेणियां' : 'categories'}
+                        {livingBudgets.length} {t('common.category', 'categories')}
                       </span>
                     </h2>
                     <p className="text-xs text-[#4D5D51] dark:text-slate-400">
-                      {language === 'hi'
-                        ? 'आवास किराया, किराना, भोजन डिलीवरी, आवागमन, उपयोगिताएं व आवश्यक सदस्यताएं'
-                        : 'Housing, groceries, transit, dining, utilities, and daily household operational commitments'}
+                      Housing, groceries, transit, dining, utilities, and daily household operational commitments
                     </p>
                   </div>
                 </div>
                 <div className="text-xs font-mono text-[#3F4F43] dark:text-slate-300 flex items-center gap-2 self-start sm:self-auto bg-white dark:bg-[#1A2C22] px-3 py-1.5 rounded-lg border border-[#DCE4DC] dark:border-[#2A3D33]">
-                  <span>{language === 'hi' ? 'आवंटित:' : 'Cap:'} <strong>{formatCurrency(livingTotals.allocated)}</strong></span>
+                  <span>{t('budget.allocated', 'Cap:')} <strong>{formatCurrency(livingTotals.allocated)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span>{language === 'hi' ? 'खर्च:' : 'Spent:'} <strong>{formatCurrency(livingTotals.spent)}</strong></span>
+                  <span>{t('budget.spent_paid', 'Spent:')} <strong>{formatCurrency(livingTotals.spent)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
                   <span className={livingTotals.util > 100 ? 'text-red-600 font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>
                     {livingTotals.util.toFixed(0)}%
@@ -606,7 +609,7 @@ export function BudgetList() {
                 </div>
               ) : (
                 <div className="p-6 text-center border border-dashed border-[#DCE4DC] dark:border-[#2A3D33] rounded-xl text-xs text-[#4D5D51] dark:text-slate-400">
-                  {language === 'hi' ? 'जीवन व्यय के लिए कोई बजट नहीं है।' : 'No living expense budgets allocated for this month.'}
+                  {t('budget.no_living_allocated', 'No living expense budgets allocated for this month.')}
                 </div>
               )}
             </div>
@@ -622,22 +625,20 @@ export function BudgetList() {
                   </div>
                   <div>
                     <h2 className="text-base font-display font-bold text-[#143E63] dark:text-blue-300 flex items-center gap-2">
-                      {language === 'hi' ? 'कर और वैधानिक अनुपालन भंडार' : 'Tax Planning & Statutory Reserves'}
+                      {t('cat.tax_compliance', 'Tax Planning & Statutory Reserves')}
                       <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300">
-                        {taxBudgets.length} {language === 'hi' ? 'श्रेणियां' : 'categories'}
+                        {taxBudgets.length} {t('common.category', 'categories')}
                       </span>
                     </h2>
                     <p className="text-xs text-[#44607B] dark:text-slate-400">
-                      {language === 'hi'
-                        ? 'अग्रिम आयकर प्रावधान, टीडीएस, जीएसटी और व्यावसायिक कर की सुरक्षित व्यवस्था'
-                        : 'Advance income tax provisions, quarterly statutory TDS, GST, and tax-saving statutory reserves'}
+                      Advance income tax provisions, quarterly statutory TDS, GST, and tax-saving statutory reserves
                     </p>
                   </div>
                 </div>
                 <div className="text-xs font-mono text-[#2B4B6F] dark:text-slate-300 flex items-center gap-2 self-start sm:self-auto bg-white dark:bg-[#172535] px-3 py-1.5 rounded-lg border border-[#D2DFEE] dark:border-[#233B52]">
-                  <span>{language === 'hi' ? 'प्रावधान:' : 'Provision:'} <strong>{formatCurrency(taxTotals.allocated)}</strong></span>
+                  <span>{t('budget.allocated', 'Provision:')} <strong>{formatCurrency(taxTotals.allocated)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span>{language === 'hi' ? 'जमा:' : 'Deposited:'} <strong>{formatCurrency(taxTotals.spent)}</strong></span>
+                  <span>{t('budget.spent_paid', 'Deposited:')} <strong>{formatCurrency(taxTotals.spent)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
                   <span className={taxTotals.util > 100 ? 'text-red-600 font-bold' : 'text-blue-700 dark:text-blue-400 font-bold'}>
                     {taxTotals.util.toFixed(0)}%
@@ -651,7 +652,7 @@ export function BudgetList() {
                 </div>
               ) : (
                 <div className="p-6 text-center border border-dashed border-[#D2DFEE] dark:border-[#233B52] rounded-xl text-xs text-[#44607B] dark:text-slate-400">
-                  {language === 'hi' ? 'इस महीने के लिए कोई कर बजट नहीं है।' : 'No tax planning budgets allocated for this month.'}
+                  {t('budget.no_tax_allocated', 'No tax planning budgets allocated for this month.')}
                 </div>
               )}
             </div>
@@ -667,22 +668,20 @@ export function BudgetList() {
                   </div>
                   <div>
                     <h2 className="text-base font-display font-bold text-[#6D4C13] dark:text-amber-300 flex items-center gap-2">
-                      {language === 'hi' ? 'निवेश और धन संचय उद्देश्य' : 'Investments & Wealth Creation'}
+                      {t('cat.investments_wealth', 'Investments & Wealth Creation')}
                       <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300">
-                        {investmentBudgets.length} {language === 'hi' ? 'श्रेणियां' : 'categories'}
+                        {investmentBudgets.length} {t('common.category', 'categories')}
                       </span>
                     </h2>
                     <p className="text-xs text-[#6B5A3E] dark:text-slate-400">
-                      {language === 'hi'
-                        ? 'म्यूचुअल फंड एसआईपी, इंडेक्स इक्विटी, सॉवरेन गोल्ड बॉन्ड और दीर्घकालिक संचय'
-                        : 'Systematic Investment Plans (SIPs), index equity funds, sovereign gold, and long-term capital assets'}
+                      Systematic Investment Plans (SIPs), index equity funds, sovereign gold, and long-term capital assets
                     </p>
                   </div>
                 </div>
                 <div className="text-xs font-mono text-[#5C451D] dark:text-slate-300 flex items-center gap-2 self-start sm:self-auto bg-white dark:bg-[#2B2317] px-3 py-1.5 rounded-lg border border-[#E9DFCE] dark:border-[#3E3422]">
-                  <span>{language === 'hi' ? 'लक्ष्य:' : 'Target:'} <strong>{formatCurrency(investmentTotals.allocated)}</strong></span>
+                  <span>{t('budget.allocated', 'Target:')} <strong>{formatCurrency(investmentTotals.allocated)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span>{language === 'hi' ? 'निवेशित:' : 'Deployed:'} <strong>{formatCurrency(investmentTotals.spent)}</strong></span>
+                  <span>{t('budget.spent_paid', 'Deployed:')} <strong>{formatCurrency(investmentTotals.spent)}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
                   <span className={investmentTotals.util >= 100 ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-amber-700 dark:text-amber-400 font-bold'}>
                     {investmentTotals.util.toFixed(0)}%
@@ -696,7 +695,7 @@ export function BudgetList() {
                 </div>
               ) : (
                 <div className="p-6 text-center border border-dashed border-[#E9DFCE] dark:border-[#3E3422] rounded-xl text-xs text-[#6B5A3E] dark:text-slate-400">
-                  {language === 'hi' ? 'इस महीने के लिए कोई निवेश बजट नहीं है।' : 'No investment allocations set for this month.'}
+                  {t('budget.no_investments_allocated', 'No investment allocations set for this month.')}
                 </div>
               )}
             </div>

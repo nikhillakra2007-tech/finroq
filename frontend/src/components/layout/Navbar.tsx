@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-context';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
 import {
   Menu,
   X,
@@ -157,7 +158,7 @@ export function Navbar() {
                 {modulesDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-80 bg-white dark:bg-[#16251E] rounded-2xl shadow-xl border border-[#BAC7BE] dark:border-[#2A3D33] p-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3 py-1.5 border-b border-slate-100 dark:border-[#2A3D33] flex items-center justify-between text-[11px] font-bold text-[#173F2B] dark:text-slate-300 uppercase tracking-wider">
-                      <span>{language === 'hi' ? 'विशेषज्ञ वित्तीय टूल्स' : 'Specialized Financial Tools'}</span>
+                      <span>{t('nav.specialized_tools', 'Specialized Financial Tools')}</span>
                       <span className="text-[10px] font-mono text-finroq-muted">{SECONDARY_TOOLS.length} Tools</span>
                     </div>
 
@@ -193,14 +194,7 @@ export function Navbar() {
 
           {/* User Account Controls */}
           <div className="hidden sm:flex sm:items-center sm:gap-2.5">
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-              className="px-2.5 py-1.5 rounded-xl border border-finroq-border text-xs font-bold text-finroq-forest hover:bg-finroq-mint/40 flex items-center gap-1.5 transition-colors"
-              title="Switch Language / भाषा बदलें"
-            >
-              <Globe className="w-3.5 h-3.5 text-finroq-forest" />
-              <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
-            </button>
+            <LanguageSelector variant="compact" align="right" />
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
             <Link
@@ -262,15 +256,9 @@ export function Navbar() {
           <div className="space-y-1">
             <div className="flex items-center justify-between px-3.5 pb-2">
               <span className="text-[10px] uppercase font-bold text-finroq-muted">
-                {language === 'hi' ? 'मुख्य हब' : 'Primary Hubs'}
+                {t('nav.primary_hubs', 'Primary Hubs')}
               </span>
-              <button
-                onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-                className="px-2.5 py-1 rounded-xl border border-finroq-border text-xs font-bold text-finroq-forest hover:bg-finroq-mint/40 flex items-center gap-1.5 transition-colors"
-              >
-                <Globe className="w-3.5 h-3.5 text-finroq-forest" />
-                <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
-              </button>
+              <LanguageSelector variant="compact" align="right" />
             </div>
 
             {PRIMARY_NAV.map((item) => (
@@ -287,7 +275,7 @@ export function Navbar() {
 
             <div className="pt-2 border-t border-slate-100 mt-2">
               <span className="px-3.5 text-[10px] uppercase font-bold text-finroq-muted">
-                {language === 'hi' ? 'विशेषज्ञ वित्तीय टूल्स' : 'Specialized Financial Tools'}
+                {t('nav.specialized_tools', 'Specialized Financial Tools')}
               </span>
               <div className="grid grid-cols-2 gap-1 px-2 pt-1">
                 {SECONDARY_TOOLS.map((m) => (
@@ -314,7 +302,7 @@ export function Navbar() {
                     onClick={handleLogout}
                     className="text-xs text-finroq-negative font-medium"
                   >
-                    {language === 'hi' ? 'लॉगआउट' : 'Logout'}
+                    {t('common.sign_out', 'Logout')}
                   </button>
                 </div>
               ) : (
@@ -323,14 +311,14 @@ export function Navbar() {
                     onClick={handleInstantDemo}
                     className="w-full py-2 rounded-xl text-xs font-bold bg-finroq-lime text-finroq-forest-deep text-center shadow-xs"
                   >
-                    {language === 'hi' ? '1-क्लिक लाइव डेमो' : '1-Click Live Demo'}
+                    {t('nav.demo', '1-Click Live Demo')}
                   </button>
                   <Link
                     href="/login"
                     className="w-full py-2 rounded-xl text-xs font-semibold text-center border border-finroq-border hover:bg-slate-50"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {language === 'hi' ? 'साइन इन करें' : 'Sign In'}
+                    {t('nav.signin', 'Sign In')}
                   </Link>
                 </div>
               )}

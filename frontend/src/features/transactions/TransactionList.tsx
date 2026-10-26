@@ -140,7 +140,7 @@ export function TransactionList() {
     { value: '', label: t('action.all_types', 'All Types') },
     { value: 'income', label: t('action.income', 'Income') },
     { value: 'expense', label: t('action.expense', 'Expense') },
-    { value: 'transfer', label: language === 'hi' ? 'ट्रांसफर' : 'Transfer' },
+    { value: 'transfer', label: t('action.transfer', 'Transfer') },
   ];
 
   const accountFilterOptions = [
@@ -156,7 +156,7 @@ export function TransactionList() {
             {t('mod.expense_tracking', 'Transactions')}
           </h2>
           <p className="text-[#374A3E] dark:text-slate-400 mt-1 text-sm font-medium">
-            {pagination.total} {language === 'hi' ? 'दर्ज लेजर लेन-देन' : `recorded ledger transaction${pagination.total !== 1 ? 's' : ''}`}
+            {pagination.total} {t('common.recorded_transactions', 'recorded ledger transactions')}
           </p>
         </div>
 
@@ -205,32 +205,24 @@ export function TransactionList() {
           </div>
           <div>
             <p className="font-bold text-[#173F2B] dark:text-slate-100">
-              {language === 'hi'
-                ? 'वित्तीय संस्थान लिंकिंग (ओपन बैंकिंग / अकाउंट एग्रीगेटर)'
-                : 'Financial Institution Linking (Open Banking / Account Aggregator)'}
+              {t('common.banking_linking', 'Financial Institution Linking (Open Banking / Account Aggregator)')}
             </p>
             <p className="text-[#374A3E] dark:text-slate-400 font-medium">
-              {language === 'hi'
-                ? 'स्थिति: संस्थागत एग्रीगेटर विन्यास हेतु तैयार। नॉन-क्रेडेंशियल सहमति प्रोटोकॉल पर आधारित।'
-                : 'Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.'}
+              {t('common.banking_status', 'Status: Ready for Institutional Aggregator Config. Uses non-credential consent protocols.')}
             </p>
           </div>
         </div>
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1A2C22] border border-[#BAC7BE] dark:border-[#2A3D33] text-[#173F2B] dark:text-emerald-300 font-mono text-[11px] font-bold shrink-0 self-start sm:self-auto">
           <ShieldCheck className="w-3.5 h-3.5 text-finroq-positive" />
-          {language === 'hi' ? 'आर्किटेक्चर सक्रिय' : 'Architecture Ready'}
+          {t('common.arch_ready', 'Architecture Ready')}
         </span>
       </div>
 
       <Card className="overflow-hidden bg-white dark:bg-[#16251E] border border-[#BAC7BE] dark:border-[#2A3D33] shadow-xs">
         {transactions.length === 0 ? (
           <EmptyState
-            title={language === 'hi' ? 'कोई लेन-देन नहीं मिला' : 'No transactions found'}
-            description={
-              language === 'hi'
-                ? 'अपना पहला लेन-देन जोड़ें, बैंक स्टेटमेंट आयात करें, या अपने फ़िल्टर बदलें।'
-                : 'Add your first transaction, import a statement, or adjust your filters.'
-            }
+            title={t('common.no_transactions', 'No transactions found')}
+            description={t('common.no_transactions_desc', 'Add your first transaction, import a statement, or adjust your filters.')}
             action={
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
@@ -250,25 +242,25 @@ export function TransactionList() {
               <thead>
                 <tr className="border-b border-[#DCE4DC] dark:border-[#2A3D33] bg-[#F3F7F3] dark:bg-[#16251E]">
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'दिनांक' : 'Date'}
+                    {t('common.date', 'Date')}
                   </th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'खाता' : 'Account'}
+                    {t('common.account', 'Account')}
                   </th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'श्रेणी' : 'Category'}
+                    {t('common.category', 'Category')}
                   </th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'प्रकार' : 'Type'}
+                    {t('common.type', 'Type')}
                   </th>
                   <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300 whitespace-nowrap min-w-[130px]">
-                    {language === 'hi' ? 'राशि' : 'Amount'}
+                    {t('common.amount', 'Amount')}
                   </th>
                   <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'विवरण' : 'Description'}
+                    {t('common.description', 'Description')}
                   </th>
                   <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-[#173F2B] dark:text-emerald-300">
-                    {language === 'hi' ? 'क्रियाएँ' : 'Actions'}
+                    {t('common.actions', 'Actions')}
                   </th>
                 </tr>
               </thead>
@@ -284,10 +276,10 @@ export function TransactionList() {
                         {formatDate(transaction.transaction_date)}
                       </td>
                       <td className="p-4 text-sm font-bold text-[#111827] dark:text-slate-100">
-                        {account?.name || (language === 'hi' ? 'अज्ञात' : 'Unknown')}
+                        {account?.name || t('common.unknown', 'Unknown')}
                       </td>
                       <td className="p-4 text-sm font-medium text-[#2A4736] dark:text-slate-300">
-                        {category?.name || (isTransfer ? (language === 'hi' ? 'खाता ट्रांसफर' : 'Account Transfer') : '—')}
+                        {category?.name || (isTransfer ? t('action.account_transfer', 'Account Transfer') : '—')}
                       </td>
                       <td className="p-4">
                         <Badge
@@ -295,10 +287,10 @@ export function TransactionList() {
                           size="sm"
                         >
                           {isIncome
-                            ? (language === 'hi' ? 'आय' : 'Income')
+                            ? t('action.income', 'Income')
                             : isTransfer
-                            ? (language === 'hi' ? 'ट्रांसफर' : 'Transfer')
-                            : (language === 'hi' ? 'खर्च' : 'Expense')}
+                            ? t('action.transfer', 'Transfer')
+                            : t('action.expense', 'Expense')}
                         </Badge>
                       </td>
                       <td className="p-4 text-right font-mono text-sm font-bold whitespace-nowrap">
@@ -324,7 +316,7 @@ export function TransactionList() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditClick(transaction)}
-                            aria-label={language === 'hi' ? 'लेन-देन संपादित करें' : 'Edit transaction'}
+                            aria-label={t('action.edit_transaction', 'Edit transaction')}
                             className="text-[#173F2B] dark:text-emerald-400 hover:text-[#102F21]"
                           >
                             <Edit className="h-4 w-4" />
@@ -333,7 +325,7 @@ export function TransactionList() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteTransaction(transaction)}
-                            aria-label={language === 'hi' ? 'लेन-देन हटाएं' : 'Delete transaction'}
+                            aria-label={t('action.delete_transaction', 'Delete transaction')}
                             className="text-danger-500 hover:text-danger-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -351,9 +343,7 @@ export function TransactionList() {
         {pagination.total > pagination.page_size && (
           <div className="flex items-center justify-between p-4 border-t border-[#DCE4DC] dark:border-[#2A3D33]">
             <p className="text-sm text-finroq-muted dark:text-slate-400">
-              {language === 'hi'
-                ? `पृष्ठ ${pagination.page} / ${Math.ceil(pagination.total / pagination.page_size)}`
-                : `Page ${pagination.page} of ${Math.ceil(pagination.total / pagination.page_size)}`}
+              {t('common.page', 'Page')} {pagination.page} / {Math.ceil(pagination.total / pagination.page_size)}
             </p>
             <div className="flex gap-2">
               <Button

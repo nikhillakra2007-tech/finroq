@@ -98,9 +98,9 @@ export function TransactionForm({
   const [categorySection, setCategorySection] = useState<'all' | 'living' | 'tax' | 'investment'>('all');
 
   const typeOptions = [
-    { value: 'income', label: language === 'hi' ? 'आय' : 'Income' },
-    { value: 'expense', label: language === 'hi' ? 'खर्च' : 'Expense' },
-    { value: 'transfer', label: language === 'hi' ? 'ट्रांसफर' : 'Transfer' },
+    { value: 'income', label: t('action.income', 'Income') },
+    { value: 'expense', label: t('action.expense', 'Expense') },
+    { value: 'transfer', label: t('action.transfer', 'Transfer') },
   ];
   const {
     register,
@@ -143,8 +143,8 @@ export function TransactionForm({
           {
             label:
               watchedType === 'income'
-                ? (language === 'hi' ? '💼 नियमित व व्यावसायिक आय' : '💼 Regular & Operational Income')
-                : (language === 'hi' ? '🏠 दैनिक व जीवन व्यय' : '🏠 Living & Everyday Expenses'),
+                ? t('cat.regular_income', '💼 Regular & Operational Income')
+                : t('cat.living_expenses', '🏠 Living & Everyday Expenses'),
             options: livingCats.map((c) => ({ value: String(c.id), label: c.name })),
           },
         ]
@@ -152,7 +152,7 @@ export function TransactionForm({
     ...(taxCats.length > 0 && (categorySection === 'all' || categorySection === 'tax')
       ? [
           {
-            label: language === 'hi' ? '🏛️ कर और वैधानिक अनुपालन' : '🏛️ Tax & Statutory Compliance',
+            label: t('cat.tax_compliance', '🏛️ Tax & Statutory Compliance'),
             options: taxCats.map((c) => ({ value: String(c.id), label: c.name })),
           },
         ]
@@ -160,7 +160,7 @@ export function TransactionForm({
     ...(investmentCats.length > 0 && (categorySection === 'all' || categorySection === 'investment')
       ? [
           {
-            label: language === 'hi' ? '📈 निवेश और धन सृजन' : '📈 Investments & Wealth Creation',
+            label: t('cat.investments_wealth', '📈 Investments & Wealth Creation'),
             options: investmentCats.map((c) => ({ value: String(c.id), label: c.name })),
           },
         ]
@@ -192,40 +192,40 @@ export function TransactionForm({
       onClose={onClose}
       title={
         isEditing
-          ? (language === 'hi' ? 'लेन-देन संपादित करें' : 'Edit Transaction')
-          : (language === 'hi' ? 'लेन-देन जोड़ें' : 'Add Transaction')
+          ? t('action.edit_transaction', 'Edit Transaction')
+          : t('action.add_transaction', 'Add Transaction')
       }
       description={
         isEditing
-          ? (language === 'hi' ? 'लेन-देन विवरण अपडेट करें' : 'Update transaction details')
-          : (language === 'hi' ? 'नया आय, खर्च, या ट्रांसफर दर्ज करें' : 'Record a new income, expense, or transfer')
+          ? t('action.update_tx_desc', 'Update transaction details')
+          : t('action.record_tx_desc', 'Record a new income, expense, or transfer')
       }
       size="md"
     >
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
         <Select
-          label={language === 'hi' ? 'खाता' : 'Account'}
+          label={t('common.account', 'Account')}
           options={accounts.map((a) => ({ value: String(a.id), label: a.name }))}
-          placeholder={language === 'hi' ? 'खाता चुनें' : 'Select account'}
+          placeholder={t('common.select_account', 'Select account')}
           error={errors.account_id?.message}
           {...register('account_id', { valueAsNumber: true })}
         />
 
         <Select
-          label={language === 'hi' ? 'प्रकार' : 'Type'}
+          label={t('common.type', 'Type')}
           options={typeOptions}
-          placeholder={language === 'hi' ? 'प्रकार चुनें' : 'Select type'}
+          placeholder={t('common.select_type', 'Select type')}
           error={errors.transaction_type?.message}
           {...register('transaction_type')}
         />
 
         {watchedType === 'transfer' ? (
           <Select
-            label={language === 'hi' ? 'गंतव्य खाता' : 'Destination Account'}
+            label={t('common.destination_account', 'Destination Account')}
             options={accounts
               .filter((a) => a.id !== Number(watchedAccountId))
               .map((a) => ({ value: String(a.id), label: a.name }))}
-            placeholder={language === 'hi' ? 'गंतव्य खाता चुनें' : 'Select destination account'}
+            placeholder={t('common.select_dest_account', 'Select destination account')}
             error={errors.to_account_id?.message}
             {...register('to_account_id', { valueAsNumber: true })}
           />
@@ -233,16 +233,16 @@ export function TransactionForm({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="block text-sm font-semibold text-[#173F2B] dark:text-slate-200">
-                {language === 'hi' ? 'श्रेणी एवं अनुभाग' : 'Category & Section'}
+                {t('common.category_section', 'Category & Section')}
               </label>
               {selectedSection && (
                 <span className="text-[11px] font-bold">
                   {selectedSection === 'tax' ? (
-                    <span className="text-blue-600 dark:text-blue-400">🏛️ {language === 'hi' ? 'कर अनुभाग' : 'Tax Section'}</span>
+                    <span className="text-blue-600 dark:text-blue-400">🏛️ {t('cat.tax_section', 'Tax Section')}</span>
                   ) : selectedSection === 'investment' ? (
-                    <span className="text-amber-600 dark:text-amber-400">📈 {language === 'hi' ? 'निवेश अनुभाग' : 'Investment Section'}</span>
+                    <span className="text-amber-600 dark:text-amber-400">📈 {t('cat.investment_section', 'Investment Section')}</span>
                   ) : (
-                    <span className="text-emerald-600 dark:text-emerald-400">🏠 {language === 'hi' ? 'दैनिक व्यय' : 'Living Expense'}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">🏠 {t('cat.living_expense', 'Living Expense')}</span>
                   )}
                 </span>
               )}
@@ -260,7 +260,7 @@ export function TransactionForm({
                     : 'bg-[#F4F7F3] dark:bg-[#1A2C22] text-[#4D5D51] dark:text-slate-300 hover:bg-[#E5ECE5]'
                 )}
               >
-                {language === 'hi' ? 'सभी' : 'All'}
+                {t('common.all', 'All')}
               </button>
               <button
                 type="button"
@@ -272,7 +272,7 @@ export function TransactionForm({
                     : 'bg-[#F4F7F3] dark:bg-[#1A2C22] text-[#4D5D51] dark:text-slate-300 hover:bg-[#E5ECE5]'
                 )}
               >
-                🏠 {language === 'hi' ? 'दैनिक' : 'Living'} ({livingCats.length})
+                🏠 {t('cat.living', 'Living')} ({livingCats.length})
               </button>
               <button
                 type="button"
@@ -284,7 +284,7 @@ export function TransactionForm({
                     : 'bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50 hover:bg-blue-100'
                 )}
               >
-                🏛️ {language === 'hi' ? 'कर (Tax)' : 'Tax'} ({taxCats.length})
+                🏛️ {t('cat.tax', 'Tax')} ({taxCats.length})
               </button>
               <button
                 type="button"
@@ -296,13 +296,13 @@ export function TransactionForm({
                     : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 hover:bg-amber-100'
                 )}
               >
-                📈 {language === 'hi' ? 'निवेश' : 'Investments'} ({investmentCats.length})
+                📈 {t('cat.investments', 'Investments')} ({investmentCats.length})
               </button>
             </div>
 
             <Select
               groups={categoryGroups}
-              placeholder={language === 'hi' ? 'श्रेणी चुनें (वैकल्पिक)' : 'Select category (optional)'}
+              placeholder={t('common.select_category_optional', 'Select category (optional)')}
               error={errors.category_id?.message}
               {...register('category_id', { valueAsNumber: true })}
             />
@@ -311,7 +311,7 @@ export function TransactionForm({
 
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label={language === 'hi' ? 'राशि' : 'Amount'}
+            label={t('common.amount', 'Amount')}
             type="number"
             step="0.01"
             min="0.01"
@@ -320,36 +320,36 @@ export function TransactionForm({
             {...register('amount')}
           />
           <Select
-            label={language === 'hi' ? 'मुद्रा' : 'Currency'}
+            label={t('common.currency', 'Currency')}
             options={currencyOptions}
-            placeholder={language === 'hi' ? 'मुद्रा' : 'Currency'}
+            placeholder={t('common.currency', 'Currency')}
             error={errors.currency?.message}
             {...register('currency')}
           />
         </div>
 
         <Input
-          label={language === 'hi' ? 'दिनांक' : 'Date'}
+          label={t('common.date', 'Date')}
           type="date"
           error={errors.transaction_date?.message}
           {...register('transaction_date')}
         />
 
         <Input
-          label={language === 'hi' ? 'विवरण (वैकल्पिक)' : 'Description (optional)'}
-          placeholder={language === 'hi' ? 'लेन-देन का विवरण' : 'Transaction details'}
+          label={t('common.description', 'Description')}
+          placeholder={t('common.tx_desc_placeholder', 'Transaction details')}
           error={errors.description?.message}
           {...register('description')}
         />
 
         <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
           <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
-            {language === 'hi' ? 'रद्द करें' : 'Cancel'}
+            {t('action.cancel', 'Cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={isLoading}>
             {isEditing
-              ? (language === 'hi' ? 'बदलाव सहेजें' : 'Save Changes')
-              : (language === 'hi' ? 'लेन-देन जोड़ें' : 'Add Transaction')}
+              ? t('action.save_changes', 'Save Changes')
+              : t('action.add_transaction', 'Add Transaction')}
           </Button>
         </div>
       </form>

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ALL_TRANSLATIONS } from './i18n-dictionary';
 import { SECTION_TRANSLATIONS } from './i18n-sections';
 import { LANDING_TRANSLATIONS } from './i18n-landing';
-import { FLAGSHIP_TRANSLATIONS, applyAutomaticLanguageRule } from './i18n-flagship';
+import { FLAGSHIP_TRANSLATIONS, UNIVERSAL_UI_TRANSLATIONS, applyAutomaticLanguageRule } from './i18n-flagship';
 
 export type Language =
   | 'en' // English
@@ -1012,6 +1012,13 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+      document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    }
+  }, [language]);
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     if (typeof window !== 'undefined') {
@@ -1026,7 +1033,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string, fallback?: string): string => {
-    // 0. Check flagship & feature translations for active language
+    // 0. Check universal UI translations for active language
+    const univLang = UNIVERSAL_UI_TRANSLATIONS[language];
+    if (univLang && univLang[key]) {
+      return univLang[key];
+    }
+    // 0.5. Check flagship & feature translations for active language
     const flagLang = FLAGSHIP_TRANSLATIONS[language];
     if (flagLang && flagLang[key]) {
       return flagLang[key];
